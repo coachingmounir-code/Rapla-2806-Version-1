@@ -1,4 +1,4 @@
-import type { Teacher, Course, Room, TimeSlot } from './db';
+import { db, type Teacher, type Course, type Room, type TimeSlot } from './db';
 
 export interface ConflictMessage {
   type: 'hard' | 'soft'; // hard = invalid assignment, soft = warning/preference
@@ -90,6 +90,66 @@ export function validateAssignment(
       }
     } catch (e) {
       console.error('Error during Sevafrei validation', e);
+    }
+  }
+
+  // 0c. Custom rules for Harishakti (Rezi and Yoga classes coordination)
+  if (teacher.name.toLowerCase().includes('harishakti')) {
+    const day = course.dayOfWeek;
+    const courseStart = timeToMinutes(course.startTime);
+    
+    if (day === 1) { // Montag
+      // Yoga in the morning OR afternoon, not both!
+      const otherMondayAssignments = allCourses.filter(
+        c => c.teacherId === teacher.id && c.id !== course.id && c.dayOfWeek === 1
+      );
+      if (otherMondayAssignments.length > 0) {
+        conflicts.push({
+          type: 'hard',
+          message: `Harishakti darf am Montag nur entweder vormittags ODER nachmittags Yoga unterrichten (nicht beides).`
+        });
+      }
+    } else if (day === 2) { // Dienstag
+      // Tuesday morning only, afternoon no services
+      if (courseStart >= timeToMinutes('12:00')) {
+        conflicts.push({
+          type: 'hard',
+          message: `Harishakti hat am Dienstag ab 12 Uhr Rezeption und danach Buchungsarbeiten (nachmittags keine Dienste).`
+        });
+      }
+    } else if (day === 3) { // Mittwoch
+      // Mittwoch is completely free!
+      conflicts.push({
+        type: 'hard',
+        message: `Mittwoch ist Harishaktis freier Wochentag.`
+      });
+    } else if (day === 4) { // Donnerstag
+      // Donnerstag unavailable for Yoga
+      conflicts.push({
+        type: 'hard',
+        message: `Harishakti ist am Donnerstag nicht für Yogastunden verfügbar (vormittags frei, 12 Uhr Sevakarunde, nachmittags Buchungen, ab 18:45 Uhr Spätrezeption).`
+      });
+    } else if (day === 5) { // Freitag
+      // Friday morning Yoga ONLY if Melanie is on duty on Friday
+      if (courseStart < timeToMinutes('12:00')) {
+        const melanieActiveOnFriday = allCourses.some(c => {
+          if (c.dayOfWeek !== 5 || !c.teacherId) return false;
+          const t = db.getTeachers().find(x => x.id === c.teacherId);
+          return t && t.name.toLowerCase().includes('melanie');
+        });
+        if (!melanieActiveOnFriday) {
+          conflicts.push({
+            type: 'hard',
+            message: `Harishakti darf am Freitag Vormittag nur unterrichten, wenn Melanie im Dienst ist.`
+          });
+        }
+      } else {
+        // Afternoon/evening has Telefondienst and Spätrezeption
+        conflicts.push({
+          type: 'hard',
+          message: `Harishakti hat am Freitag ab 16 Uhr Telefondienst und danach Spätrezeption (nachmittags/abends kein Yoga).`
+        });
+      }
     }
   }
 

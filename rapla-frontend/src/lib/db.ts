@@ -224,7 +224,13 @@ const GENERATED_TEACHERS: Teacher[] = NEW_TEACHER_NAMES.map((name, index) => {
       preferredDays: [],
       canLeadMeditation: false,
       canLeadSatsang: false,
-      availability: [
+      availability: name.toLowerCase().includes('harishakti') ? [
+        { day: 1, start: '06:30', end: '22:00' }, // Monday (morgens ODER nachmittags - checked in validator)
+        { day: 2, start: '06:30', end: '11:30' }, // Tuesday (vormittags, bis 11:30)
+        // Wednesday: FREI
+        // Thursday: no slot
+        { day: 5, start: '06:30', end: '11:30' }  // Friday (vormittags, bis 11:30)
+      ] : [
         { day: 1, start: isSevaka ? '06:30' : '08:00', end: '22:00' },
         { day: 2, start: isSevaka ? '06:30' : '08:00', end: '22:00' },
         { day: 3, start: isSevaka ? '06:30' : '08:00', end: '22:00' },
@@ -528,6 +534,26 @@ export const db = {
     }
     // Ensure all entries have the isYogaTeacher property (defaults to true)
     for (const t of list) {
+      // Migration for Harishakti's rules
+      if (t.name.toLowerCase().includes('harishakti')) {
+        const hasMondayAvail = t.rules.availability.some(a => a.day === 1 && a.start === '06:30' && a.end === '22:00');
+        const hasTuesdayAvail = t.rules.availability.some(a => a.day === 2 && a.end === '11:30');
+        const hasWedAvail = t.rules.availability.some(a => a.day === 3);
+        const hasThuAvail = t.rules.availability.some(a => a.day === 4);
+        const hasFriAvail = t.rules.availability.some(a => a.day === 5 && a.end === '11:30');
+        
+        if (!hasMondayAvail || !hasTuesdayAvail || hasWedAvail || hasThuAvail || !hasFriAvail) {
+          t.rules.availability = [
+            { day: 1, start: '06:30', end: '22:00' }, // Monday
+            { day: 2, start: '06:30', end: '11:30' }, // Tuesday
+            // Wednesday: FREI
+            // Thursday: no slot
+            { day: 5, start: '06:30', end: '11:30' }  // Friday
+          ];
+          updated = true;
+        }
+      }
+
       if (t.isYogaTeacher === undefined) {
         t.isYogaTeacher = true;
         updated = true;
