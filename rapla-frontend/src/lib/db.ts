@@ -3245,15 +3245,27 @@ function setStored<T>(key: string, value: T): void {
   }
 }
 
+const CURRENT_DB_VERSION = 3;
+
 // Database Actions
 export const db = {
   getTeachers: (): Teacher[] => {
+    const storedVersion = typeof window !== 'undefined' ? localStorage.getItem('rapla_db_version') : null;
+    const isOutdated = !storedVersion || parseInt(storedVersion, 10) < CURRENT_DB_VERSION;
+
     const stored = getStored<Teacher[]>('rapla_teachers', DEFAULT_TEACHERS);
     let updated = false;
     const list = [...stored];
     for (const defT of DEFAULT_TEACHERS) {
-      if (!list.some(t => t.name === defT.name)) {
+      const existingIdx = list.findIndex(t => t.id === defT.id || t.name === defT.name);
+      if (existingIdx === -1) {
         list.push(defT);
+        updated = true;
+      } else if (isOutdated) {
+        list[existingIdx].rules = defT.rules;
+        list[existingIdx].specialties = defT.specialties;
+        list[existingIdx].roleType = defT.roleType;
+        list[existingIdx].availabilityMode = defT.availabilityMode;
         updated = true;
       }
     }
@@ -3332,6 +3344,9 @@ export const db = {
     if (updated) {
       db.saveTeachers(list);
     }
+    if (isOutdated && typeof window !== 'undefined') {
+      localStorage.setItem('rapla_db_version', CURRENT_DB_VERSION.toString());
+    }
     return list;
   },
   saveTeachers: (teachers: Teacher[]): void => setStored('rapla_teachers', teachers),
@@ -3374,6 +3389,9 @@ export const db = {
   
   // Week Plan Methods
   getWeekPlans: (): WeekPlan[] => {
+    const storedVersion = typeof window !== 'undefined' ? localStorage.getItem('rapla_db_version') : null;
+    const isOutdated = !storedVersion || parseInt(storedVersion, 10) < CURRENT_DB_VERSION;
+
     const stored = getStored<WeekPlan[]>('rapla_week_plans', DEFAULT_WEEK_PLANS);
     const hasOldCourses = stored.some(p => p.courses.some(c => c.name === 'Morgen-Hatha Flow'));
     if (hasOldCourses) {
@@ -3387,8 +3405,8 @@ export const db = {
       if (idx === -1) {
         list.push(defPlan);
         updated = true;
-      } else if (defPlan.id.startsWith('plan-pre-')) {
-        // Always force update preplanned weeks from default week plans code to prevent stale or corrupt local storage state
+      } else if (isOutdated || defPlan.id.startsWith('plan-pre-')) {
+        // Always force update preplanned weeks or all default plans on DB version mismatch to prevent stale state
         list[idx] = defPlan;
         updated = true;
       }
@@ -3413,6 +3431,9 @@ export const db = {
     }
     if (updated) {
       db.saveWeekPlans(list);
+    }
+    if (isOutdated && typeof window !== 'undefined') {
+      localStorage.setItem('rapla_db_version', CURRENT_DB_VERSION.toString());
     }
     return list;
   },
