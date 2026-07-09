@@ -311,6 +311,12 @@
       {/each}
     </div>
   </div>
+  
+  <footer class="view-footer-info" style="margin-top: 2rem; text-align: center; font-size: 0.8rem; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 1rem; clear: both;">
+    <span>Yoga Vidya Nordsee © 2026</span>
+    <span style="margin: 0 10px;">•</span>
+    <button type="button" onclick={() => { if(confirm('Möchtest du den Browser-Speicher zurücksetzen? Deine lokalen Planungs-Änderungen gehen verloren.')) { localStorage.clear(); location.reload(); } }} style="background: none; border: none; color: #3b82f6; cursor: pointer; text-decoration: underline; font-size: 0.8rem; padding: 0; font-family: inherit;">Planungsdaten zurücksetzen (Synchronisieren)</button>
+  </footer>
 </div>
 
 <style>
