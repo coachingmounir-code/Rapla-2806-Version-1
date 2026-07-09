@@ -11,6 +11,7 @@
   let currentPlan = $state<WeekPlan | null>(null);
   let currentWeekOffset = $state(0);
   let isFullscreen = $state(false);
+  let activeMobileDay = $state(5);
 
   // Filter query parameters
   let teacherParam = $derived(page.url.searchParams.get('teacher') || '');
@@ -25,6 +26,14 @@
     ) || null;
   });
 
+  // Derived filtered courses for the mobile agenda view
+  let filteredMobileCourses = $derived(
+    courses
+      .filter(c => c.dayOfWeek === activeMobileDay)
+      .filter(c => !onlyMySlotsParam || !selectedTeacher || c.teacherId === selectedTeacher.id)
+      .sort((a, b) => a.startTime.localeCompare(b.startTime))
+  );
+
   const DAYS = [
     { value: 5, label: 'Freitag' },
     { value: 6, label: 'Samstag' },
@@ -37,6 +46,12 @@
 
   onMount(() => {
     loadData();
+    
+    // Set active mobile day to today if today is within our calendar cycle
+    const todayVal = new Date().getDay();
+    if (DAYS.some(d => d.value === todayVal)) {
+      activeMobileDay = todayVal;
+    }
     
     // Add keypress listener for escaping fullscreen
     const handleKeydown = (e: KeyboardEvent) => {
@@ -256,72 +271,135 @@
     </div>
   </header>
 
-  <!-- Calendar Roster Grid -->
-  <div id="view-calendar-container" class="calendar-grid-container animate-fade-in" class:fullscreen-mode={isFullscreen}>
-    <div class="grid-controls-row">
-      <div class="navigation-group">
-        <button type="button" class="btn btn-secondary btn-small" onclick={() => navigateWeek(-1)}>◀ Letzte Woche</button>
-        <span class="week-title-badge">
-          KW {currentPlan ? getWeekNumber(getMondayOfCurrentWeek()) : '--'} ({currentPlan?.targetWeekCode || 'Kein Plan'})
-        </span>
-        <button type="button" class="btn btn-secondary btn-small" onclick={() => navigateWeek(1)}>Nächste Woche ▶</button>
-      </div>
-
-      <div class="action-buttons-group">
-        <button type="button" class="btn btn-secondary btn-small fullscreen-toggle-btn" onclick={toggleFullscreen}>
-          {isFullscreen ? '🗗 Beenden' : '🖥️ Vollbild'}
-        </button>
-      </div>
-    </div>
-
-    <div class="calendar-grid">
-      <!-- Top Left Header Info -->
-      <div class="grid-header-cell week-header">
-        <div class="week-label">TAG / ZEIT</div>
-      </div>
-
-      <!-- Week Days Headers starting from Friday -->
-      {#each DAYS as day}
-        {@const isToday = new Date().getDay() === day.value && currentWeekOffset === 0}
-        <div class="grid-header-cell day-header" class:header-today={isToday}>
-          <span class="day-label-short">{day.label}</span>
-          <span class="day-date">{getDayDateString(day.value)}</span>
-        </div>
-      {/each}
-
-      <!-- Grid Rows by Hour -->
-      {#each getDisplayedHours(courses) as hour}
-        <div class="grid-time-cell">
-          <span>{hour.toString().padStart(2, '0')}:00</span>
+  <!-- Calendar Roster Grid (Desktop Only) -->
+  <div class="desktop-only-grid">
+    <div id="view-calendar-container" class="calendar-grid-container animate-fade-in" class:fullscreen-mode={isFullscreen}>
+      <div class="grid-controls-row">
+        <div class="navigation-group">
+          <button type="button" class="btn btn-secondary btn-small" onclick={() => navigateWeek(-1)}>◀ Letzte Woche</button>
+          <span class="week-title-badge">
+            KW {currentPlan ? getWeekNumber(getMondayOfCurrentWeek()) : '--'} ({currentPlan?.targetWeekCode || 'Kein Plan'})
+          </span>
+          <button type="button" class="btn btn-secondary btn-small" onclick={() => navigateWeek(1)}>Nächste Woche ▶</button>
         </div>
 
+        <div class="action-buttons-group">
+          <button type="button" class="btn btn-secondary btn-small fullscreen-toggle-btn" onclick={toggleFullscreen}>
+            {isFullscreen ? '🗗 Beenden' : '🖥️ Vollbild'}
+          </button>
+        </div>
+      </div>
+
+      <div class="calendar-grid">
+        <!-- Top Left Header Info -->
+        <div class="grid-header-cell week-header">
+          <div class="week-label">TAG / ZEIT</div>
+        </div>
+
+        <!-- Week Days Headers starting from Friday -->
         {#each DAYS as day}
-          <div class="grid-content-cell">
-            {#each getFilteredCoursesForHour(day.value, hour) as course}
-              {@const isHighlighted = selectedTeacher && course.teacherId === selectedTeacher.id}
-              {@const colors = getCourseColor(course)}
-              {@const teacherName = teachers.find(t => t.id === course.teacherId)?.name || 'Unbesetzt'}
-              {@const roomName = rooms.find(r => r.id === course.roomId)?.name || 'Raum?'}
-              
-              <div 
-                class="course-card-rapla" 
-                class:highlighted-card={isHighlighted}
-                class:dimmed-card={selectedTeacher && !isHighlighted && !onlyMySlotsParam}
-                style="background-color: {colors.bg}; border-left: 4px solid {isHighlighted ? '#ea580c' : colors.border};"
-              >
-                <div class="card-top-line">
-                  <span class="card-time">{course.startTime} - {course.endTime}</span>
-                  <span class="card-room">{roomName}</span>
-                </div>
-                <div class="card-title-line">{course.name}</div>
-                <div class="card-teacher-line">
-                  👤 {teacherName}
-                </div>
-              </div>
-            {/each}
+          {@const isToday = new Date().getDay() === day.value && currentWeekOffset === 0}
+          <div class="grid-header-cell day-header" class:header-today={isToday}>
+            <span class="day-label-short">{day.label}</span>
+            <span class="day-date">{getDayDateString(day.value)}</span>
           </div>
         {/each}
+
+        <!-- Grid Rows by Hour -->
+        {#each getDisplayedHours(courses) as hour}
+          <div class="grid-time-cell">
+            <span>{hour.toString().padStart(2, '0')}:00</span>
+          </div>
+
+          {#each DAYS as day}
+            <div class="grid-content-cell">
+              {#each getFilteredCoursesForHour(day.value, hour) as course}
+                {@const isHighlighted = selectedTeacher && course.teacherId === selectedTeacher.id}
+                {@const colors = getCourseColor(course)}
+                {@const teacherName = teachers.find(t => t.id === course.teacherId)?.name || 'Unbesetzt'}
+                {@const roomName = rooms.find(r => r.id === course.roomId)?.name || 'Raum?'}
+                
+                <div 
+                  class="course-card-rapla" 
+                  class:highlighted-card={isHighlighted}
+                  class:dimmed-card={selectedTeacher && !isHighlighted && !onlyMySlotsParam}
+                  style="background-color: {colors.bg}; border-left: 4px solid {isHighlighted ? '#ea580c' : colors.border};"
+                >
+                  <div class="card-top-line">
+                    <span class="card-time">{course.startTime} - {course.endTime}</span>
+                    <span class="card-room">{roomName}</span>
+                  </div>
+                  <div class="card-title-line">{course.name}</div>
+                  <div class="card-teacher-line">
+                    👤 {teacherName}
+                  </div>
+                </div>
+              {/each}
+            </div>
+          {/each}
+        {/each}
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile View (Phone Only) -->
+  <div class="mobile-only-agenda">
+    <!-- Navigation for Weeks on Mobile -->
+    <div class="mobile-week-nav">
+      <button type="button" class="btn btn-secondary btn-small" onclick={() => navigateWeek(-1)}>◀</button>
+      <span class="week-title-badge-mobile">
+        KW {currentPlan ? getWeekNumber(getMondayOfCurrentWeek()) : '--'} ({currentPlan?.targetWeekCode || 'Kein Plan'})
+      </span>
+      <button type="button" class="btn btn-secondary btn-small" onclick={() => navigateWeek(1)}>▶</button>
+    </div>
+
+    <!-- Day Selector Tabs -->
+    <div class="mobile-day-tabs">
+      {#each DAYS as day}
+        {@const isToday = new Date().getDay() === day.value && currentWeekOffset === 0}
+        <button 
+          type="button" 
+          class="day-tab-btn" 
+          class:active={activeMobileDay === day.value}
+          class:is-today={isToday}
+          onclick={() => activeMobileDay = day.value}
+        >
+          <span class="day-tab-name">{day.label.substring(0, 2)}</span>
+          <span class="day-tab-date">{getDayDateString(day.value)}</span>
+        </button>
       {/each}
+    </div>
+
+    <!-- Timeline of Courses -->
+    <div class="mobile-agenda-list">
+      {#if filteredMobileCourses.length === 0}
+        <div class="empty-agenda-state">
+          📭 Keine Stunden für diesen Tag eingetragen.
+        </div>
+      {:else}
+        {#each filteredMobileCourses as course}
+          {@const isHighlighted = selectedTeacher && course.teacherId === selectedTeacher.id}
+          {@const colors = getCourseColor(course)}
+          {@const teacherName = teachers.find(t => t.id === course.teacherId)?.name || 'Unbesetzt'}
+          {@const roomName = rooms.find(r => r.id === course.roomId)?.name || 'Raum?'}
+
+          <div 
+            class="mobile-agenda-card"
+            class:highlighted-card={isHighlighted}
+            class:dimmed-card={selectedTeacher && !isHighlighted && !onlyMySlotsParam}
+            style="background-color: {colors.bg}; border-left: 5px solid {isHighlighted ? '#ea580c' : colors.border};"
+          >
+            <div class="agenda-time-room">
+              <span class="agenda-time">⏰ {course.startTime} - {course.endTime}</span>
+              <span class="agenda-room">{roomName}</span>
+            </div>
+            <h3 class="agenda-title">{course.name}</h3>
+            <div class="agenda-teacher">
+              👤 {teacherName}
+            </div>
+          </div>
+        {/each}
+      {/if}
     </div>
   </div>
   
@@ -671,5 +749,190 @@
   @keyframes fadeIn {
     from { opacity: 0; transform: translateY(4px); }
     to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Responsive Breakpoints & Toggles */
+  @media (min-width: 768px) {
+    .desktop-only-grid {
+      display: block;
+    }
+    .mobile-only-agenda {
+      display: none;
+    }
+  }
+
+  @media (max-width: 767px) {
+    .desktop-only-grid {
+      display: none;
+    }
+    .mobile-only-agenda {
+      display: block;
+    }
+
+    /* Stacking header elements on small devices */
+    .view-header {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 1.25rem;
+      padding-bottom: 1.25rem;
+    }
+
+    .logo-area {
+      justify-content: center;
+      text-align: center;
+    }
+
+    .header-controls {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0.75rem;
+    }
+
+    .user-badge {
+      justify-content: center;
+    }
+  }
+
+  /* Mobile agenda specific CSS styling */
+  .mobile-week-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f1f5f9;
+    padding: 0.5rem;
+    border-radius: 8px;
+    margin-bottom: 0.75rem;
+    border: 1px solid #cbd5e1;
+  }
+
+  .week-title-badge-mobile {
+    font-weight: 700;
+    font-size: 0.8rem;
+    color: #334155;
+    background: white;
+    padding: 0.35rem 0.75rem;
+    border-radius: 6px;
+    border: 1px solid #cbd5e1;
+    text-align: center;
+  }
+
+  .mobile-day-tabs {
+    display: flex;
+    overflow-x: auto;
+    gap: 0.5rem;
+    padding: 0.25rem 0.25rem 0.75rem 0.25rem;
+    margin-bottom: 1.25rem;
+    scrollbar-width: none;
+  }
+
+  .mobile-day-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .day-tab-btn {
+    flex: 1 0 72px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 0.65rem 0.4rem;
+    background: white;
+    border: 1px solid #cbd5e1;
+    border-radius: 10px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+  }
+
+  .day-tab-btn.active {
+    background: #ea580c;
+    border-color: #ea580c;
+    color: white;
+    box-shadow: 0 4px 10px rgba(234, 88, 12, 0.2);
+  }
+
+  .day-tab-btn.active .day-tab-date {
+    color: rgba(255, 255, 255, 0.85);
+  }
+
+  .day-tab-name {
+    font-weight: 800;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+  }
+
+  .day-tab-date {
+    font-size: 0.7rem;
+    color: #64748b;
+    margin-top: 2px;
+  }
+
+  .day-tab-btn.is-today:not(.active) {
+    border-color: #3b82f6;
+    background: #eff6ff;
+    color: #1d4ed8;
+  }
+
+  .day-tab-btn.is-today:not(.active) .day-tab-date {
+    color: #2563eb;
+  }
+
+  .mobile-agenda-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 2rem;
+  }
+
+  .mobile-agenda-card {
+    padding: 1rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    text-align: left;
+    transition: all 0.2s ease;
+  }
+
+  .agenda-time-room {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.72rem;
+    font-weight: 750;
+    color: #64748b;
+    border-bottom: 1px dashed rgba(0, 0, 0, 0.05);
+    padding-bottom: 4px;
+  }
+
+  .agenda-room {
+    font-weight: 800;
+    color: #ea580c;
+  }
+
+  .agenda-title {
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0;
+    line-height: 1.25;
+  }
+
+  .agenda-teacher {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #475569;
+  }
+
+  .empty-agenda-state {
+    text-align: center;
+    padding: 3.5rem 1rem;
+    color: #94a3b8;
+    background: white;
+    border-radius: 12px;
+    border: 1px dashed #cbd5e1;
+    font-weight: 600;
+    font-size: 0.9rem;
   }
 </style>
