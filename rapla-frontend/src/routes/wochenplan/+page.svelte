@@ -214,6 +214,19 @@
     
     <!-- User Info & Interactive Toggles -->
     <div class="header-controls">
+      <button 
+        type="button" 
+        class="btn sync-header-btn" 
+        onclick={() => { 
+          if(confirm('Möchtest du den Browser-Speicher zurücksetzen und neu synchronisieren?')) { 
+            localStorage.clear(); 
+            location.reload(); 
+          } 
+        }}
+      >
+        🔄 Synchronisieren
+      </button>
+
       {#if selectedTeacher}
         <div class="user-badge" style="background: linear-gradient(135deg, #f97316, #ea580c); color: white;">
           <span class="user-icon">🧘</span>
@@ -369,6 +382,23 @@
     display: flex;
     align-items: center;
     gap: 1.25rem;
+  }
+
+  .sync-header-btn {
+    background: linear-gradient(135deg, #0284c7, #0369a1);
+    color: white !important;
+    border: none;
+    font-weight: 700;
+    box-shadow: 0 4px 6px rgba(3, 105, 161, 0.2);
+    border-radius: 30px;
+    padding: 0.5rem 1.25rem;
+    transition: all 0.2s ease;
+  }
+
+  .sync-header-btn:hover {
+    background: linear-gradient(135deg, #0369a1, #075985);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 12px rgba(3, 105, 161, 0.3);
   }
 
   .user-badge {
