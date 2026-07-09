@@ -27,163 +27,167 @@
 	<title>Yoga Vidya Rapla 2.0</title>
 </svelte:head>
 
-<div class="layout-container">
-	<!-- Sidebar Navigation - Inspired by Yoga Vidya Nordsee branding -->
-	<aside class="sidebar">
-		<div class="logo-area">
-			<div class="logo-img-wrapper">
-				<img src={nataraja} alt="Yoga Vidya Logo" class="logo-img" />
+{#if page.url.pathname.startsWith('/wochenplan')}
+	{@render children()}
+{:else}
+	<div class="layout-container">
+		<!-- Sidebar Navigation - Inspired by Yoga Vidya Nordsee branding -->
+		<aside class="sidebar">
+			<div class="logo-area">
+				<div class="logo-img-wrapper">
+					<img src={nataraja} alt="Yoga Vidya Logo" class="logo-img" />
+				</div>
+				<div class="logo-text">
+					<h2>YOGA VIDYA</h2>
+					<span>NORDSEE</span>
+				</div>
 			</div>
-			<div class="logo-text">
-				<h2>YOGA VIDYA</h2>
-				<span>NORDSEE</span>
+
+			<!-- Swami Teachings Quote -->
+			<div class="logo-teachings">
+				<p>"To serve, to love, to give, to purify, to meditate, to realize."</p>
 			</div>
-		</div>
 
-		<!-- Swami Teachings Quote -->
-		<div class="logo-teachings">
-			<p>"To serve, to love, to give, to purify, to meditate, to realize."</p>
-		</div>
-
-		<nav class="nav-menu">
-			<a href="/" class="nav-item" class:active={page.url.pathname === '/'}>
-				<span class="nav-icon">🏠</span>
-				<span class="nav-label">Kommende Seminare</span>
-			</a>
-			<!-- Wochenplan & KI-Vorplanung Dropdown Menu -->
-			<div class="nav-dropdown-container">
-				<button 
-					type="button" 
-					class="nav-item nav-dropdown-trigger" 
-					class:active={page.url.pathname.startsWith('/schedule') || page.url.pathname.startsWith('/ai-planning') || page.url.pathname.startsWith('/sevafrei')}
-					onclick={() => showScheduleDropdown = !showScheduleDropdown}
-				>
-					<span class="nav-icon">📅</span>
-					<span class="nav-label">Wochenplan</span>
-					<span class="dropdown-arrow">{showScheduleDropdown ? '▼' : '▶'}</span>
-				</button>
+			<nav class="nav-menu">
+				<a href="/" class="nav-item" class:active={page.url.pathname === '/'}>
+					<span class="nav-icon">🏠</span>
+					<span class="nav-label">Kommende Seminare</span>
+				</a>
+				<!-- Wochenplan & KI-Vorplanung Dropdown Menu -->
+				<div class="nav-dropdown-container">
+					<button 
+						type="button" 
+						class="nav-item nav-dropdown-trigger" 
+						class:active={page.url.pathname.startsWith('/schedule') || page.url.pathname.startsWith('/ai-planning') || page.url.pathname.startsWith('/sevafrei')}
+						onclick={() => showScheduleDropdown = !showScheduleDropdown}
+					>
+						<span class="nav-icon">📅</span>
+						<span class="nav-label">Wochenplan</span>
+						<span class="dropdown-arrow">{showScheduleDropdown ? '▼' : '▶'}</span>
+					</button>
+					
+					{#if showScheduleDropdown}
+						<div class="nav-dropdown-menu">
+							<a 
+								href="/schedule" 
+								class="nav-dropdown-item" 
+								class:active={page.url.pathname.startsWith('/schedule')}
+							>
+								<span class="nav-icon">📆</span>
+								<span class="nav-label">Wochenplan</span>
+							</a>
+							<a 
+								href="/ai-planning" 
+								class="nav-dropdown-item" 
+								class:active={page.url.pathname.startsWith('/ai-planning')}
+							>
+								<span class="nav-icon">⚡</span>
+								<span class="nav-label">KI-Vorplanung</span>
+							</a>
+							<a 
+								href="/sevafrei" 
+								class="nav-dropdown-item" 
+								class:active={page.url.pathname.startsWith('/sevafrei')}
+							>
+								<span class="nav-icon">🏖️</span>
+								<span class="nav-label">Sevafrei Kalender</span>
+							</a>
+						</div>
+					{/if}
+				</div>
 				
-				{#if showScheduleDropdown}
-					<div class="nav-dropdown-menu">
-						<a 
-							href="/schedule" 
-							class="nav-dropdown-item" 
-							class:active={page.url.pathname.startsWith('/schedule')}
-						>
-							<span class="nav-icon">📆</span>
-							<span class="nav-label">Wochenplan</span>
-						</a>
-						<a 
-							href="/ai-planning" 
-							class="nav-dropdown-item" 
-							class:active={page.url.pathname.startsWith('/ai-planning')}
-						>
-							<span class="nav-icon">⚡</span>
-							<span class="nav-label">KI-Vorplanung</span>
-						</a>
-						<a 
-							href="/sevafrei" 
-							class="nav-dropdown-item" 
-							class:active={page.url.pathname.startsWith('/sevafrei')}
-						>
-							<span class="nav-icon">🏖️</span>
-							<span class="nav-label">Sevafrei Kalender</span>
-						</a>
+				<!-- Combined Teachers Dropdown Menu -->
+				<div class="nav-dropdown-container">
+					<button 
+						type="button" 
+						class="nav-item nav-dropdown-trigger" 
+						class:active={page.url.pathname.startsWith('/sevakas') || page.url.pathname.startsWith('/teachers')}
+						onclick={() => showTeachersDropdown = !showTeachersDropdown}
+					>
+						<span class="nav-icon">🧘</span>
+						<span class="nav-label">Unterrichtende</span>
+						<span class="dropdown-arrow">{showTeachersDropdown ? '▼' : '▶'}</span>
+					</button>
+					
+					{#if showTeachersDropdown}
+						<div class="nav-dropdown-menu">
+							<a 
+								href="/sevakas" 
+								class="nav-dropdown-item" 
+								class:active={page.url.pathname.startsWith('/sevakas')}
+							>
+								<span class="nav-icon">👥</span>
+								<span class="nav-label">Sevakas</span>
+							</a>
+							<a 
+								href="/teachers" 
+								class="nav-dropdown-item" 
+								class:active={page.url.pathname.startsWith('/teachers')}
+							>
+								<span class="nav-icon">👤</span>
+								<span class="nav-label">Externe Seminarleiter</span>
+							</a>
+						</div>
+					{/if}
+				</div>
+			</nav>
+
+			<!-- Bottom Greeting Card & Brand Slogan -->
+			<div class="sidebar-footer">
+				<div class="namaste-card">
+					<!-- Simple meditating outline or icon -->
+					<svg class="meditation-icon-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+						<circle cx="50" cy="30" r="8" fill="none" stroke="var(--text-secondary)" stroke-width="2" />
+						<path d="M50 38 L50 60 L38 52 M50 60 L62 52" stroke="var(--text-secondary)" stroke-width="2" stroke-linecap="round" fill="none" />
+						<path d="M30 75 C30 65 40 60 50 60 C60 60 70 65 70 75" stroke="var(--text-secondary)" stroke-width="2" stroke-linecap="round" fill="none" />
+						<path d="M25 80 C35 78 65 78 75 80" stroke="var(--text-secondary)" stroke-width="2" stroke-linecap="round" fill="none" />
+					</svg>
+					<div class="namaste-text">
+						<p class="teach-item">Be good</p>
+						<p class="teach-item">Do good</p>
+						<p class="teach-item">Be kind</p>
+						<p class="teach-item">Be pure</p>
+						<p class="teach-item">Be truthful</p>
 					</div>
-				{/if}
+				</div>
 			</div>
-			
-			<!-- Combined Teachers Dropdown Menu -->
-			<div class="nav-dropdown-container">
-				<button 
-					type="button" 
-					class="nav-item nav-dropdown-trigger" 
-					class:active={page.url.pathname.startsWith('/sevakas') || page.url.pathname.startsWith('/teachers')}
-					onclick={() => showTeachersDropdown = !showTeachersDropdown}
-				>
-					<span class="nav-icon">🧘</span>
-					<span class="nav-label">Unterrichtende</span>
-					<span class="dropdown-arrow">{showTeachersDropdown ? '▼' : '▶'}</span>
-				</button>
+		</aside>
+
+		<!-- Main Content Area -->
+		<main class="main-content">
+			<!-- Header Search Bar & User info -->
+			<header class="top-header">
+				<div class="studio-selector">
+					<strong>Yoga Vidya Rapla 2.0</strong>
+					<span class="selector-arrow">˅</span>
+				</div>
 				
-				{#if showTeachersDropdown}
-					<div class="nav-dropdown-menu">
-						<a 
-							href="/sevakas" 
-							class="nav-dropdown-item" 
-							class:active={page.url.pathname.startsWith('/sevakas')}
-						>
-							<span class="nav-icon">👥</span>
-							<span class="nav-label">Sevakas</span>
-						</a>
-						<a 
-							href="/teachers" 
-							class="nav-dropdown-item" 
-							class:active={page.url.pathname.startsWith('/teachers')}
-						>
-							<span class="nav-icon">👤</span>
-							<span class="nav-label">Externe Seminarleiter</span>
-						</a>
+				<div class="search-bar">
+					<span class="search-icon">🔍</span>
+					<input type="text" placeholder="Suche nach Kursen, Lehrern, Räumen..." />
+				</div>
+
+				<div class="user-profile-area">
+					<div class="notification-badge-container">
+						<span class="notification-icon">🔔</span>
+						<span class="badge-dot">6</span>
 					</div>
-				{/if}
-			</div>
-		</nav>
-
-		<!-- Bottom Greeting Card & Brand Slogan -->
-		<div class="sidebar-footer">
-			<div class="namaste-card">
-				<!-- Simple meditating outline or icon -->
-				<svg class="meditation-icon-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-					<circle cx="50" cy="30" r="8" fill="none" stroke="var(--text-secondary)" stroke-width="2" />
-					<path d="M50 38 L50 60 L38 52 M50 60 L62 52" stroke="var(--text-secondary)" stroke-width="2" stroke-linecap="round" fill="none" />
-					<path d="M30 75 C30 65 40 60 50 60 C60 60 70 65 70 75" stroke="var(--text-secondary)" stroke-width="2" stroke-linecap="round" fill="none" />
-					<path d="M25 80 C35 78 65 78 75 80" stroke="var(--text-secondary)" stroke-width="2" stroke-linecap="round" fill="none" />
-				</svg>
-				<div class="namaste-text">
-					<p class="teach-item">Be good</p>
-					<p class="teach-item">Do good</p>
-					<p class="teach-item">Be kind</p>
-					<p class="teach-item">Be pure</p>
-					<p class="teach-item">Be truthful</p>
-				</div>
-			</div>
-		</div>
-	</aside>
-
-	<!-- Main Content Area -->
-	<main class="main-content">
-		<!-- Header Search Bar & User info -->
-		<header class="top-header">
-			<div class="studio-selector">
-				<strong>Yoga Vidya Rapla 2.0</strong>
-				<span class="selector-arrow">˅</span>
-			</div>
-			
-			<div class="search-bar">
-				<span class="search-icon">🔍</span>
-				<input type="text" placeholder="Suche nach Kursen, Lehrern, Räumen..." />
-			</div>
-
-			<div class="user-profile-area">
-				<div class="notification-badge-container">
-					<span class="notification-icon">🔔</span>
-					<span class="badge-dot">6</span>
-				</div>
-				<div class="avatar-profile">
-					<div class="avatar-photo">🧘</div>
-					<div class="avatar-info">
-						<strong>Julia</strong>
-						<span>Studio Admin</span>
+					<div class="avatar-profile">
+						<div class="avatar-photo">🧘</div>
+						<div class="avatar-info">
+							<strong>Julia</strong>
+							<span>Studio Admin</span>
+						</div>
 					</div>
 				</div>
-			</div>
-		</header>
+			</header>
 
-		<div class="content-wrapper">
-			{@render children()}
-		</div>
-	</main>
-</div>
+			<div class="content-wrapper">
+				{@render children()}
+			</div>
+		</main>
+	</div>
+{/if}
 
 <style>
 	.layout-container {
