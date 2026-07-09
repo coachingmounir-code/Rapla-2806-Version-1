@@ -217,8 +217,8 @@ const GENERATED_TEACHERS: Teacher[] = NEW_TEACHER_NAMES.map((name, index) => {
     availabilityMode: isSevaka ? 'always' : 'seminar_only',
     roleType: isSevaka ? 'sevaka' : 'external',
     rules: {
-      maxClassesPerDay: 2,
-      maxHoursPerWeek: 10,
+      maxClassesPerDay: name.toLowerCase().includes('karuna') ? 3 : 2,
+      maxHoursPerWeek: name.toLowerCase().includes('karuna') ? 30 : 10,
       minRestTime: 30,
       preferredRooms: [],
       preferredDays: [],
@@ -230,6 +230,14 @@ const GENERATED_TEACHERS: Teacher[] = NEW_TEACHER_NAMES.map((name, index) => {
         // Wednesday: FREI
         // Thursday: no slot
         { day: 5, start: '06:30', end: '11:30' }  // Friday (vormittags, bis 11:30)
+      ] : name.toLowerCase().includes('karuna') ? [
+        // Montag (1) ist Ruhetag (absolute Planungssperre)
+        { day: 2, start: '06:30', end: '22:00' }, // Dienstag
+        { day: 3, start: '06:30', end: '22:00' }, // Mittwoch
+        { day: 4, start: '06:30', end: '22:00' }, // Donnerstag
+        { day: 5, start: '06:30', end: '22:00' }, // Freitag
+        { day: 6, start: '06:30', end: '22:00' }, // Samstag
+        { day: 0, start: '06:30', end: '22:00' }  // Sonntag
       ] : [
         { day: 1, start: isSevaka ? '06:30' : '08:00', end: '22:00' },
         { day: 2, start: isSevaka ? '06:30' : '08:00', end: '22:00' },
@@ -3245,7 +3253,7 @@ function setStored<T>(key: string, value: T): void {
   }
 }
 
-const CURRENT_DB_VERSION = 3;
+const CURRENT_DB_VERSION = 4;
 
 // Database Actions
 export const db = {
@@ -3286,6 +3294,26 @@ export const db = {
             // Wednesday: FREI
             // Thursday: no slot
             { day: 5, start: '06:30', end: '11:30' }  // Friday
+          ];
+          updated = true;
+        }
+      }
+
+      // Migration for Karuna's rules
+      if (t.name.toLowerCase().includes('karuna')) {
+        const hasMondayAvail = t.rules.availability.some(a => a.day === 1);
+        const hasTuesdayAvail = t.rules.availability.some(a => a.day === 2);
+        
+        if (hasMondayAvail || !hasTuesdayAvail || t.rules.maxHoursPerWeek < 30 || t.rules.maxClassesPerDay < 3) {
+          t.rules.maxClassesPerDay = 3;
+          t.rules.maxHoursPerWeek = 30;
+          t.rules.availability = [
+            { day: 2, start: '06:30', end: '22:00' }, // Tuesday
+            { day: 3, start: '06:30', end: '22:00' }, // Wednesday
+            { day: 4, start: '06:30', end: '22:00' }, // Thursday
+            { day: 5, start: '06:30', end: '22:00' }, // Friday
+            { day: 6, start: '06:30', end: '22:00' }, // Saturday
+            { day: 0, start: '06:30', end: '22:00' }  // Sunday
           ];
           updated = true;
         }

@@ -153,6 +153,44 @@ export function validateAssignment(
     }
   }
 
+  // 0d. Custom rules for Karuna (Seminarhausleitung)
+  if (teacher.name.toLowerCase().includes('karuna')) {
+    const day = course.dayOfWeek;
+    const isYogaClass = course.style.toLowerCase() !== 'meditation';
+
+    // Rule: Ruhetag Montag (absolute Planungssperre für alle Programme)
+    if (day === 1) {
+      conflicts.push({
+        type: 'hard',
+        message: `Montag ist Karunas wöchentlicher Ruhetag. Es gilt eine absolute Planungssperre.`
+      });
+    }
+
+    // Rule: Tagesmaximum 1 Yogastunde (ausnahmslos)
+    if (isYogaClass) {
+      const otherYogaClassesOnDay = allCourses.filter(
+        c => c.teacherId === teacher.id && c.id !== course.id && c.dayOfWeek === day && c.style.toLowerCase() !== 'meditation'
+      );
+      if (otherYogaClassesOnDay.length >= 1) {
+        conflicts.push({
+          type: 'hard',
+          message: `Karuna darf maximal 1 Yogastunde pro Tag unterrichten (Tageslimit überschritten).`
+        });
+      }
+      
+      // Rule: Wochenmaximum 3 Yogastunden insgesamt (Satsänge zählen separat und werden darüber hinaus eingeplant)
+      const weeklyYogaClasses = allCourses.filter(
+        c => c.teacherId === teacher.id && c.id !== course.id && c.style.toLowerCase() !== 'meditation'
+      );
+      if (weeklyYogaClasses.length >= 3) {
+        conflicts.push({
+          type: 'hard',
+          message: `Karuna darf maximal 3 Yogastunden pro Woche unterrichten (Wochenlimit von 3 Yogastunden überschritten).`
+        });
+      }
+    }
+  }
+
   // 0. Check if active Yoga Teacher (Soft)
   if (teacher.isYogaTeacher === false) {
     conflicts.push({
@@ -405,6 +443,35 @@ export function runAiPlanning(
       
       const capacityRatio = plannedHours / teacher.rules.maxHoursPerWeek;
       score -= capacityRatio * 50; // deduct points if close to max capacity to encourage balance
+      
+      // Custom scoring rules for Karuna (Seminarhausleitung)
+      if (teacher.name.toLowerCase().includes('karuna')) {
+        const isYogaClass = course.style.toLowerCase() !== 'meditation';
+
+        // 1. Satsang Wednesday to Sunday: Standard & high priority
+        if (course.name === 'Satsang' && [3, 4, 5, 6, 0].includes(course.dayOfWeek)) {
+          score += 1000;
+        }
+
+        // 2. Ankommensyogastunden (Friday and Sunday at 16:30, Hatha style/Mittelstufe name)
+        const isAnkommYoga = isYogaClass &&
+                             course.name === 'Mittelstufe' &&
+                             (course.dayOfWeek === 5 || course.dayOfWeek === 0) &&
+                             course.startTime === '16:30';
+        if (isAnkommYoga) {
+          score += 1000;
+        }
+
+        // 3. Saturday Yoga class: Emergency backup option ONLY
+        if (isYogaClass && course.dayOfWeek === 6) {
+          score -= 500;
+        }
+
+        // 4. Other Yoga classes on normal weekdays: Penalize slightly to avoid preempting other teachers
+        if (isYogaClass && !isAnkommYoga && course.dayOfWeek !== 6) {
+          score -= 200;
+        }
+      }
       
       candidateScores.push({
         teacher,
