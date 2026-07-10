@@ -98,6 +98,18 @@
       loadingStep = `Plane ${plan.name}...`;
       loadingLogs = [...loadingLogs, `[INFO] Berechne Dienstplan für ${plan.name}...`];
       
+      // Reset plan's courses to a fresh copy of the Blankowoche template courses before planning
+      const template = db.getWeekPlan('plan-template-1');
+      if (template) {
+        plan.courses = template.courses.map(c => ({
+          ...c,
+          id: 'course-' + Math.random().toString(36).substr(2, 9),
+          teacherId: c.teacherId,
+          isAiPlanned: false,
+          status: 'draft'
+        }));
+      }
+
       const result = runAiPlanning(plan.courses, teachers, plan.seminarLeaderIds || [], plan.targetWeekCode);
       
       plan.courses = result.plannedCourses;
