@@ -385,8 +385,21 @@ export function runAiPlanning(
   // Clone courses to avoid modifying original array until approved
   let workingCourses = courses.map(c => ({ ...c }));
   
-  // Sort courses by "difficulty" - first those in studios with few teacher options, then by length or early times
-  const coursesToPlan = workingCourses.filter(c => c.teacherId === null || c.isAiPlanned);
+  // Find which courses need planning: either unassigned, marked for AI planning, or having a hard conflict with their current assignment (e.g. vacation/abwesenheit/ruhetag)
+  const coursesToPlan = workingCourses.filter(c => {
+    if (c.teacherId === null || c.isAiPlanned) return true;
+    const teacher = teachers.find(t => t.id === c.teacherId);
+    if (!teacher) return true;
+    const conflicts = validateAssignment(teacher, c, workingCourses, seminarLeaderIds, targetWeekCode);
+    const hasHardConflict = conflicts.some(conf => conf.type === 'hard');
+    if (hasHardConflict) {
+      const dayNames = ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag'];
+      const dayName = dayNames[c.dayOfWeek] || c.dayOfWeek.toString();
+      logs.push(`Replanung erforderlich für "${c.name}" am ${dayName} (${c.startTime}), da ${teacher.name} einen Planungskonflikt hat.`);
+      return true;
+    }
+    return false;
+  });
   
   logs.push(`${coursesToPlan.length} Kurse müssen verplant werden.`);
   
