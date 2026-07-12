@@ -170,6 +170,7 @@ const SEVAKA_NAMES = [
   "hu bürkle #",
   "Karuna Wapke #",
   "Mouniir Jaber #",
+  "Narayani Kedenburg",
   "Nirmaya Fodor #",
   "Pranava Pauly",
   "Satyam",
@@ -491,7 +492,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
     targetWeekCode: "2026-W28",
     courses: [
       {
-            "id": "course-99uwhb0j9",
+            "id": "course-v74kc8drf",
             "name": "Gef. Meditation",
             "style": "Meditation",
             "dayOfWeek": 5,
@@ -503,7 +504,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-4tmay67zw",
+            "id": "course-xnl2kbui0",
             "name": "Satsang",
             "style": "Meditation",
             "dayOfWeek": 5,
@@ -515,7 +516,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-pm5nb5h21",
+            "id": "course-tliqody19",
             "name": "Anfänger",
             "style": "Hatha",
             "dayOfWeek": 5,
@@ -527,7 +528,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-gbdhyhk2z",
+            "id": "course-ae79o7wob",
             "name": "Mittelstufe Klangyogastunde",
             "style": "Hatha",
             "dayOfWeek": 5,
@@ -539,7 +540,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-ym59yv5q1",
+            "id": "course-i8ppyie9t",
             "name": "Anfänger AS",
             "style": "Hatha",
             "dayOfWeek": 5,
@@ -551,7 +552,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-bc2a8qduq",
+            "id": "course-ksly4vnts",
             "name": "Mittelstufe AS",
             "style": "Hatha",
             "dayOfWeek": 5,
@@ -563,7 +564,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-lds5glown",
+            "id": "course-wcamvkrpr",
             "name": "Om Namo Narayanaya",
             "style": "Meditation",
             "dayOfWeek": 5,
@@ -575,7 +576,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-c7lfoxu8g",
+            "id": "course-p8ph8kkqm",
             "name": "Ankommensmedi.",
             "style": "Meditation",
             "dayOfWeek": 5,
@@ -587,7 +588,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-edmhyixz7",
+            "id": "course-f1feo1lan",
             "name": "Satsang",
             "style": "Meditation",
             "dayOfWeek": 5,
@@ -599,7 +600,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-nuel2p8dt",
+            "id": "course-t41us8fms",
             "name": "Fortgeschrittenes Pranayama",
             "style": "Hatha",
             "dayOfWeek": 6,
@@ -611,7 +612,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-zch621t4n",
+            "id": "course-4om6rwdkz",
             "name": "Gef. Meditation",
             "style": "Meditation",
             "dayOfWeek": 6,
@@ -623,7 +624,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-2grn7gj0y",
+            "id": "course-nc3h92ylm",
             "name": "Satsang",
             "style": "Meditation",
             "dayOfWeek": 6,
@@ -635,7 +636,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-7qf2jll0i",
+            "id": "course-4izgyvlhk",
             "name": "Anfänger",
             "style": "Hatha",
             "dayOfWeek": 6,
@@ -647,7 +648,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-lcrtvijxk",
+            "id": "course-zto4fz9rg",
             "name": "Mittelstufe",
             "style": "Hatha",
             "dayOfWeek": 6,
@@ -659,7 +660,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-fxhog8jp2",
+            "id": "course-fh821q04z",
             "name": "Anfänger",
             "style": "Hatha",
             "dayOfWeek": 6,
@@ -671,7 +672,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-emmwb6317",
+            "id": "course-2czq4we4p",
             "name": "Mittelstufe Mantrayogastunde",
             "style": "Hatha",
             "dayOfWeek": 6,
@@ -683,7 +684,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-pwo71f3me",
+            "id": "course-am2ycbce0",
             "name": "Om Namo Narayanaya",
             "style": "Meditation",
             "dayOfWeek": 6,
@@ -695,7 +696,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-p68ickadv",
+            "id": "course-l7txoacov",
             "name": "Satsang",
             "style": "Meditation",
             "dayOfWeek": 6,
@@ -707,7 +708,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-xzkc45f0m",
+            "id": "course-swgxapcho",
             "name": "Fortgeschrittenes Pranayama",
             "style": "Hatha",
             "dayOfWeek": 0,
@@ -719,7 +720,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-pp3sn61qy",
+            "id": "course-al5ud9hc3",
             "name": "Gef. Meditation",
             "style": "Meditation",
             "dayOfWeek": 0,
@@ -731,7 +732,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-bcamfns3z",
+            "id": "course-g1510gg57",
             "name": "Satsang",
             "style": "Meditation",
             "dayOfWeek": 0,
@@ -743,7 +744,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-bogqqwe9h",
+            "id": "course-3aewxbkv4",
             "name": "Anfänger",
             "style": "Hatha",
             "dayOfWeek": 0,
@@ -755,7 +756,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-hi1fnajrn",
+            "id": "course-fcsvgb0py",
             "name": "Mittelstufe",
             "style": "Hatha",
             "dayOfWeek": 0,
@@ -767,7 +768,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-xursadid4",
+            "id": "course-kifw6no81",
             "name": "Anfänger AS",
             "style": "Hatha",
             "dayOfWeek": 0,
@@ -779,7 +780,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-2jxgasfx4",
+            "id": "course-me76bluzf",
             "name": "Mittelstufe AS",
             "style": "Hatha",
             "dayOfWeek": 0,
@@ -791,7 +792,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-vd13l105s",
+            "id": "course-yzurra5w0",
             "name": "Om Namo Narayanaya",
             "style": "Meditation",
             "dayOfWeek": 0,
@@ -803,7 +804,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-broo1bgnx",
+            "id": "course-plej07egc",
             "name": "Ankommensmedi.",
             "style": "Meditation",
             "dayOfWeek": 0,
@@ -815,7 +816,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-bh9s2ah0g",
+            "id": "course-7i63es5xa",
             "name": "Satsang",
             "style": "Meditation",
             "dayOfWeek": 0,
@@ -827,7 +828,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-rytb8qosy",
+            "id": "course-37s0r4ave",
             "name": "Gef. Meditation",
             "style": "Meditation",
             "dayOfWeek": 1,
@@ -839,7 +840,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-s2vihl28b",
+            "id": "course-jupyv4zfw",
             "name": "Satsang",
             "style": "Meditation",
             "dayOfWeek": 1,
@@ -851,7 +852,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-8i3pac0ym",
+            "id": "course-s3nz1wg9w",
             "name": "Anfänger",
             "style": "Hatha",
             "dayOfWeek": 1,
@@ -863,7 +864,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-i2enm57mi",
+            "id": "course-06vdawx2h",
             "name": "Mittelstufe",
             "style": "Hatha",
             "dayOfWeek": 1,
@@ -875,7 +876,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-7uogb565a",
+            "id": "course-eu37tx1yk",
             "name": "Anfänger Rückenstunde",
             "style": "Hatha",
             "dayOfWeek": 1,
@@ -887,7 +888,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-8dayxo0ed",
+            "id": "course-xiwg2ejb2",
             "name": "Mittelstufe",
             "style": "Hatha",
             "dayOfWeek": 1,
@@ -899,7 +900,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-rn4s65caw",
+            "id": "course-yzod7e0wt",
             "name": "Om Namo Narayanaya",
             "style": "Meditation",
             "dayOfWeek": 1,
@@ -911,7 +912,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-2jq0gigh0",
+            "id": "course-5tlj846ze",
             "name": "Satsang",
             "style": "Meditation",
             "dayOfWeek": 1,
@@ -923,7 +924,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-m1ubftrss",
+            "id": "course-2aefzzo98",
             "name": "Gef. Meditation",
             "style": "Meditation",
             "dayOfWeek": 2,
@@ -935,7 +936,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-vkc3i1f2r",
+            "id": "course-mrxjfq3a9",
             "name": "Satsang",
             "style": "Meditation",
             "dayOfWeek": 2,
@@ -947,7 +948,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-g3s1hnmgu",
+            "id": "course-jmfl9bd3o",
             "name": "Anfänger",
             "style": "Hatha",
             "dayOfWeek": 2,
@@ -959,7 +960,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-r394tj7fq",
+            "id": "course-hspd02z53",
             "name": "Mittelstufe",
             "style": "Hatha",
             "dayOfWeek": 2,
@@ -971,7 +972,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-d3w8kii6k",
+            "id": "course-vnzdk6tjs",
             "name": "Anfänger Yin Yoga",
             "style": "Hatha",
             "dayOfWeek": 2,
@@ -983,7 +984,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-a7nkkswmj",
+            "id": "course-s3nemkgc2",
             "name": "Mittelstufe",
             "style": "Hatha",
             "dayOfWeek": 2,
@@ -995,7 +996,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-9n7xt017m",
+            "id": "course-xp0eg7f1v",
             "name": "Om Namo Narayanaya",
             "style": "Meditation",
             "dayOfWeek": 2,
@@ -1007,7 +1008,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-bw49gmtns",
+            "id": "course-hzgrac7cc",
             "name": "Gef. Meditation",
             "style": "Meditation",
             "dayOfWeek": 3,
@@ -1019,7 +1020,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-q37vexweh",
+            "id": "course-t81yw5b5a",
             "name": "Satsang",
             "style": "Meditation",
             "dayOfWeek": 3,
@@ -1031,7 +1032,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-v8dl69xmc",
+            "id": "course-nodld38jo",
             "name": "Anfänger",
             "style": "Hatha",
             "dayOfWeek": 3,
@@ -1043,7 +1044,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-4eer8vokt",
+            "id": "course-hij6osy2d",
             "name": "Mittelstufe",
             "style": "Hatha",
             "dayOfWeek": 3,
@@ -1055,7 +1056,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-5iyxf4lrb",
+            "id": "course-zmaadwbip",
             "name": "Om Namo Narayanaya",
             "style": "Meditation",
             "dayOfWeek": 3,
@@ -1067,7 +1068,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-of7eodcqt",
+            "id": "course-a74a6ocn1",
             "name": "Satsang",
             "style": "Meditation",
             "dayOfWeek": 3,
@@ -1079,7 +1080,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-7szg2k8k8",
+            "id": "course-slhd4epz0",
             "name": "Gef. Meditation",
             "style": "Meditation",
             "dayOfWeek": 4,
@@ -1091,7 +1092,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-q6nbx5174",
+            "id": "course-rs8lj615r",
             "name": "Satsang",
             "style": "Meditation",
             "dayOfWeek": 4,
@@ -1103,7 +1104,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-ycfk0tnlh",
+            "id": "course-9xqa5sb8e",
             "name": "Anfänger",
             "style": "Hatha",
             "dayOfWeek": 4,
@@ -1115,7 +1116,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-qyhssdeub",
+            "id": "course-3f3o9h3dk",
             "name": "Mittelstufe",
             "style": "Hatha",
             "dayOfWeek": 4,
@@ -1127,7 +1128,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-6wntddd40",
+            "id": "course-0dyuhmazu",
             "name": "Anfänger",
             "style": "Hatha",
             "dayOfWeek": 4,
@@ -1139,7 +1140,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-o18wl24mx",
+            "id": "course-n2fblsvzj",
             "name": "Mittelstufe",
             "style": "Hatha",
             "dayOfWeek": 4,
@@ -1151,7 +1152,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-btwpq3ya0",
+            "id": "course-8j5ew2sbm",
             "name": "Om Namo Narayanaya",
             "style": "Meditation",
             "dayOfWeek": 4,
@@ -1163,7 +1164,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-vw3atitzn",
+            "id": "course-ayu3wrm3o",
             "name": "Satsang",
             "style": "Meditation",
             "dayOfWeek": 4,
@@ -1184,7 +1185,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
     targetWeekCode: "2026-W29",
     courses: [
       {
-            "id": "course-xg1fnf2p3",
+            "id": "course-571b29x3y",
             "name": "Gef. Meditation",
             "style": "Meditation",
             "dayOfWeek": 5,
@@ -1196,7 +1197,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-ss0tc48xf",
+            "id": "course-edb5s10oo",
             "name": "Satsang",
             "style": "Meditation",
             "dayOfWeek": 5,
@@ -1208,7 +1209,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-3ojfzfas5",
+            "id": "course-wyy6xh94g",
             "name": "Anfänger",
             "style": "Hatha",
             "dayOfWeek": 5,
@@ -1220,7 +1221,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-1vepaypfu",
+            "id": "course-awlltqtxk",
             "name": "Mittelstufe Klangyogastunde",
             "style": "Hatha",
             "dayOfWeek": 5,
@@ -1232,7 +1233,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-tllh60135",
+            "id": "course-rlbw99gcm",
             "name": "Anfänger AS",
             "style": "Hatha",
             "dayOfWeek": 5,
@@ -1244,7 +1245,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-7pdgtticw",
+            "id": "course-wm7q2hc20",
             "name": "Mittelstufe AS",
             "style": "Hatha",
             "dayOfWeek": 5,
@@ -1256,7 +1257,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-a2razccwo",
+            "id": "course-n7pyi3atj",
             "name": "Om Namo Narayanaya",
             "style": "Meditation",
             "dayOfWeek": 5,
@@ -1268,7 +1269,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-4gibbmwc3",
+            "id": "course-4xkagzg9b",
             "name": "Ankommensmedi.",
             "style": "Meditation",
             "dayOfWeek": 5,
@@ -1280,7 +1281,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-ebph5llyq",
+            "id": "course-wbdp158g9",
             "name": "Satsang",
             "style": "Meditation",
             "dayOfWeek": 5,
@@ -1292,7 +1293,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-t0agt60v6",
+            "id": "course-l02qn5kc2",
             "name": "Fortgeschrittenes Pranayama",
             "style": "Hatha",
             "dayOfWeek": 6,
@@ -1304,7 +1305,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-xyjk3i124",
+            "id": "course-2a1nsyuo9",
             "name": "Gef. Meditation",
             "style": "Meditation",
             "dayOfWeek": 6,
@@ -1316,7 +1317,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-1sf97kjwh",
+            "id": "course-gaen5rkjy",
             "name": "Satsang",
             "style": "Meditation",
             "dayOfWeek": 6,
@@ -1328,7 +1329,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-aejsmpqxr",
+            "id": "course-a88qi60wb",
             "name": "Anfänger",
             "style": "Hatha",
             "dayOfWeek": 6,
@@ -1340,7 +1341,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-xtehgbbpp",
+            "id": "course-hfnxxchi7",
             "name": "Mittelstufe",
             "style": "Hatha",
             "dayOfWeek": 6,
@@ -1352,7 +1353,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-5bb3rh09w",
+            "id": "course-jcjx48l3q",
             "name": "Anfänger",
             "style": "Hatha",
             "dayOfWeek": 6,
@@ -1364,7 +1365,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-avd5zmy3q",
+            "id": "course-14582mox8",
             "name": "Mittelstufe Mantrayogastunde",
             "style": "Hatha",
             "dayOfWeek": 6,
@@ -1376,7 +1377,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-r27hk51vr",
+            "id": "course-gv6kj41v3",
             "name": "Om Namo Narayanaya",
             "style": "Meditation",
             "dayOfWeek": 6,
@@ -1388,7 +1389,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-tyyotjcbq",
+            "id": "course-ed166f993",
             "name": "Satsang",
             "style": "Meditation",
             "dayOfWeek": 6,
@@ -1400,7 +1401,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-qkony2klc",
+            "id": "course-j4w4w6upo",
             "name": "Fortgeschrittenes Pranayama",
             "style": "Hatha",
             "dayOfWeek": 0,
@@ -1412,7 +1413,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-8dnn7d637",
+            "id": "course-rjc8azo0x",
             "name": "Gef. Meditation",
             "style": "Meditation",
             "dayOfWeek": 0,
@@ -1424,7 +1425,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-rlc5uc72f",
+            "id": "course-l0b2hn4ao",
             "name": "Satsang",
             "style": "Meditation",
             "dayOfWeek": 0,
@@ -1436,7 +1437,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-vrw6op71n",
+            "id": "course-l0l3vk5sm",
             "name": "Anfänger",
             "style": "Hatha",
             "dayOfWeek": 0,
@@ -1448,7 +1449,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-twoh7a4k8",
+            "id": "course-6dm5vcxsj",
             "name": "Mittelstufe",
             "style": "Hatha",
             "dayOfWeek": 0,
@@ -1460,7 +1461,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-b7mc2uyvd",
+            "id": "course-9m4q5aq7s",
             "name": "Anfänger AS",
             "style": "Hatha",
             "dayOfWeek": 0,
@@ -1472,7 +1473,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-w6wpicdvq",
+            "id": "course-ze0xe6x7c",
             "name": "Mittelstufe AS",
             "style": "Hatha",
             "dayOfWeek": 0,
@@ -1484,7 +1485,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-u8wmzdqet",
+            "id": "course-ruig3glez",
             "name": "Om Namo Narayanaya",
             "style": "Meditation",
             "dayOfWeek": 0,
@@ -1496,7 +1497,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-9z00nhwi6",
+            "id": "course-fsinohh23",
             "name": "Ankommensmedi.",
             "style": "Meditation",
             "dayOfWeek": 0,
@@ -1508,7 +1509,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-4p5d6rl5u",
+            "id": "course-grv78mw4y",
             "name": "Satsang",
             "style": "Meditation",
             "dayOfWeek": 0,
@@ -1520,7 +1521,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-9gq92ypt6",
+            "id": "course-ewmlw0v6t",
             "name": "Gef. Meditation",
             "style": "Meditation",
             "dayOfWeek": 1,
@@ -1532,7 +1533,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-kd7h51saw",
+            "id": "course-2q8ota0f5",
             "name": "Satsang",
             "style": "Meditation",
             "dayOfWeek": 1,
@@ -1544,7 +1545,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-tftqzao2e",
+            "id": "course-hu4w18atf",
             "name": "Anfänger",
             "style": "Hatha",
             "dayOfWeek": 1,
@@ -1556,7 +1557,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-gd1buqv4k",
+            "id": "course-8pd6pw1y0",
             "name": "Mittelstufe",
             "style": "Hatha",
             "dayOfWeek": 1,
@@ -1568,7 +1569,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-tj9ybbgp9",
+            "id": "course-ptuwlas4p",
             "name": "Anfänger Rückenstunde",
             "style": "Hatha",
             "dayOfWeek": 1,
@@ -1580,7 +1581,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-o2jaumx1h",
+            "id": "course-0xk4yqduv",
             "name": "Mittelstufe",
             "style": "Hatha",
             "dayOfWeek": 1,
@@ -1592,7 +1593,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-4ttaxunco",
+            "id": "course-subfmvbu0",
             "name": "Om Namo Narayanaya",
             "style": "Meditation",
             "dayOfWeek": 1,
@@ -1604,7 +1605,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-vd1a7lid8",
+            "id": "course-bfn8fnhil",
             "name": "Satsang",
             "style": "Meditation",
             "dayOfWeek": 1,
@@ -1616,7 +1617,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-c90jz78bg",
+            "id": "course-mvj40zsl1",
             "name": "Gef. Meditation",
             "style": "Meditation",
             "dayOfWeek": 2,
@@ -1628,7 +1629,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-g7u0ehorp",
+            "id": "course-ktfky57nk",
             "name": "Satsang",
             "style": "Meditation",
             "dayOfWeek": 2,
@@ -1640,7 +1641,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-fjoqywfuu",
+            "id": "course-ebw35otta",
             "name": "Anfänger",
             "style": "Hatha",
             "dayOfWeek": 2,
@@ -1652,7 +1653,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-ku1996nkp",
+            "id": "course-fmfwglqjs",
             "name": "Mittelstufe",
             "style": "Hatha",
             "dayOfWeek": 2,
@@ -1664,7 +1665,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-53oqh3ar0",
+            "id": "course-2c3lya9nz",
             "name": "Anfänger Yin Yoga",
             "style": "Hatha",
             "dayOfWeek": 2,
@@ -1676,7 +1677,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-peiiz4l5l",
+            "id": "course-85o7q281z",
             "name": "Mittelstufe",
             "style": "Hatha",
             "dayOfWeek": 2,
@@ -1688,7 +1689,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-4b7qskd9n",
+            "id": "course-udyyh7irx",
             "name": "Om Namo Narayanaya",
             "style": "Meditation",
             "dayOfWeek": 2,
@@ -1700,7 +1701,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-enf3amptb",
+            "id": "course-n8midhky5",
             "name": "Gef. Meditation",
             "style": "Meditation",
             "dayOfWeek": 3,
@@ -1712,7 +1713,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-ocireo1y4",
+            "id": "course-s1wq5p1b1",
             "name": "Satsang",
             "style": "Meditation",
             "dayOfWeek": 3,
@@ -1724,7 +1725,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-ym8mwjuhr",
+            "id": "course-2gr5mi6kl",
             "name": "Anfänger",
             "style": "Hatha",
             "dayOfWeek": 3,
@@ -1736,7 +1737,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-zflfarzbj",
+            "id": "course-qa2artmh6",
             "name": "Mittelstufe",
             "style": "Hatha",
             "dayOfWeek": 3,
@@ -1748,7 +1749,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-q5tlfjity",
+            "id": "course-o32a7ly8w",
             "name": "Om Namo Narayanaya",
             "style": "Meditation",
             "dayOfWeek": 3,
@@ -1760,7 +1761,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-kz799kmgq",
+            "id": "course-ifliwx8nf",
             "name": "Satsang",
             "style": "Meditation",
             "dayOfWeek": 3,
@@ -1772,7 +1773,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-2sv3hdxcz",
+            "id": "course-cavpvd28v",
             "name": "Gef. Meditation",
             "style": "Meditation",
             "dayOfWeek": 4,
@@ -1784,7 +1785,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-vpe3oop9x",
+            "id": "course-dvo5bq9jo",
             "name": "Satsang",
             "style": "Meditation",
             "dayOfWeek": 4,
@@ -1796,7 +1797,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-fk6by3e9q",
+            "id": "course-2oxhwzqhv",
             "name": "Anfänger",
             "style": "Hatha",
             "dayOfWeek": 4,
@@ -1808,7 +1809,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-vhbio2e3y",
+            "id": "course-idfyn277q",
             "name": "Mittelstufe",
             "style": "Hatha",
             "dayOfWeek": 4,
@@ -1820,7 +1821,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-m5h0bn04r",
+            "id": "course-8gbtzc28a",
             "name": "Anfänger",
             "style": "Hatha",
             "dayOfWeek": 4,
@@ -1832,7 +1833,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-1fbshennl",
+            "id": "course-l6y6205x1",
             "name": "Mittelstufe",
             "style": "Hatha",
             "dayOfWeek": 4,
@@ -1844,7 +1845,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-9d56za0rf",
+            "id": "course-t2x5sjg8j",
             "name": "Om Namo Narayanaya",
             "style": "Meditation",
             "dayOfWeek": 4,
@@ -1856,7 +1857,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-7g4e0o1ao",
+            "id": "course-u0vpny5lh",
             "name": "Satsang",
             "style": "Meditation",
             "dayOfWeek": 4,
@@ -1877,7 +1878,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
     targetWeekCode: "2026-W30",
     courses: [
       {
-            "id": "course-0nt9hx0nk",
+            "id": "course-nvz6sjpkw",
             "name": "Gef. Meditation",
             "style": "Meditation",
             "dayOfWeek": 5,
@@ -1889,7 +1890,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-nig4e846t",
+            "id": "course-htkrtafm4",
             "name": "Satsang",
             "style": "Meditation",
             "dayOfWeek": 5,
@@ -1901,7 +1902,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-62lxurbox",
+            "id": "course-yk1ia10sf",
             "name": "Anfänger",
             "style": "Hatha",
             "dayOfWeek": 5,
@@ -1913,7 +1914,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-0dfgji0yo",
+            "id": "course-ptbg22uzv",
             "name": "Mittelstufe Klangyogastunde",
             "style": "Hatha",
             "dayOfWeek": 5,
@@ -1925,7 +1926,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-vhlp0f3ab",
+            "id": "course-8vb81m7wb",
             "name": "Anfänger AS",
             "style": "Hatha",
             "dayOfWeek": 5,
@@ -1937,7 +1938,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-kn15z1vt3",
+            "id": "course-qsakz8jr1",
             "name": "Mittelstufe AS",
             "style": "Hatha",
             "dayOfWeek": 5,
@@ -1949,7 +1950,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-4lqhcgh4g",
+            "id": "course-idk987cm3",
             "name": "Om Namo Narayanaya",
             "style": "Meditation",
             "dayOfWeek": 5,
@@ -1961,7 +1962,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-il4rj5qws",
+            "id": "course-87wry1vtw",
             "name": "Ankommensmedi.",
             "style": "Meditation",
             "dayOfWeek": 5,
@@ -1973,7 +1974,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-zjhr51xg5",
+            "id": "course-tu2roz96y",
             "name": "Satsang",
             "style": "Meditation",
             "dayOfWeek": 5,
@@ -1985,7 +1986,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-h5og2x1p6",
+            "id": "course-uxxearl4w",
             "name": "Fortgeschrittenes Pranayama",
             "style": "Hatha",
             "dayOfWeek": 6,
@@ -1997,7 +1998,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-cfwywlafk",
+            "id": "course-c2o9ukhux",
             "name": "Gef. Meditation",
             "style": "Meditation",
             "dayOfWeek": 6,
@@ -2009,7 +2010,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-v3hre7kgr",
+            "id": "course-bfqy8f134",
             "name": "Satsang",
             "style": "Meditation",
             "dayOfWeek": 6,
@@ -2021,7 +2022,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-o10xgx1ki",
+            "id": "course-0bbqk6v0t",
             "name": "Anfänger",
             "style": "Hatha",
             "dayOfWeek": 6,
@@ -2033,7 +2034,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-ow8g7gicw",
+            "id": "course-yhd69pp0h",
             "name": "Mittelstufe",
             "style": "Hatha",
             "dayOfWeek": 6,
@@ -2045,7 +2046,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-ehahym0n0",
+            "id": "course-ujg0cp7ui",
             "name": "Anfänger",
             "style": "Hatha",
             "dayOfWeek": 6,
@@ -2057,7 +2058,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-ano3hc3p3",
+            "id": "course-4m5n011rj",
             "name": "Mittelstufe Mantrayogastunde",
             "style": "Hatha",
             "dayOfWeek": 6,
@@ -2069,7 +2070,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-kbfghypjr",
+            "id": "course-x57vdj585",
             "name": "Om Namo Narayanaya",
             "style": "Meditation",
             "dayOfWeek": 6,
@@ -2081,7 +2082,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-z7haxsx79",
+            "id": "course-7uz9u4mub",
             "name": "Satsang",
             "style": "Meditation",
             "dayOfWeek": 6,
@@ -2093,7 +2094,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-scu1pl4bq",
+            "id": "course-bzjcp4puk",
             "name": "Fortgeschrittenes Pranayama",
             "style": "Hatha",
             "dayOfWeek": 0,
@@ -2105,7 +2106,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-zal27gm57",
+            "id": "course-2639fl4qt",
             "name": "Gef. Meditation",
             "style": "Meditation",
             "dayOfWeek": 0,
@@ -2117,7 +2118,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-08l6zsgfd",
+            "id": "course-nwf6ajmbp",
             "name": "Satsang",
             "style": "Meditation",
             "dayOfWeek": 0,
@@ -2129,7 +2130,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-kiqjilhca",
+            "id": "course-nosr66nil",
             "name": "Anfänger",
             "style": "Hatha",
             "dayOfWeek": 0,
@@ -2141,7 +2142,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-5ubhz3o9z",
+            "id": "course-r1vz40i8k",
             "name": "Mittelstufe",
             "style": "Hatha",
             "dayOfWeek": 0,
@@ -2153,7 +2154,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-mv1xauzjp",
+            "id": "course-4b17icl7v",
             "name": "Anfänger AS",
             "style": "Hatha",
             "dayOfWeek": 0,
@@ -2165,7 +2166,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-j0jo1393p",
+            "id": "course-km7ts2swd",
             "name": "Mittelstufe AS",
             "style": "Hatha",
             "dayOfWeek": 0,
@@ -2177,7 +2178,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-jvfub7592",
+            "id": "course-ck3m0itgl",
             "name": "Om Namo Narayanaya",
             "style": "Meditation",
             "dayOfWeek": 0,
@@ -2189,7 +2190,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-ougdso0xj",
+            "id": "course-osfil6g6f",
             "name": "Ankommensmedi.",
             "style": "Meditation",
             "dayOfWeek": 0,
@@ -2201,7 +2202,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-n6aqu5cs7",
+            "id": "course-c40029l0z",
             "name": "Satsang",
             "style": "Meditation",
             "dayOfWeek": 0,
@@ -2213,7 +2214,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-55hd5v6lt",
+            "id": "course-q6rfqfs9q",
             "name": "Gef. Meditation",
             "style": "Meditation",
             "dayOfWeek": 1,
@@ -2225,7 +2226,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-697vcceac",
+            "id": "course-6yitda8xl",
             "name": "Satsang",
             "style": "Meditation",
             "dayOfWeek": 1,
@@ -2237,7 +2238,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-cuqyvn4ji",
+            "id": "course-44x8ehod6",
             "name": "Anfänger",
             "style": "Hatha",
             "dayOfWeek": 1,
@@ -2249,7 +2250,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-traph2urb",
+            "id": "course-ev14iw8e1",
             "name": "Mittelstufe",
             "style": "Hatha",
             "dayOfWeek": 1,
@@ -2261,7 +2262,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-0f8qznqwa",
+            "id": "course-6dyp0iwgc",
             "name": "Anfänger Rückenstunde",
             "style": "Hatha",
             "dayOfWeek": 1,
@@ -2273,7 +2274,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-v9au3gfyw",
+            "id": "course-262hrwmol",
             "name": "Mittelstufe",
             "style": "Hatha",
             "dayOfWeek": 1,
@@ -2285,7 +2286,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-m0fxl50dz",
+            "id": "course-5k5hkmf8s",
             "name": "Om Namo Narayanaya",
             "style": "Meditation",
             "dayOfWeek": 1,
@@ -2297,7 +2298,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-jwjvrlqm1",
+            "id": "course-kr2x6cblw",
             "name": "Satsang",
             "style": "Meditation",
             "dayOfWeek": 1,
@@ -2309,7 +2310,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-8p4j51h1o",
+            "id": "course-vkskckt6s",
             "name": "Gef. Meditation",
             "style": "Meditation",
             "dayOfWeek": 2,
@@ -2321,7 +2322,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-gaenbj5xo",
+            "id": "course-bz1ub58do",
             "name": "Satsang",
             "style": "Meditation",
             "dayOfWeek": 2,
@@ -2333,7 +2334,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-jomszfoto",
+            "id": "course-ev06ejc2y",
             "name": "Anfänger",
             "style": "Hatha",
             "dayOfWeek": 2,
@@ -2345,7 +2346,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-yy9wuv2or",
+            "id": "course-h4lqk7mvy",
             "name": "Mittelstufe",
             "style": "Hatha",
             "dayOfWeek": 2,
@@ -2357,7 +2358,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-q3key7pqq",
+            "id": "course-p5m5hnun7",
             "name": "Anfänger Yin Yoga",
             "style": "Hatha",
             "dayOfWeek": 2,
@@ -2369,7 +2370,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-3dd8oac9o",
+            "id": "course-sy0qk137x",
             "name": "Mittelstufe",
             "style": "Hatha",
             "dayOfWeek": 2,
@@ -2381,7 +2382,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-xrqxd7mgf",
+            "id": "course-oxsi377xh",
             "name": "Om Namo Narayanaya",
             "style": "Meditation",
             "dayOfWeek": 2,
@@ -2393,7 +2394,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-vgh77vvf9",
+            "id": "course-jy0mqgsfm",
             "name": "Gef. Meditation",
             "style": "Meditation",
             "dayOfWeek": 3,
@@ -2405,7 +2406,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-ahiw48fdg",
+            "id": "course-4s5igqld6",
             "name": "Satsang",
             "style": "Meditation",
             "dayOfWeek": 3,
@@ -2417,7 +2418,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-ki19es5e0",
+            "id": "course-tikqhuy1v",
             "name": "Anfänger",
             "style": "Hatha",
             "dayOfWeek": 3,
@@ -2429,7 +2430,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-x9v5zxbzz",
+            "id": "course-8t7r8r8x6",
             "name": "Mittelstufe",
             "style": "Hatha",
             "dayOfWeek": 3,
@@ -2441,7 +2442,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-k9m7hjafg",
+            "id": "course-zxebeps3n",
             "name": "Om Namo Narayanaya",
             "style": "Meditation",
             "dayOfWeek": 3,
@@ -2453,7 +2454,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-ixqrbheap",
+            "id": "course-5lo9z0sp7",
             "name": "Satsang",
             "style": "Meditation",
             "dayOfWeek": 3,
@@ -2465,7 +2466,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-qjx8fle21",
+            "id": "course-sndj7fgte",
             "name": "Gef. Meditation",
             "style": "Meditation",
             "dayOfWeek": 4,
@@ -2477,7 +2478,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-wa7j0bnqd",
+            "id": "course-34ew43iyy",
             "name": "Satsang",
             "style": "Meditation",
             "dayOfWeek": 4,
@@ -2489,7 +2490,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-nllp353hq",
+            "id": "course-se03wn767",
             "name": "Anfänger",
             "style": "Hatha",
             "dayOfWeek": 4,
@@ -2501,7 +2502,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-piflajiot",
+            "id": "course-1je5jb0in",
             "name": "Mittelstufe",
             "style": "Hatha",
             "dayOfWeek": 4,
@@ -2513,7 +2514,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-uc9lr24ri",
+            "id": "course-atsx3kc1r",
             "name": "Anfänger",
             "style": "Hatha",
             "dayOfWeek": 4,
@@ -2525,7 +2526,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-huuhw1hno",
+            "id": "course-ecbhjo3d4",
             "name": "Mittelstufe",
             "style": "Hatha",
             "dayOfWeek": 4,
@@ -2537,7 +2538,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-69isyg416",
+            "id": "course-gnmus0418",
             "name": "Om Namo Narayanaya",
             "style": "Meditation",
             "dayOfWeek": 4,
@@ -2549,7 +2550,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-nwr7sa4pq",
+            "id": "course-r4z9n6ruu",
             "name": "Satsang",
             "style": "Meditation",
             "dayOfWeek": 4,
@@ -2570,7 +2571,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
     targetWeekCode: "2026-W31",
     courses: [
       {
-            "id": "course-uh5s0vgec",
+            "id": "course-42odxooba",
             "name": "Gef. Meditation",
             "style": "Meditation",
             "dayOfWeek": 5,
@@ -2582,7 +2583,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-17kjs88g3",
+            "id": "course-9k3bp050n",
             "name": "Satsang",
             "style": "Meditation",
             "dayOfWeek": 5,
@@ -2594,7 +2595,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-xalhgxuc5",
+            "id": "course-ru5vet47u",
             "name": "Anfänger",
             "style": "Hatha",
             "dayOfWeek": 5,
@@ -2606,7 +2607,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-zer1yqugv",
+            "id": "course-pky50luaj",
             "name": "Mittelstufe Klangyogastunde",
             "style": "Hatha",
             "dayOfWeek": 5,
@@ -2618,7 +2619,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-hc7r48t1l",
+            "id": "course-v888uq5iv",
             "name": "Anfänger AS",
             "style": "Hatha",
             "dayOfWeek": 5,
@@ -2630,7 +2631,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-39qpfaztm",
+            "id": "course-x9i24lud1",
             "name": "Mittelstufe AS",
             "style": "Hatha",
             "dayOfWeek": 5,
@@ -2642,7 +2643,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-22f3ghkke",
+            "id": "course-k6qdflo3i",
             "name": "Om Namo Narayanaya",
             "style": "Meditation",
             "dayOfWeek": 5,
@@ -2654,7 +2655,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-emqunceav",
+            "id": "course-opxl77ohw",
             "name": "Ankommensmedi.",
             "style": "Meditation",
             "dayOfWeek": 5,
@@ -2666,7 +2667,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-8rodwjnrh",
+            "id": "course-lmggmywqm",
             "name": "Satsang",
             "style": "Meditation",
             "dayOfWeek": 5,
@@ -2678,7 +2679,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-genllsien",
+            "id": "course-hoaiy1out",
             "name": "Fortgeschrittenes Pranayama",
             "style": "Hatha",
             "dayOfWeek": 6,
@@ -2690,7 +2691,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-ry41z10l9",
+            "id": "course-85n2zwoyl",
             "name": "Gef. Meditation",
             "style": "Meditation",
             "dayOfWeek": 6,
@@ -2702,7 +2703,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-radjus89p",
+            "id": "course-vjyke9nwq",
             "name": "Satsang",
             "style": "Meditation",
             "dayOfWeek": 6,
@@ -2714,7 +2715,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-qbebdyiu6",
+            "id": "course-e5vn94w62",
             "name": "Anfänger",
             "style": "Hatha",
             "dayOfWeek": 6,
@@ -2726,7 +2727,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-ioww0jnd4",
+            "id": "course-4mrs3poef",
             "name": "Mittelstufe",
             "style": "Hatha",
             "dayOfWeek": 6,
@@ -2738,7 +2739,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-ja4zs9iiu",
+            "id": "course-xg4rg352a",
             "name": "Anfänger",
             "style": "Hatha",
             "dayOfWeek": 6,
@@ -2750,7 +2751,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-j2oh8x07q",
+            "id": "course-326kfceu7",
             "name": "Mittelstufe Mantrayogastunde",
             "style": "Hatha",
             "dayOfWeek": 6,
@@ -2762,7 +2763,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-pupadn98i",
+            "id": "course-uqqad6a2t",
             "name": "Om Namo Narayanaya",
             "style": "Meditation",
             "dayOfWeek": 6,
@@ -2774,7 +2775,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-43bgkp2hr",
+            "id": "course-wym7qoapr",
             "name": "Satsang",
             "style": "Meditation",
             "dayOfWeek": 6,
@@ -2786,7 +2787,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-x1zpanq9r",
+            "id": "course-p5owrze6a",
             "name": "Fortgeschrittenes Pranayama",
             "style": "Hatha",
             "dayOfWeek": 0,
@@ -2798,7 +2799,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-980c1ttmc",
+            "id": "course-2vqwidna2",
             "name": "Gef. Meditation",
             "style": "Meditation",
             "dayOfWeek": 0,
@@ -2810,7 +2811,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-v6oykdiof",
+            "id": "course-o34nx2mxa",
             "name": "Satsang",
             "style": "Meditation",
             "dayOfWeek": 0,
@@ -2822,7 +2823,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-dennawb22",
+            "id": "course-859wtok5y",
             "name": "Anfänger",
             "style": "Hatha",
             "dayOfWeek": 0,
@@ -2834,7 +2835,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-7gclic50c",
+            "id": "course-g1ytbl4u2",
             "name": "Mittelstufe",
             "style": "Hatha",
             "dayOfWeek": 0,
@@ -2846,7 +2847,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-6sfcr7854",
+            "id": "course-i3dpi0xq8",
             "name": "Anfänger AS",
             "style": "Hatha",
             "dayOfWeek": 0,
@@ -2858,7 +2859,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-47uk6ishr",
+            "id": "course-iuhsv5y9m",
             "name": "Mittelstufe AS",
             "style": "Hatha",
             "dayOfWeek": 0,
@@ -2870,7 +2871,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-vznccwyc5",
+            "id": "course-8yebavr36",
             "name": "Om Namo Narayanaya",
             "style": "Meditation",
             "dayOfWeek": 0,
@@ -2882,7 +2883,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-kk3zq4y4y",
+            "id": "course-b389yivtf",
             "name": "Ankommensmedi.",
             "style": "Meditation",
             "dayOfWeek": 0,
@@ -2894,7 +2895,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-1ujfrdmjy",
+            "id": "course-q8754cqbd",
             "name": "Satsang",
             "style": "Meditation",
             "dayOfWeek": 0,
@@ -2906,7 +2907,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-cdgsphqyf",
+            "id": "course-9rb4uuzl8",
             "name": "Gef. Meditation",
             "style": "Meditation",
             "dayOfWeek": 1,
@@ -2918,7 +2919,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-43gveycwr",
+            "id": "course-sqldqhiv6",
             "name": "Satsang",
             "style": "Meditation",
             "dayOfWeek": 1,
@@ -2930,7 +2931,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-2rzqfjg6l",
+            "id": "course-u1wnbqwup",
             "name": "Anfänger",
             "style": "Hatha",
             "dayOfWeek": 1,
@@ -2942,7 +2943,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-4ebdmn14a",
+            "id": "course-vxho8mg80",
             "name": "Mittelstufe",
             "style": "Hatha",
             "dayOfWeek": 1,
@@ -2954,7 +2955,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-csdq0pnts",
+            "id": "course-1ml2hem8i",
             "name": "Anfänger Rückenstunde",
             "style": "Hatha",
             "dayOfWeek": 1,
@@ -2966,7 +2967,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-pgddh2pmx",
+            "id": "course-5ma41i4tm",
             "name": "Mittelstufe",
             "style": "Hatha",
             "dayOfWeek": 1,
@@ -2978,7 +2979,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-s6y3t3jyz",
+            "id": "course-phiqvw69j",
             "name": "Om Namo Narayanaya",
             "style": "Meditation",
             "dayOfWeek": 1,
@@ -2990,7 +2991,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-fpx9fwghf",
+            "id": "course-2yds0bbf9",
             "name": "Satsang",
             "style": "Meditation",
             "dayOfWeek": 1,
@@ -3002,7 +3003,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-won2lays7",
+            "id": "course-i05g1nzrf",
             "name": "Gef. Meditation",
             "style": "Meditation",
             "dayOfWeek": 2,
@@ -3014,7 +3015,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-dg7axwngl",
+            "id": "course-zdnvmwi9p",
             "name": "Satsang",
             "style": "Meditation",
             "dayOfWeek": 2,
@@ -3026,7 +3027,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-bn6pik3ya",
+            "id": "course-mjrxkflga",
             "name": "Anfänger",
             "style": "Hatha",
             "dayOfWeek": 2,
@@ -3038,7 +3039,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-7kpoh6cv9",
+            "id": "course-jehid0ntf",
             "name": "Mittelstufe",
             "style": "Hatha",
             "dayOfWeek": 2,
@@ -3050,7 +3051,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-zmg3wrurp",
+            "id": "course-b8ar1z52y",
             "name": "Anfänger Yin Yoga",
             "style": "Hatha",
             "dayOfWeek": 2,
@@ -3062,7 +3063,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-rx0mh1gp9",
+            "id": "course-rpuplc5wg",
             "name": "Mittelstufe",
             "style": "Hatha",
             "dayOfWeek": 2,
@@ -3074,7 +3075,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-vtu8h5ok6",
+            "id": "course-0udubnr63",
             "name": "Om Namo Narayanaya",
             "style": "Meditation",
             "dayOfWeek": 2,
@@ -3086,7 +3087,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-bq545f63h",
+            "id": "course-7p7ge61mr",
             "name": "Gef. Meditation",
             "style": "Meditation",
             "dayOfWeek": 3,
@@ -3098,7 +3099,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-agpj1jhx0",
+            "id": "course-34iu3x2xm",
             "name": "Satsang",
             "style": "Meditation",
             "dayOfWeek": 3,
@@ -3110,7 +3111,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-nognt2s7k",
+            "id": "course-uwb8w7vx5",
             "name": "Anfänger",
             "style": "Hatha",
             "dayOfWeek": 3,
@@ -3122,7 +3123,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-5h14rdbjw",
+            "id": "course-nuulom6ko",
             "name": "Mittelstufe",
             "style": "Hatha",
             "dayOfWeek": 3,
@@ -3134,7 +3135,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-ldj09b0mh",
+            "id": "course-rpt29l2se",
             "name": "Om Namo Narayanaya",
             "style": "Meditation",
             "dayOfWeek": 3,
@@ -3146,7 +3147,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-9rbtccfwc",
+            "id": "course-pnpx75lso",
             "name": "Satsang",
             "style": "Meditation",
             "dayOfWeek": 3,
@@ -3158,7 +3159,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-vdp5iipd2",
+            "id": "course-7lhl0pzh5",
             "name": "Gef. Meditation",
             "style": "Meditation",
             "dayOfWeek": 4,
@@ -3170,7 +3171,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-i9k976nvl",
+            "id": "course-gwp4cex80",
             "name": "Satsang",
             "style": "Meditation",
             "dayOfWeek": 4,
@@ -3182,7 +3183,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-3iud9lybs",
+            "id": "course-xc5tu6bor",
             "name": "Anfänger",
             "style": "Hatha",
             "dayOfWeek": 4,
@@ -3194,7 +3195,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-1z45gw1um",
+            "id": "course-nnjze1esf",
             "name": "Mittelstufe",
             "style": "Hatha",
             "dayOfWeek": 4,
@@ -3206,7 +3207,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-dynwukv5v",
+            "id": "course-28xdr2te9",
             "name": "Anfänger",
             "style": "Hatha",
             "dayOfWeek": 4,
@@ -3218,7 +3219,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-bgr3s33cl",
+            "id": "course-nqs3vabzm",
             "name": "Mittelstufe",
             "style": "Hatha",
             "dayOfWeek": 4,
@@ -3230,7 +3231,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-efespc2ui",
+            "id": "course-t6sigct5l",
             "name": "Om Namo Narayanaya",
             "style": "Meditation",
             "dayOfWeek": 4,
@@ -3242,7 +3243,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "status": "approved"
       },
       {
-            "id": "course-tdfn9hdqe",
+            "id": "course-5rgdaywb0",
             "name": "Satsang",
             "style": "Meditation",
             "dayOfWeek": 4,
@@ -3280,7 +3281,7 @@ function setStored<T>(key: string, value: T): void {
   }
 }
 
-const CURRENT_DB_VERSION = 8;
+const CURRENT_DB_VERSION = 9;
 
 // Database Actions
 export const db = {
