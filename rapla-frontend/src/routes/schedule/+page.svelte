@@ -345,6 +345,11 @@
       .filter(c => selectedTeacherFilter === 'all' || c.teacherId === selectedTeacherFilter)
       .sort((a, b) => a.startTime.localeCompare(b.startTime));
   }
+  function handleSync() {
+    if (confirm('Möchtest du den Wochenplan mit dem Server synchronisieren? Eigene ungespeicherte Änderungen am Plan werden zurückgesetzt.')) {
+      db.syncDatabase();
+    }
+  }
 </script>
 
 <div class="page-header">
@@ -353,9 +358,14 @@
     <h1>Wochenplan <span style="font-size: 1.2rem; font-weight: 500; color: var(--text-secondary); margin-left: 0.5rem;">({currentPlan?.name || 'Aktiv'})</span></h1>
     <p>Aktuelle Yoga-Kurse und Lehrerzuweisungen der laufenden Woche.</p>
   </div>
-  <button class="btn btn-primary" onclick={openAddModal}>
-    <span>➕</span> Kurs hinzufügen
-  </button>
+  <div style="display: flex; gap: 0.75rem; align-items: center;">
+    <button class="btn btn-secondary" onclick={handleSync} title="Lädt den neuesten Stand aus dem System">
+      <span>🔄</span> Synchronisieren
+    </button>
+    <button class="btn btn-primary" onclick={openAddModal}>
+      <span>➕</span> Kurs hinzufügen
+    </button>
+  </div>
 </div>
 
 <!-- Filters Toolbar on top of Calendar -->
