@@ -199,6 +199,26 @@ export function validateAssignment(
     });
   }
 
+  // 0x. Check non-preferred weekdays (Soft)
+  const nonPreferredDays = teacher.rules.nonPreferredDays || [];
+  if (nonPreferredDays.includes(course.dayOfWeek)) {
+    const dayNames = ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag'];
+    const dayName = dayNames[course.dayOfWeek] || course.dayOfWeek.toString();
+    conflicts.push({
+      type: 'soft',
+      message: `${teacher.name} möchte am ${dayName} bevorzugt nicht unterrichten (nicht bevorzugter Wochentag).`
+    });
+  }
+
+  // 0y. Expose custom wishes/notes (Soft)
+  if (teacher.customWishes && teacher.customWishes.trim().length > 0) {
+    conflicts.push({
+      type: 'soft',
+      message: `Spezifischer Wunsch von ${teacher.name}: "${teacher.customWishes}"`
+    });
+  }
+
+
   // 0b. Check if external seminar-only teacher is conducting a seminar this week
   if (teacher.availabilityMode === 'seminar_only' && !seminarLeaderIds.includes(teacher.id)) {
     conflicts.push({
@@ -447,6 +467,12 @@ export function runAiPlanning(
       const preferredDays = teacher.rules.preferredDays || [];
       if (preferredDays.includes(course.dayOfWeek)) {
         score += 50; // Give a large bonus to prioritize this teacher for courses on this day!
+      }
+
+      // Non-preferred day penalty
+      const nonPreferredDaysVal = teacher.rules.nonPreferredDays || [];
+      if (nonPreferredDaysVal.includes(course.dayOfWeek)) {
+        score -= 40; // Deduct points if the teacher prefers not to teach on this day!
       }
       
       // Preference: distribute hours evenly (favour teachers with fewer planned hours)

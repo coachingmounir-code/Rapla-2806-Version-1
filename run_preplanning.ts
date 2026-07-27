@@ -17,6 +17,29 @@ global.localStorage = {
 
 // Populate rapla_teachers in mock localStorage so db.getTeachers() returns our teachers
 const teachers = db.getTeachers();
+
+// Load wishes from JSON if available on disk
+const wishesPath = './rapla-frontend/src/lib/data/sevakas_wishes.json';
+if (fs.existsSync(wishesPath)) {
+  try {
+    const wishesData = fs.readFileSync(wishesPath, 'utf-8');
+    const wishes = JSON.parse(wishesData);
+    if (Array.isArray(wishes)) {
+      wishes.forEach(wish => {
+        const idx = teachers.findIndex(t => t.id === wish.id || t.name === wish.name);
+        if (idx !== -1) {
+          teachers[idx].rules = { ...teachers[idx].rules, ...wish.rules };
+          if (wish.availabilityMode) teachers[idx].availabilityMode = wish.availabilityMode;
+          if (wish.specialties) teachers[idx].specialties = wish.specialties;
+          teachers[idx].customWishes = wish.customWishes;
+        }
+      });
+      console.log(`[PREPLANNING] ${wishes.length} Sevaka-Wünsche erfolgreich aus JSON geladen.`);
+    }
+  } catch (e) {
+    console.error('[PREPLANNING] Fehler beim Laden der Sevaka-Wünsche:', e);
+  }
+}
 localStorage.setItem('rapla_teachers', JSON.stringify(teachers));
 
 // Populate rapla_sevafrei in mock localStorage from EXCEL_ABSENCES
@@ -54,7 +77,33 @@ const sevafreiList = EXCEL_ABSENCES.map((abs, i) => {
     status: abs.status,
     note: abs.note
   } : null;
-}).filter(Boolean);
+}).filter(Boolean) as any[];
+
+// Load custom absences from JSON if available and merge
+const absencesPath = './rapla-frontend/src/lib/data/sevafrei_absences.json';
+if (fs.existsSync(absencesPath)) {
+  try {
+    const absencesData = fs.readFileSync(absencesPath, 'utf-8');
+    const customAbsences = JSON.parse(absencesData);
+    if (Array.isArray(customAbsences)) {
+      let mergedCount = 0;
+      customAbsences.forEach(abs => {
+        const isDup = sevafreiList.some(
+          existing => existing.teacherId === abs.teacherId &&
+                      existing.startDate === abs.startDate &&
+                      existing.endDate === abs.endDate
+        );
+        if (!isDup) {
+          sevafreiList.push(abs);
+          mergedCount++;
+        }
+      });
+      console.log(`[PREPLANNING] ${mergedCount} zusätzliche Abwesenheiten aus JSON geladen.`);
+    }
+  } catch (e) {
+    console.error('[PREPLANNING] Fehler beim Laden der Abwesenheiten:', e);
+  }
+}
 
 localStorage.setItem('rapla_sevafrei', JSON.stringify(sevafreiList));
 

@@ -222,6 +222,11 @@
 
   function saveToStorage() {
     localStorage.setItem('rapla_sevafrei', JSON.stringify(sevafreiList));
+    fetch('/api/sevafrei', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(sevafreiList)
+    }).catch(err => console.error('Failed to save absences to server:', err));
   }
 
   function handleAddEntry(e: Event) {

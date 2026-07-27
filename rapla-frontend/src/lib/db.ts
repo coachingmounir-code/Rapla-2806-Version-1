@@ -11,6 +11,7 @@ export interface TeacherRules {
   minRestTime: number; // in minutes
   preferredRooms: string[];
   preferredDays?: number[]; // list of days (0-6) where this teacher is prioritized
+  nonPreferredDays?: number[]; // list of days (0-6) where this teacher prefers not to teach
   canLeadMeditation?: boolean;
   canLeadSatsang?: boolean;
   availability: TimeSlot[];
@@ -27,6 +28,7 @@ export interface Teacher {
   availabilityMode?: 'always' | 'seminar_only';
   roleType?: 'sevaka' | 'external'; // 'sevaka' (core team) or 'external'
   rules: TeacherRules;
+  customWishes?: string; // free text for comments/wishes
 }
 
 export interface Room {

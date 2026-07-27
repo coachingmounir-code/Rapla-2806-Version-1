@@ -2,6 +2,7 @@
 	import '../global.css';
 	import favicon from '$lib/assets/favicon.svg';
 	import nataraja from '$lib/assets/nataraja.jpg';
+	import { onMount } from 'svelte';
 
 	let { children } = $props();
 
@@ -18,6 +19,66 @@
 		}
 		if (path.startsWith('/schedule') || path.startsWith('/ai-planning') || path.startsWith('/sevafrei')) {
 			showScheduleDropdown = true;
+		}
+	});
+
+	onMount(async () => {
+		// Sync wishes from server JSON to localStorage
+		try {
+			const wishesRes = await fetch('/api/sevakas-wishes');
+			if (wishesRes.ok) {
+				const wishes = await wishesRes.json();
+				if (wishes && wishes.length > 0) {
+					const savedTeachers = localStorage.getItem('rapla_teachers');
+					if (savedTeachers) {
+						const teachers = JSON.parse(savedTeachers);
+						let updated = false;
+						for (const wish of wishes) {
+							const idx = teachers.findIndex((t: any) => t.id === wish.id || t.name === wish.name);
+							if (idx !== -1) {
+								teachers[idx].rules = { ...teachers[idx].rules, ...wish.rules };
+								if (wish.availabilityMode) teachers[idx].availabilityMode = wish.availabilityMode;
+								if (wish.specialties) teachers[idx].specialties = wish.specialties;
+								teachers[idx].customWishes = wish.customWishes; // sync custom wishes field
+								updated = true;
+							}
+						}
+						if (updated) {
+							localStorage.setItem('rapla_teachers', JSON.stringify(teachers));
+						}
+					}
+				}
+			}
+		} catch (e) {
+			console.error('Failed to sync wishes on load:', e);
+		}
+
+		// Sync absences from server JSON to localStorage
+		try {
+			const absencesRes = await fetch('/api/sevafrei');
+			if (absencesRes.ok) {
+				const serverAbsences = await absencesRes.json();
+				if (serverAbsences && serverAbsences.length > 0) {
+					const localAbsencesStr = localStorage.getItem('rapla_sevafrei') || '[]';
+					const localAbsences = JSON.parse(localAbsencesStr);
+					let updated = false;
+					for (const sAbs of serverAbsences) {
+						const idx = localAbsences.findIndex((a: any) => a.id === sAbs.id);
+						if (idx !== -1) {
+							localAbsences[idx] = sAbs;
+							updated = true;
+						} else {
+							localAbsences.push(sAbs);
+							updated = true;
+						}
+					}
+					if (updated) {
+						localStorage.setItem('rapla_sevafrei', JSON.stringify(localAbsences));
+					}
+				}
+			}
+		} catch (e) {
+			console.error('Failed to sync absences on load:', e);
 		}
 	});
 </script>
@@ -114,10 +175,18 @@
 							<a 
 								href="/sevakas" 
 								class="nav-dropdown-item" 
-								class:active={page.url.pathname.startsWith('/sevakas')}
+								class:active={page.url.pathname.startsWith('/sevakas') && !page.url.pathname.endsWith('/wuensche')}
 							>
 								<span class="nav-icon">👥</span>
 								<span class="nav-label">Sevakas</span>
+							</a>
+							<a 
+								href="/sevakas/wuensche" 
+								class="nav-dropdown-item" 
+								class:active={page.url.pathname.includes('/sevakas/wuensche')}
+							>
+								<span class="nav-icon">📝</span>
+								<span class="nav-label">Sevaka-Wünsche</span>
 							</a>
 							<a 
 								href="/teachers" 
