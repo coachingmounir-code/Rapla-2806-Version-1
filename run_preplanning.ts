@@ -63,6 +63,7 @@ const sevafreiList = EXCEL_ABSENCES.map((abs, i) => {
     if (cleanExcel === "ulrich" && dbName.includes("ulrich")) return true;
     
     const firstName = dbName.split(' ')[0];
+    if (firstName === "karuna" && cleanExcel !== "karuna") return false;
     return cleanExcel.includes(firstName) && firstName.length > 2;
   });
 
