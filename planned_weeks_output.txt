@@ -86,7 +86,7 @@
       },
       {
         "id": "course-2026-W28-8",
-        "name": "Ankommensmedi.",
+        "name": "Satsang Einführung",
         "style": "Meditation",
         "dayOfWeek": 5,
         "startTime": "20:00",
@@ -314,7 +314,7 @@
       },
       {
         "id": "course-2026-W28-27",
-        "name": "Ankommensmedi.",
+        "name": "Satsang Einführung",
         "style": "Meditation",
         "dayOfWeek": 0,
         "startTime": "20:00",
@@ -774,7 +774,7 @@
       },
       {
         "id": "course-2026-W29-8",
-        "name": "Ankommensmedi.",
+        "name": "Satsang Einführung",
         "style": "Meditation",
         "dayOfWeek": 5,
         "startTime": "20:00",
@@ -1002,7 +1002,7 @@
       },
       {
         "id": "course-2026-W29-27",
-        "name": "Ankommensmedi.",
+        "name": "Satsang Einführung",
         "style": "Meditation",
         "dayOfWeek": 0,
         "startTime": "20:00",
@@ -1462,7 +1462,7 @@
       },
       {
         "id": "course-2026-W30-8",
-        "name": "Ankommensmedi.",
+        "name": "Satsang Einführung",
         "style": "Meditation",
         "dayOfWeek": 5,
         "startTime": "20:00",
@@ -1690,7 +1690,7 @@
       },
       {
         "id": "course-2026-W30-27",
-        "name": "Ankommensmedi.",
+        "name": "Satsang Einführung",
         "style": "Meditation",
         "dayOfWeek": 0,
         "startTime": "20:00",
@@ -2150,7 +2150,7 @@
       },
       {
         "id": "course-2026-W31-8",
-        "name": "Ankommensmedi.",
+        "name": "Satsang Einführung",
         "style": "Meditation",
         "dayOfWeek": 5,
         "startTime": "20:00",
@@ -2378,7 +2378,7 @@
       },
       {
         "id": "course-2026-W31-27",
-        "name": "Ankommensmedi.",
+        "name": "Satsang Einführung",
         "style": "Meditation",
         "dayOfWeek": 0,
         "startTime": "20:00",

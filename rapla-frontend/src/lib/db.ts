@@ -533,7 +533,7 @@ const generateDefaultCourses = (): Course[] => {
     { name: 'Anfänger AS', style: 'Hatha', dayOfWeek: 5, startTime: '16:30', endTime: '18:00', roomId: 'room-2', teacherName: 'Abha' },
     { name: 'Mittelstufe AS', style: 'Hatha', dayOfWeek: 5, startTime: '16:30', endTime: '18:00', roomId: 'room-5', teacherName: 'Karuna' },
     { name: 'Om Namo Narayanaya', style: 'Meditation', dayOfWeek: 5, startTime: '19:30', endTime: '20:00', roomId: 'room-2', teacherName: 'Adam' },
-    { name: 'Ankommensmedi.', style: 'Meditation', dayOfWeek: 5, startTime: '20:00', endTime: '20:35', roomId: 'room-5', teacherName: 'Pranava' },
+    { name: 'Satsang Einführung', style: 'Meditation', dayOfWeek: 5, startTime: '20:00', endTime: '20:35', roomId: 'room-5', teacherName: 'Pranava' },
     { name: 'Satsang', style: 'Meditation', dayOfWeek: 5, startTime: '20:00', endTime: '21:00', roomId: 'room-2', teacherName: 'Karuna' },
 
     // Saturday (dayOfWeek: 6)
@@ -556,7 +556,7 @@ const generateDefaultCourses = (): Course[] => {
     { name: 'Anfänger AS', style: 'Hatha', dayOfWeek: 0, startTime: '16:30', endTime: '18:15', roomId: 'room-2', teacherName: 'Karuna' },
     { name: 'Mittelstufe AS', style: 'Hatha', dayOfWeek: 0, startTime: '16:30', endTime: '18:00', roomId: 'room-5', teacherName: 'Pranava' },
     { name: 'Om Namo Narayanaya', style: 'Meditation', dayOfWeek: 0, startTime: '19:30', endTime: '20:00', roomId: 'room-2', teacherName: 'burnie' },
-    { name: 'Ankommensmedi.', style: 'Meditation', dayOfWeek: 0, startTime: '20:00', endTime: '20:35', roomId: 'room-5', teacherName: 'Harishakti' },
+    { name: 'Satsang Einführung', style: 'Meditation', dayOfWeek: 0, startTime: '20:00', endTime: '20:35', roomId: 'room-5', teacherName: 'Harishakti' },
     { name: 'Satsang', style: 'Meditation', dayOfWeek: 0, startTime: '20:00', endTime: '21:00', roomId: 'room-2', teacherName: 'Karuna' },
 
     // Monday (dayOfWeek: 1)
@@ -721,7 +721,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
           },
           {
             "id": "course-2026-W28-8",
-            "name": "Ankommensmedi.",
+            "name": "Satsang Einführung",
             "style": "Meditation",
             "dayOfWeek": 5,
             "startTime": "20:00",
@@ -949,7 +949,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
           },
           {
             "id": "course-2026-W28-27",
-            "name": "Ankommensmedi.",
+            "name": "Satsang Einführung",
             "style": "Meditation",
             "dayOfWeek": 0,
             "startTime": "20:00",
@@ -1414,7 +1414,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
           },
           {
             "id": "course-2026-W29-8",
-            "name": "Ankommensmedi.",
+            "name": "Satsang Einführung",
             "style": "Meditation",
             "dayOfWeek": 5,
             "startTime": "20:00",
@@ -1642,7 +1642,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
           },
           {
             "id": "course-2026-W29-27",
-            "name": "Ankommensmedi.",
+            "name": "Satsang Einführung",
             "style": "Meditation",
             "dayOfWeek": 0,
             "startTime": "20:00",
@@ -2107,7 +2107,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
           },
           {
             "id": "course-2026-W30-8",
-            "name": "Ankommensmedi.",
+            "name": "Satsang Einführung",
             "style": "Meditation",
             "dayOfWeek": 5,
             "startTime": "20:00",
@@ -2335,7 +2335,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
           },
           {
             "id": "course-2026-W30-27",
-            "name": "Ankommensmedi.",
+            "name": "Satsang Einführung",
             "style": "Meditation",
             "dayOfWeek": 0,
             "startTime": "20:00",
@@ -2800,7 +2800,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
           },
           {
             "id": "course-2026-W31-8",
-            "name": "Ankommensmedi.",
+            "name": "Satsang Einführung",
             "style": "Meditation",
             "dayOfWeek": 5,
             "startTime": "20:00",
@@ -3028,7 +3028,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
           },
           {
             "id": "course-2026-W31-27",
-            "name": "Ankommensmedi.",
+            "name": "Satsang Einführung",
             "style": "Meditation",
             "dayOfWeek": 0,
             "startTime": "20:00",
