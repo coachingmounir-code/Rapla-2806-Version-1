@@ -250,6 +250,38 @@ export function validateAssignment(
     }
   }
 
+  // 6. Karuna Satsang rule: Karuna always does the 20:00 Satsang Wed-Sun (unless she is absent)
+  if (course.name === 'Satsang' && course.startTime === '20:00' && [3, 4, 5, 6, 0].includes(course.dayOfWeek)) {
+    let isKarunaAbsent = false;
+    const karuna = (teachers || db.getTeachers()).find(t => t.name.toLowerCase().includes('karuna'));
+    if (typeof window !== 'undefined' && targetWeekCode && karuna) {
+      try {
+        const courseDate = getLocalDateForDay(targetWeekCode, course.dayOfWeek);
+        const saved = localStorage.getItem('rapla_sevafrei');
+        if (saved) {
+          const sevafreiList = JSON.parse(saved);
+          const activeAbsence = sevafreiList.find((entry: any) =>
+            entry.teacherId === karuna.id &&
+            courseDate >= entry.startDate &&
+            courseDate <= entry.endDate
+          );
+          if (activeAbsence) {
+            isKarunaAbsent = true;
+          }
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    if (!teacherNameLower.includes('karuna') && !isKarunaAbsent) {
+      conflicts.push({
+        type: 'hard',
+        message: `Karuna gibt immer den Satsang um 20.00 Uhr mittwochs, donnerstags, freitags, samstags und sonntags.`
+      });
+    }
+  }
+
   // Teresa & Hu cannot lead yoga classes (hard constraint)
   if ((teacher.isYogaTeacher === false || teacherNameLower.includes('teresa') || teacherNameLower.includes('hu')) && isYogaClassForSevaka) {
     conflicts.push({
@@ -806,7 +838,13 @@ export function runAiPlanning(
     if (c.teacherId === null || c.isAiPlanned) return true;
     const teacher = teachers.find(t => t.id === c.teacherId);
     if (!teacher) return true;
-    const conflicts = validateAssignment(teacher, c, workingCourses, seminarLeaderIds, targetWeekCode);
+    
+    // Simulate layout with this assignment and auto-adjust rooms
+    const tempLayout = workingCourses.map(x => x.id === c.id ? { ...x, teacherId: teacher.id } : { ...x });
+    adjustRoomsForRules(tempLayout, teachers);
+    const adjustedCourse = tempLayout.find(x => x.id === c.id)!;
+
+    const conflicts = validateAssignment(teacher, adjustedCourse, tempLayout, seminarLeaderIds, targetWeekCode, teachers);
     const hasAbsenceConflict = conflicts.some(conf => conf.type === 'hard' && conf.message.includes('abwesend'));
     if (hasAbsenceConflict) {
       const dayNames = ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag'];
@@ -846,7 +884,12 @@ export function runAiPlanning(
     // Score every teacher
     for (const teacher of yogaTeachers) {
       // Get conflicts for assigning this teacher to this course in the current layout
-      const conflicts = validateAssignment(teacher, course, workingCourses, seminarLeaderIds, targetWeekCode);
+      // Simulate layout with this assignment and auto-adjust rooms
+      const tempLayout = workingCourses.map(x => x.id === course.id ? { ...x, teacherId: teacher.id } : { ...x });
+      adjustRoomsForRules(tempLayout, teachers);
+      const adjustedCourse = tempLayout.find(x => x.id === course.id)!;
+
+      const conflicts = validateAssignment(teacher, adjustedCourse, tempLayout, seminarLeaderIds, targetWeekCode, teachers);
       
       const hardConflicts = conflicts.filter(c => c.type === 'hard');
       const softConflicts = conflicts.filter(c => c.type === 'soft');

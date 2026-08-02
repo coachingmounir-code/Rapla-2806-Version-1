@@ -524,7 +524,7 @@
 
       <div class="modal-footer">
         {#if editingTeacher}
-          <button class="btn btn-danger" style="margin-right: auto;" onclick={() => handleDelete(editingTeacher.id)}>
+          <button class="btn btn-danger" style="margin-right: auto;" onclick={() => editingTeacher && handleDelete(editingTeacher.id)}>
             🗑️ Löschen
           </button>
         {/if}
