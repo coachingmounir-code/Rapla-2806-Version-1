@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount, untrack } from 'svelte';
   import { db, type Course, type Teacher, type Room, type WeekPlan } from '$lib/db';
-  import { runAiPlanning, validateAllCourses, type ConflictMessage, validateAssignment } from '$lib/planningEngine';
+  import { runAiPlanning, validateAllCourses, type ConflictMessage, validateAssignment, adjustRoomsForRules } from '$lib/planningEngine';
   import { page } from '$app/state';
   import { goto } from '$app/navigation';
 
@@ -140,6 +140,9 @@
     if (index !== -1) {
       plannedCourses[index].teacherId = teacherId;
       plannedCourses[index].isAiPlanned = teacherId !== null;
+      
+      // Auto-adjust rooms according to room rules
+      adjustRoomsForRules(plannedCourses, teachers);
       
       // Save changes immediately to currentPlan
       if (currentPlan) {

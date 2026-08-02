@@ -65,7 +65,8 @@ export function validateAssignment(
   course: Course,
   allCourses: Course[],
   seminarLeaderIds: string[] = [],
-  targetWeekCode?: string
+  targetWeekCode?: string,
+  teachers?: Teacher[]
 ): ConflictMessage[] {
   const conflicts: ConflictMessage[] = [];
 
@@ -744,6 +745,10 @@ export function validateAssignment(
     }
   }
 
+  // 8. Check Room Rules from Raum Regeln.txt (Hard)
+  const roomConflicts = validateRoomRules(course, allCourses, teachers || db.getTeachers());
+  conflicts.push(...roomConflicts);
+
   return conflicts;
 }
 
@@ -758,15 +763,16 @@ export function validateAllCourses(
   
   courses.forEach(course => {
     if (!course.teacherId) {
-      validationMap[course.id] = [];
+      // Validate room rules even if no teacher is assigned
+      validationMap[course.id] = validateRoomRules(course, courses, teachers);
       return;
     }
     const teacher = teachers.find(t => t.id === course.teacherId);
     if (!teacher) {
-      validationMap[course.id] = [];
+      validationMap[course.id] = validateRoomRules(course, courses, teachers);
       return;
     }
-    validationMap[course.id] = validateAssignment(teacher, course, courses, seminarLeaderIds, targetWeekCode);
+    validationMap[course.id] = validateAssignment(teacher, course, courses, seminarLeaderIds, targetWeekCode, teachers);
   });
   
   return validationMap;
@@ -967,6 +973,9 @@ export function runAiPlanning(
     }
   }
 
+  // Apply room rules to auto-adjust rooms based on final teacher assignments
+  adjustRoomsForRules(workingCourses, teachers);
+
   const assignedCount = workingCourses.filter(c => c.teacherId !== null && c.isAiPlanned).length;
   logs.push(`Planung abgeschlossen. ${assignedCount} von ${coursesToPlan.length} Kursen wurden erfolgreich zugewiesen.`);
   
@@ -974,4 +983,137 @@ export function runAiPlanning(
     plannedCourses: workingCourses,
     logs
   };
+}
+
+// Room rule validation from Raum Regeln.txt
+export function validateRoomRules(
+  course: Course,
+  allCourses: Course[],
+  teachers: Teacher[]
+): ConflictMessage[] {
+  const conflicts: ConflictMessage[] = [];
+  const nameLower = course.name.toLowerCase();
+  const styleLower = course.style.toLowerCase();
+
+  // 1. Pranayama rule: Pranayama always in Radhakrishna (room-2)
+  if (nameLower.includes('pranayama') || styleLower.includes('pranayama')) {
+    if (course.roomId !== 'room-2') {
+      conflicts.push({
+        type: 'hard',
+        message: `Pranayama-Stunden müssen im Radhakrishna Raum stattfinden.`
+      });
+    }
+  }
+
+  // 2. Beginner rule: Yoga beginner classes in Radhakrishna (room-2), except when parallel to Pranava's Klangyogastunde Mittelstufe (then Tripura room-5)
+  if (nameLower.includes('anfänger')) {
+    // Check if there is a parallel Klangyogastunde taught by Pranava
+    const hasParallelPranavaKlang = allCourses.some(c => {
+      if (c.id === course.id) return false;
+      if (c.dayOfWeek !== course.dayOfWeek || c.startTime !== course.startTime) return false;
+      if (!c.name.toLowerCase().includes('mittelstufe') || !c.name.toLowerCase().includes('klang')) return false;
+      if (!c.teacherId) return false;
+      const t = teachers.find(x => x.id === c.teacherId);
+      return t && t.name.toLowerCase().includes('pranava');
+    });
+
+    if (hasParallelPranavaKlang) {
+      if (course.roomId !== 'room-5') {
+        conflicts.push({
+          type: 'hard',
+          message: `Da parallel eine Klangyogastunde Mittelstufe von Pranava stattfindet, muss die Anfängerstunde im Tripura Raum stattfinden.`
+        });
+      }
+    } else {
+      if (course.roomId !== 'room-2') {
+        conflicts.push({
+          type: 'hard',
+          message: `Yoga-Anfängerstunden müssen im Radhakrishna Raum stattfinden.`
+        });
+      }
+    }
+  }
+
+  // 3. Intermediate rule: Yoga intermediate classes in Tripura (room-5), except when taught by Pranava as Klangyogastunde (then Radhakrishna room-2)
+  if (nameLower.includes('mittelstufe')) {
+    const isKlang = nameLower.includes('klang');
+    let isPranava = false;
+    if (course.teacherId) {
+      const t = teachers.find(x => x.id === course.teacherId);
+      if (t && t.name.toLowerCase().includes('pranava')) {
+        isPranava = true;
+      }
+    }
+
+    if (isKlang && isPranava) {
+      if (course.roomId !== 'room-2') {
+        conflicts.push({
+          type: 'hard',
+          message: `Klangyogastunden Mittelstufe von Pranava müssen im Radhakrishna Raum stattfinden.`
+        });
+      }
+    } else {
+      if (course.roomId !== 'room-5') {
+        conflicts.push({
+          type: 'hard',
+          message: `Yoga-Mittelstufen müssen im Tripura Raum stattfinden.`
+        });
+      }
+    }
+  }
+
+  return conflicts;
+}
+
+// Room auto-adjustment logic
+export function adjustRoomsForRules(courses: Course[], teachers: Teacher[]): Course[] {
+  courses.forEach(course => {
+    const nameLower = course.name.toLowerCase();
+    const styleLower = course.style.toLowerCase();
+
+    // 1. Pranayama rule
+    if (nameLower.includes('pranayama') || styleLower.includes('pranayama')) {
+      course.roomId = 'room-2'; // Radhakrisna
+      return;
+    }
+
+    // 2. Beginner/Intermediate rules
+    const isBeginner = nameLower.includes('anfänger');
+    const isIntermediate = nameLower.includes('mittelstufe');
+
+    if (isBeginner) {
+      // Look for a parallel Klangyogastunde taught by Pranava
+      const hasParallelPranavaKlang = courses.some(c => {
+        if (c.id === course.id) return false;
+        if (c.dayOfWeek !== course.dayOfWeek || c.startTime !== course.startTime) return false;
+        if (!c.name.toLowerCase().includes('mittelstufe') || !c.name.toLowerCase().includes('klang')) return false;
+        if (!c.teacherId) return false;
+        const t = teachers.find(x => x.id === c.teacherId);
+        return t && t.name.toLowerCase().includes('pranava');
+      });
+
+      if (hasParallelPranavaKlang) {
+        course.roomId = 'room-5'; // Tripura
+      } else {
+        course.roomId = 'room-2'; // Radhakrisna
+      }
+    } else if (isIntermediate) {
+      const isKlang = nameLower.includes('klang');
+      let isPranava = false;
+      if (course.teacherId) {
+        const t = teachers.find(x => x.id === course.teacherId);
+        if (t && t.name.toLowerCase().includes('pranava')) {
+          isPranava = true;
+        }
+      }
+
+      if (isKlang && isPranava) {
+        course.roomId = 'room-2'; // Radhakrisna
+      } else {
+        course.roomId = 'room-5'; // Tripura
+      }
+    }
+  });
+
+  return courses;
 }
