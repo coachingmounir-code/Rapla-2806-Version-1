@@ -29,7 +29,7 @@
   let sevafreiList = $state<SevafreiEntry[]>([]);
   let sevakas = $state<Teacher[]>([]);
   let showModal = $state(false);
-  let activeView = $state<'timeline' | 'availability' | 'quotas'>('timeline');
+  let activeView = $state<'timeline' | 'availability'>('timeline');
   let showRegularFreeDaysInTimeline = $state(false);
 
   // Month tracking
@@ -517,9 +517,7 @@
     <button class="switch-btn" class:active={activeView === 'availability'} onclick={() => activeView = 'availability'}>
       🟢 Verfügbarkeit (7 Tage)
     </button>
-    <button class="switch-btn" class:active={activeView === 'quotas'} onclick={() => activeView = 'quotas'}>
-      📊 Quoten & Kontingente
-    </button>
+
   </div>
 
   <div class="stats-pills">
@@ -693,51 +691,6 @@
         </div>
       </div>
     {/each}
-  </div>
-{:else}
-  <!-- EXCEL QUOTAS TABULAR VIEW -->
-  <div class="quotas-wrapper glass-card animate-fade-in" style="margin-top: 1rem;">
-    <h3 style="margin-bottom: 0.5rem; color: var(--text-primary);">📊 Kontingente (Soll / Ist-Abgleich 2026)</h3>
-    <p style="margin-bottom: 1.25rem; font-size: 0.85rem; color: var(--text-secondary);">
-      Die Kontingente stammen direkt aus dem Tabellenblatt <em>Jan-Juni</em> und <em>Juli-Dez</em> des Seva-Planers.
-    </p>
-
-    <div class="grid-table">
-      <div class="quota-table-header">
-        <div>Name</div>
-        <div>Team</div>
-        <div style="text-align: center;">Seminartage Soll</div>
-        <div style="text-align: center;">Seminartage Ist</div>
-        <div style="text-align: center;">Seminartage Rest</div>
-        <div style="text-align: center;">Sevafrei Soll</div>
-        <div style="text-align: center;">Sevafrei Ist</div>
-        <div style="text-align: center;">Sevafrei Rest</div>
-      </div>
-      
-      {#each quotas as q}
-        {@const semRest = q.seminarSoll - q.seminarIst}
-        {@const sevRest = q.sevafreiSoll - q.sevafreiIst}
-        <div class="quota-table-row">
-          <div class="sevaka-cell">
-            <strong>{q.spiritualName}</strong>
-            {#if q.firstName !== q.spiritualName}
-              <span style="font-size: 0.75rem; color: var(--text-secondary); font-weight: normal;">({q.firstName} {q.lastName})</span>
-            {/if}
-          </div>
-          <div>{q.team}</div>
-          <div style="text-align: center; font-weight: 500;">{q.seminarSoll}</div>
-          <div style="text-align: center; color: var(--primary); font-weight: 700;">{q.seminarIst}</div>
-          <div style="text-align: center; font-weight: 700;" class:text-highlight={semRest < 0} class:text-muted={semRest === 0}>
-            {semRest}
-          </div>
-          <div style="text-align: center; font-weight: 500;">{q.sevafreiSoll}</div>
-          <div style="text-align: center; color: #1565c0; font-weight: 700;">{q.sevafreiIst}</div>
-          <div style="text-align: center; font-weight: 700;" class:text-highlight={sevRest < 0} class:text-muted={sevRest === 0}>
-            {sevRest}
-          </div>
-        </div>
-      {/each}
-    </div>
   </div>
 {/if}
 
@@ -1086,49 +1039,11 @@
     display: inline-block;
   }
 
-  /* Grid Table layout */
-  .grid-table {
-    display: flex;
-    flex-direction: column;
-    background: #ffffff;
-    border-radius: 16px;
-    border: 1px solid var(--border-color);
-    overflow: hidden;
-    box-shadow: 0 4px 10px rgba(150, 0, 64, 0.01);
-  }
 
 
 
-  /* Quotas Table grid columns */
-  .quota-table-header {
-    display: grid;
-    grid-template-columns: 200px 100px repeat(6, 1fr);
-    padding: 0.85rem 1.5rem;
-    background: var(--secondary);
-    font-weight: 700;
-    font-size: 0.85rem;
-    color: var(--text-primary);
-    border-bottom: 1px solid var(--border-color);
-  }
 
-  .quota-table-row {
-    display: grid;
-    grid-template-columns: 200px 100px repeat(6, 1fr);
-    padding: 0.85rem 1.5rem;
-    align-items: center;
-    border-bottom: 1px solid rgba(234, 217, 201, 0.4);
-    font-size: 0.88rem;
-    color: var(--text-primary);
-    transition: background 0.2s ease;
-  }
 
-  .quota-table-row:last-child {
-    border-bottom: none;
-  }
-
-  .quota-table-row:hover {
-    background: rgba(255, 253, 248, 0.5);
-  }
 
   .sevaka-cell {
     display: flex;
