@@ -13,24 +13,6 @@
   let isFullscreen = $state(false);
   let activeMobileDay = $state(5);
 
-  const DEITIES: Record<number, { name: string; avatar: string; quality: string; color: string; mantra: string }> = {
-    0: { name: 'Surya', avatar: '☀️', quality: 'Licht & Kraft', color: '#f59e0b', mantra: 'Om Suryaya Namaha' }, // Sunday
-    1: { name: 'Shiva', avatar: '🔱', quality: 'Stille & Meditation', color: '#06b6d4', mantra: 'Om Namah Shivaya' }, // Monday
-    2: { name: 'Ganesha', avatar: '🐘', quality: 'Schutz & Fokus', color: '#f97316', mantra: 'Om Gam Ganapataye Namaha' }, // Tuesday
-    3: { name: 'Krishna', avatar: '🦚', quality: 'Freude & Liebe', color: '#10b981', mantra: 'Om Namo Bhagavate' }, // Wednesday
-    4: { name: 'Vishnu', avatar: '🐚', quality: 'Harmonie & Weisheit', color: '#3b82f6', mantra: 'Om Namo Narayanaya' }, // Thursday
-    5: { name: 'Durga', avatar: '🪷', quality: 'Mut & Hingabe', color: '#ec4899', mantra: 'Om Dum Durgayei Namaha' }, // Friday
-    6: { name: 'Hanuman', avatar: '🐒', quality: 'Kraft & Hingabe', color: '#ef4444', mantra: 'Om Hanumate Namaha' } // Saturday
-  };
-
-  const ROOM_DEITIES: Record<string, { symbol: string; deity: string }> = {
-    'room-1': { symbol: '🪷', deity: 'Devi' },
-    'room-2': { symbol: '🦚', deity: 'Radhakrishna' },
-    'room-3': { symbol: '🐒', deity: 'Hanuman' },
-    'room-4': { symbol: '🏹', deity: 'Sitaram' },
-    'room-5': { symbol: '🕉️', deity: 'Tripura' }
-  };
-
   // Filter query parameters
   let teacherParam = $derived(page.url.searchParams.get('teacher') || '');
   let onlyMySlotsParam = $derived(page.url.searchParams.get('onlyMySlots') === 'true');
@@ -126,7 +108,7 @@
     return targetDate.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit' });
   }
 
-  function getCourseColor(course: Course): { bg: string; border: string; text: string; shadow: string } {
+  function getCourseColor(course: Course): { bg: string; border: string } {
     const nameLower = course.name.toLowerCase();
     const styleLower = course.style.toLowerCase();
     const isYellow = 
@@ -138,17 +120,13 @@
     
     if (isYellow) {
       return {
-        bg: '#fffdf5',     // Soft Warm Saffron/Cream background
-        border: '#d97706', // Deep Golden/Saffron border
-        text: '#78350f',   // Warm Brown text
-        shadow: 'rgba(217, 119, 36, 0.08)'
+        bg: '#ffffcc',
+        border: '#dddd66'
       };
     } else {
       return {
-        bg: '#fff5f7',     // Soft Peach/Rose background
-        border: '#e11d48', // Ruby red border
-        text: '#881337',   // Deep Ruby/Burgundy text
-        shadow: 'rgba(225, 29, 72, 0.06)'
+        bg: '#ffcce6',
+        border: '#ff99cc'
       };
     }
   }
@@ -321,17 +299,9 @@
         <!-- Week Days Headers starting from Friday -->
         {#each DAYS as day}
           {@const isToday = new Date().getDay() === day.value && currentWeekOffset === 0}
-          {@const deity = DEITIES[day.value]}
-          <div class="grid-header-cell day-header" class:header-today={isToday} style="border-top: 3px solid {deity?.color || '#cbd5e1'};">
+          <div class="grid-header-cell day-header" class:header-today={isToday}>
             <span class="day-label-short">{day.label}</span>
             <span class="day-date">{getDayDateString(day.value)}</span>
-            {#if deity}
-              <div class="deity-badge" style="color: {deity.color}; background-color: {deity.color}10; border-color: {deity.color}30;">
-                <span class="deity-avatar">{deity.avatar}</span>
-                <span class="deity-name">{deity.name}</span>
-              </div>
-              <span class="deity-quality">{deity.quality}</span>
-            {/if}
           </div>
         {/each}
 
@@ -348,24 +318,18 @@
                 {@const colors = getCourseColor(course)}
                 {@const teacherName = teachers.find(t => t.id === course.teacherId)?.name || 'Unbesetzt'}
                 {@const roomName = rooms.find(r => r.id === course.roomId)?.name || 'Raum?'}
-                {@const roomDeity = ROOM_DEITIES[course.roomId]}
                 
                 <div 
                   class="course-card-rapla" 
                   class:highlighted-card={isHighlighted}
                   class:dimmed-card={selectedTeacher && !isHighlighted && !onlyMySlotsParam}
-                  style="background-color: {colors.bg}; color: {colors.text}; border-left: 4px solid {isHighlighted ? '#ea580c' : colors.border}; box-shadow: 0 2px 5px {colors.shadow};"
+                  style="background-color: {colors.bg}; border-left: 4px solid {isHighlighted ? '#ea580c' : colors.border};"
                 >
                   <div class="card-top-line">
                     <span class="card-time">{course.startTime} - {course.endTime}</span>
-                    <span class="card-room" title={roomDeity ? `Raum der/des ${roomDeity.deity}` : ''}>
-                      {#if roomDeity}
-                        <span class="room-deity-symbol">{roomDeity.symbol}</span>
-                      {/if}
-                      {roomName}
-                    </span>
+                    <span class="card-room">{roomName}</span>
                   </div>
-                  <div class="card-title-line" style="color: {colors.text};">{course.name}</div>
+                  <div class="card-title-line">{course.name}</div>
                   <div class="card-teacher-line">
                     👤 {teacherName}
                   </div>
@@ -393,20 +357,15 @@
     <div class="mobile-day-tabs">
       {#each DAYS as day}
         {@const isToday = new Date().getDay() === day.value && currentWeekOffset === 0}
-        {@const deity = DEITIES[day.value]}
         <button 
           type="button" 
           class="day-tab-btn" 
           class:active={activeMobileDay === day.value}
           class:is-today={isToday}
           onclick={() => activeMobileDay = day.value}
-          style="border-bottom: 3px solid {activeMobileDay === day.value ? (deity?.color || '#ea580c') : '#cbd5e1'};"
         >
           <span class="day-tab-name">{day.label.substring(0, 2)}</span>
           <span class="day-tab-date">{getDayDateString(day.value)}</span>
-          {#if deity}
-            <span class="mobile-deity-icon" style="font-size: 0.95rem; margin-top: 2px;">{deity.avatar}</span>
-          {/if}
         </button>
       {/each}
     </div>
@@ -423,24 +382,18 @@
           {@const colors = getCourseColor(course)}
           {@const teacherName = teachers.find(t => t.id === course.teacherId)?.name || 'Unbesetzt'}
           {@const roomName = rooms.find(r => r.id === course.roomId)?.name || 'Raum?'}
-          {@const roomDeity = ROOM_DEITIES[course.roomId]}
 
           <div 
             class="mobile-agenda-card"
             class:highlighted-card={isHighlighted}
             class:dimmed-card={selectedTeacher && !isHighlighted && !onlyMySlotsParam}
-            style="background-color: {colors.bg}; color: {colors.text}; border-left: 5px solid {isHighlighted ? '#ea580c' : colors.border}; box-shadow: 0 3px 66px {colors.shadow};"
+            style="background-color: {colors.bg}; border-left: 5px solid {isHighlighted ? '#ea580c' : colors.border};"
           >
             <div class="agenda-time-room">
               <span class="agenda-time">⏰ {course.startTime} - {course.endTime}</span>
-              <span class="agenda-room">
-                {#if roomDeity}
-                  <span class="room-deity-symbol">{roomDeity.symbol}</span>
-                {/if}
-                {roomName}
-              </span>
+              <span class="agenda-room">{roomName}</span>
             </div>
-            <h3 class="agenda-title" style="color: {colors.text};">{course.name}</h3>
+            <h3 class="agenda-title">{course.name}</h3>
             <div class="agenda-teacher">
               👤 {teacherName}
             </div>
@@ -460,14 +413,9 @@
 <style>
   .view-page-container {
     padding: 1.5rem 2rem;
-    max-width: 1440px;
+    max-width: 1400px;
     margin: 0 auto;
     font-family: 'Outfit', 'Inter', sans-serif;
-    background-image: 
-      radial-gradient(circle at 5% 5%, rgba(217, 119, 36, 0.03) 0%, transparent 35%),
-      radial-gradient(circle at 95% 95%, rgba(150, 0, 64, 0.03) 0%, transparent 40%);
-    background-attachment: fixed;
-    min-height: 100vh;
   }
 
   .view-header {
@@ -475,13 +423,8 @@
     justify-content: space-between;
     align-items: center;
     margin-bottom: 2rem;
-    padding: 1.25rem 1.75rem;
-    background: rgba(255, 253, 248, 0.8);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border-radius: 16px;
-    border: 1px solid var(--border-color);
-    box-shadow: 0 10px 30px -10px rgba(42, 27, 27, 0.04);
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid #e2e8f0;
   }
 
   .logo-area {
@@ -611,13 +554,12 @@
 
   .week-title-badge {
     font-weight: 700;
-    font-size: 0.95rem;
-    color: var(--primary);
+    font-size: 0.9rem;
+    color: #334155;
     background: #ffffff;
-    padding: 0.5rem 1.25rem;
-    border-radius: 30px;
-    border: 1.5px solid var(--border-color);
-    box-shadow: inset 0 2px 4px rgba(42, 27, 27, 0.02);
+    padding: 0.4rem 1rem;
+    border-radius: 6px;
+    border: 1px solid #cbd5e1;
   }
 
   .calendar-grid {
@@ -633,23 +575,22 @@
   }
 
   .grid-header-cell {
-    background: #ffffff;
-    padding: 10px 4px;
+    background: #f8fafc;
+    padding: 8px 4px;
     text-align: center;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    min-height: 84px;
-    border-top: 3px solid #cbd5e1;
-    transition: all 0.25s ease;
+    min-height: 48px;
+    border-top: 3px solid #94a3b8;
   }
 
   .week-header {
     font-weight: 700;
     font-size: 0.75rem;
     color: #475569;
-    background: #f8fafc;
+    background: #f1f5f9;
     border-top: 3px solid #64748b;
   }
 
@@ -658,93 +599,50 @@
   }
 
   .header-today {
-    background: #fffbeb !important;
-    box-shadow: inset 0 0 12px rgba(217, 119, 36, 0.08);
+    background: #eff6ff;
+    border-top: 3px solid #3b82f6;
   }
 
   .day-label-short {
-    font-size: 0.82rem;
+    font-size: 0.8rem;
     font-weight: 800;
     text-transform: uppercase;
-    color: #1e293b;
   }
 
   .day-date {
-    font-size: 0.72rem;
+    font-size: 0.75rem;
     color: #64748b;
   }
 
   .grid-time-cell {
-    background: #f8fafc;
-    padding: 8px 6px;
+    background: #f1f5f9;
+    padding: 6px;
     font-size: 0.75rem;
-    font-weight: 800;
+    font-weight: 700;
     color: #475569;
     display: flex;
     justify-content: center;
     align-items: flex-start;
-    border-right: 1px solid #e2e8f0;
   }
 
   .grid-content-cell {
     background: #ffffff;
-    padding: 6px;
+    padding: 4px;
     display: flex;
     flex-direction: column;
-    gap: 6px;
-    min-height: 75px;
+    gap: 4px;
+    min-height: 50px;
   }
 
   .course-card-rapla {
-    padding: 8px 10px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(42, 27, 27, 0.02);
+    padding: 6px 8px;
+    border-radius: 6px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
     text-align: left;
     display: flex;
     flex-direction: column;
-    gap: 3px;
-    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
-    overflow: hidden;
-  }
-
-  .course-card-rapla:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 16px rgba(42, 27, 27, 0.06);
-  }
-
-  .deity-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    font-size: 0.68rem;
-    font-weight: 800;
-    padding: 2px 6px;
-    border-radius: 12px;
-    margin-top: 4px;
-    border: 1px solid transparent;
-    text-transform: uppercase;
-    letter-spacing: 0.02em;
-  }
-
-  .deity-avatar {
-    font-size: 0.75rem;
-  }
-
-  .deity-quality {
-    font-size: 0.58rem;
-    color: #64748b;
-    font-style: italic;
-    margin-top: 2px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 100%;
-  }
-
-  .room-deity-symbol {
-    margin-right: 2px;
-    font-size: 0.8rem;
+    gap: 2px;
+    transition: all 0.2s ease;
   }
 
   .card-top-line {
