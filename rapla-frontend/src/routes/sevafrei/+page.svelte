@@ -29,9 +29,8 @@
   let sevafreiList = $state<SevafreiEntry[]>([]);
   let sevakas = $state<Teacher[]>([]);
   let showModal = $state(false);
-  let activeView = $state<'timeline' | 'calendar' | 'availability' | 'list' | 'quotas'>('timeline');
+  let activeView = $state<'timeline' | 'availability' | 'list' | 'quotas'>('timeline');
   let showRegularFreeDaysInTimeline = $state(false);
-  let showRegularFreeDaysInCalendar = $state(false);
 
   // Month tracking
   let currentYear = $state(2026);
@@ -55,7 +54,6 @@
   // Filtering state
   let searchQuery = $state('');
   let filterType = $state<string>('all');
-  let calendarTeacherFilter = $state<string>('all');
   let calendarWrapperEl = $state<HTMLElement | null>(null);
   let isFullscreen = $state(false);
 
@@ -531,9 +529,6 @@
     <button class="switch-btn" class:active={activeView === 'timeline'} onclick={() => activeView = 'timeline'}>
       📊 Belegungsplan (Timeline)
     </button>
-    <button class="switch-btn" class:active={activeView === 'calendar'} onclick={() => activeView = 'calendar'}>
-      📅 Kalenderraster
-    </button>
     <button class="switch-btn" class:active={activeView === 'availability'} onclick={() => activeView = 'availability'}>
       🟢 Verfügbarkeit (7 Tage)
     </button>
@@ -664,111 +659,6 @@
           </tr>
         </tfoot>
       </table>
-    </div>
-  </div>
-{:else if activeView === 'calendar'}
-  <div bind:this={calendarWrapperEl} class="calendar-wrapper glass-card animate-fade-in" class:fullscreen-mode={isFullscreen} style="margin-top: 1rem;">
-    <!-- Calendar Controls -->
-    <div class="calendar-controls">
-      <button class="arrow-btn" onclick={prevMonth}>◀</button>
-      <h2 class="calendar-month-title">{MONTH_NAMES[currentMonth]} {currentYear}</h2>
-      <button class="arrow-btn" onclick={nextMonth}>▶</button>
-      <button 
-        class="arrow-btn" 
-        onclick={toggleFullscreen} 
-        style="width: auto; padding: 0 0.75rem; font-size: 0.85rem; font-weight: 600; display: flex; align-items: center; gap: 0.3rem; margin-left: 0.5rem; border-radius: 8px;"
-        title="Vollbildmodus umschalten"
-      >
-        {isFullscreen ? '🔍 Normal' : '📺 Vollbild'}
-      </button>
-    </div>
-
-    <!-- Calendar Person Filter & Options -->
-    <div class="calendar-filter-bar" style="display: flex; justify-content: space-between; align-items: center; gap: 0.75rem; margin-bottom: 1.25rem; padding: 0 0.5rem;">
-      <div class="options-group">
-        <label class="checkbox-label" style="display: flex; align-items: center; gap: 0.4rem; font-size: 0.85rem; font-weight: 600;">
-          <input type="checkbox" bind:checked={showRegularFreeDaysInCalendar} />
-          Reguläre freie Tage anzeigen
-        </label>
-      </div>
-      
-      <div style="display: flex; align-items: center; gap: 0.75rem;">
-        <label class="form-label" for="calendar-teacher-filter" style="margin: 0; font-weight: 600; font-size: 0.85rem;">Person filtern:</label>
-        <select 
-          id="calendar-teacher-filter" 
-          class="form-select" 
-          style="width: 220px; padding: 0.35rem 0.75rem; font-size: 0.85rem;" 
-          bind:value={calendarTeacherFilter}
-        >
-          <option value="all">Alle Personen anzeigen</option>
-          {#each sevakas as s}
-            <option value={s.id}>{s.name}</option>
-          {/each}
-        </select>
-      </div>
-    </div>
-
-    <!-- Calendar Grid -->
-    <div class="calendar-grid">
-      <!-- Weekday headers -->
-      {#each WEEKDAYS as day}
-        <div class="weekday-header">{day}</div>
-      {/each}
-
-      <!-- Day cells -->
-      {#each calendarDays as cell}
-        {@const cellAbsences = sevafreiList.filter(e => cell.date >= e.startDate && cell.date <= e.endDate && (calendarTeacherFilter === 'all' || e.teacherId === calendarTeacherFilter))}
-        {@const cellRegularFree = sevakas.filter(s => getGeneralFreeDays(s).includes(cell.weekday) && (calendarTeacherFilter === 'all' || s.id === calendarTeacherFilter))}
-        <div class="day-cell" class:padded-day={!cell.isCurrentMonth}>
-          <div class="day-meta">
-            <span class="day-num" class:today-num={cell.date === new Date().toISOString().split('T')[0]}>
-              {cell.day}
-            </span>
-          </div>
-
-          <div class="cell-events-container">
-            <!-- Active Absences (Urlaub, Fortbildung, etc.) -->
-            {#each cellAbsences as abs}
-              <div 
-                class="cell-event-item {abs.type.toLowerCase()}" 
-                style="border-left: 3px solid {abs.avatarColor}"
-                title="{abs.teacherName}: {abs.type} - {abs.note || 'Keine Angabe'}"
-              >
-                <span class="event-type-icon">
-                  {#if abs.type === 'Urlaub'}🌴{:else if abs.type === 'Freizeitausgleich'}⏳{:else if abs.type === 'Fortbildung'}📚{:else if abs.type === 'Krank'}🩹{:else if abs.type === 'Seminartage'}📖{:else if abs.type === 'Seminarleitung'}💼{:else if abs.type === 'Frei'}🏖️{:else}⚙️{/if}
-                </span>
-                <span class="event-name">{abs.teacherName.split(' ')[0]}</span>
-              </div>
-            {/each}
-
-            <!-- Regular Weekly Free Days -->
-            {#if showRegularFreeDaysInCalendar}
-              {#each cellRegularFree as freeSev}
-                <!-- Only show free days if the Sevaka is not already on vacation/absence on this day -->
-                {#if !cellAbsences.some(a => a.teacherId === freeSev.id)}
-                  <div 
-                    class="cell-event-item regular-free" 
-                    title="{freeSev.name}: Regulärer freier Wochentag"
-                  >
-                    <span class="event-type-icon">🏖️</span>
-                    <span class="event-name">{freeSev.name.split(' ')[0]} (Frei)</span>
-                  </div>
-                {/if}
-              {/each}
-            {/if}
-          </div>
-        </div>
-      {/each}
-    </div>
-
-    <!-- Calendar Legend -->
-    <div class="calendar-legend">
-      <div class="legend-item"><span class="legend-color-dot" style="background-color: #e3f2fd; border: 1px solid #1565c0;"></span> 🌴 Urlaub</div>
-      <div class="legend-item"><span class="legend-color-dot" style="background-color: #ede7f6; border: 1px solid #651fff;"></span> ⏳ Freizeitausgleich</div>
-      <div class="legend-item"><span class="legend-color-dot" style="background-color: #e8f5e9; border: 1px solid #2e7d32;"></span> 📖 Seminartage</div>
-      <div class="legend-item"><span class="legend-color-dot" style="background-color: #fff3e0; border: 1px solid #e65100;"></span> 💼 Seminarleitung</div>
-      <div class="legend-item"><span class="legend-color-dot" style="background-color: #ffebee; border: 1px solid #c62828;"></span> 🩹 Krank</div>
-      <div class="legend-item"><span class="legend-color-dot" style="background-color: #f7f7f7; border: 1px solid #cccccc;"></span> 🏖️ Regulärer freier Wochentag</div>
     </div>
   </div>
 {:else if activeView === 'availability'}
