@@ -320,8 +320,8 @@
         "startTime": "20:00",
         "endTime": "20:35",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-harishakti",
-        "isAiPlanned": false,
+        "teacherId": "teacher-gen-mouniir-jaber",
+        "isAiPlanned": true,
         "status": "approved"
       },
       {
@@ -548,7 +548,7 @@
         "startTime": "09:15",
         "endTime": "11:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-mouniir-jaber",
+        "teacherId": "teacher-gen-satyam",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -572,7 +572,7 @@
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-satyam",
+        "teacherId": "teacher-gen-mouniir-jaber",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -620,7 +620,7 @@
         "startTime": "09:15",
         "endTime": "11:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-satyam",
+        "teacherId": "teacher-gen-mouniir-jaber",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -1008,8 +1008,8 @@
         "startTime": "20:00",
         "endTime": "20:35",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-harishakti",
-        "isAiPlanned": false,
+        "teacherId": "teacher-gen-anjali-gelzleichter",
+        "isAiPlanned": true,
         "status": "approved"
       },
       {
@@ -1696,8 +1696,8 @@
         "startTime": "20:00",
         "endTime": "20:35",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-harishakti",
-        "isAiPlanned": false,
+        "teacherId": "teacher-gen-mouniir-jaber",
+        "isAiPlanned": true,
         "status": "approved"
       },
       {
@@ -2384,8 +2384,8 @@
         "startTime": "20:00",
         "endTime": "20:35",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-harishakti",
-        "isAiPlanned": false,
+        "teacherId": "teacher-gen-anjali-gelzleichter",
+        "isAiPlanned": true,
         "status": "approved"
       },
       {

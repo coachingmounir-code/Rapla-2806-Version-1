@@ -556,7 +556,7 @@ const generateDefaultCourses = (): Course[] => {
     { name: 'Anfänger AS', style: 'Hatha', dayOfWeek: 0, startTime: '16:30', endTime: '18:15', roomId: 'room-2', teacherName: 'Karuna' },
     { name: 'Mittelstufe AS', style: 'Hatha', dayOfWeek: 0, startTime: '16:30', endTime: '18:00', roomId: 'room-5', teacherName: 'Pranava' },
     { name: 'Om Namo Narayanaya', style: 'Meditation', dayOfWeek: 0, startTime: '19:30', endTime: '20:00', roomId: 'room-2', teacherName: 'burnie' },
-    { name: 'Satsang Einführung', style: 'Meditation', dayOfWeek: 0, startTime: '20:00', endTime: '20:35', roomId: 'room-5', teacherName: 'Harishakti' },
+    { name: 'Satsang Einführung', style: 'Meditation', dayOfWeek: 0, startTime: '20:00', endTime: '20:35', roomId: 'room-5', teacherName: '' },
     { name: 'Satsang', style: 'Meditation', dayOfWeek: 0, startTime: '20:00', endTime: '21:00', roomId: 'room-2', teacherName: 'Karuna' },
 
     // Monday (dayOfWeek: 1)
@@ -955,8 +955,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "startTime": "20:00",
             "endTime": "20:35",
             "roomId": "room-5",
-            "teacherId": "teacher-gen-harishakti",
-            "isAiPlanned": false,
+            "teacherId": "teacher-gen-mouniir-jaber",
+            "isAiPlanned": true,
             "status": "approved"
           },
           {
@@ -1183,7 +1183,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "startTime": "09:15",
             "endTime": "11:00",
             "roomId": "room-2",
-            "teacherId": "teacher-gen-mouniir-jaber",
+            "teacherId": "teacher-gen-satyam",
             "isAiPlanned": true,
             "status": "approved"
           },
@@ -1207,7 +1207,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "startTime": "19:30",
             "endTime": "20:00",
             "roomId": "room-2",
-            "teacherId": "teacher-gen-satyam",
+            "teacherId": "teacher-gen-mouniir-jaber",
             "isAiPlanned": true,
             "status": "approved"
           },
@@ -1255,7 +1255,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "startTime": "09:15",
             "endTime": "11:00",
             "roomId": "room-2",
-            "teacherId": "teacher-gen-satyam",
+            "teacherId": "teacher-gen-mouniir-jaber",
             "isAiPlanned": true,
             "status": "approved"
           },
@@ -1648,8 +1648,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "startTime": "20:00",
             "endTime": "20:35",
             "roomId": "room-5",
-            "teacherId": "teacher-gen-harishakti",
-            "isAiPlanned": false,
+            "teacherId": "teacher-gen-anjali-gelzleichter",
+            "isAiPlanned": true,
             "status": "approved"
           },
           {
@@ -2341,8 +2341,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "startTime": "20:00",
             "endTime": "20:35",
             "roomId": "room-5",
-            "teacherId": "teacher-gen-harishakti",
-            "isAiPlanned": false,
+            "teacherId": "teacher-gen-mouniir-jaber",
+            "isAiPlanned": true,
             "status": "approved"
           },
           {
@@ -3034,8 +3034,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "startTime": "20:00",
             "endTime": "20:35",
             "roomId": "room-5",
-            "teacherId": "teacher-gen-harishakti",
-            "isAiPlanned": false,
+            "teacherId": "teacher-gen-anjali-gelzleichter",
+            "isAiPlanned": true,
             "status": "approved"
           },
           {
@@ -3425,7 +3425,7 @@ function setStored<T>(key: string, value: T): void {
   }
 }
 
-const CURRENT_DB_VERSION = 13;
+const CURRENT_DB_VERSION = 14;
 
 // Database Actions
 export const db = {

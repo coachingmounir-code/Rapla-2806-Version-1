@@ -1028,9 +1028,28 @@ export function runAiPlanning(
       // Custom scoring rules for Sunday Satsang Einführung: only Nirmaya, Anjali, Hu, Mounir
       const isSatsangEinfuehrungCourse = course.name.toLowerCase().includes('satsang einführung') || course.name.toLowerCase().includes('satsang-einführung');
       if (isSatsangEinfuehrungCourse && course.dayOfWeek === 0) {
+        const allowed = ['nirmaya', 'anjali', 'hu', 'mounir'];
         const tNameLower = teacher.name.toLowerCase();
-        if (tNameLower.includes('nirmaya') || tNameLower.includes('anjali') || tNameLower.includes('hu') || tNameLower.includes('mounir')) {
+        const isAllowed = allowed.some(a => tNameLower.includes(a));
+        if (isAllowed) {
           score += 500; // Prioritize these four
+          
+          // Parse week number for rotation
+          let weekNum = 0;
+          if (targetWeekCode) {
+            const match = targetWeekCode.match(/-W(\d+)/);
+            if (match) {
+              weekNum = parseInt(match[1], 10);
+            }
+          }
+          if (weekNum > 0) {
+            // Rotate preferred teacher based on week index
+            const preferredIndex = weekNum % allowed.length;
+            const preferredName = allowed[preferredIndex];
+            if (tNameLower.includes(preferredName)) {
+              score += 1000; // Huge bonus for the rotating preference
+            }
+          }
         }
       }
       
