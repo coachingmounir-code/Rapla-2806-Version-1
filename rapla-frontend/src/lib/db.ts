@@ -3425,7 +3425,7 @@ function setStored<T>(key: string, value: T): void {
   }
 }
 
-const CURRENT_DB_VERSION = 12;
+const CURRENT_DB_VERSION = 13;
 
 // Database Actions
 export const db = {

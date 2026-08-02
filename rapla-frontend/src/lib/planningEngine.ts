@@ -250,6 +250,50 @@ export function validateAssignment(
     }
   }
 
+  // Satsang Einführung rule: Friday only Pranava, Sunday only Nirmaya, Anjali, Hu, Mounir
+  const isSatsangEinfuehrung = courseNameLower.includes('satsang einführung') || courseNameLower.includes('satsang-einführung') || courseNameLower.includes('satsangeinführung');
+  if (isSatsangEinfuehrung) {
+    if (course.dayOfWeek === 5) {
+      let isPranavaAbsent = false;
+      const pranava = (teachers || db.getTeachers()).find(t => t.name.toLowerCase().includes('pranava'));
+      if (typeof window !== 'undefined' && targetWeekCode && pranava) {
+        try {
+          const courseDate = getLocalDateForDay(targetWeekCode, course.dayOfWeek);
+          const saved = localStorage.getItem('rapla_sevafrei');
+          if (saved) {
+            const sevafreiList = JSON.parse(saved);
+            const activeAbsence = sevafreiList.find((entry: any) =>
+              entry.teacherId === pranava.id &&
+              courseDate >= entry.startDate &&
+              courseDate <= entry.endDate
+            );
+            if (activeAbsence) {
+              isPranavaAbsent = true;
+            }
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      }
+
+      if (!teacherNameLower.includes('pranava') && !isPranavaAbsent) {
+        conflicts.push({
+          type: 'hard',
+          message: `Freitags darf die Satsang Einführung nur von Pranava geleitet werden.`
+        });
+      }
+    } else if (course.dayOfWeek === 0) {
+      const allowed = ['nirmaya', 'anjali', 'hu', 'mounir'];
+      const isAllowed = allowed.some(a => teacherNameLower.includes(a));
+      if (!isAllowed) {
+        conflicts.push({
+          type: 'hard',
+          message: `Sonntags darf die Satsang Einführung nur von Nirmaya, Anjali, Hu oder Mounir geleitet werden.`
+        });
+      }
+    }
+  }
+
   // 6. Karuna Satsang rule: Karuna always does the 20:00 Satsang Wed-Sun (unless she is absent)
   if (course.name === 'Satsang' && course.startTime === '20:00' && [3, 4, 5, 6, 0].includes(course.dayOfWeek)) {
     let isKarunaAbsent = false;
@@ -978,6 +1022,15 @@ export function runAiPlanning(
           score += 1000; // Prioritize Karuna and Burnie
         } else if (teacher.name.toLowerCase().includes('narayani') || teacher.name.toLowerCase().includes('abha')) {
           score += 200; // Secondary option
+        }
+      }
+
+      // Custom scoring rules for Sunday Satsang Einführung: only Nirmaya, Anjali, Hu, Mounir
+      const isSatsangEinfuehrungCourse = course.name.toLowerCase().includes('satsang einführung') || course.name.toLowerCase().includes('satsang-einführung');
+      if (isSatsangEinfuehrungCourse && course.dayOfWeek === 0) {
+        const tNameLower = teacher.name.toLowerCase();
+        if (tNameLower.includes('nirmaya') || tNameLower.includes('anjali') || tNameLower.includes('hu') || tNameLower.includes('mounir')) {
+          score += 500; // Prioritize these four
         }
       }
       
