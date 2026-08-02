@@ -1672,8 +1672,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "startTime": "07:00",
             "endTime": "07:30",
             "roomId": "room-5",
-            "teacherId": "teacher-gen-hu-buerkle",
-            "isAiPlanned": false,
+            "teacherId": "teacher-gen-adam-zmuda",
+            "isAiPlanned": true,
             "status": "approved"
           },
           {
@@ -2245,8 +2245,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "startTime": "06:00",
             "endTime": "06:50",
             "roomId": "room-5",
-            "teacherId": "teacher-gen-adam-zmuda",
-            "isAiPlanned": true,
+            "teacherId": null,
+            "isAiPlanned": false,
             "status": "approved"
           },
           {
@@ -2329,7 +2329,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "startTime": "19:30",
             "endTime": "20:00",
             "roomId": "room-2",
-            "teacherId": "teacher-gen-satyam",
+            "teacherId": "teacher-gen-adam-zmuda",
             "isAiPlanned": true,
             "status": "approved"
           },
@@ -2365,8 +2365,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "startTime": "07:00",
             "endTime": "07:30",
             "roomId": "room-5",
-            "teacherId": "teacher-gen-hu-buerkle",
-            "isAiPlanned": false,
+            "teacherId": "teacher-gen-adam-zmuda",
+            "isAiPlanned": true,
             "status": "approved"
           },
           {
@@ -2515,13 +2515,13 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
           },
           {
             "id": "course-2026-W30-42",
-            "name": "Mittelstufe",
+            "name": "Yoga Flow Mittelstufe",
             "style": "Hatha",
             "dayOfWeek": 2,
             "startTime": "16:15",
             "endTime": "18:00",
             "roomId": "room-5",
-            "teacherId": "teacher-gen-mouniir-jaber",
+            "teacherId": "teacher-gen-satyam",
             "isAiPlanned": true,
             "status": "approved"
           },
@@ -2575,13 +2575,13 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
           },
           {
             "id": "course-2026-W30-47",
-            "name": "Yoga Flow Mittelstufe",
+            "name": "Mittelstufe",
             "style": "Hatha",
             "dayOfWeek": 3,
             "startTime": "09:15",
             "endTime": "11:00",
             "roomId": "room-5",
-            "teacherId": "teacher-gen-satyam",
+            "teacherId": "teacher-gen-mouniir-jaber",
             "isAiPlanned": true,
             "status": "approved"
           },
@@ -2593,7 +2593,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "startTime": "19:30",
             "endTime": "20:00",
             "roomId": "room-2",
-            "teacherId": "teacher-gen-adam-zmuda",
+            "teacherId": "teacher-gen-satyam",
             "isAiPlanned": true,
             "status": "approved"
           },
@@ -2938,8 +2938,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "startTime": "06:00",
             "endTime": "06:50",
             "roomId": "room-5",
-            "teacherId": "teacher-gen-adam-zmuda",
-            "isAiPlanned": true,
+            "teacherId": null,
+            "isAiPlanned": false,
             "status": "approved"
           },
           {
@@ -3022,7 +3022,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "startTime": "19:30",
             "endTime": "20:00",
             "roomId": "room-2",
-            "teacherId": "teacher-gen-satyam",
+            "teacherId": "teacher-gen-adam-zmuda",
             "isAiPlanned": true,
             "status": "approved"
           },
@@ -3226,8 +3226,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
             "startTime": "19:30",
             "endTime": "20:00",
             "roomId": "room-2",
-            "teacherId": "teacher-gen-satyam",
-            "isAiPlanned": true,
+            "teacherId": "teacher-gen-mouniir-christopher",
+            "isAiPlanned": false,
             "status": "approved"
           },
           {

@@ -236,6 +236,19 @@ export function validateAssignment(
 
   const counts = getWeeklyCounts();
 
+  // Pranayama constraints: only Karuna, Burnie, Narayani, Abha
+  const isPranayama = courseNameLower.includes('pranayama') || courseStyleLower.includes('pranayama');
+  if (isPranayama) {
+    const allowed = ['karuna', 'burnie', 'narayani', 'abha'];
+    const isAllowed = allowed.some(a => teacherNameLower.includes(a));
+    if (!isAllowed) {
+      conflicts.push({
+        type: 'hard',
+        message: `Pranayama darf nur von Karuna, Burnie, Narayani oder Abha unterrichtet werden.`
+      });
+    }
+  }
+
   // Teresa & Hu cannot lead yoga classes (hard constraint)
   if ((teacher.isYogaTeacher === false || teacherNameLower.includes('teresa') || teacherNameLower.includes('hu')) && isYogaClassForSevaka) {
     conflicts.push({
@@ -906,6 +919,16 @@ export function runAiPlanning(
       if (teacher.name.toLowerCase().includes('mounir') || teacher.name.toLowerCase().includes('mouniir')) {
         if (course.name === 'Gef. Meditation' && course.dayOfWeek === 3 && course.startTime < '12:00') {
           score -= 150; // Large penalty so others are preferred
+        }
+      }
+
+      // Custom scoring rules for Pranayama: prioritize Karuna and Burnie first, then Narayani and Abha
+      const isPranayamaCourse = course.name.toLowerCase().includes('pranayama') || course.style.toLowerCase().includes('pranayama');
+      if (isPranayamaCourse) {
+        if (teacher.name.toLowerCase().includes('karuna') || teacher.name.toLowerCase().includes('burnie')) {
+          score += 1000; // Prioritize Karuna and Burnie
+        } else if (teacher.name.toLowerCase().includes('narayani') || teacher.name.toLowerCase().includes('abha')) {
+          score += 200; // Secondary option
         }
       }
       
