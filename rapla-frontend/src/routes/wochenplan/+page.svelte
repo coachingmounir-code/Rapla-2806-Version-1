@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount, untrack } from 'svelte';
   import { db, type Course, type Teacher, type Room, type WeekPlan } from '$lib/db';
+  import { getLocalDateForDay } from '$lib/planningEngine';
   import { page } from '$app/state';
   import { goto } from '$app/navigation';
 
@@ -109,6 +110,14 @@
   }
 
   function getCourseColor(course: Course): { bg: string; border: string } {
+    const isUnassigned = !course.teacherId || course.teacherId === 'teacher-gen-yl';
+    if (isUnassigned) {
+      return {
+        bg: '#fee2e2', // light red/rose
+        border: '#ef4444' // red
+      };
+    }
+
     const nameLower = course.name.toLowerCase();
     const styleLower = course.style.toLowerCase();
     const isYellow = 
@@ -177,7 +186,43 @@
                || null;
     
     if (currentPlan) {
-      courses = currentPlan.courses;
+      // Dynamically filter out absent teachers
+      const saved = typeof window !== 'undefined' ? localStorage.getItem('rapla_sevafrei') : null;
+      const sevafreiList = saved ? JSON.parse(saved) : [];
+      
+      courses = currentPlan.courses.map(c => {
+        if (!c.teacherId) return c;
+        const teacher = teachers.find(t => t.id === c.teacherId);
+        if (!teacher) return c;
+        
+        const courseDate = getLocalDateForDay(weekCode, c.dayOfWeek);
+        
+        // Support composite teacher names (e.g. "Adam, Anjali")
+        const namesToCheck: string[] = [];
+        if (teacher.name.includes(',')) {
+          teacher.name.split(',').forEach(n => namesToCheck.push(n.trim().toLowerCase()));
+        } else {
+          namesToCheck.push(teacher.name.toLowerCase().trim());
+        }
+        
+        let isAbsent = false;
+        for (const name of namesToCheck) {
+          const activeAbsence = sevafreiList.find((entry: any) => {
+            const entryName = entry.teacherName.toLowerCase().trim();
+            const isMatch = entryName.includes(name) || name.includes(entryName.split(' ')[0]);
+            return isMatch && courseDate >= entry.startDate && courseDate <= entry.endDate;
+          });
+          if (activeAbsence) {
+            isAbsent = true;
+            break;
+          }
+        }
+        
+        if (isAbsent) {
+          return { ...c, teacherId: null };
+        }
+        return c;
+      });
     } else {
       courses = [];
     }

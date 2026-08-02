@@ -77,16 +77,29 @@ export function validateAssignment(
       const saved = localStorage.getItem('rapla_sevafrei');
       if (saved) {
         const sevafreiList = JSON.parse(saved);
-        const activeAbsence = sevafreiList.find((entry: any) =>
-          entry.teacherId === teacher.id &&
-          courseDate >= entry.startDate &&
-          courseDate <= entry.endDate
-        );
-        if (activeAbsence) {
-          conflicts.push({
-            type: 'hard',
-            message: `${teacher.name} ist an diesem Datum (${courseDate}) abwesend (${activeAbsence.type}: ${activeAbsence.note || 'Keine Angabe'}).`
+        
+        // Support composite teacher names (e.g. "Adam, Anjali")
+        const namesToCheck: string[] = [];
+        if (teacher.name.includes(',')) {
+          teacher.name.split(',').forEach(n => namesToCheck.push(n.trim().toLowerCase()));
+        } else {
+          namesToCheck.push(teacher.name.toLowerCase().trim());
+        }
+        
+        for (const name of namesToCheck) {
+          const activeAbsence = sevafreiList.find((entry: any) => {
+            const entryName = entry.teacherName.toLowerCase().trim();
+            const isMatch = entryName.includes(name) || name.includes(entryName.split(' ')[0]);
+            return isMatch && courseDate >= entry.startDate && courseDate <= entry.endDate;
           });
+          
+          if (activeAbsence) {
+            conflicts.push({
+              type: 'hard',
+              message: `${teacher.name} ist an diesem Datum (${courseDate}) abwesend (${activeAbsence.type}: ${activeAbsence.note || 'Keine Angabe'}).`
+            });
+            break;
+          }
         }
       }
     } catch (e) {
