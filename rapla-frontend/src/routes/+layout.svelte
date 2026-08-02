@@ -17,7 +17,7 @@
 		if (path.startsWith('/sevakas') || path.startsWith('/teachers')) {
 			showTeachersDropdown = true;
 		}
-		if (path.startsWith('/schedule') || path.startsWith('/ai-planning') || path.startsWith('/sevafrei')) {
+		if (path.startsWith('/schedule') || path.startsWith('/ai-planning')) {
 			showScheduleDropdown = true;
 		}
 	});
@@ -119,7 +119,7 @@
 					<button 
 						type="button" 
 						class="nav-item nav-dropdown-trigger" 
-						class:active={page.url.pathname.startsWith('/schedule') || page.url.pathname.startsWith('/ai-planning') || page.url.pathname.startsWith('/sevafrei')}
+						class:active={page.url.pathname.startsWith('/schedule') || page.url.pathname.startsWith('/ai-planning')}
 						onclick={() => showScheduleDropdown = !showScheduleDropdown}
 					>
 						<span class="nav-icon">📅</span>
@@ -145,17 +145,19 @@
 								<span class="nav-icon">⚡</span>
 								<span class="nav-label">KI-Vorplanung</span>
 							</a>
-							<a 
-								href="/sevafrei" 
-								class="nav-dropdown-item" 
-								class:active={page.url.pathname.startsWith('/sevafrei')}
-							>
-								<span class="nav-icon">🏖️</span>
-								<span class="nav-label">Sevafrei Kalender</span>
-							</a>
 						</div>
 					{/if}
 				</div>
+				
+				<!-- Sevafrei Kalender als eigener Hauptreiter -->
+				<a 
+					href="/sevafrei" 
+					class="nav-item" 
+					class:active={page.url.pathname.startsWith('/sevafrei')}
+				>
+					<span class="nav-icon">🏖️</span>
+					<span class="nav-label">Sevafrei Kalender</span>
+				</a>
 				
 				<!-- Combined Teachers Dropdown Menu -->
 				<div class="nav-dropdown-container">
