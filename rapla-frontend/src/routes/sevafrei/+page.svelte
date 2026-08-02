@@ -29,7 +29,9 @@
   let sevafreiList = $state<SevafreiEntry[]>([]);
   let sevakas = $state<Teacher[]>([]);
   let showModal = $state(false);
-  let activeView = $state<'calendar' | 'list' | 'quotas'>('calendar');
+  let activeView = $state<'timeline' | 'calendar' | 'list' | 'quotas'>('timeline');
+  let showRegularFreeDaysInTimeline = $state(false);
+  let showRegularFreeDaysInCalendar = $state(false);
 
   // Month tracking
   let currentYear = $state(2026);
@@ -81,7 +83,70 @@
     { spiritualName: "Harishakti", firstName: "Ramona", lastName: "Gäpler", team: "Rezeption", seminarSoll: 0, seminarIst: 0, sevafreiSoll: 17, sevafreiIst: 6 }
   ];
 
+  let filteredSevakas = $derived(
+    sevakas.filter(s => {
+      if (searchQuery.trim() !== '') {
+        return s.name.toLowerCase().includes(searchQuery.toLowerCase());
+      }
+      return true;
+    }).sort((a, b) => a.name.localeCompare(b.name))
+  );
 
+  let daysInMonth = $derived(new Date(currentYear, currentMonth + 1, 0).getDate());
+  let daysArray = $derived(Array.from({ length: daysInMonth }, (_, i) => i + 1));
+  let todayStr = $derived(new Date().toISOString().split('T')[0]);
+
+  function getWeekdayLabel(day: number): string {
+    const d = new Date(currentYear, currentMonth, day);
+    const dayIndex = d.getDay(); // 0 = Sunday, 1 = Monday, etc.
+    const wds = ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"];
+    return wds[dayIndex];
+  }
+
+  function getDateString(day: number): string {
+    const monthStr = (currentMonth + 1).toString().padStart(2, '0');
+    return `${currentYear}-${monthStr}-${day.toString().padStart(2, '0')}`;
+  }
+
+  function getAbsenceForDate(teacherId: string, dateStr: string): SevafreiEntry | undefined {
+    return sevafreiList.find(e => e.teacherId === teacherId && dateStr >= e.startDate && dateStr <= e.endDate);
+  }
+
+  function isRegularFreeDay(teacher: Teacher, day: number): boolean {
+    const d = new Date(currentYear, currentMonth, day);
+    const adjustedWeekday = d.getDay() === 0 ? 6 : d.getDay() - 1;
+    return getGeneralFreeDays(teacher).includes(adjustedWeekday);
+  }
+
+  function getAbsenceAbbreviation(type: string): string {
+    switch (type) {
+      case 'Urlaub': return 'U';
+      case 'Freizeitausgleich': return 'ZA';
+      case 'Seminartage': return 'S';
+      case 'Seminarleitung': return 'SL';
+      case 'Fortbildung': return 'FB';
+      case 'Krank': return 'K';
+      case 'Frei': return 'F';
+      default: return 'X';
+    }
+  }
+
+  function getAbsenceClass(type: string): string {
+    switch (type) {
+      case 'Urlaub': return 'u';
+      case 'Freizeitausgleich': return 'za';
+      case 'Seminartage': return 's';
+      case 'Seminarleitung': return 'sl';
+      case 'Fortbildung': return 'fb';
+      case 'Krank': return 'k';
+      case 'Frei': return 'f';
+      default: return 'x';
+    }
+  }
+
+  function getAbsenceCountForDate(dateStr: string): number {
+    return sevafreiList.filter(e => dateStr >= e.startDate && dateStr <= e.endDate).length;
+  }
 
   onMount(() => {
     // Load Sevakas
@@ -390,8 +455,11 @@
 <!-- Switch view mode and summary row -->
 <div class="view-header-bar animate-fade-in" style="margin-top: 1.5rem;">
   <div class="view-switcher-pill">
+    <button class="switch-btn" class:active={activeView === 'timeline'} onclick={() => activeView = 'timeline'}>
+      📊 Belegungsplan (Timeline)
+    </button>
     <button class="switch-btn" class:active={activeView === 'calendar'} onclick={() => activeView = 'calendar'}>
-      📅 Kalender
+      📅 Kalenderraster
     </button>
     <button class="switch-btn" class:active={activeView === 'list'} onclick={() => activeView = 'list'}>
       📋 Listenansicht ({filteredEntries.length})
@@ -409,7 +477,120 @@
   </div>
 </div>
 
-{#if activeView === 'calendar'}
+{#if activeView === 'timeline'}
+  <div bind:this={calendarWrapperEl} class="calendar-wrapper glass-card animate-fade-in" class:fullscreen-mode={isFullscreen} style="margin-top: 1rem;">
+    <!-- Timeline Controls -->
+    <div class="calendar-controls">
+      <button class="arrow-btn" onclick={prevMonth}>◀</button>
+      <h2 class="calendar-month-title">{MONTH_NAMES[currentMonth]} {currentYear}</h2>
+      <button class="arrow-btn" onclick={nextMonth}>▶</button>
+      <button 
+        class="arrow-btn" 
+        onclick={toggleFullscreen} 
+        style="width: auto; padding: 0 0.75rem; font-size: 0.85rem; font-weight: 600; display: flex; align-items: center; gap: 0.3rem; margin-left: 0.5rem; border-radius: 8px;"
+        title="Vollbildmodus umschalten"
+      >
+        {isFullscreen ? '🔍 Normal' : '📺 Vollbild'}
+      </button>
+    </div>
+
+    <!-- Timeline Legend and Filter Options -->
+    <div class="timeline-options-bar">
+      <div class="legend-grid">
+        <div class="legend-item"><span class="legend-box u">U</span> Urlaub</div>
+        <div class="legend-item"><span class="legend-box za">ZA</span> Freizeitausgleich</div>
+        <div class="legend-item"><span class="legend-box s">S</span> Seminartage</div>
+        <div class="legend-item"><span class="legend-box sl">SL</span> Seminarleitung</div>
+        <div class="legend-item"><span class="legend-box fb">FB</span> Fortbildung</div>
+        <div class="legend-item"><span class="legend-box k">K</span> Krank</div>
+        <div class="legend-item"><span class="legend-box f">F</span> Regulär Frei</div>
+      </div>
+      
+      <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+          <label class="form-label" for="timeline-search" style="margin: 0; font-weight: 600; font-size: 0.85rem;">Sevaka filtern:</label>
+          <input 
+            type="text" 
+            id="timeline-search"
+            placeholder="Name suchen..." 
+            class="form-select"
+            style="width: 160px; padding: 0.3rem 0.5rem; font-size: 0.85rem;"
+            bind:value={searchQuery}
+          />
+        </div>
+        <label class="checkbox-label" style="display: flex; align-items: center; gap: 0.4rem; font-size: 0.85rem; font-weight: 600; margin: 0;">
+          <input type="checkbox" bind:checked={showRegularFreeDaysInTimeline} />
+          Reguläre freie Tage anzeigen
+        </label>
+      </div>
+    </div>
+
+    <!-- Timeline Table -->
+    <div class="timeline-table-wrapper">
+      <table class="timeline-table">
+        <thead>
+          <tr>
+            <th class="sticky-col name-header">Sevaka</th>
+            {#each daysArray as day}
+              {@const weekday = getWeekdayLabel(day)}
+              {@const isWeekend = weekday === 'Sa' || weekday === 'So'}
+              {@const dateStr = getDateString(day)}
+              {@const isToday = dateStr === todayStr}
+              <th class="day-header" class:weekend-header={isWeekend} class:today-header={isToday}>
+                <div class="header-day-num">{day}</div>
+                <div class="header-day-name">{weekday}</div>
+              </th>
+            {/each}
+          </tr>
+        </thead>
+        <tbody>
+          {#each filteredSevakas as sev}
+            <tr>
+              <td class="sticky-col name-cell">
+                <span class="avatar-dot" style="background-color: {sev.avatarColor || '#960040'}"></span>
+                <strong>{sev.name}</strong>
+              </td>
+              {#each daysArray as day}
+                {@const dateStr = getDateString(day)}
+                {@const abs = getAbsenceForDate(sev.id, dateStr)}
+                {@const isRegFree = isRegularFreeDay(sev, day)}
+                {@const weekday = getWeekdayLabel(day)}
+                {@const isWeekend = weekday === 'Sa' || weekday === 'So'}
+                <td 
+                  class="timeline-cell" 
+                  class:weekend-cell={isWeekend}
+                  title={abs ? `${sev.name}: ${abs.type} (${formatDateString(abs.startDate)} - ${formatDateString(abs.endDate)})${abs.note ? ' - ' + abs.note : ''}` : (isRegFree ? `${sev.name}: Regulär Frei` : '')}
+                >
+                  {#if abs}
+                    <div class="cell-block {getAbsenceClass(abs.type)}">
+                      {getAbsenceAbbreviation(abs.type)}
+                    </div>
+                  {:else if showRegularFreeDaysInTimeline && isRegFree}
+                    <div class="cell-block f">
+                      F
+                    </div>
+                  {/if}
+                </td>
+              {/each}
+            </tr>
+          {/each}
+        </tbody>
+        <tfoot>
+          <tr class="summary-row">
+            <td class="sticky-col name-cell"><strong>Abwesend (Gesamt)</strong></td>
+            {#each daysArray as day}
+              {@const dateStr = getDateString(day)}
+              {@const count = getAbsenceCountForDate(dateStr)}
+              <td class="summary-cell" class:has-absences={count > 0}>
+                {count > 0 ? count : ''}
+              </td>
+            {/each}
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </div>
+{:else if activeView === 'calendar'}
   <div bind:this={calendarWrapperEl} class="calendar-wrapper glass-card animate-fade-in" class:fullscreen-mode={isFullscreen} style="margin-top: 1rem;">
     <!-- Calendar Controls -->
     <div class="calendar-controls">
@@ -426,20 +607,29 @@
       </button>
     </div>
 
-    <!-- Calendar Person Filter -->
-    <div class="calendar-filter-bar" style="display: flex; justify-content: flex-end; align-items: center; gap: 0.75rem; margin-bottom: 1.25rem; padding: 0 0.5rem;">
-      <label class="form-label" for="calendar-teacher-filter" style="margin: 0; font-weight: 600;">Person filtern:</label>
-      <select 
-        id="calendar-teacher-filter" 
-        class="form-select" 
-        style="width: 220px; padding: 0.35rem 0.75rem; font-size: 0.85rem;" 
-        bind:value={calendarTeacherFilter}
-      >
-        <option value="all">Alle Personen anzeigen</option>
-        {#each sevakas as s}
-          <option value={s.id}>{s.name}</option>
-        {/each}
-      </select>
+    <!-- Calendar Person Filter & Options -->
+    <div class="calendar-filter-bar" style="display: flex; justify-content: space-between; align-items: center; gap: 0.75rem; margin-bottom: 1.25rem; padding: 0 0.5rem;">
+      <div class="options-group">
+        <label class="checkbox-label" style="display: flex; align-items: center; gap: 0.4rem; font-size: 0.85rem; font-weight: 600;">
+          <input type="checkbox" bind:checked={showRegularFreeDaysInCalendar} />
+          Reguläre freie Tage anzeigen
+        </label>
+      </div>
+      
+      <div style="display: flex; align-items: center; gap: 0.75rem;">
+        <label class="form-label" for="calendar-teacher-filter" style="margin: 0; font-weight: 600; font-size: 0.85rem;">Person filtern:</label>
+        <select 
+          id="calendar-teacher-filter" 
+          class="form-select" 
+          style="width: 220px; padding: 0.35rem 0.75rem; font-size: 0.85rem;" 
+          bind:value={calendarTeacherFilter}
+        >
+          <option value="all">Alle Personen anzeigen</option>
+          {#each sevakas as s}
+            <option value={s.id}>{s.name}</option>
+          {/each}
+        </select>
+      </div>
     </div>
 
     <!-- Calendar Grid -->
@@ -476,18 +666,20 @@
             {/each}
 
             <!-- Regular Weekly Free Days -->
-            {#each cellRegularFree as freeSev}
-              <!-- Only show free days if the Sevaka is not already on vacation/absence on this day -->
-              {#if !cellAbsences.some(a => a.teacherId === freeSev.id)}
-                <div 
-                  class="cell-event-item regular-free" 
-                  title="{freeSev.name}: Regulärer freier Wochentag"
-                >
-                  <span class="event-type-icon">🏖️</span>
-                  <span class="event-name">{freeSev.name.split(' ')[0]} (Frei)</span>
-                </div>
-              {/if}
-            {/each}
+            {#if showRegularFreeDaysInCalendar}
+              {#each cellRegularFree as freeSev}
+                <!-- Only show free days if the Sevaka is not already on vacation/absence on this day -->
+                {#if !cellAbsences.some(a => a.teacherId === freeSev.id)}
+                  <div 
+                    class="cell-event-item regular-free" 
+                    title="{freeSev.name}: Regulärer freier Wochentag"
+                  >
+                    <span class="event-type-icon">🏖️</span>
+                    <span class="event-name">{freeSev.name.split(' ')[0]} (Frei)</span>
+                  </div>
+                {/if}
+              {/each}
+            {/if}
           </div>
         </div>
       {/each}
@@ -1232,5 +1424,209 @@
     padding: 1.25rem 1.5rem;
     border-top: 1px solid rgba(234, 217, 201, 0.6);
     background: #faf8f5;
+  }
+
+  /* Timeline Planer-Tabelle Styles */
+  .timeline-container {
+    padding: 1.5rem;
+    background: #ffffff;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+  }
+
+  .timeline-options-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .legend-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .legend-box {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 20px;
+    font-size: 0.7rem;
+    font-weight: 800;
+    border-radius: 4px;
+    color: #ffffff;
+    border: 1px solid rgba(0,0,0,0.15);
+  }
+
+  /* Specific color codings based on original sheet */
+  .legend-box.u, .cell-block.u { background-color: #1e88e5; color: #ffffff; } /* Urlaub - Blue */
+  .legend-box.za, .cell-block.za { background-color: #8e24aa; color: #ffffff; } /* Freizeitausgleich - Purple */
+  .legend-box.s, .cell-block.s { background-color: #43a047; color: #ffffff; } /* Seminartage - Green */
+  .legend-box.sl, .cell-block.sl { background-color: #fb8c00; color: #ffffff; } /* Seminarleitung - Orange */
+  .legend-box.fb, .cell-block.fb { background-color: #00acc1; color: #ffffff; } /* Fortbildung - Teal */
+  .legend-box.k, .cell-block.k { background-color: #e53935; color: #ffffff; } /* Krank - Red */
+  .legend-box.f, .cell-block.f { background-color: #d1d1d1; color: #424242; } /* Regulär Frei - Gray */
+  .legend-box.x, .cell-block.x { background-color: #757575; color: #ffffff; } /* Sonstiges - Gray */
+
+  .checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .timeline-table-wrapper {
+    overflow-x: auto;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: #ffffff;
+    max-height: 70vh;
+  }
+
+  .timeline-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 0.8rem;
+  }
+
+  .timeline-table th, 
+  .timeline-table td {
+    border-right: 1px solid #e0dcd3;
+    border-bottom: 1px solid #e0dcd3;
+    padding: 0.35rem 0.45rem;
+    text-align: center;
+    vertical-align: middle;
+  }
+
+  .timeline-table th {
+    background: #f5f3ee;
+    font-weight: 700;
+    color: var(--text-primary);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+
+  /* Sticky first column (Sevaka Names) */
+  .sticky-col {
+    position: sticky;
+    left: 0;
+    background: #fcfbfa;
+    z-index: 5;
+    border-right: 2px solid #b3ad9e !important;
+    text-align: left !important;
+    min-width: 160px;
+    max-width: 160px;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.05);
+  }
+
+  /* Make header corner sticky for both horizontal and vertical scroll */
+  .name-header {
+    z-index: 15 !important;
+    background: #ebe7de !important;
+  }
+
+  .name-cell {
+    background: #fcfbfa !important;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .avatar-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+    flex-shrink: 0;
+  }
+
+  /* Day headers */
+  .day-header {
+    min-width: 32px;
+    max-width: 32px;
+  }
+
+  .header-day-num {
+    font-size: 0.85rem;
+    font-weight: 800;
+  }
+
+  .header-day-name {
+    font-size: 0.65rem;
+    opacity: 0.7;
+    text-transform: uppercase;
+  }
+
+  /* Weekend highlighting */
+  .weekend-header {
+    background: #e8e3d9 !important;
+  }
+
+  .weekend-cell {
+    background-color: #faf8f3;
+  }
+
+  /* Today column highlight */
+  .today-header {
+    background: #ffe0b2 !important;
+    border-left: 2px solid #fb8c00;
+    border-right: 2px solid #fb8c00;
+  }
+
+  /* Cells and Blocks */
+  .timeline-cell {
+    height: 32px;
+    padding: 2px !important;
+  }
+
+  .cell-block {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    font-weight: 800;
+    border-radius: 3px;
+    box-shadow: inset 0 0 2px rgba(0,0,0,0.1);
+  }
+
+  /* Summary Row at bottom */
+  .summary-row {
+    background: #f5f3ee;
+    font-weight: 700;
+  }
+  
+  .summary-row td {
+    border-bottom: none;
+    background: #f5f3ee;
+    position: sticky;
+    bottom: 0;
+    z-index: 9;
+  }
+
+  .summary-cell {
+    font-size: 0.8rem;
+    font-weight: 800;
+    color: var(--text-secondary);
+  }
+
+  .summary-cell.has-absences {
+    background-color: #ffebee !important;
+    color: #c62828;
   }
 </style>
