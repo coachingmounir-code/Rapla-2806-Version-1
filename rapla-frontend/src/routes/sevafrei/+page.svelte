@@ -29,7 +29,7 @@
   let sevafreiList = $state<SevafreiEntry[]>([]);
   let sevakas = $state<Teacher[]>([]);
   let showModal = $state(false);
-  let activeView = $state<'timeline' | 'calendar' | 'list' | 'quotas'>('timeline');
+  let activeView = $state<'timeline' | 'calendar' | 'availability' | 'list' | 'quotas'>('timeline');
   let showRegularFreeDaysInTimeline = $state(false);
   let showRegularFreeDaysInCalendar = $state(false);
 
@@ -146,6 +146,79 @@
 
   function getAbsenceCountForDate(dateStr: string): number {
     return sevafreiList.filter(e => dateStr >= e.startDate && dateStr <= e.endDate).length;
+  }
+
+  function getTeacherTeam(teacherName: string): string {
+    const cleanName = teacherName.toLowerCase();
+    const q = quotas.find(entry => 
+      cleanName.includes(entry.spiritualName.toLowerCase()) || 
+      cleanName.includes(entry.firstName.toLowerCase())
+    );
+    return q ? q.team : 'Core Team';
+  }
+
+  function getNext7Days() {
+    const days: { dateStr: string; label: string; weekday: string }[] = [];
+    const today = new Date();
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(today);
+      d.setDate(today.getDate() + i);
+      const dateStr = d.toISOString().split('T')[0];
+      
+      let label = '';
+      if (i === 0) label = 'Heute';
+      else if (i === 1) label = 'Morgen';
+      else {
+        label = d.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit' });
+      }
+      
+      const weekdayNames = ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"];
+      const weekday = weekdayNames[d.getDay()];
+      
+      days.push({ dateStr, label, weekday });
+    }
+    return days;
+  }
+
+  interface AvailabilityStatus {
+    teacher: Teacher;
+    status: 'available' | 'absent' | 'free';
+    reason?: string;
+  }
+
+  function getAvailabilityForDate(dateStr: string, weekdayLabel: string): AvailabilityStatus[] {
+    const weekdayIndex = getAdjustedWeekdayIndex(dateStr);
+    
+    return sevakas.map(s => {
+      const abs = sevafreiList.find(e => e.teacherId === s.id && dateStr >= e.startDate && dateStr <= e.endDate);
+      if (abs) {
+        return {
+          teacher: s,
+          status: 'absent',
+          reason: `${abs.type}${abs.note ? ' (' + abs.note + ')' : ''}`
+        };
+      }
+      
+      const isRegFree = getGeneralFreeDays(s).includes(weekdayIndex);
+      if (isRegFree) {
+        return {
+          teacher: s,
+          status: 'free',
+          reason: 'Regulärer freier Tag'
+        };
+      }
+      
+      return {
+        teacher: s,
+        status: 'available'
+      };
+    });
+  }
+
+  function getAdjustedWeekdayIndex(dateStr: string): number {
+    const d = new Date(dateStr);
+    const day = d.getDay(); // 0 = Sun, 1 = Mon ...
+    return day === 0 ? 6 : day - 1;
   }
 
   onMount(() => {
@@ -461,6 +534,9 @@
     <button class="switch-btn" class:active={activeView === 'calendar'} onclick={() => activeView = 'calendar'}>
       📅 Kalenderraster
     </button>
+    <button class="switch-btn" class:active={activeView === 'availability'} onclick={() => activeView = 'availability'}>
+      🟢 Verfügbarkeit (7 Tage)
+    </button>
     <button class="switch-btn" class:active={activeView === 'list'} onclick={() => activeView = 'list'}>
       📋 Listenansicht ({filteredEntries.length})
     </button>
@@ -694,6 +770,57 @@
       <div class="legend-item"><span class="legend-color-dot" style="background-color: #ffebee; border: 1px solid #c62828;"></span> 🩹 Krank</div>
       <div class="legend-item"><span class="legend-color-dot" style="background-color: #f7f7f7; border: 1px solid #cccccc;"></span> 🏖️ Regulärer freier Wochentag</div>
     </div>
+  </div>
+{:else if activeView === 'availability'}
+  <!-- AVAILABILITY 7 DAYS VIEW -->
+  <div class="availability-days-grid animate-fade-in">
+    {#each getNext7Days() as day}
+      {@const statuses = getAvailabilityForDate(day.dateStr, day.weekday)}
+      {@const available = statuses.filter(s => s.status === 'available')}
+      {@const unavailable = statuses.filter(s => s.status !== 'available')}
+      
+      <div class="day-availability-card glass-card">
+        <div class="day-card-header">
+          <h3>{day.label} <span class="weekday-lbl">({day.weekday}, {formatDateString(day.dateStr)})</span></h3>
+          <span class="availability-count">{available.length} von {statuses.length} verfügbar</span>
+        </div>
+        
+        <div class="day-card-body" style="display: flex; flex-direction: column; gap: 1rem;">
+          <div class="status-section">
+            <h4 class="section-title available-title">🟢 Verfügbar ({available.length})</h4>
+            <div class="names-list">
+              {#if available.length === 0}
+                <span class="no-names">Keine Sevakas verfügbar</span>
+              {:else}
+                {#each available as entry}
+                  <span class="name-badge available-badge" style="border-left: 3px solid {entry.teacher.avatarColor || '#960040'}">
+                    {entry.teacher.name} <span class="team-tag">[{getTeacherTeam(entry.teacher.name)}]</span>
+                  </span>
+                {/each}
+              {/if}
+            </div>
+          </div>
+          
+          <div class="status-section">
+            <h4 class="section-title unavailable-title">🔴 Nicht verfügbar ({unavailable.length})</h4>
+            <div class="names-list">
+              {#if unavailable.length === 0}
+                <span class="no-names">Alle sind verfügbar</span>
+              {:else}
+                {#each unavailable as entry}
+                  <span class="name-badge unavailable-badge" title={entry.reason}>
+                    {entry.teacher.name}
+                    <span class="reason-tag">
+                      {entry.status === 'free' ? '🏖️ Frei' : `❌ ${entry.reason?.split(' ')[0]}`}
+                    </span>
+                  </span>
+                {/each}
+              {/if}
+            </div>
+          </div>
+        </div>
+      </div>
+    {/each}
   </div>
 {:else if activeView === 'list'}
   <!-- LIST TABULAR VIEW -->
@@ -1628,5 +1755,125 @@
   .summary-cell.has-absences {
     background-color: #ffebee !important;
     color: #c62828;
+  }
+
+  /* Availability Grid & Card Styles */
+  .availability-days-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1rem;
+  }
+
+  .day-availability-card {
+    background: #ffffff;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    box-shadow: 0 4px 10px rgba(150, 0, 64, 0.01);
+  }
+
+  .day-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(234, 217, 201, 0.6);
+    padding-bottom: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .day-card-header h3 {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin: 0;
+  }
+
+  .weekday-lbl {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+  }
+
+  .availability-count {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+    background: var(--secondary);
+    padding: 0.2rem 0.5rem;
+    border-radius: 6px;
+  }
+
+  .status-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .section-title {
+    font-size: 0.8rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin: 0 0 0.25rem 0;
+  }
+
+  .available-title {
+    color: #2e7d32;
+  }
+
+  .unavailable-title {
+    color: #c62828;
+  }
+
+  .names-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  .no-names {
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+    font-style: italic;
+  }
+
+  .name-badge {
+    font-size: 0.78rem;
+    font-weight: 700;
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+
+  .available-badge {
+    background: #e8f5e9;
+    color: #2e7d32;
+    border: 1px solid rgba(163, 196, 133, 0.3);
+  }
+
+  .team-tag {
+    font-size: 0.65rem;
+    opacity: 0.8;
+    font-weight: 600;
+  }
+
+  .unavailable-badge {
+    background: #ffebee;
+    color: #c62828;
+    border: 1px solid rgba(229, 57, 53, 0.15);
+  }
+
+  .reason-tag {
+    font-size: 0.65rem;
+    font-weight: 800;
+    background: rgba(229, 57, 53, 0.08);
+    padding: 0.05rem 0.25rem;
+    border-radius: 4px;
   }
 </style>
