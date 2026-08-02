@@ -1327,4 +1327,24 @@
       box-shadow: 0 0 12px rgba(225, 29, 72, 0.4);
     }
   }
+
+  @media (max-width: 768px) {
+    .filters-bar {
+      flex-direction: column;
+      align-items: stretch !important;
+      gap: 1rem;
+    }
+    .filter-group {
+      flex-direction: column;
+      align-items: stretch !important;
+      gap: 0.5rem;
+    }
+    .filter-select {
+      width: 100% !important;
+    }
+    .legend-container {
+      margin-left: 0 !important;
+      justify-content: center;
+    }
+  }
 </style>

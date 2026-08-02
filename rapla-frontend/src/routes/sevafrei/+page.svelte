@@ -1458,4 +1458,38 @@
     padding: 0.05rem 0.25rem;
     border-radius: 4px;
   }
+
+  @media (max-width: 768px) {
+    .view-header-bar {
+      flex-direction: column;
+      align-items: stretch !important;
+      gap: 1rem;
+    }
+    .stats-pills {
+      justify-content: center;
+    }
+    .calendar-controls {
+      gap: 1rem !important;
+      margin-bottom: 1rem;
+    }
+    .calendar-month-title {
+      font-size: 1.25rem !important;
+      min-width: auto !important;
+    }
+    .timeline-options-bar {
+      flex-direction: column;
+      align-items: stretch !important;
+      gap: 1rem;
+    }
+    .legend-grid {
+      justify-content: center;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .form-row {
+      grid-template-columns: 1fr !important;
+      gap: 0.75rem;
+    }
+  }
 </style>

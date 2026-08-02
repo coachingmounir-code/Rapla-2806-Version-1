@@ -11,9 +11,11 @@
 
 	let showTeachersDropdown = $state(false);
 	let showScheduleDropdown = $state(false);
+	let mobileMenuOpen = $state(false);
 
 	$effect(() => {
 		const path = page.url.pathname;
+		mobileMenuOpen = false; // close mobile menu on page navigation
 		if (path.startsWith('/sevakas') || path.startsWith('/teachers')) {
 			showTeachersDropdown = true;
 		}
@@ -92,8 +94,13 @@
 	{@render children()}
 {:else}
 	<div class="layout-container">
+		{#if mobileMenuOpen}
+			<!-- svelte-ignore a11y_click_events_have_key_events -->
+			<!-- svelte-ignore a11y_no_static_element_interactions -->
+			<div class="sidebar-backdrop" onclick={() => mobileMenuOpen = false}></div>
+		{/if}
 		<!-- Sidebar Navigation - Inspired by Yoga Vidya Nordsee branding -->
-		<aside class="sidebar">
+		<aside class="sidebar" class:open={mobileMenuOpen}>
 			<div class="logo-area">
 				<div class="logo-img-wrapper">
 					<img src={nataraja} alt="Yoga Vidya Logo" class="logo-img" />
@@ -228,6 +235,14 @@
 		<main class="main-content">
 			<!-- Header Search Bar & User info -->
 			<header class="top-header">
+				<button 
+					type="button" 
+					class="hamburger-menu" 
+					onclick={() => mobileMenuOpen = !mobileMenuOpen} 
+					aria-label="Menü öffnen"
+				>
+					☰
+				</button>
 				<div class="studio-selector">
 					<strong>Yoga Vidya Rapla 2.0</strong>
 					<span class="selector-arrow">˅</span>
@@ -280,6 +295,7 @@
 		background-color: var(--secondary); /* Light warm Sand/Beige sidebar */
 		color: var(--text-primary);
 		border-right: 1px solid var(--border-color);
+		transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 	}
 
 	.logo-area {
@@ -644,5 +660,62 @@
 		color: #ffffff;
 		background: var(--primary);
 		box-shadow: 0 3px 8px 0 rgba(217, 119, 36, 0.15);
+	}
+
+	.sidebar-backdrop {
+		position: fixed;
+		inset: 0;
+		background: rgba(42, 27, 27, 0.35);
+		backdrop-filter: blur(4px);
+		-webkit-backdrop-filter: blur(4px);
+		z-index: 999;
+	}
+
+	.hamburger-menu {
+		display: none;
+	}
+
+	@media (max-width: 1024px) {
+		.sidebar {
+			transform: translateX(-100%);
+			z-index: 1000;
+		}
+		.sidebar.open {
+			transform: translateX(0);
+		}
+		.main-content {
+			margin-left: 0 !important;
+		}
+		.hamburger-menu {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			background: none;
+			border: none;
+			font-size: 1.75rem;
+			cursor: pointer;
+			color: var(--primary);
+			padding: 0.5rem;
+			border-radius: 8px;
+			transition: var(--transition-smooth);
+		}
+		.hamburger-menu:hover {
+			background: rgba(150, 0, 64, 0.05);
+		}
+		.top-header {
+			padding: 0 1.25rem;
+		}
+	}
+
+	@media (max-width: 768px) {
+		.search-bar {
+			display: none;
+		}
+		.avatar-info {
+			display: none;
+		}
+		.content-wrapper {
+			padding: 1.25rem 1rem;
+		}
 	}
 </style>
