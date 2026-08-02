@@ -367,9 +367,12 @@ const standardCourses = standardCoursesDefs.map((c, index) => ({
   status: 'draft' as const
 }));
 
-// Run planning for 4 weeks: W28, W29, W30, W31
+// Run planning for weeks: W32 to W40
 const results: Record<string, any[]> = {};
-for (const week of ['2026-W28', '2026-W29', '2026-W30', '2026-W31']) {
+for (const week of [
+  '2026-W32', '2026-W33', '2026-W34', '2026-W35',
+  '2026-W36', '2026-W37', '2026-W38', '2026-W39', '2026-W40'
+]) {
   results[week] = planWeekWithAbsences(week, standardCourses);
 }
 

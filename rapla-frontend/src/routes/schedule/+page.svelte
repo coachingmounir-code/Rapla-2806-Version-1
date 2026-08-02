@@ -175,12 +175,27 @@
     } else {
       const monday = getMondayOfCurrentWeek();
       const weekCode = getWeekCode(monday);
+      const isAfterW40 = weekCode > '2026-W40';
       
-      currentPlan = weekPlans.find(p => p.targetWeekCode === weekCode && p.status === 'approved')
-                 || weekPlans.find(p => p.targetWeekCode === weekCode)
-                 || weekPlans.find(p => p.id === 'plan-template-1')
-                 || weekPlans[0]
-                 || null;
+      let foundPlan = weekPlans.find(p => p.targetWeekCode === weekCode && p.status === 'approved')
+                   || weekPlans.find(p => p.targetWeekCode === weekCode);
+                   
+      if (!foundPlan) {
+        if (isAfterW40) {
+          const template = weekPlans.find(p => p.id === 'plan-template-1') || weekPlans[0];
+          foundPlan = {
+            ...template,
+            id: `plan-blank-${weekCode}`,
+            targetWeekCode: weekCode,
+            courses: template.courses.map(c => ({ ...c, teacherId: null, isAiPlanned: false, status: 'draft' }))
+          };
+        } else {
+          foundPlan = weekPlans.find(p => p.id === 'plan-template-1')
+                   || weekPlans[0]
+                   || null;
+        }
+      }
+      currentPlan = foundPlan;
     }
     
     if (currentPlan) {
@@ -504,6 +519,7 @@
 
             <div 
               class="course-card-rapla" 
+              class:unassigned-card={!course.teacherId || course.teacherId === 'teacher-gen-yl'}
               style="background-color: {cardColors.bg}; border: 1px solid {cardColors.border};"
               onclick={() => openEditModal(course)}
             >
@@ -1276,5 +1292,39 @@
   }
   .week-nav-btn:active {
     transform: scale(0.9);
+  }
+
+  /* High Contrast Unassigned Card Warning Style */
+  .unassigned-card {
+    border: 1.5px solid #dc2626 !important;
+    animation: pulse-warning 2.5s infinite ease-in-out;
+  }
+
+  .unassigned-card .card-top-line {
+    color: #e11d48 !important;
+  }
+
+  .unassigned-card .card-room {
+    color: #be123c !important;
+  }
+
+  .unassigned-card .card-title-line {
+    color: #881337 !important;
+  }
+
+  .unassigned-card .card-teacher-line {
+    color: #be123c !important;
+    font-weight: 800 !important;
+  }
+
+  @keyframes pulse-warning {
+    0%, 100% {
+      background-color: #ffe4e6; /* rose-100 */
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    50% {
+      background-color: #fecdd3; /* rose-200 - strong alert red/rose */
+      box-shadow: 0 0 12px rgba(225, 29, 72, 0.4);
+    }
   }
 </style>

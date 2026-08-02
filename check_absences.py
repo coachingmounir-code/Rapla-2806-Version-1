@@ -10,8 +10,8 @@ pattern = r'\{\s*excelName:\s*"([^"]+)",\s*startDate:\s*"([^"]+)",\s*endDate:\s*
 
 matches = re.findall(pattern, content)
 
-start_date = datetime.date(2026, 7, 10)
-end_date = datetime.date(2026, 8, 6)
+start_date = datetime.date(2026, 7, 31)
+end_date = datetime.date(2026, 10, 1)
 
 print(f"Checking absences from {start_date} to {end_date}:")
 for match in matches:
