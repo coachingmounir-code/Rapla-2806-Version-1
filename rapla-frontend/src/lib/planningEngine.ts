@@ -191,6 +191,383 @@ export function validateAssignment(
     }
   }
 
+  // --- SEVAKA RULES FROM TXT FILE ---
+  const teacherNameLower = teacher.name.toLowerCase();
+  const courseNameLower = course.name.toLowerCase();
+  const courseStyleLower = course.style.toLowerCase();
+
+  // Categorize course types
+  const isMeditationForSevaka = courseNameLower.includes('meditation') || courseNameLower.includes('medi.') || courseStyleLower.includes('meditation');
+  const isSatsangForSevaka = courseNameLower.includes('satsang');
+  const isOnnForSevaka = courseNameLower.includes('om namo');
+  const isYogaClassForSevaka = !isMeditationForSevaka && !isSatsangForSevaka && !isOnnForSevaka;
+
+  // Let's filter the other assignments for the weekly counts
+  const otherSevakaAssignments = allCourses.filter(
+    c => c.teacherId === teacher.id && c.id !== course.id
+  );
+
+  const getWeeklyCounts = () => {
+    let yogaCount = isYogaClassForSevaka ? 1 : 0;
+    let meditationCount = isMeditationForSevaka ? 1 : 0;
+    let satsangCount = isSatsangForSevaka ? 1 : 0;
+    let onnCount = isOnnForSevaka ? 1 : 0;
+
+    otherSevakaAssignments.forEach(c => {
+      const cName = c.name.toLowerCase();
+      const cStyle = c.style.toLowerCase();
+      const cIsMed = cName.includes('meditation') || cName.includes('medi.') || cStyle.includes('meditation');
+      const cIsSat = cName.includes('satsang');
+      const cIsOnn = cName.includes('om namo');
+
+      if (!cIsMed && !cIsSat && !cIsOnn) {
+        yogaCount++;
+      } else if (cIsMed) {
+        meditationCount++;
+      } else if (cIsSat) {
+        satsangCount++;
+      } else if (cIsOnn) {
+        onnCount++;
+      }
+    });
+
+    return { yogaCount, meditationCount, satsangCount, onnCount };
+  };
+
+  const counts = getWeeklyCounts();
+
+  // Teresa & Hu cannot lead yoga classes (hard constraint)
+  if ((teacher.isYogaTeacher === false || teacherNameLower.includes('teresa') || teacherNameLower.includes('hu')) && isYogaClassForSevaka) {
+    conflicts.push({
+      type: 'hard',
+      message: `${teacher.name} gibt keine Yogastunden.`
+    });
+  }
+
+  // 1. Burnie
+  if (teacherNameLower.includes('burnie')) {
+    // Samstag, Dienstag, Freitag are free
+    if ([2, 5, 6].includes(course.dayOfWeek)) {
+      conflicts.push({
+        type: 'hard',
+        message: `${teacher.name} hat samstags, dienstags und freitags frei.`
+      });
+    }
+    // Max 1 Satsang am Morgen
+    if (isSatsangForSevaka && course.startTime.toLowerCase() < '12:00') {
+      const morningSatsangs = otherSevakaAssignments.filter(c => c.name.toLowerCase().includes('satsang') && c.startTime.toLowerCase() < '12:00');
+      if (morningSatsangs.length >= 1) {
+        conflicts.push({
+          type: 'hard',
+          message: `${teacher.name} kann nur einmal wöchentlich für einen Satsang am Morgen eingeteilt werden.`
+        });
+      }
+    }
+    // Max 1 geführte Meditation per week
+    if (isMeditationForSevaka && counts.meditationCount > 1) {
+      conflicts.push({
+        type: 'hard',
+        message: `${teacher.name} kann nur einmal wöchentlich für eine geführte Meditation eingeteilt werden.`
+      });
+    }
+  }
+
+  // 2. Satyam
+  if (teacherNameLower.includes('satyam')) {
+    if (course.dayOfWeek === 1) {
+      conflicts.push({
+        type: 'hard',
+        message: `${teacher.name} hat montags frei.`
+      });
+    }
+    // Max 2 yoga classes per week
+    if (isYogaClassForSevaka && counts.yogaCount > 2) {
+      conflicts.push({
+        type: 'hard',
+        message: `${teacher.name} kann maximal zweimal wöchentlich für Yogastunden eingeteilt werden.`
+      });
+    }
+  }
+
+  // 3. Teresa
+  if (teacherNameLower.includes('teresa')) {
+    if (course.dayOfWeek === 4) {
+      conflicts.push({
+        type: 'hard',
+        message: `${teacher.name} hat donnerstags frei.`
+      });
+    }
+    // Max 1 ONN per week
+    if (isOnnForSevaka && counts.onnCount > 1) {
+      conflicts.push({
+        type: 'hard',
+        message: `${teacher.name} leitet Om Namo Narayanaya maximal einmal wöchentlich.`
+      });
+    }
+  }
+
+  // 4. Abha
+  if (teacherNameLower.includes('abha')) {
+    if ([0, 3].includes(course.dayOfWeek)) {
+      conflicts.push({
+        type: 'hard',
+        message: `${teacher.name} hat sonntags und mittwochs frei.`
+      });
+    }
+    // Yin Yoga Anfängerstunde: max 1 per week
+    const isYinAnfaenger = courseNameLower.includes('anfänger') && courseStyleLower.includes('yin');
+    if (isYinAnfaenger) {
+      const otherYinAnfaenger = otherSevakaAssignments.filter(c => c.name.toLowerCase().includes('anfänger') && c.style.toLowerCase().includes('yin'));
+      if (otherYinAnfaenger.length >= 1) {
+        conflicts.push({
+          type: 'hard',
+          message: `${teacher.name} kann nur einmal wöchentlich für eine Yin Yoga Anfängerstunde eingeteilt werden.`
+        });
+      }
+    }
+    // Max 3 yoga classes per week
+    if (isYogaClassForSevaka && counts.yogaCount > 3) {
+      conflicts.push({
+        type: 'hard',
+        message: `${teacher.name} darf für maximal 3 Yogastunden wöchentlich eingeteilt werden.`
+      });
+    }
+  }
+
+  // 5. Anjali
+  if (teacherNameLower.includes('anjali')) {
+    if (course.dayOfWeek === 3) {
+      conflicts.push({
+        type: 'hard',
+        message: `${teacher.name} hat mittwochs frei.`
+      });
+    }
+    // Tue after 12:00 and Thu before 11:00
+    if (course.dayOfWeek === 2 && timeToMinutes(course.startTime) >= timeToMinutes('12:00')) {
+      conflicts.push({
+        type: 'hard',
+        message: `${teacher.name} ist dienstags ab 12.00 Uhr nicht einteilbar.`
+      });
+    }
+    if (course.dayOfWeek === 4 && timeToMinutes(course.startTime) < timeToMinutes('11:00')) {
+      conflicts.push({
+        type: 'hard',
+        message: `${teacher.name} ist donnerstags bis 11.00 Uhr nicht einteilbar.`
+      });
+    }
+    // Max 3 yoga classes per week
+    if (isYogaClassForSevaka && counts.yogaCount > 3) {
+      conflicts.push({
+        type: 'hard',
+        message: `${teacher.name} darf für maximal 3 Yogastunden wöchentlich eingeteilt werden.`
+      });
+    }
+  }
+
+  // 7. Hu
+  if (teacherNameLower.includes('hu')) {
+    if (course.dayOfWeek === 2) {
+      conflicts.push({
+        type: 'hard',
+        message: `${teacher.name} hat dienstags frei.`
+      });
+    }
+    // Mon after 12:00 and Wed before 12:00
+    if (course.dayOfWeek === 1 && timeToMinutes(course.startTime) >= timeToMinutes('12:00')) {
+      conflicts.push({
+        type: 'hard',
+        message: `${teacher.name} ist montags nur bis 12.00 Uhr einplanbar.`
+      });
+    }
+    if (course.dayOfWeek === 3 && timeToMinutes(course.startTime) < timeToMinutes('12:00')) {
+      conflicts.push({
+        type: 'hard',
+        message: `${teacher.name} ist mittwochs erst ab 12.00 Uhr einplanbar.`
+      });
+    }
+  }
+
+  // 8. Mounir
+  if (teacherNameLower.includes('mounir') || teacherNameLower.includes('mouniir')) {
+    if (course.dayOfWeek === 1) {
+      conflicts.push({
+        type: 'hard',
+        message: `${teacher.name} hat montags frei.`
+      });
+    }
+  }
+
+  // 9. Nirmaya
+  if (teacherNameLower.includes('nirmaya')) {
+    if ([2, 3].includes(course.dayOfWeek)) {
+      conflicts.push({
+        type: 'hard',
+        message: `${teacher.name} hat dienstags und mittwochs frei.`
+      });
+    }
+    // Max 1 guided meditation per week
+    if (isMeditationForSevaka && counts.meditationCount > 1) {
+      conflicts.push({
+        type: 'hard',
+        message: `${teacher.name} kann jede Woche nur für eine geführte Meditation eingeteilt werden.`
+      });
+    }
+    // Max 1 morning satsang per week
+    if (isSatsangForSevaka && course.startTime.toLowerCase() < '12:00' && counts.satsangCount > 1) {
+      conflicts.push({
+        type: 'hard',
+        message: `${teacher.name} kann jede Woche nur für einen Satsang am Morgen eingeteilt werden.`
+      });
+    }
+    // Max 2 Anfänger yoga classes per week
+    const isAnfaengerYoga = isYogaClassForSevaka && courseNameLower.includes('anfänger');
+    if (isAnfaengerYoga) {
+      const otherAnfaengerYoga = otherSevakaAssignments.filter(c => {
+        const cName = c.name.toLowerCase();
+        const cStyle = c.style.toLowerCase();
+        const cIsYoga = !cName.includes('meditation') && !cName.includes('medi.') && !cStyle.includes('meditation') && !cName.includes('satsang') && !cName.includes('om namo');
+        return cIsYoga && cName.includes('anfänger');
+      });
+      if (otherAnfaengerYoga.length >= 2) {
+        conflicts.push({
+          type: 'hard',
+          message: `${teacher.name} kann maximal zweimal wöchentlich für eine Anfängerstunde eingeteilt werden.`
+        });
+      }
+    }
+    // No yoga classes on Fridays, Saturdays, Sundays
+    if (isYogaClassForSevaka && [5, 6, 0].includes(course.dayOfWeek)) {
+      conflicts.push({
+        type: 'hard',
+        message: `${teacher.name} unterrichtet freitags, samstags und sonntags keine Yogastunden.`
+      });
+    }
+  }
+
+  // 10. Narayani
+  if (teacherNameLower.includes('narayani')) {
+    if ([5, 6].includes(course.dayOfWeek)) {
+      conflicts.push({
+        type: 'hard',
+        message: `${teacher.name} hat freitags und samstags frei.`
+      });
+    }
+    // Sun after 13:00
+    if (course.dayOfWeek === 0 && timeToMinutes(course.startTime) >= timeToMinutes('13:00')) {
+      conflicts.push({
+        type: 'hard',
+        message: `${teacher.name} ist sonntags ab 13.00 Uhr nicht mehr einteilbar.`
+      });
+    }
+    // Max 3 yoga classes per week
+    if (isYogaClassForSevaka && counts.yogaCount > 3) {
+      conflicts.push({
+        type: 'hard',
+        message: `${teacher.name} darf für maximal 3 Yogastunden wöchentlich eingeteilt werden.`
+      });
+    }
+  }
+
+  // 11. Pranava
+  if (teacherNameLower.includes('pranava')) {
+    if ([2, 3].includes(course.dayOfWeek)) {
+      conflicts.push({
+        type: 'hard',
+        message: `${teacher.name} hat dienstags und mittwochs frei.`
+      });
+    }
+    // Max 4 yoga classes per week
+    if (isYogaClassForSevaka && counts.yogaCount > 4) {
+      conflicts.push({
+        type: 'hard',
+        message: `${teacher.name} darf für maximal 4 Yogastunden wöchentlich eingeteilt werden.`
+      });
+    }
+    // Max 1 guided meditation per week
+    if (isMeditationForSevaka && counts.meditationCount > 1) {
+      conflicts.push({
+        type: 'hard',
+        message: `${teacher.name} kann maximal einmal wöchentlich für eine geführte Meditation eingeteilt werden.`
+      });
+    }
+  }
+
+  // 12. Alexander
+  if (teacherNameLower.includes('alexander')) {
+    if ([0, 1].includes(course.dayOfWeek)) {
+      conflicts.push({
+        type: 'hard',
+        message: `${teacher.name} hat sonntags und montags frei.`
+      });
+    }
+    // Max 1 Satsang per week
+    if (isSatsangForSevaka && counts.satsangCount > 1) {
+      conflicts.push({
+        type: 'hard',
+        message: `${teacher.name} kann maximal einmal wöchentlich für einen Satsang eingeteilt werden.`
+      });
+    }
+    // Max 1 guided meditation per week
+    if (isMeditationForSevaka && counts.meditationCount > 1) {
+      conflicts.push({
+        type: 'hard',
+        message: `${teacher.name} kann maximal einmal wöchentlich für eine geführte Meditation eingeteilt werden.`
+      });
+    }
+    // Max 2 yoga classes per week
+    if (isYogaClassForSevaka && counts.yogaCount > 2) {
+      conflicts.push({
+        type: 'hard',
+        message: `${teacher.name} darf für maximal 2 Yogastunden wöchentlich eingeteilt werden.`
+      });
+    }
+  }
+
+  // 13. Adam
+  if (teacherNameLower.includes('adam')) {
+    if (course.dayOfWeek === 2) {
+      conflicts.push({
+        type: 'hard',
+        message: `${teacher.name} hat dienstags frei.`
+      });
+    }
+    // Max 1 ONN per week
+    if (isOnnForSevaka && counts.onnCount > 1) {
+      conflicts.push({
+        type: 'hard',
+        message: `${teacher.name} leitet Om Namo Narayanaya maximal einmal wöchentlich.`
+      });
+    }
+  }
+
+  // 14. Harishakti
+  if (teacherNameLower.includes('harishakti')) {
+    // Max 3 yoga classes per week
+    if (isYogaClassForSevaka && counts.yogaCount > 3) {
+      conflicts.push({
+        type: 'hard',
+        message: `${teacher.name} darf für maximal 3 Yogastunden wöchentlich eingeteilt werden.`
+      });
+    }
+  }
+
+  // 15. Ulrich
+  if (teacherNameLower.includes('ulrich')) {
+    if ([2, 6].includes(course.dayOfWeek)) {
+      conflicts.push({
+        type: 'hard',
+        message: `${teacher.name} hat dienstags und samstags frei.`
+      });
+    }
+    // Max 4 yoga classes per week
+    if (isYogaClassForSevaka && counts.yogaCount > 4) {
+      conflicts.push({
+        type: 'hard',
+        message: `${teacher.name} darf für maximal 4 Yogastunden wöchentlich eingeteilt werden.`
+      });
+    }
+  }
+
   // 0. Check if active Yoga Teacher (Soft)
   if (teacher.isYogaTeacher === false) {
     conflicts.push({
@@ -427,6 +804,12 @@ export function runAiPlanning(
   coursesToPlan.forEach(c => {
     c.teacherId = null;
     c.isAiPlanned = false;
+    // Revert custom course names to original template names
+    if (c.name === 'Yoga Vidya meets Pavanmuktasana') {
+      c.name = 'Anfänger';
+    } else if (c.name === 'Yoga Flow Mittelstufe') {
+      c.name = 'Mittelstufe';
+    }
   });
 
   // Plan course by course
@@ -511,6 +894,20 @@ export function runAiPlanning(
           score -= 200;
         }
       }
+
+      // Custom scoring rules for Narayani: prefers Mittelstufe
+      if (teacher.name.toLowerCase().includes('narayani')) {
+        if (course.name.toLowerCase().includes('mittelstufe')) {
+          score += 150; // High bonus for her preferred style
+        }
+      }
+
+      // Custom scoring rules for Mounir: Wednesday morning meditation backup only
+      if (teacher.name.toLowerCase().includes('mounir') || teacher.name.toLowerCase().includes('mouniir')) {
+        if (course.name === 'Gef. Meditation' && course.dayOfWeek === 3 && course.startTime < '12:00') {
+          score -= 150; // Large penalty so others are preferred
+        }
+      }
       
       candidateScores.push({
         teacher,
@@ -528,6 +925,14 @@ export function runAiPlanning(
       if (index !== -1) {
         workingCourses[index].teacherId = bestCandidate.teacher.id;
         workingCourses[index].isAiPlanned = true;
+
+        // Apply custom course name based on Sevaka rules
+        const tNameLower = bestCandidate.teacher.name.toLowerCase();
+        if (tNameLower.includes('burnie') && workingCourses[index].name === 'Anfänger') {
+          workingCourses[index].name = 'Yoga Vidya meets Pavanmuktasana';
+        } else if (tNameLower.includes('satyam') && workingCourses[index].name === 'Mittelstufe') {
+          workingCourses[index].name = 'Yoga Flow Mittelstufe';
+        }
         
         logs.push(`✓ Zuweisung erfolgreich: ${bestCandidate.teacher.name} (Score: ${bestCandidate.score.toFixed(0)})`);
         if (bestCandidate.conflicts.length > 0) {
