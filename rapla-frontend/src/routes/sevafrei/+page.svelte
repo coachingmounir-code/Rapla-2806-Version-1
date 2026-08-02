@@ -29,7 +29,7 @@
   let sevafreiList = $state<SevafreiEntry[]>([]);
   let sevakas = $state<Teacher[]>([]);
   let showModal = $state(false);
-  let activeView = $state<'timeline' | 'availability' | 'list' | 'quotas'>('timeline');
+  let activeView = $state<'timeline' | 'availability' | 'quotas'>('timeline');
   let showRegularFreeDaysInTimeline = $state(false);
 
   // Month tracking
@@ -53,7 +53,6 @@
 
   // Filtering state
   let searchQuery = $state('');
-  let filterType = $state<string>('all');
   let calendarWrapperEl = $state<HTMLElement | null>(null);
   let isFullscreen = $state(false);
 
@@ -397,12 +396,7 @@
     showModal = false;
   }
 
-  function deleteEntry(id: string) {
-    if (confirm('Möchten Sie diesen Eintrag wirklich löschen?')) {
-      sevafreiList = sevafreiList.filter(e => e.id !== id);
-      saveToStorage();
-    }
-  }
+
 
   function formatDateString(isoString: string): string {
     const d = new Date(isoString);
@@ -488,16 +482,7 @@
   // Reactive states
   let calendarDays = $derived(generateCalendarDays(currentYear, currentMonth));
 
-  let filteredEntries = $derived(
-    sevafreiList.filter(e => {
-      if (filterType !== 'all' && e.type !== filterType) return false;
-      if (searchQuery.trim() !== '') {
-        const query = searchQuery.toLowerCase();
-        return e.teacherName.toLowerCase().includes(query) || e.note.toLowerCase().includes(query);
-      }
-      return true;
-    }).sort((a, b) => a.startDate.localeCompare(b.startDate))
-  );
+
 
   let activeTodayCount = $derived(
     sevafreiList.filter(e => {
@@ -531,9 +516,6 @@
     </button>
     <button class="switch-btn" class:active={activeView === 'availability'} onclick={() => activeView = 'availability'}>
       🟢 Verfügbarkeit (7 Tage)
-    </button>
-    <button class="switch-btn" class:active={activeView === 'list'} onclick={() => activeView = 'list'}>
-      📋 Listenansicht ({filteredEntries.length})
     </button>
     <button class="switch-btn" class:active={activeView === 'quotas'} onclick={() => activeView = 'quotas'}>
       📊 Quoten & Kontingente
@@ -711,84 +693,6 @@
         </div>
       </div>
     {/each}
-  </div>
-{:else if activeView === 'list'}
-  <!-- LIST TABULAR VIEW -->
-  <!-- Filters bar -->
-  <div class="filters-bar glass-card animate-fade-in" style="margin-top: 1rem;">
-    <div class="filter-group">
-      <label class="form-label" for="search-sevaka">Sevaka suchen:</label>
-      <input 
-        type="text" 
-        id="search-sevaka"
-        placeholder="Name oder Notiz suchen..." 
-        class="form-select filter-select"
-        style="width: 250px; padding: 0.4rem 0.75rem;"
-        bind:value={searchQuery}
-      />
-    </div>
-
-    <div class="filter-group">
-      <label class="form-label" for="filter-type">Typ filtern:</label>
-      <select id="filter-type" class="form-select filter-select" bind:value={filterType}>
-        <option value="all">Alle Typen</option>
-        <option value="Urlaub">🌴 Urlaub</option>
-        <option value="Freizeitausgleich">⏳ Freizeitausgleich</option>
-        <option value="Seminartage">📖 Seminartage</option>
-        <option value="Seminarleitung">💼 Seminarleitung</option>
-        <option value="Fortbildung">📚 Fortbildung</option>
-        <option value="Krank">🩹 Krank</option>
-        <option value="Frei">🏖️ Frei / Wochentag</option>
-        <option value="Sonstiges">⚙️ Sonstiges</option>
-      </select>
-    </div>
-  </div>
-
-  <div class="sevafrei-list animate-fade-in" style="margin-top: 1rem;">
-    {#if filteredEntries.length === 0}
-      <div class="no-results glass-card">
-        <span class="no-results-icon">📋</span>
-        <h3>Keine Abwesenheiten eingetragen</h3>
-        <p>Es wurden keine Einträge für die aktuellen Filterkriterien gefunden.</p>
-      </div>
-    {:else}
-      <div class="grid-table">
-        <div class="table-header">
-          <div>Sevaka</div>
-          <div>Zeitraum</div>
-          <div>Kategorie</div>
-          <div>Grund / Notiz</div>
-          <div>Status</div>
-          <div style="text-align: right;">Aktion</div>
-        </div>
-        
-        {#each filteredEntries as entry}
-          <div class="table-row">
-            <div class="sevaka-cell">
-              <span class="sev-avatar" style="background-color: {entry.avatarColor}">{entry.teacherName.charAt(0)}</span>
-              <strong>{entry.teacherName}</strong>
-            </div>
-            <div>
-              <strong>{formatDateString(entry.startDate)}</strong> bis <strong>{formatDateString(entry.endDate)}</strong>
-            </div>
-            <div>
-              <span class="cat-badge {entry.type.toLowerCase()}">
-                {#if entry.type === 'Urlaub'}🌴{:else if entry.type === 'Freizeitausgleich'}⏳{:else if entry.type === 'Seminartage'}📖{:else if entry.type === 'Seminarleitung'}💼{:else if entry.type === 'Fortbildung'}📚{:else if entry.type === 'Krank'}🩹{:else if entry.type === 'Frei'}🏖️{:else}⚙️{/if} {entry.type}
-              </span>
-            </div>
-            <div class="note-cell">
-              {entry.note || 'Keine Angabe'}
-            </div>
-            <div>
-              <span class="status-badge {entry.status.toLowerCase()}">{entry.status}</span>
-            </div>
-            <div style="text-align: right;">
-              <button class="delete-btn" onclick={() => deleteEntry(entry.id)}>🗑️ Löschen</button>
-            </div>
-          </div>
-        {/each}
-      </div>
-    {/if}
   </div>
 {:else}
   <!-- EXCEL QUOTAS TABULAR VIEW -->
@@ -1193,35 +1097,7 @@
     box-shadow: 0 4px 10px rgba(150, 0, 64, 0.01);
   }
 
-  .table-header {
-    display: grid;
-    grid-template-columns: 180px 220px 150px 1fr 120px 100px;
-    padding: 0.85rem 1.5rem;
-    background: var(--secondary);
-    font-weight: 700;
-    font-size: 0.85rem;
-    color: var(--text-primary);
-    border-bottom: 1px solid var(--border-color);
-  }
 
-  .table-row {
-    display: grid;
-    grid-template-columns: 180px 220px 150px 1fr 120px 100px;
-    padding: 1rem 1.5rem;
-    align-items: center;
-    border-bottom: 1px solid rgba(234, 217, 201, 0.4);
-    font-size: 0.88rem;
-    color: var(--text-primary);
-    transition: background 0.2s ease;
-  }
-
-  .table-row:last-child {
-    border-bottom: none;
-  }
-
-  .table-row:hover {
-    background: rgba(255, 253, 248, 0.5);
-  }
 
   /* Quotas Table grid columns */
   .quota-table-header {
@@ -1260,106 +1136,7 @@
     gap: 0.5rem;
   }
 
-  .sev-avatar {
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    color: #ffffff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 700;
-    font-size: 0.85rem;
-  }
 
-  .note-cell {
-    color: var(--text-secondary);
-    font-style: italic;
-  }
-
-  /* Badges */
-  .cat-badge {
-    display: inline-block;
-    padding: 0.25rem 0.65rem;
-    border-radius: 6px;
-    font-size: 0.75rem;
-    font-weight: 700;
-  }
-
-  .cat-badge.urlaub { background: #e3f2fd; color: #1565c0; }
-  .cat-badge.freizeitausgleich { background: #ede7f6; color: #651fff; }
-  .cat-badge.seminartage { background: #e8f5e9; color: #2e7d32; }
-  .cat-badge.seminarleitung { background: #fff3e0; color: #e65100; }
-  .cat-badge.fortbildung { background: #e8f5e9; color: #2e7d32; }
-  .cat-badge.krank { background: #ffebee; color: #c62828; }
-  .cat-badge.sonstiges { background: #f5f5f5; color: #616161; }
-  .cat-badge.frei { background: rgba(247, 247, 247, 0.9); color: #7a7566; border: 1px dashed #d1cfc7; }
-
-  .status-badge {
-    display: inline-block;
-    padding: 0.2rem 0.5rem;
-    border-radius: 6px;
-    font-size: 0.72rem;
-    font-weight: 800;
-    text-transform: uppercase;
-  }
-
-  .status-badge.genehmigt {
-    background: rgba(163, 196, 133, 0.2);
-    color: #2e7d32;
-    border: 1px solid rgba(163, 196, 133, 0.5);
-  }
-
-  .status-badge.ausstehend {
-    background: #ffe5cc;
-    color: #d35400;
-    border: 1px solid #ff9800;
-  }
-
-  .delete-btn {
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 0.8rem;
-    color: var(--text-secondary);
-    font-weight: 600;
-    padding: 0.25rem;
-    border-radius: 6px;
-    transition: var(--transition-smooth);
-  }
-
-  .delete-btn:hover {
-    color: var(--danger);
-    background: rgba(220, 53, 69, 0.08);
-  }
-
-  .no-results {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 3.5rem 2rem;
-    text-align: center;
-    background: rgba(255, 253, 248, 0.8);
-    border-radius: 16px;
-    border: 1px solid var(--border-color);
-  }
-
-  .no-results-icon {
-    font-size: 3rem;
-    margin-bottom: 0.75rem;
-  }
-
-  .no-results h3 {
-    font-family: 'Playfair Display', serif;
-    color: var(--text-primary);
-    margin-bottom: 0.35rem;
-  }
-
-  .no-results p {
-    color: var(--text-secondary);
-    font-size: 0.9rem;
-  }
 
   /* Modal Dialog styles */
   .modal-backdrop {
