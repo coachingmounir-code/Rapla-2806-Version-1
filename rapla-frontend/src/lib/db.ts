@@ -77,20 +77,20 @@ const NEW_TEACHER_NAMES = [
   "! SemBegl #",
   "! Übersetzer #",
   "! YL #",
-  "Abha Morkötter #",
-  "Adam Zmuda",
+  "Abha",
+  "Adam",
   "Adinatha Lang #",
-  "Alexander Melior #",
+  "Alexander",
   "Amyana Finkel",
   "Ananda Schaak",
   "Ananta Heussler",
   "Anantadas Büsseler",
-  "Anjali Gelzleichter #",
+  "Anjali",
   "Annette Pritschow",
   "Aziza Lena Alemi",
   "Beate Menkarski",
   "Bhavani Jannausch",
-  "burnie Bansemer",
+  "Burnie",
   "Carina van Anken",
   "Christel Smaluhn",
   "Christopher",
@@ -103,7 +103,7 @@ const NEW_TEACHER_NAMES = [
   "Gruppe Mudita",
   "Hagit Noam",
   "Harishakti",
-  "hu bürkle #",
+  "Hu",
   "Ingrid Seemann",
   "Jnanadev Wallaschkowski",
   "Jörg Lützow",
@@ -111,7 +111,7 @@ const NEW_TEACHER_NAMES = [
   "Julia Backhaus",
   "Jutta Kremer",
   "Jyoti Rudolphi #",
-  "Karuna Wapke #",
+  "Karuna",
   "Klaus Schindler",
   "Larissa Gaertner",
   "Lilly",
@@ -129,14 +129,14 @@ const NEW_TEACHER_NAMES = [
   "Mirabai Seifert",
   "Monika",
   "Monika Adele Camara",
-  "Mouniir Jaber #",
-  "Narayani Kedenburg",
+  "Mounir",
+  "Narayani",
   "Nathalie Butscher",
   "Nina Pabst",
-  "Nirmaya Fodor #",
+  "Nirmaya",
   "Parashakti Küttner",
   "Petra Zimmermann",
-  "Pranava Pauly",
+  "Pranava",
   "Ramashakti Sikora",
   "Raphael Mousa",
   "Sarada Drautzburg",
@@ -154,8 +154,8 @@ const NEW_TEACHER_NAMES = [
   "Swami Tattvarupananda",
   "Swami Yatidharmananda",
   "Tanja Eichenmüller",
-  "Teresa Allgäu",
-  "Ulrich Nebel #",
+  "Teresa",
+  "Ulrich",
   "Venulo Broszinski",
   "Volker Horn",
   "Wolfgang Seemann",
@@ -164,21 +164,21 @@ const NEW_TEACHER_NAMES = [
 ];
 
 const SEVAKA_NAMES = [
-  "Abha Morkötter #",
-  "Adam Zmuda",
-  "Alexander Melior #",
-  "Anjali Gelzleichter #",
-  "burnie Bansemer",
+  "Abha",
+  "Adam",
+  "Alexander",
+  "Anjali",
+  "Burnie",
   "Harishakti",
-  "hu bürkle #",
-  "Karuna Wapke #",
-  "Mouniir Jaber #",
-  "Narayani Kedenburg",
-  "Nirmaya Fodor #",
-  "Pranava Pauly",
+  "Hu",
+  "Karuna",
+  "Mounir",
+  "Narayani",
+  "Nirmaya",
+  "Pranava",
   "Satyam",
-  "Teresa Allgäu",
-  "Ulrich Nebel #"
+  "Teresa",
+  "Ulrich"
 ];
 
 function getTeacherAvailability(name: string, isSevaka: boolean): TimeSlot[] {
@@ -335,7 +335,20 @@ const GENERATED_TEACHERS: Teacher[] = NEW_TEACHER_NAMES.map((name, index) => {
     .replace(/[^a-z0-9]/g, '-')
     .replace(/-+/g, '-')
     .replace(/^-|-$/g, '');
-  const id = `teacher-gen-${cleanIdName || index}`;
+  let id = `teacher-gen-${cleanIdName || index}`;
+  if (name === "Abha") id = "teacher-gen-abha-morkoetter";
+  else if (name === "Adam") id = "teacher-gen-adam-zmuda";
+  else if (name === "Alexander") id = "teacher-gen-alexander-melior";
+  else if (name === "Anjali") id = "teacher-gen-anjali-gelzleichter";
+  else if (name === "Burnie") id = "teacher-gen-burnie-bansemer";
+  else if (name === "Hu") id = "teacher-gen-hu-buerkle";
+  else if (name === "Karuna") id = "teacher-gen-karuna-wapke";
+  else if (name === "Mounir") id = "teacher-gen-mouniir-jaber";
+  else if (name === "Narayani") id = "teacher-gen-narayani-kedenburg";
+  else if (name === "Nirmaya") id = "teacher-gen-nirmaya-fodor";
+  else if (name === "Pranava") id = "teacher-gen-pranava-pauly";
+  else if (name === "Teresa") id = "teacher-gen-teresa-allgaeu";
+  else if (name === "Ulrich") id = "teacher-gen-ulrich-nebel";
   
   const emailName = name.toLowerCase()
     .replace(/ä/g, 'ae')
@@ -496,7 +509,7 @@ const generateDefaultCourses = (): Course[] => {
     if (nameLower === 'ulrich') return 'teacher-gen-ulrich-nebel';
     if (nameLower === 'alexander') return 'teacher-gen-alexander-melior';
     if (nameLower === 'narayani') return 'teacher-gen-narayani-kedenburg';
-    if (nameLower === 'mouniir') return 'teacher-gen-mouniir-jaber';
+    if (nameLower === 'mouniir' || nameLower === 'mounir') return 'teacher-gen-mouniir-jaber';
     if (nameLower === 'christopher') return 'teacher-gen-christopher';
     return null;
   };
@@ -547,9 +560,9 @@ const generateDefaultCourses = (): Course[] => {
     { name: 'Satsang', style: 'Meditation', dayOfWeek: 0, startTime: '20:00', endTime: '21:00', roomId: 'room-2', teacherName: '' },
 
     // Monday (dayOfWeek: 1)
-    { name: 'Gef. Meditation', style: 'Meditation', dayOfWeek: 1, startTime: '07:00', endTime: '07:30', roomId: 'room-5', teacherName: 'hu' },
+    { name: 'Gef. Meditation', style: 'Meditation', dayOfWeek: 1, startTime: '07:00', endTime: '07:30', roomId: 'room-5', teacherName: 'Hu' },
     { name: 'Satsang', style: 'Meditation', dayOfWeek: 1, startTime: '07:00', endTime: '08:00', roomId: 'room-2', teacherName: 'Anjali' },
-    { name: 'Anfänger', style: 'Hatha', dayOfWeek: 1, startTime: '09:15', endTime: '11:00', roomId: 'room-2', teacherName: 'burnie' },
+    { name: 'Anfänger', style: 'Hatha', dayOfWeek: 1, startTime: '09:15', endTime: '11:00', roomId: 'room-2', teacherName: 'Burnie' },
     { name: 'Mittelstufe', style: 'Hatha', dayOfWeek: 1, startTime: '09:15', endTime: '11:00', roomId: 'room-5', teacherName: 'Harishakti' },
     { name: 'Anfänger Rückenstunde', style: 'Hatha', dayOfWeek: 1, startTime: '16:15', endTime: '18:00', roomId: 'room-2', teacherName: 'Pranava' },
     { name: 'Mittelstufe', style: 'Hatha', dayOfWeek: 1, startTime: '16:15', endTime: '18:00', roomId: 'room-5', teacherName: 'Ulrich' },
@@ -563,10 +576,10 @@ const generateDefaultCourses = (): Course[] => {
     { name: 'Mittelstufe', style: 'Hatha', dayOfWeek: 2, startTime: '09:15', endTime: '11:00', roomId: 'room-5', teacherName: 'Anjali' },
     { name: 'Anfänger Yin Yoga', style: 'Hatha', dayOfWeek: 2, startTime: '16:15', endTime: '18:00', roomId: 'room-2', teacherName: 'Abha' },
     { name: 'Mittelstufe', style: 'Hatha', dayOfWeek: 2, startTime: '16:15', endTime: '18:00', roomId: 'room-5', teacherName: 'Narayani' },
-    { name: 'Om Namo Narayanaya', style: 'Meditation', dayOfWeek: 2, startTime: '19:30', endTime: '20:00', roomId: 'room-2', teacherName: 'Mouniir' },
+    { name: 'Om Namo Narayanaya', style: 'Meditation', dayOfWeek: 2, startTime: '19:30', endTime: '20:00', roomId: 'room-2', teacherName: 'Mounir' },
 
     // Wednesday (dayOfWeek: 3)
-    { name: 'Gef. Meditation', style: 'Meditation', dayOfWeek: 3, startTime: '07:00', endTime: '07:30', roomId: 'room-5', teacherName: 'Mouniir' },
+    { name: 'Gef. Meditation', style: 'Meditation', dayOfWeek: 3, startTime: '07:00', endTime: '07:30', roomId: 'room-5', teacherName: 'Mounir' },
     { name: 'Satsang', style: 'Meditation', dayOfWeek: 3, startTime: '07:00', endTime: '08:00', roomId: 'room-2', teacherName: 'Narayani' },
     { name: 'Anfänger', style: 'Hatha', dayOfWeek: 3, startTime: '09:15', endTime: '11:00', roomId: 'room-2', teacherName: 'Alexander' },
     { name: 'Mittelstufe', style: 'Hatha', dayOfWeek: 3, startTime: '09:15', endTime: '11:00', roomId: 'room-5', teacherName: 'Narayani' },
@@ -574,7 +587,7 @@ const generateDefaultCourses = (): Course[] => {
     { name: 'Satsang', style: 'Meditation', dayOfWeek: 3, startTime: '20:00', endTime: '21:00', roomId: 'room-2', teacherName: 'Karuna' },
 
     // Thursday (dayOfWeek: 4)
-    { name: 'Gef. Meditation', style: 'Meditation', dayOfWeek: 4, startTime: '07:00', endTime: '07:30', roomId: 'room-5', teacherName: 'burnie' },
+    { name: 'Gef. Meditation', style: 'Meditation', dayOfWeek: 4, startTime: '07:00', endTime: '07:30', roomId: 'room-5', teacherName: 'Burnie' },
     { name: 'Satsang', style: 'Meditation', dayOfWeek: 4, startTime: '07:00', endTime: '08:00', roomId: 'room-2', teacherName: 'Anjali' },
     { name: 'Anfänger', style: 'Hatha', dayOfWeek: 4, startTime: '09:15', endTime: '11:00', roomId: 'room-2', teacherName: 'Alexander' },
     { name: 'Mittelstufe', style: 'Hatha', dayOfWeek: 4, startTime: '09:15', endTime: '11:00', roomId: 'room-5', teacherName: 'Abha' },
@@ -3412,7 +3425,7 @@ function setStored<T>(key: string, value: T): void {
   }
 }
 
-const CURRENT_DB_VERSION = 10;
+const CURRENT_DB_VERSION = 11;
 
 // Database Actions
 export const db = {
@@ -3423,12 +3436,31 @@ export const db = {
     const stored = getStored<Teacher[]>('rapla_teachers', DEFAULT_TEACHERS);
     let updated = false;
     const list = [...stored];
+
+    // Migration to update existing Sevakas' names to first names
+    for (const t of list) {
+      if (t.id === "teacher-gen-abha-morkoetter" && t.name !== "Abha") { t.name = "Abha"; updated = true; }
+      else if (t.id === "teacher-gen-adam-zmuda" && t.name !== "Adam") { t.name = "Adam"; updated = true; }
+      else if (t.id === "teacher-gen-alexander-melior" && t.name !== "Alexander") { t.name = "Alexander"; updated = true; }
+      else if (t.id === "teacher-gen-anjali-gelzleichter" && t.name !== "Anjali") { t.name = "Anjali"; updated = true; }
+      else if (t.id === "teacher-gen-burnie-bansemer" && t.name !== "Burnie") { t.name = "Burnie"; updated = true; }
+      else if (t.id === "teacher-gen-hu-buerkle" && t.name !== "Hu") { t.name = "Hu"; updated = true; }
+      else if (t.id === "teacher-gen-karuna-wapke" && t.name !== "Karuna") { t.name = "Karuna"; updated = true; }
+      else if (t.id === "teacher-gen-mouniir-jaber" && t.name !== "Mounir") { t.name = "Mounir"; updated = true; }
+      else if (t.id === "teacher-gen-narayani-kedenburg" && t.name !== "Narayani") { t.name = "Narayani"; updated = true; }
+      else if (t.id === "teacher-gen-nirmaya-fodor" && t.name !== "Nirmaya") { t.name = "Nirmaya"; updated = true; }
+      else if (t.id === "teacher-gen-pranava-pauly" && t.name !== "Pranava") { t.name = "Pranava"; updated = true; }
+      else if (t.id === "teacher-gen-teresa-allgaeu" && t.name !== "Teresa") { t.name = "Teresa"; updated = true; }
+      else if (t.id === "teacher-gen-ulrich-nebel" && t.name !== "Ulrich") { t.name = "Ulrich"; updated = true; }
+    }
+
     for (const defT of DEFAULT_TEACHERS) {
       const existingIdx = list.findIndex(t => t.id === defT.id || t.name === defT.name);
       if (existingIdx === -1) {
         list.push(defT);
         updated = true;
       } else if (isOutdated) {
+        list[existingIdx].name = defT.name;
         list[existingIdx].rules = defT.rules;
         list[existingIdx].specialties = defT.specialties;
         list[existingIdx].roleType = defT.roleType;
