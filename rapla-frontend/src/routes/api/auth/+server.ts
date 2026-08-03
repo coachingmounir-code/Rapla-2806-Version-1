@@ -3,7 +3,9 @@ import type { RequestHandler } from './$types';
 import fs from 'fs';
 import path from 'path';
 
-const CONFIG_PATH = path.resolve('src/lib/data/auth_config.json');
+const path1 = path.resolve('src/lib/data/auth_config.json');
+const path2 = path.resolve('rapla-frontend/src/lib/data/auth_config.json');
+const CONFIG_PATH = fs.existsSync(path2) ? path2 : path1;
 
 function getPasswords() {
   const defaults = {

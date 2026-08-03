@@ -3,7 +3,9 @@ import type { RequestHandler } from './$types';
 import fs from 'fs';
 import path from 'path';
 
-const FILE_PATH = path.resolve('src/lib/data/sevafrei_absences.json');
+const path1 = path.resolve('src/lib/data/sevafrei_absences.json');
+const path2 = path.resolve('rapla-frontend/src/lib/data/sevafrei_absences.json');
+const FILE_PATH = fs.existsSync(path2) ? path2 : path1;
 
 export const GET: RequestHandler = async () => {
   try {
