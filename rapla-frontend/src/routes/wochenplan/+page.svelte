@@ -264,6 +264,18 @@
     loadData();
   }
 
+  function selectTeacher(teacherId: string) {
+    const params = new URLSearchParams(page.url.searchParams);
+    if (teacherId) {
+      params.set('teacher', teacherId);
+      params.set('onlyMySlots', 'true');
+    } else {
+      params.delete('teacher');
+      params.delete('onlyMySlots');
+    }
+    goto(`?${params.toString()}`);
+  }
+
   function toggleOnlyMySlots() {
     const params = new URLSearchParams(page.url.searchParams);
     if (onlyMySlotsParam) {
@@ -288,6 +300,28 @@
     
     <!-- User Info & Interactive Toggles -->
     <div class="header-controls">
+      <div class="view-selector-group">
+        <label for="teacher-select">Ansicht filtern:</label>
+        <select 
+          id="teacher-select" 
+          class="view-select-dropdown" 
+          value={selectedTeacher?.id || ''} 
+          onchange={(e) => selectTeacher(e.currentTarget.value)}
+        >
+          <option value="">👥 Gesamtübersicht</option>
+          <optgroup label="Sevakas (Team)">
+            {#each teachers.filter(t => t.roleType === 'sevaka') as t}
+              <option value={t.id}>🧘 {t.name}</option>
+            {/each}
+          </optgroup>
+          <optgroup label="Externe Lehrer">
+            {#each teachers.filter(t => t.roleType !== 'sevaka') as t}
+              <option value={t.id}>👤 {t.name}</option>
+            {/each}
+          </optgroup>
+        </select>
+      </div>
+
       <button 
         type="button" 
         class="btn sync-header-btn" 
@@ -531,6 +565,50 @@
     display: flex;
     align-items: center;
     gap: 1.25rem;
+  }
+
+  .view-selector-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: inherit;
+  }
+
+  .view-selector-group label {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #475569;
+  }
+
+  .view-select-dropdown {
+    padding: 0.5rem 2rem 0.5rem 1rem;
+    font-family: inherit;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #1e293b;
+    background-color: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 30px;
+    outline: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23475569'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 14px;
+    min-width: 180px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  }
+
+  .view-select-dropdown:hover {
+    border-color: #94a3b8;
+    background-color: #f8fafc;
+  }
+
+  .view-select-dropdown:focus {
+    border-color: #ea580c;
+    box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.1);
   }
 
   .sync-header-btn {
