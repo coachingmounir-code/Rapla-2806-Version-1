@@ -248,10 +248,7 @@
 					<span class="selector-arrow">˅</span>
 				</div>
 				
-				<div class="search-bar">
-					<span class="search-icon">🔍</span>
-					<input type="text" placeholder="Suche nach Kursen, Lehrern, Räumen..." />
-				</div>
+
 
 				<div class="user-profile-area">
 					<div class="notification-badge-container">
@@ -486,39 +483,7 @@
 		color: var(--text-secondary);
 	}
 
-	.search-bar {
-		position: relative;
-		width: 320px;
-	}
 
-	.search-icon {
-		position: absolute;
-		left: 0.85rem;
-		top: 50%;
-		transform: translateY(-50%);
-		font-size: 0.85rem;
-		color: var(--text-secondary);
-		opacity: 0.8;
-	}
-
-	.search-bar input {
-		width: 100%;
-		border: 1px solid var(--border-color);
-		border-radius: 20px;
-		background: #faf8f5;
-		padding: 0.45rem 1rem 0.45rem 2.2rem;
-		font-size: 0.85rem;
-		font-family: inherit;
-		color: var(--text-primary);
-		transition: var(--transition-smooth);
-	}
-
-	.search-bar input:focus {
-		outline: none;
-		background: #ffffff;
-		border-color: var(--primary);
-		box-shadow: 0 0 0 3px rgba(217, 119, 36, 0.1);
-	}
 
 	.user-profile-area {
 		display: flex;
@@ -708,9 +673,7 @@
 	}
 
 	@media (max-width: 768px) {
-		.search-bar {
-			display: none;
-		}
+
 		.avatar-info {
 			display: none;
 		}
