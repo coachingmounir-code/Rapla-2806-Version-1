@@ -94,11 +94,17 @@ export function validateAssignment(
           });
           
           if (activeAbsence) {
-            conflicts.push({
-              type: 'hard',
-              message: `${teacher.name} ist an diesem Datum (${courseDate}) abwesend (${activeAbsence.type}: ${activeAbsence.note || 'Keine Angabe'}).`
-            });
-            break;
+            const isSatsang = course.name.toLowerCase().includes('satsang');
+            const isBypassedType = ['seminarleitung', 'frei', 'seminartage'].includes(activeAbsence.type.toLowerCase());
+            if (isSatsang && isBypassedType) {
+              // Bypassed for Satsangs
+            } else {
+              conflicts.push({
+                type: 'hard',
+                message: `${teacher.name} ist an diesem Datum (${courseDate}) abwesend (${activeAbsence.type}: ${activeAbsence.note || 'Keine Angabe'}).`
+              });
+              break;
+            }
           }
         }
       }
@@ -258,7 +264,8 @@ export function validateAssignment(
               const activeAbsence = sevafreiList.find((entry: any) =>
                 entry.teacherId === karuna.id &&
                 courseDate >= entry.startDate &&
-                courseDate <= entry.endDate
+                courseDate <= entry.endDate &&
+                !['seminarleitung', 'frei', 'seminartage'].includes(entry.type.toLowerCase())
               );
               if (activeAbsence) {
                 isKarunaAbsent = true;
@@ -302,7 +309,8 @@ export function validateAssignment(
               const activeAbsence = sevafreiList.find((entry: any) =>
                 entry.teacherId === narayani.id &&
                 courseDate >= entry.startDate &&
-                courseDate <= entry.endDate
+                courseDate <= entry.endDate &&
+                !['seminarleitung', 'frei', 'seminartage'].includes(entry.type.toLowerCase())
               );
               if (activeAbsence) {
                 isNarayaniAbsent = true;
@@ -1076,7 +1084,8 @@ export function runAiPlanning(
                   const activeAbsence = sevafreiList.find((entry: any) =>
                     entry.teacherId === karuna.id &&
                     courseDate >= entry.startDate &&
-                    courseDate <= entry.endDate
+                    courseDate <= entry.endDate &&
+                    !['seminarleitung', 'frei', 'seminartage'].includes(entry.type.toLowerCase())
                   );
                   if (activeAbsence) {
                     isKarunaAbsent = true;
@@ -1115,7 +1124,8 @@ export function runAiPlanning(
                   const activeAbsence = sevafreiList.find((entry: any) =>
                     entry.teacherId === narayani.id &&
                     courseDate >= entry.startDate &&
-                    courseDate <= entry.endDate
+                    courseDate <= entry.endDate &&
+                    !['seminarleitung', 'frei', 'seminartage'].includes(entry.type.toLowerCase())
                   );
                   if (activeAbsence) {
                     isNarayaniAbsent = true;
