@@ -250,19 +250,7 @@
 				
 
 
-				<div class="user-profile-area">
-					<div class="notification-badge-container">
-						<span class="notification-icon">🔔</span>
-						<span class="badge-dot">6</span>
-					</div>
-					<div class="avatar-profile">
-						<div class="avatar-photo">🧘</div>
-						<div class="avatar-info">
-							<strong>Julia</strong>
-							<span>Studio Admin</span>
-						</div>
-					</div>
-				</div>
+
 			</header>
 
 			<div class="content-wrapper">
@@ -485,73 +473,7 @@
 
 
 
-	.user-profile-area {
-		display: flex;
-		align-items: center;
-		gap: 1.5rem;
-	}
 
-	.notification-badge-container {
-		position: relative;
-		cursor: pointer;
-	}
-
-	.notification-icon {
-		font-size: 1.2rem;
-		color: var(--text-secondary);
-	}
-
-	.badge-dot {
-		position: absolute;
-		top: -4px;
-		right: -4px;
-		width: 14px;
-		height: 14px;
-		border-radius: 50%;
-		background: var(--primary); /* Saffron dot */
-		color: #ffffff;
-		font-size: 0.6rem;
-		font-weight: 700;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-	}
-
-	.avatar-profile {
-		display: flex;
-		align-items: center;
-		gap: 0.65rem;
-	}
-
-	.avatar-photo {
-		width: 36px;
-		height: 36px;
-		border-radius: 50%;
-		background: var(--primary);
-		border: 1px solid var(--border-color);
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		font-size: 1.2rem;
-		color: #ffffff;
-	}
-
-	.avatar-info {
-		display: flex;
-		flex-direction: column;
-		line-height: 1.2;
-	}
-
-	.avatar-info strong {
-		font-size: 0.88rem;
-		font-weight: 700;
-		color: var(--text-primary);
-	}
-
-	.avatar-info span {
-		font-size: 0.72rem;
-		color: var(--text-secondary);
-	}
 
 	.content-wrapper {
 		max-width: 1400px;
@@ -674,9 +596,7 @@
 
 	@media (max-width: 768px) {
 
-		.avatar-info {
-			display: none;
-		}
+
 		.content-wrapper {
 			padding: 1.25rem 1rem;
 		}
