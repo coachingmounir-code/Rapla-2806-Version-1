@@ -5040,8 +5040,8 @@
         "startTime": "06:00",
         "endTime": "06:50",
         "roomId": "room-2",
-        "teacherId": null,
-        "isAiPlanned": false,
+        "teacherId": "teacher-gen-karuna-wapke",
+        "isAiPlanned": true,
         "status": "approved"
       },
       {

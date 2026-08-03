@@ -3401,7 +3401,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
     ],
     createdAt: new Date().toISOString()
   },
-    {
+      {
     id: "plan-pre-2026-W32",
     name: "Vorplanung 2026-W32 (Automatisch)",
     status: "approved",
@@ -8482,8 +8482,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "06:00",
         "endTime": "06:50",
         "roomId": "room-2",
-        "teacherId": null,
-        "isAiPlanned": false,
+        "teacherId": "teacher-gen-karuna-wapke",
+        "isAiPlanned": true,
         "status": "approved"
       },
       {
@@ -9662,7 +9662,7 @@ function setStored<T>(key: string, value: T): void {
   }
 }
 
-const CURRENT_DB_VERSION = 16;
+const CURRENT_DB_VERSION = 17;
 
 // Database Actions
 export const db = {
