@@ -399,3 +399,51 @@ fs.writeFileSync('planned_weeks_output.txt',
   Object.entries(results).map(([week, courses]) => `// === ${week} ===\n${formatPlanCoursesCode(courses)}`).join('\n\n')
 );
 console.log("\nDone! Output written to planned_weeks_output.txt");
+
+// Reconstruct the plans TS code to insert into db.ts
+const plansCodeParts = Object.entries(results).map(([week, courses]) => {
+  return `  {
+    id: "plan-pre-${week}",
+    name: "Vorplanung ${week} (Automatisch)",
+    status: "approved",
+    targetWeekCode: "${week}",
+    courses: ${formatPlanCoursesCode(courses)},
+    createdAt: new Date().toISOString()
+  }`;
+});
+const plansCode = plansCodeParts.join(',\n');
+
+// Read db.ts
+const dbPath = './rapla-frontend/src/lib/db.ts';
+if (fs.existsSync(dbPath)) {
+  let dbContent = fs.readFileSync(dbPath, 'utf-8');
+
+  // Find the target section to replace
+  const startIndex = dbContent.indexOf('    id: "plan-pre-2026-W32",');
+  const braceStartIndex = dbContent.lastIndexOf('{', startIndex);
+  const endPlanIndex = dbContent.indexOf('    id: "plan-pre-2026-W40",');
+  const createdAtIndex = dbContent.indexOf('    createdAt:', endPlanIndex);
+  const braceEndIndex = dbContent.indexOf('  }', createdAtIndex) + 3;
+
+  if (braceStartIndex !== -1 && braceEndIndex !== -1 && startIndex !== -1 && endPlanIndex !== -1) {
+    const before = dbContent.substring(0, braceStartIndex);
+    const after = dbContent.substring(braceEndIndex);
+    
+    // Also bump CURRENT_DB_VERSION
+    let updatedContent = before + plansCode + after;
+    updatedContent = updatedContent.replace(
+      /const CURRENT_DB_VERSION = \d+;/g,
+      (match) => {
+        const version = parseInt(match.match(/\d+/)![0], 10);
+        return `const CURRENT_DB_VERSION = ${version + 1};`;
+      }
+    );
+    
+    fs.writeFileSync(dbPath, updatedContent);
+    console.log(`[PREPLANNING] rapla-frontend/src/lib/db.ts wurde erfolgreich mit den neuen Wochenplänen ab W32 aktualisiert (CURRENT_DB_VERSION erhöht).`);
+  } else {
+    console.error('[PREPLANNING] Fehler beim Finden des Ersetzungsbereichs in db.ts');
+  }
+} else {
+  console.error('[PREPLANNING] db.ts Pfad existiert nicht.');
+}

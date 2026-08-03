@@ -211,7 +211,7 @@ export function validateAssignment(
   const courseStyleLower = course.style.toLowerCase();
 
   // Categorize course types
-  const isMeditationForSevaka = courseNameLower.includes('meditation') || courseNameLower.includes('medi.') || courseStyleLower.includes('meditation');
+  const isMeditationForSevaka = (courseNameLower.includes('meditation') || courseNameLower.includes('medi.') || courseStyleLower.includes('meditation')) && !courseNameLower.includes('satsang');
   const isSatsangForSevaka = courseNameLower.includes('satsang');
   const isOnnForSevaka = courseNameLower.includes('om namo');
   const isYogaClassForSevaka = !isMeditationForSevaka && !isSatsangForSevaka && !isOnnForSevaka;
@@ -230,7 +230,7 @@ export function validateAssignment(
     otherSevakaAssignments.forEach(c => {
       const cName = c.name.toLowerCase();
       const cStyle = c.style.toLowerCase();
-      const cIsMed = cName.includes('meditation') || cName.includes('medi.') || cStyle.includes('meditation');
+      const cIsMed = (cName.includes('meditation') || cName.includes('medi.') || cStyle.includes('meditation')) && !cName.includes('satsang');
       const cIsSat = cName.includes('satsang');
       const cIsOnn = cName.includes('om namo');
 
@@ -307,35 +307,117 @@ export function validateAssignment(
     }
   }
 
-  // 6. Karuna Satsang rule: Karuna always does the 20:00 Satsang Wed-Sun (unless she is absent)
-  if (course.name === 'Satsang' && course.startTime === '20:00' && [3, 4, 5, 6, 0].includes(course.dayOfWeek)) {
-    let isKarunaAbsent = false;
-    const karuna = (teachers || db.getTeachers()).find(t => t.name.toLowerCase().includes('karuna'));
-    if (typeof window !== 'undefined' && targetWeekCode && karuna) {
-      try {
-        const courseDate = getLocalDateForDay(targetWeekCode, course.dayOfWeek);
-        const saved = localStorage.getItem('rapla_sevafrei');
-        if (saved) {
-          const sevafreiList = JSON.parse(saved);
-          const activeAbsence = sevafreiList.find((entry: any) =>
-            entry.teacherId === karuna.id &&
-            courseDate >= entry.startDate &&
-            courseDate <= entry.endDate
-          );
-          if (activeAbsence) {
-            isKarunaAbsent = true;
-          }
-        }
-      } catch (e) {
-        console.error(e);
+  // --- SATSANG REGELN ---
+  const isSatsangCourse = course.name === 'Satsang';
+
+  if (isSatsangCourse) {
+    // Regel 4: Folgende Personen werden nie für einen Satsang eingeteilt: Adam, Hu, Mounir, Teresa, Satyam, Ulrich, Pranava
+    const forbiddenForSatsang = ['adam', 'hu', 'mounir', 'mouniir', 'teresa', 'satyam', 'ulrich', 'pranava'];
+    const isForbidden = forbiddenForSatsang.some(name => teacherNameLower.includes(name));
+    if (isForbidden) {
+      conflicts.push({
+        type: 'hard',
+        message: `${teacher.name} darf laut Satsang-Regel 4 nie für einen Satsang eingeteilt werden.`
+      });
+    }
+
+    // Regel 1: Dienstagabends gibt es nie einen Satsang
+    if (course.dayOfWeek === 2 && course.startTime === '20:00') {
+      conflicts.push({
+        type: 'hard',
+        message: `Dienstagabends gibt es nie einen Satsang (Satsang-Regel 1).`
+      });
+    }
+
+    // Regel 3: Morgens um 7.00Uhr bis 8.00Uhr werden folgende Personen immer wieder eingeteilt: Anjali, Nirmaya, Burnie, Harishakti, Narayani, Abha, Alexander
+    if (course.startTime === '07:00') {
+      const allowedMorningSatsang = ['anjali', 'nirmaya', 'burnie', 'harishakti', 'narayani', 'abha', 'alexander'];
+      const isAllowedMorning = allowedMorningSatsang.some(name => teacherNameLower.includes(name));
+      if (!isAllowedMorning) {
+        conflicts.push({
+          type: 'hard',
+          message: `${teacher.name} darf morgens keinen Satsang leiten. Nur Anjali, Nirmaya, Burnie, Harishakti, Narayani, Abha und Alexander sind dafür eingeteilt (Satsang-Regel 3).`
+        });
       }
     }
 
-    if (!teacherNameLower.includes('karuna') && !isKarunaAbsent) {
-      conflicts.push({
-        type: 'hard',
-        message: `Karuna gibt immer den Satsang um 20.00 Uhr mittwochs, donnerstags, freitags, samstags und sonntags.`
-      });
+    // Regel 2: Abend-Satsang (20:00 - 21:00)
+    if (course.startTime === '20:00') {
+      // Mittwochs bis sonntags (3, 4, 5, 6, 0) leitet Karuna den Satsang am Abend
+      if ([3, 4, 5, 6, 0].includes(course.dayOfWeek)) {
+        let isKarunaAbsent = false;
+        const karuna = (teachers || db.getTeachers()).find(t => t.name.toLowerCase().includes('karuna'));
+        if (typeof window !== 'undefined' && targetWeekCode && karuna) {
+          try {
+            const courseDate = getLocalDateForDay(targetWeekCode, course.dayOfWeek);
+            const saved = localStorage.getItem('rapla_sevafrei');
+            if (saved) {
+              const sevafreiList = JSON.parse(saved);
+              const activeAbsence = sevafreiList.find((entry: any) =>
+                entry.teacherId === karuna.id &&
+                courseDate >= entry.startDate &&
+                courseDate <= entry.endDate
+              );
+              if (activeAbsence) {
+                isKarunaAbsent = true;
+              }
+            }
+          } catch (e) {
+            console.error(e);
+          }
+        }
+
+        if (!teacherNameLower.includes('karuna')) {
+          if (!isKarunaAbsent) {
+            conflicts.push({
+              type: 'hard',
+              message: `Karuna leitet mittwochs bis sonntags den Abend-Satsang. Nur wenn sie laut sevafrei-Kalender nicht kann, werden andere eingeteilt (Satsang-Regel 2).`
+            });
+          } else {
+            // Wenn Karuna abwesend ist, werden Narayani, Abha und Anjali bevorzugt
+            const preferredBackups = ['narayani', 'abha', 'anjali'];
+            const isPreferredBackup = preferredBackups.some(name => teacherNameLower.includes(name));
+            if (!isPreferredBackup) {
+              conflicts.push({
+                type: 'soft',
+                message: `${teacher.name} ist nicht die bevorzugte Vertretung (Narayani, Abha, Anjali) für Karuna am Abend (Satsang-Regel 2).`
+              });
+            }
+          }
+        }
+      }
+
+      // Montag abends um 20.00Uhr leitet Narayani den Satsang
+      if (course.dayOfWeek === 1) {
+        let isNarayaniAbsent = false;
+        const narayani = (teachers || db.getTeachers()).find(t => t.name.toLowerCase().includes('narayani'));
+        if (typeof window !== 'undefined' && targetWeekCode && narayani) {
+          try {
+            const courseDate = getLocalDateForDay(targetWeekCode, course.dayOfWeek);
+            const saved = localStorage.getItem('rapla_sevafrei');
+            if (saved) {
+              const sevafreiList = JSON.parse(saved);
+              const activeAbsence = sevafreiList.find((entry: any) =>
+                entry.teacherId === narayani.id &&
+                courseDate >= entry.startDate &&
+                courseDate <= entry.endDate
+              );
+              if (activeAbsence) {
+                isNarayaniAbsent = true;
+              }
+            }
+          } catch (e) {
+            console.error(e);
+          }
+        }
+
+        if (!teacherNameLower.includes('narayani') && !isNarayaniAbsent) {
+          conflicts.push({
+            type: 'hard',
+            message: `Narayani leitet montags den Abend-Satsang. Nur wenn sie laut sevafrei-Kalender nicht kann, werden andere eingeteilt (Satsang-Regel 2).`
+          });
+        }
+      }
     }
   }
 
@@ -709,7 +791,6 @@ export function validateAssignment(
   
   // 1. Check Specialty (Hard) & Meditation/Satsang Qualifications
   const isMeditationCourse = course.name === 'Gef. Meditation';
-  const isSatsangCourse = course.name === 'Satsang';
 
   if (isMeditationCourse) {
     if (!teacher.rules.canLeadMeditation) {
@@ -989,11 +1070,6 @@ export function runAiPlanning(
       if (teacher.name.toLowerCase().includes('karuna')) {
         const isYogaClass = course.style.toLowerCase() !== 'meditation';
 
-        // 1. Satsang Wednesday to Sunday: Standard & high priority
-        if (course.name === 'Satsang' && [3, 4, 5, 6, 0].includes(course.dayOfWeek)) {
-          score += 1000;
-        }
-
         // 2. Ankommensyogastunden (Friday and Sunday at 16:30, Hatha style/Mittelstufe name)
         const isAnkommYoga = isYogaClass &&
                              course.name === 'Mittelstufe' &&
@@ -1065,7 +1141,96 @@ export function runAiPlanning(
           }
         }
       }
-      
+
+      // --- SATSANG SCORING RULES ---
+      if (course.name === 'Satsang') {
+        const tNameLower = teacher.name.toLowerCase();
+        
+        // Morgen-Satsang (07:00):
+        if (course.startTime === '07:00') {
+          const allowedMorningSatsang = ['anjali', 'nirmaya', 'burnie', 'harishakti', 'narayani', 'abha', 'alexander'];
+          if (allowedMorningSatsang.some(name => tNameLower.includes(name))) {
+            score += 500; // Priorisiere erlaubte Morgen-Satsang-Leiter
+          } else {
+            score -= 10000; // Andere stark abwerten (obwohl harter Konflikt sie filtert)
+          }
+        }
+        
+        // Abend-Satsang (20:00):
+        if (course.startTime === '20:00') {
+          // Mittwochs bis sonntags: Karuna ist Standard
+          if ([3, 4, 5, 6, 0].includes(course.dayOfWeek)) {
+            if (tNameLower.includes('karuna')) {
+              score += 10000; // Extrem hohe Priorität für Karuna
+            } else {
+              // Prüfe ob Karuna abwesend ist
+              let isKarunaAbsent = false;
+              const karuna = (teachers || db.getTeachers()).find(t => t.name.toLowerCase().includes('karuna'));
+              if (targetWeekCode && karuna) {
+                const courseDate = getLocalDateForDay(targetWeekCode, course.dayOfWeek);
+                const saved = typeof window !== 'undefined' ? localStorage.getItem('rapla_sevafrei') : null;
+                if (saved) {
+                  const sevafreiList = JSON.parse(saved);
+                  const activeAbsence = sevafreiList.find((entry: any) =>
+                    entry.teacherId === karuna.id &&
+                    courseDate >= entry.startDate &&
+                    courseDate <= entry.endDate
+                  );
+                  if (activeAbsence) {
+                    isKarunaAbsent = true;
+                  }
+                }
+              }
+              
+              if (isKarunaAbsent) {
+                // Wenn Karuna abwesend ist, werden Narayani, Abha und Anjali bevorzugt
+                if (tNameLower.includes('narayani')) {
+                  score += 8000; // Höchste Vertretungs-Priorität
+                } else if (tNameLower.includes('abha') || tNameLower.includes('anjali')) {
+                  score += 6000; // Zweithöchste Vertretungs-Priorität
+                } else {
+                  score += 100; // Niedrige Priorität für andere erlaubte Lehrer
+                }
+              } else {
+                score -= 10000; // Karuna ist nicht abwesend und Lehrer ist nicht Karuna
+              }
+            }
+          }
+          
+          // Montag: Narayani ist Standard
+          if (course.dayOfWeek === 1) {
+            if (tNameLower.includes('narayani')) {
+              score += 10000; // Extrem hohe Priorität für Narayani
+            } else {
+              // Prüfe ob Narayani abwesend ist
+              let isNarayaniAbsent = false;
+              const narayani = (teachers || db.getTeachers()).find(t => t.name.toLowerCase().includes('narayani'));
+              if (targetWeekCode && narayani) {
+                const courseDate = getLocalDateForDay(targetWeekCode, course.dayOfWeek);
+                const saved = typeof window !== 'undefined' ? localStorage.getItem('rapla_sevafrei') : null;
+                if (saved) {
+                  const sevafreiList = JSON.parse(saved);
+                  const activeAbsence = sevafreiList.find((entry: any) =>
+                    entry.teacherId === narayani.id &&
+                    courseDate >= entry.startDate &&
+                    courseDate <= entry.endDate
+                  );
+                  if (activeAbsence) {
+                    isNarayaniAbsent = true;
+                  }
+                }
+              }
+              
+              if (isNarayaniAbsent) {
+                score += 500; // Erlaubt wenn Narayani abwesend ist
+              } else {
+                score -= 10000; // Narayani ist nicht abwesend und Lehrer ist nicht Narayani
+              }
+            }
+          }
+        }
+      }
+
       candidateScores.push({
         teacher,
         score,
