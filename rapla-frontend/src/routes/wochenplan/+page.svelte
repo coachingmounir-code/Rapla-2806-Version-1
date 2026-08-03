@@ -293,12 +293,22 @@
         class="btn sync-header-btn" 
         onclick={() => { 
           if(confirm('Möchtest du den Browser-Speicher zurücksetzen und neu synchronisieren?')) { 
-            localStorage.clear(); 
-            location.reload(); 
+            db.syncDatabase();
           } 
         }}
       >
         🔄 Synchronisieren
+      </button>
+
+      <button 
+        type="button" 
+        class="btn logout-header-btn" 
+        onclick={() => { 
+          localStorage.removeItem('rapla_user_role'); 
+          goto('/login'); 
+        }}
+      >
+        🚪 Abmelden
       </button>
 
       {#if selectedTeacher}
@@ -467,7 +477,7 @@
   <footer class="view-footer-info" style="margin-top: 2rem; text-align: center; font-size: 0.8rem; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 1rem; clear: both;">
     <span>Yoga Vidya Nordsee © 2026</span>
     <span style="margin: 0 10px;">•</span>
-    <button type="button" onclick={() => { if(confirm('Möchtest du den Browser-Speicher zurücksetzen? Deine lokalen Planungs-Änderungen gehen verloren.')) { localStorage.clear(); location.reload(); } }} style="background: none; border: none; color: #3b82f6; cursor: pointer; text-decoration: underline; font-size: 0.8rem; padding: 0; font-family: inherit;">Planungsdaten zurücksetzen (Synchronisieren)</button>
+    <button type="button" onclick={() => { if(confirm('Möchtest du den Browser-Speicher zurücksetzen? Deine lokalen Planungs-Änderungen gehen verloren.')) { db.syncDatabase(); } }} style="background: none; border: none; color: #3b82f6; cursor: pointer; text-decoration: underline; font-size: 0.8rem; padding: 0; font-family: inherit;">Planungsdaten zurücksetzen (Synchronisieren)</button>
   </footer>
 </div>
 
@@ -538,6 +548,24 @@
     background: linear-gradient(135deg, #0369a1, #075985);
     transform: translateY(-1px);
     box-shadow: 0 6px 12px rgba(3, 105, 161, 0.3);
+  }
+
+  .logout-header-btn {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: white !important;
+    border: none;
+    font-weight: 700;
+    box-shadow: 0 4px 6px rgba(220, 38, 38, 0.2);
+    border-radius: 30px;
+    padding: 0.5rem 1.25rem;
+    transition: all 0.2s ease;
+    cursor: pointer;
+  }
+
+  .logout-header-btn:hover {
+    background: linear-gradient(135deg, #dc2626, #b91c1c);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 12px rgba(220, 38, 38, 0.3);
   }
 
   .user-badge {
