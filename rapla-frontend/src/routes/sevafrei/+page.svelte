@@ -681,7 +681,7 @@
                   <span class="name-badge unavailable-badge" title={entry.reason}>
                     {entry.teacher.name}
                     <span class="reason-tag">
-                      {entry.status === 'free' ? '🏖️ Frei' : `❌ ${entry.reason?.split(' ')[0]}`}
+                      {entry.status === 'free' ? '❌ Frei' : `❌ ${entry.reason?.split(' ')[0]}`}
                     </span>
                   </span>
                 {/each}
