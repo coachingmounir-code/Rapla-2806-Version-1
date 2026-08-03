@@ -226,8 +226,14 @@
             return isMatch && courseDate >= entry.startDate && courseDate <= entry.endDate;
           });
           if (activeAbsence) {
-            isAbsent = true;
-            break;
+            const isSatsang = c.name.toLowerCase().includes('satsang');
+            const isBypassedType = ['seminarleitung', 'frei', 'seminartage'].includes(activeAbsence.type.toLowerCase());
+            if (isSatsang && isBypassedType) {
+              // Bypassed for Satsangs
+            } else {
+              isAbsent = true;
+              break;
+            }
           }
         }
         
