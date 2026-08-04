@@ -530,8 +530,8 @@ const generateDefaultCourses = (): Course[] => {
     { name: 'Satsang', style: 'Meditation', dayOfWeek: 5, startTime: '07:00', endTime: '08:00', roomId: 'room-2', teacherName: 'Nirmaya' },
     { name: 'Anfänger', style: 'Hatha', dayOfWeek: 5, startTime: '09:15', endTime: '11:00', roomId: 'room-5', teacherName: 'Harishakti' },
     { name: 'Mittelstufe Klangyogastunde', style: 'Hatha', dayOfWeek: 5, startTime: '09:15', endTime: '11:00', roomId: 'room-2', teacherName: 'Pranava' },
-    { name: 'Anfänger AS', style: 'Hatha', dayOfWeek: 5, startTime: '16:30', endTime: '18:00', roomId: 'room-2', teacherName: 'Abha' },
-    { name: 'Mittelstufe AS', style: 'Hatha', dayOfWeek: 5, startTime: '16:30', endTime: '18:00', roomId: 'room-5', teacherName: 'Karuna' },
+    { name: 'Anfänger Ankommensstunde', style: 'Hatha', dayOfWeek: 5, startTime: '16:30', endTime: '18:00', roomId: 'room-2', teacherName: 'Abha' },
+    { name: 'Mittelstufe Ankommensstunde', style: 'Hatha', dayOfWeek: 5, startTime: '16:30', endTime: '18:00', roomId: 'room-5', teacherName: 'Karuna' },
     { name: 'Om Namo Narayanaya', style: 'Meditation', dayOfWeek: 5, startTime: '19:30', endTime: '20:00', roomId: 'room-2', teacherName: 'Adam' },
     { name: 'Satsang Einführung', style: 'Meditation', dayOfWeek: 5, startTime: '20:00', endTime: '20:35', roomId: 'room-5', teacherName: 'Pranava' },
     { name: 'Satsang', style: 'Meditation', dayOfWeek: 5, startTime: '20:00', endTime: '21:00', roomId: 'room-2', teacherName: 'Karuna' },
@@ -553,8 +553,8 @@ const generateDefaultCourses = (): Course[] => {
     { name: 'Satsang', style: 'Meditation', dayOfWeek: 0, startTime: '07:00', endTime: '08:00', roomId: 'room-2', teacherName: 'burnie' },
     { name: 'Anfänger', style: 'Hatha', dayOfWeek: 0, startTime: '09:15', endTime: '11:00', roomId: 'room-2', teacherName: 'burnie' },
     { name: 'Mittelstufe', style: 'Hatha', dayOfWeek: 0, startTime: '09:15', endTime: '11:00', roomId: 'room-5', teacherName: 'Anjali' },
-    { name: 'Anfänger AS', style: 'Hatha', dayOfWeek: 0, startTime: '16:30', endTime: '18:15', roomId: 'room-2', teacherName: 'Karuna' },
-    { name: 'Mittelstufe AS', style: 'Hatha', dayOfWeek: 0, startTime: '16:30', endTime: '18:00', roomId: 'room-5', teacherName: 'Pranava' },
+    { name: 'Anfänger Ankommensstunde', style: 'Hatha', dayOfWeek: 0, startTime: '16:30', endTime: '18:00', roomId: 'room-2', teacherName: 'Karuna' },
+    { name: 'Mittelstufe Ankommensstunde', style: 'Hatha', dayOfWeek: 0, startTime: '16:30', endTime: '18:00', roomId: 'room-5', teacherName: 'Pranava' },
     { name: 'Om Namo Narayanaya', style: 'Meditation', dayOfWeek: 0, startTime: '19:30', endTime: '20:00', roomId: 'room-2', teacherName: 'burnie' },
     { name: 'Satsang Einführung', style: 'Meditation', dayOfWeek: 0, startTime: '20:00', endTime: '20:35', roomId: 'room-5', teacherName: '' },
     { name: 'Satsang', style: 'Meditation', dayOfWeek: 0, startTime: '20:00', endTime: '21:00', roomId: 'room-2', teacherName: 'Karuna' },
@@ -685,7 +685,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W28-5",
-        "name": "Anfänger AS",
+        "name": "Anfänger Ankommensstunde",
         "style": "Hatha",
         "dayOfWeek": 5,
         "startTime": "16:30",
@@ -697,7 +697,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W28-6",
-        "name": "Mittelstufe AS",
+        "name": "Mittelstufe Ankommensstunde",
         "style": "Hatha",
         "dayOfWeek": 5,
         "startTime": "16:30",
@@ -913,11 +913,11 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W28-24",
-        "name": "Anfänger AS",
+        "name": "Anfänger Ankommensstunde",
         "style": "Hatha",
         "dayOfWeek": 0,
         "startTime": "16:30",
-        "endTime": "18:15",
+        "endTime": "18:00",
         "roomId": "room-2",
         "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
@@ -925,7 +925,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W28-25",
-        "name": "Mittelstufe AS",
+        "name": "Mittelstufe Ankommensstunde",
         "style": "Hatha",
         "dayOfWeek": 0,
         "startTime": "16:30",
@@ -1378,7 +1378,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W29-5",
-        "name": "Anfänger AS",
+        "name": "Anfänger Ankommensstunde",
         "style": "Hatha",
         "dayOfWeek": 5,
         "startTime": "16:30",
@@ -1390,7 +1390,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W29-6",
-        "name": "Mittelstufe AS",
+        "name": "Mittelstufe Ankommensstunde",
         "style": "Hatha",
         "dayOfWeek": 5,
         "startTime": "16:30",
@@ -1606,11 +1606,11 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W29-24",
-        "name": "Anfänger AS",
+        "name": "Anfänger Ankommensstunde",
         "style": "Hatha",
         "dayOfWeek": 0,
         "startTime": "16:30",
-        "endTime": "18:15",
+        "endTime": "18:00",
         "roomId": "room-2",
         "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
@@ -1618,7 +1618,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W29-25",
-        "name": "Mittelstufe AS",
+        "name": "Mittelstufe Ankommensstunde",
         "style": "Hatha",
         "dayOfWeek": 0,
         "startTime": "16:30",
@@ -2071,7 +2071,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W30-5",
-        "name": "Anfänger AS",
+        "name": "Anfänger Ankommensstunde",
         "style": "Hatha",
         "dayOfWeek": 5,
         "startTime": "16:30",
@@ -2083,7 +2083,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W30-6",
-        "name": "Mittelstufe AS",
+        "name": "Mittelstufe Ankommensstunde",
         "style": "Hatha",
         "dayOfWeek": 5,
         "startTime": "16:30",
@@ -2299,11 +2299,11 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W30-24",
-        "name": "Anfänger AS",
+        "name": "Anfänger Ankommensstunde",
         "style": "Hatha",
         "dayOfWeek": 0,
         "startTime": "16:30",
-        "endTime": "18:15",
+        "endTime": "18:00",
         "roomId": "room-2",
         "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
@@ -2311,7 +2311,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W30-25",
-        "name": "Mittelstufe AS",
+        "name": "Mittelstufe Ankommensstunde",
         "style": "Hatha",
         "dayOfWeek": 0,
         "startTime": "16:30",
@@ -2764,7 +2764,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W31-5",
-        "name": "Anfänger AS",
+        "name": "Anfänger Ankommensstunde",
         "style": "Hatha",
         "dayOfWeek": 5,
         "startTime": "16:30",
@@ -2776,7 +2776,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W31-6",
-        "name": "Mittelstufe AS",
+        "name": "Mittelstufe Ankommensstunde",
         "style": "Hatha",
         "dayOfWeek": 5,
         "startTime": "16:30",
@@ -2992,11 +2992,11 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W31-24",
-        "name": "Anfänger AS",
+        "name": "Anfänger Ankommensstunde",
         "style": "Hatha",
         "dayOfWeek": 0,
         "startTime": "16:30",
-        "endTime": "18:15",
+        "endTime": "18:00",
         "roomId": "room-2",
         "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
@@ -3004,7 +3004,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W31-25",
-        "name": "Mittelstufe AS",
+        "name": "Mittelstufe Ankommensstunde",
         "style": "Hatha",
         "dayOfWeek": 0,
         "startTime": "16:30",
@@ -3401,7 +3401,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
     ],
     createdAt: new Date().toISOString()
   },
-            {
+                {
     id: "plan-pre-2026-W32",
     name: "Vorplanung 2026-W32 (Automatisch)",
     status: "approved",
@@ -3457,7 +3457,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W32-5",
-        "name": "Anfänger AS",
+        "name": "Anfänger Ankommensstunde",
         "style": "Hatha",
         "dayOfWeek": 5,
         "startTime": "16:30",
@@ -3469,7 +3469,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W32-6",
-        "name": "Mittelstufe AS",
+        "name": "Mittelstufe Ankommensstunde",
         "style": "Hatha",
         "dayOfWeek": 5,
         "startTime": "16:30",
@@ -3685,11 +3685,11 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W32-24",
-        "name": "Anfänger AS",
+        "name": "Anfänger Ankommensstunde",
         "style": "Hatha",
         "dayOfWeek": 0,
         "startTime": "16:30",
-        "endTime": "18:15",
+        "endTime": "18:00",
         "roomId": "room-2",
         "teacherId": "teacher-gen-mouniir-jaber",
         "isAiPlanned": true,
@@ -3697,7 +3697,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W32-25",
-        "name": "Mittelstufe AS",
+        "name": "Mittelstufe Ankommensstunde",
         "style": "Hatha",
         "dayOfWeek": 0,
         "startTime": "16:30",
@@ -4150,7 +4150,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W33-5",
-        "name": "Anfänger AS",
+        "name": "Anfänger Ankommensstunde",
         "style": "Hatha",
         "dayOfWeek": 5,
         "startTime": "16:30",
@@ -4162,7 +4162,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W33-6",
-        "name": "Mittelstufe AS",
+        "name": "Mittelstufe Ankommensstunde",
         "style": "Hatha",
         "dayOfWeek": 5,
         "startTime": "16:30",
@@ -4378,11 +4378,11 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W33-24",
-        "name": "Anfänger AS",
+        "name": "Anfänger Ankommensstunde",
         "style": "Hatha",
         "dayOfWeek": 0,
         "startTime": "16:30",
-        "endTime": "18:15",
+        "endTime": "18:00",
         "roomId": "room-2",
         "teacherId": "teacher-gen-satyam",
         "isAiPlanned": true,
@@ -4390,7 +4390,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W33-25",
-        "name": "Mittelstufe AS",
+        "name": "Mittelstufe Ankommensstunde",
         "style": "Hatha",
         "dayOfWeek": 0,
         "startTime": "16:30",
@@ -4843,7 +4843,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W34-5",
-        "name": "Anfänger AS",
+        "name": "Anfänger Ankommensstunde",
         "style": "Hatha",
         "dayOfWeek": 5,
         "startTime": "16:30",
@@ -4855,7 +4855,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W34-6",
-        "name": "Mittelstufe AS",
+        "name": "Mittelstufe Ankommensstunde",
         "style": "Hatha",
         "dayOfWeek": 5,
         "startTime": "16:30",
@@ -5071,11 +5071,11 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W34-24",
-        "name": "Anfänger AS",
+        "name": "Anfänger Ankommensstunde",
         "style": "Hatha",
         "dayOfWeek": 0,
         "startTime": "16:30",
-        "endTime": "18:15",
+        "endTime": "18:00",
         "roomId": "room-2",
         "teacherId": "teacher-gen-satyam",
         "isAiPlanned": true,
@@ -5083,7 +5083,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W34-25",
-        "name": "Mittelstufe AS",
+        "name": "Mittelstufe Ankommensstunde",
         "style": "Hatha",
         "dayOfWeek": 0,
         "startTime": "16:30",
@@ -5101,7 +5101,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-ulrich-nebel",
+        "teacherId": "teacher-gen-satyam",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -5536,7 +5536,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W35-5",
-        "name": "Anfänger AS",
+        "name": "Anfänger Ankommensstunde",
         "style": "Hatha",
         "dayOfWeek": 5,
         "startTime": "16:30",
@@ -5548,7 +5548,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W35-6",
-        "name": "Mittelstufe AS",
+        "name": "Mittelstufe Ankommensstunde",
         "style": "Hatha",
         "dayOfWeek": 5,
         "startTime": "16:30",
@@ -5764,11 +5764,11 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W35-24",
-        "name": "Anfänger AS",
+        "name": "Anfänger Ankommensstunde",
         "style": "Hatha",
         "dayOfWeek": 0,
         "startTime": "16:30",
-        "endTime": "18:15",
+        "endTime": "18:00",
         "roomId": "room-2",
         "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
@@ -5776,7 +5776,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W35-25",
-        "name": "Mittelstufe AS",
+        "name": "Mittelstufe Ankommensstunde",
         "style": "Hatha",
         "dayOfWeek": 0,
         "startTime": "16:30",
@@ -6229,7 +6229,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W36-5",
-        "name": "Anfänger AS",
+        "name": "Anfänger Ankommensstunde",
         "style": "Hatha",
         "dayOfWeek": 5,
         "startTime": "16:30",
@@ -6241,7 +6241,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W36-6",
-        "name": "Mittelstufe AS",
+        "name": "Mittelstufe Ankommensstunde",
         "style": "Hatha",
         "dayOfWeek": 5,
         "startTime": "16:30",
@@ -6457,11 +6457,11 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W36-24",
-        "name": "Anfänger AS",
+        "name": "Anfänger Ankommensstunde",
         "style": "Hatha",
         "dayOfWeek": 0,
         "startTime": "16:30",
-        "endTime": "18:15",
+        "endTime": "18:00",
         "roomId": "room-2",
         "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
@@ -6469,7 +6469,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W36-25",
-        "name": "Mittelstufe AS",
+        "name": "Mittelstufe Ankommensstunde",
         "style": "Hatha",
         "dayOfWeek": 0,
         "startTime": "16:30",
@@ -6922,7 +6922,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W37-5",
-        "name": "Anfänger AS",
+        "name": "Anfänger Ankommensstunde",
         "style": "Hatha",
         "dayOfWeek": 5,
         "startTime": "16:30",
@@ -6934,7 +6934,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W37-6",
-        "name": "Mittelstufe AS",
+        "name": "Mittelstufe Ankommensstunde",
         "style": "Hatha",
         "dayOfWeek": 5,
         "startTime": "16:30",
@@ -7150,11 +7150,11 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W37-24",
-        "name": "Anfänger AS",
+        "name": "Anfänger Ankommensstunde",
         "style": "Hatha",
         "dayOfWeek": 0,
         "startTime": "16:30",
-        "endTime": "18:15",
+        "endTime": "18:00",
         "roomId": "room-2",
         "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
@@ -7162,7 +7162,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W37-25",
-        "name": "Mittelstufe AS",
+        "name": "Mittelstufe Ankommensstunde",
         "style": "Hatha",
         "dayOfWeek": 0,
         "startTime": "16:30",
@@ -7615,7 +7615,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W38-5",
-        "name": "Anfänger AS",
+        "name": "Anfänger Ankommensstunde",
         "style": "Hatha",
         "dayOfWeek": 5,
         "startTime": "16:30",
@@ -7627,7 +7627,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W38-6",
-        "name": "Mittelstufe AS",
+        "name": "Mittelstufe Ankommensstunde",
         "style": "Hatha",
         "dayOfWeek": 5,
         "startTime": "16:30",
@@ -7843,11 +7843,11 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W38-24",
-        "name": "Anfänger AS",
+        "name": "Anfänger Ankommensstunde",
         "style": "Hatha",
         "dayOfWeek": 0,
         "startTime": "16:30",
-        "endTime": "18:15",
+        "endTime": "18:00",
         "roomId": "room-2",
         "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
@@ -7855,7 +7855,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W38-25",
-        "name": "Mittelstufe AS",
+        "name": "Mittelstufe Ankommensstunde",
         "style": "Hatha",
         "dayOfWeek": 0,
         "startTime": "16:30",
@@ -8308,7 +8308,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W39-5",
-        "name": "Anfänger AS",
+        "name": "Anfänger Ankommensstunde",
         "style": "Hatha",
         "dayOfWeek": 5,
         "startTime": "16:30",
@@ -8320,7 +8320,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W39-6",
-        "name": "Mittelstufe AS",
+        "name": "Mittelstufe Ankommensstunde",
         "style": "Hatha",
         "dayOfWeek": 5,
         "startTime": "16:30",
@@ -8536,11 +8536,11 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W39-24",
-        "name": "Anfänger AS",
+        "name": "Anfänger Ankommensstunde",
         "style": "Hatha",
         "dayOfWeek": 0,
         "startTime": "16:30",
-        "endTime": "18:15",
+        "endTime": "18:00",
         "roomId": "room-2",
         "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
@@ -8548,7 +8548,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W39-25",
-        "name": "Mittelstufe AS",
+        "name": "Mittelstufe Ankommensstunde",
         "style": "Hatha",
         "dayOfWeek": 0,
         "startTime": "16:30",
@@ -9001,7 +9001,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W40-5",
-        "name": "Anfänger AS",
+        "name": "Anfänger Ankommensstunde",
         "style": "Hatha",
         "dayOfWeek": 5,
         "startTime": "16:30",
@@ -9013,7 +9013,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W40-6",
-        "name": "Mittelstufe AS",
+        "name": "Mittelstufe Ankommensstunde",
         "style": "Hatha",
         "dayOfWeek": 5,
         "startTime": "16:30",
@@ -9229,11 +9229,11 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W40-24",
-        "name": "Anfänger AS",
+        "name": "Anfänger Ankommensstunde",
         "style": "Hatha",
         "dayOfWeek": 0,
         "startTime": "16:30",
-        "endTime": "18:15",
+        "endTime": "18:00",
         "roomId": "room-2",
         "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
@@ -9241,7 +9241,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W40-25",
-        "name": "Mittelstufe AS",
+        "name": "Mittelstufe Ankommensstunde",
         "style": "Hatha",
         "dayOfWeek": 0,
         "startTime": "16:30",
@@ -9662,7 +9662,7 @@ function setStored<T>(key: string, value: T): void {
   }
 }
 
-const CURRENT_DB_VERSION = 20;
+const CURRENT_DB_VERSION = 22;
 
 // Database Actions
 export const db = {

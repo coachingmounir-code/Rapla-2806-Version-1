@@ -925,7 +925,7 @@ export function runAiPlanning(
     c.teacherId = null;
     c.isAiPlanned = false;
     // Revert custom course names to original template names
-    if (c.name === 'Yoga Vidya meets Pavanmuktasana') {
+    if (c.name === 'Yoga Vidya meets Pavanmuktasana' || c.name === 'Anfänger Yin Yoga') {
       c.name = 'Anfänger';
     } else if (c.name === 'Yoga Flow Mittelstufe') {
       c.name = 'Mittelstufe';
@@ -997,7 +997,7 @@ export function runAiPlanning(
 
         // 2. Ankommensyogastunden (Friday and Sunday at 16:30, Hatha style/Mittelstufe name)
         const isAnkommYoga = isYogaClass &&
-                             course.name === 'Mittelstufe' &&
+                             (course.name === 'Mittelstufe Ankommensstunde' || course.name === 'Mittelstufe AS' || course.name === 'Mittelstufe') &&
                              (course.dayOfWeek === 5 || course.dayOfWeek === 0) &&
                              course.startTime === '16:30';
         if (isAnkommYoga) {
@@ -1181,6 +1181,11 @@ export function runAiPlanning(
           workingCourses[index].name = 'Yoga Vidya meets Pavanmuktasana';
         } else if (tNameLower.includes('satyam') && workingCourses[index].name === 'Mittelstufe') {
           workingCourses[index].name = 'Yoga Flow Mittelstufe';
+        } else if (tNameLower.includes('abha') && workingCourses[index].name === 'Anfänger') {
+          const hasYin = workingCourses.some(wc => wc.teacherId === bestCandidate.teacher.id && wc.name === 'Anfänger Yin Yoga');
+          if (!hasYin) {
+            workingCourses[index].name = 'Anfänger Yin Yoga';
+          }
         }
         
         logs.push(`✓ Zuweisung erfolgreich: ${bestCandidate.teacher.name} (Score: ${bestCandidate.score.toFixed(0)})`);
