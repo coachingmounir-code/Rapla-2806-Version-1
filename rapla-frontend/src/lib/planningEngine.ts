@@ -114,6 +114,7 @@ export function validateAssignment(
   }
 
   // --- SEVAKA RULES FROM TXT FILE ---
+  const isSevaka = teacher.roleType === 'sevaka';
   const teacherNameLower = teacher.name.toLowerCase();
   const courseNameLower = course.name.toLowerCase();
   const courseStyleLower = course.style.toLowerCase();
@@ -672,14 +673,16 @@ export function validateAssignment(
   }
 
   // 0x. Check non-preferred weekdays (Soft)
-  const nonPreferredDays = teacher.rules.nonPreferredDays || [];
-  if (nonPreferredDays.includes(course.dayOfWeek)) {
-    const dayNames = ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag'];
-    const dayName = dayNames[course.dayOfWeek] || course.dayOfWeek.toString();
-    conflicts.push({
-      type: 'soft',
-      message: `${teacher.name} möchte am ${dayName} bevorzugt nicht unterrichten (nicht bevorzugter Wochentag).`
-    });
+  if (!isSevaka) {
+    const nonPreferredDays = teacher.rules.nonPreferredDays || [];
+    if (nonPreferredDays.includes(course.dayOfWeek)) {
+      const dayNames = ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag'];
+      const dayName = dayNames[course.dayOfWeek] || course.dayOfWeek.toString();
+      conflicts.push({
+        type: 'soft',
+        message: `${teacher.name} möchte am ${dayName} bevorzugt nicht unterrichten (nicht bevorzugter Wochentag).`
+      });
+    }
   }
 
   // 0y. Expose custom wishes/notes (Soft)
@@ -700,50 +703,54 @@ export function validateAssignment(
   }
   
   // 1. Check Specialty (Hard) & Meditation/Satsang Qualifications
-  const isMeditationCourse = course.name === 'Gef. Meditation';
+  if (!isSevaka) {
+    const isMeditationCourse = course.name === 'Gef. Meditation';
 
-  if (isMeditationCourse) {
-    if (!teacher.rules.canLeadMeditation) {
-      conflicts.push({
-        type: 'hard',
-        message: `${teacher.name} ist nicht für geführte Meditationen qualifiziert.`
-      });
-    }
-  } else if (isSatsangCourse) {
-    if (!teacher.rules.canLeadSatsang) {
-      conflicts.push({
-        type: 'hard',
-        message: `${teacher.name} ist nicht für Satsang-Leitungen qualifiziert.`
-      });
-    }
-  } else {
-    const isQualified = teacher.specialties.some(
-      spec => spec.toLowerCase() === course.style.toLowerCase()
-    );
-    if (!isQualified) {
-      conflicts.push({
-        type: 'hard',
-        message: `${teacher.name} hat keine Spezialisierung für den Yoga-Stil "${course.style}".`
-      });
+    if (isMeditationCourse) {
+      if (!teacher.rules.canLeadMeditation) {
+        conflicts.push({
+          type: 'hard',
+          message: `${teacher.name} ist nicht für geführte Meditationen qualifiziert.`
+        });
+      }
+    } else if (isSatsangCourse) {
+      if (!teacher.rules.canLeadSatsang) {
+        conflicts.push({
+          type: 'hard',
+          message: `${teacher.name} ist nicht für Satsang-Leitungen qualifiziert.`
+        });
+      }
+    } else {
+      const isQualified = teacher.specialties.some(
+        spec => spec.toLowerCase() === course.style.toLowerCase()
+      );
+      if (!isQualified) {
+        conflicts.push({
+          type: 'hard',
+          message: `${teacher.name} hat keine Spezialisierung für den Yoga-Stil "${course.style}".`
+        });
+      }
     }
   }
 
   // 2. Check Availability (Hard)
-  const courseStart = timeToMinutes(course.startTime);
-  const courseEnd = timeToMinutes(course.endTime);
-  const daySlots = teacher.rules.availability.filter(slot => slot.day === course.dayOfWeek);
-  
-  const fitsAvailability = daySlots.some(slot => {
-    const availStart = timeToMinutes(slot.start);
-    const availEnd = timeToMinutes(slot.end);
-    return courseStart >= availStart && courseEnd <= availEnd;
-  });
-
-  if (!fitsAvailability) {
-    conflicts.push({
-      type: 'hard',
-      message: `${teacher.name} ist am gewählten Wochentag zur Kurszeit (${course.startTime} - ${course.endTime}) laut Arbeitszeiten nicht verfügbar.`
+  if (!isSevaka) {
+    const courseStart = timeToMinutes(course.startTime);
+    const courseEnd = timeToMinutes(course.endTime);
+    const daySlots = teacher.rules.availability.filter(slot => slot.day === course.dayOfWeek);
+    
+    const fitsAvailability = daySlots.some(slot => {
+      const availStart = timeToMinutes(slot.start);
+      const availEnd = timeToMinutes(slot.end);
+      return courseStart >= availStart && courseEnd <= availEnd;
     });
+
+    if (!fitsAvailability) {
+      conflicts.push({
+        type: 'hard',
+        message: `${teacher.name} ist am gewählten Wochentag zur Kurszeit (${course.startTime} - ${course.endTime}) laut Arbeitszeiten nicht verfügbar.`
+      });
+    }
   }
 
   // 3. Check Overlapping Classes (Hard)
@@ -763,65 +770,73 @@ export function validateAssignment(
   }
 
   // 4. Check Buffer / Rest Time (Hard)
-  const restTime = teacher.rules.minRestTime;
-  if (restTime > 0) {
-    const hasBufferConflict = otherAssignments.some(other => {
-      const c1Start = timeToMinutes(course.startTime);
-      const c1End = timeToMinutes(course.endTime);
-      const c2Start = timeToMinutes(other.startTime);
-      const c2End = timeToMinutes(other.endTime);
-      
-      // Calculate gap between them
-      let gap = 0;
-      if (c1Start >= c2End) {
-        gap = c1Start - c2End;
-      } else if (c2Start >= c1End) {
-        gap = c2Start - c1End;
-      } else {
-        return true; // overlapping, handled above but also counts as buffer conflict
-      }
-      return gap < restTime;
-    });
-
-    if (hasBufferConflict) {
-      conflicts.push({
-        type: 'hard',
-        message: `${teacher.name} benötigt zwischen den Kursen eine Mindestpause von ${restTime} Minuten.`
+  if (!isSevaka) {
+    const restTime = teacher.rules.minRestTime;
+    if (restTime > 0) {
+      const hasBufferConflict = otherAssignments.some(other => {
+        const c1Start = timeToMinutes(course.startTime);
+        const c1End = timeToMinutes(course.endTime);
+        const c2Start = timeToMinutes(other.startTime);
+        const c2End = timeToMinutes(other.endTime);
+        
+        // Calculate gap between them
+        let gap = 0;
+        if (c1Start >= c2End) {
+          gap = c1Start - c2End;
+        } else if (c2Start >= c1End) {
+          gap = c2Start - c1End;
+        } else {
+          return true; // overlapping, handled above but also counts as buffer conflict
+        }
+        return gap < restTime;
       });
+
+      if (hasBufferConflict) {
+        conflicts.push({
+          type: 'hard',
+          message: `${teacher.name} benötigt zwischen den Kursen eine Mindestpause von ${restTime} Minuten.`
+        });
+      }
     }
   }
 
   // 5. Check Daily Class Limit (Hard)
-  const classesOnDay = otherAssignments.length + 1; // plus the current one
-  if (classesOnDay > teacher.rules.maxClassesPerDay) {
-    conflicts.push({
-      type: 'hard',
-      message: `${teacher.name} überschreitet das Tageslimit von ${teacher.rules.maxClassesPerDay} Einheiten.`
-    });
+  if (!isSevaka) {
+    const classesOnDay = otherAssignments.length + 1; // plus the current one
+    if (classesOnDay > teacher.rules.maxClassesPerDay) {
+      conflicts.push({
+        type: 'hard',
+        message: `${teacher.name} überschreitet das Tageslimit von ${teacher.rules.maxClassesPerDay} Einheiten.`
+      });
+    }
   }
 
-  // 6. Check Weekly Hours Limit (Soft/Hard depending on preferences, here we treat as Hard to be thorough)
-  const courseDurationMins = timeToMinutes(course.endTime) - timeToMinutes(course.startTime);
-  const weeklyDurationMins = allCourses
-    .filter(c => c.teacherId === teacher.id && c.id !== course.id)
-    .reduce((sum, c) => sum + (timeToMinutes(c.endTime) - timeToMinutes(c.startTime)), 0) + courseDurationMins;
-  
-  const weeklyHours = weeklyDurationMins / 60;
-  if (weeklyHours > teacher.rules.maxHoursPerWeek) {
-    conflicts.push({
-      type: 'hard',
-      message: `${teacher.name} überschreitet die wöchentliche maximale Arbeitszeit von ${teacher.rules.maxHoursPerWeek} Std. (Geplant: ${weeklyHours.toFixed(1)} Std.).`
-    });
+  // 6. Check Weekly Hours Limit (Hard)
+  if (!isSevaka) {
+    const courseDurationMins = timeToMinutes(course.endTime) - timeToMinutes(course.startTime);
+    const weeklyDurationMins = allCourses
+      .filter(c => c.teacherId === teacher.id && c.id !== course.id)
+      .reduce((sum, c) => sum + (timeToMinutes(c.endTime) - timeToMinutes(c.startTime)), 0) + courseDurationMins;
+    
+    const weeklyHours = weeklyDurationMins / 60;
+    if (weeklyHours > teacher.rules.maxHoursPerWeek) {
+      conflicts.push({
+        type: 'hard',
+        message: `${teacher.name} überschreitet die wöchentliche maximale Arbeitszeit von ${teacher.rules.maxHoursPerWeek} Std. (Geplant: ${weeklyHours.toFixed(1)} Std.).`
+      });
+    }
   }
 
   // 7. Check Room Preference (Soft)
-  if (teacher.rules.preferredRooms.length > 0) {
-    const isPreferredRoom = teacher.rules.preferredRooms.includes(course.roomId);
-    if (!isPreferredRoom) {
-      conflicts.push({
-        type: 'soft',
-        message: `${teacher.name} unterrichtet bevorzugt in anderen Räumen.`
-      });
+  if (!isSevaka) {
+    if (teacher.rules.preferredRooms.length > 0) {
+      const isPreferredRoom = teacher.rules.preferredRooms.includes(course.roomId);
+      if (!isPreferredRoom) {
+        conflicts.push({
+          type: 'soft',
+          message: `${teacher.name} unterrichtet bevorzugt in anderen Räumen.`
+        });
+      }
     }
   }
 

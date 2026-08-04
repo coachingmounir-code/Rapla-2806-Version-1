@@ -297,42 +297,48 @@
       </div>
 
       <!-- Rules Summary -->
-      <div class="rules-summary">
-        <h4>📋 Aktive Grundregeln:</h4>
-        <div class="rule-item">
-          <span>Max. Einheiten:</span>
-          <strong>{teacher.rules.maxClassesPerDay} / Tag | {teacher.rules.maxHoursPerWeek} Std. / Woche</strong>
-        </div>
-        <div class="rule-item">
-          <span>Mindestpause:</span>
-          <strong>{teacher.rules.minRestTime} Minuten</strong>
-        </div>
-        <div class="rule-item">
-          <span>Verfügbarkeit:</span>
-          <strong>{teacher.rules.availability.length} Schichten</strong>
-        </div>
-        {#if teacher.roleType === 'sevaka' && teacher.rules.preferredDays && teacher.rules.preferredDays.length > 0}
+      {#if roleType !== 'sevaka'}
+        <div class="rules-summary">
+          <h4>📋 Aktive Grundregeln:</h4>
           <div class="rule-item">
-            <span>Priorisiert an:</span>
-            <strong style="color: var(--primary);">{teacher.rules.preferredDays.map(d => DAYS.find(day => day.value === d)?.label.substring(0, 2)).join(', ')}</strong>
+            <span>Max. Einheiten:</span>
+            <strong>{teacher.rules.maxClassesPerDay} / Tag | {teacher.rules.maxHoursPerWeek} Std. / Woche</strong>
           </div>
-        {/if}
-        {#if teacher.roleType === 'sevaka' && (teacher.rules.canLeadMeditation || teacher.rules.canLeadSatsang)}
           <div class="rule-item">
-            <span>KI-Qualifikation:</span>
-            <strong style="color: #960040;">
-              {[
-                teacher.rules.canLeadMeditation ? 'Meditation' : '',
-                teacher.rules.canLeadSatsang ? 'Satsang' : ''
-              ].filter(Boolean).join(', ')}
-            </strong>
+            <span>Mindestpause:</span>
+            <strong>{teacher.rules.minRestTime} Minuten</strong>
           </div>
-        {/if}
-      </div>
-      
-      <div class="card-action">
-        <span class="edit-link">Regeln bearbeiten →</span>
-      </div>
+          <div class="rule-item">
+            <span>Verfügbarkeit:</span>
+            <strong>{teacher.rules.availability.length} Schichten</strong>
+          </div>
+          {#if teacher.rules.preferredDays && teacher.rules.preferredDays.length > 0}
+            <div class="rule-item">
+              <span>Priorisiert an:</span>
+              <strong style="color: var(--primary);">{teacher.rules.preferredDays.map(d => DAYS.find(day => day.value === d)?.label.substring(0, 2)).join(', ')}</strong>
+            </div>
+          {/if}
+          {#if teacher.rules.canLeadMeditation || teacher.rules.canLeadSatsang}
+            <div class="rule-item">
+              <span>KI-Qualifikation:</span>
+              <strong style="color: #960040;">
+                {[
+                  teacher.rules.canLeadMeditation ? 'Meditation' : '',
+                  teacher.rules.canLeadSatsang ? 'Satsang' : ''
+                ].filter(Boolean).join(', ')}
+              </strong>
+            </div>
+          {/if}
+        </div>
+        
+        <div class="card-action">
+          <span class="edit-link">Regeln bearbeiten →</span>
+        </div>
+      {:else}
+        <div class="card-action">
+          <span class="edit-link">Profil bearbeiten →</span>
+        </div>
+      {/if}
     </div>
   {:else}
     <div class="glass-card" style="grid-column: 1 / -1; padding: 3rem; text-align: center; color: var(--text-secondary);">
@@ -377,149 +383,106 @@
           </label>
         </div>
 
-        {#if formIsYogaTeacher}
-          <div class="form-group" style="margin-bottom: 1.5rem;">
-            <label class="form-label" for="teacher-avail-mode">Einteilungs-Verfügbarkeit</label>
-            <select id="teacher-avail-mode" class="form-input" bind:value={formAvailabilityMode}>
-              <option value="always">Vollzeit vor Ort (Immer verfügbar)</option>
-              <option value="seminar_only">Externer Seminarleiter (Nur in Seminarwochen einteilbar)</option>
-            </select>
-          </div>
-        {/if}
-
-        <!-- Specialties Checkboxes -->
-        <div class="form-group">
-          <label class="form-label" for="spec-hatha">Yoga-Stile / Qualifikationen</label>
-          <div class="checkbox-grid">
-            {#each SPECIALTY_OPTIONS as spec}
-              <button 
-                id="spec-{spec.toLowerCase().replace(' ', '-')}"
-                type="button" 
-                class="checkbox-chip" 
-                class:active={formSpecialties.includes(spec)}
-                onclick={() => toggleSpecialty(spec)}
-              >
-                {spec}
-              </button>
-            {/each}
-          </div>
-        </div>
-        {#if roleType === 'sevaka'}
-          <div class="form-group" style="margin-top: 1rem;">
-            <label class="form-label" for="lead-meditation">Spezielle Leitungs-Qualifikationen (Für KI-Planung)</label>
-            <div class="checkbox-grid">
-              <button 
-                id="lead-meditation"
-                type="button" 
-                class="checkbox-chip" 
-                class:active={ruleCanLeadMeditation}
-                onclick={() => ruleCanLeadMeditation = !ruleCanLeadMeditation}
-              >
-                🧘 Geführte Meditation leiten
-              </button>
-              <button 
-                id="lead-satsang"
-                type="button" 
-                class="checkbox-chip" 
-                class:active={ruleCanLeadSatsang}
-                onclick={() => ruleCanLeadSatsang = !ruleCanLeadSatsang}
-              >
-                🕉️ Satsang leiten
-              </button>
+        {#if roleType !== 'sevaka'}
+          {#if formIsYogaTeacher}
+            <div class="form-group" style="margin-bottom: 1.5rem;">
+              <label class="form-label" for="teacher-avail-mode">Einteilungs-Verfügbarkeit</label>
+              <select id="teacher-avail-mode" class="form-input" bind:value={formAvailabilityMode}>
+                <option value="always">Vollzeit vor Ort (Immer verfügbar)</option>
+                <option value="seminar_only">Externer Seminarleiter (Nur in Seminarwochen einteilbar)</option>
+              </select>
             </div>
-          </div>
-        {/if}
+          {/if}
 
-        <div class="divider"></div>
-        <div class="section-title">⚙️ Planungsregeln für die KI</div>
-
-        <div class="grid-cols-3" style="gap: 1rem;">
+          <!-- Specialties Checkboxes -->
           <div class="form-group">
-            <label class="form-label" for="rule-max-classes">Max. Klassen / Tag</label>
-            <input id="rule-max-classes" type="number" min="1" max="10" class="form-input" bind:value={ruleMaxClasses} />
-          </div>
-          <div class="form-group">
-            <label class="form-label" for="rule-max-hours">Max. Stunden / Woche</label>
-            <input id="rule-max-hours" type="number" min="1" max="50" class="form-input" bind:value={ruleMaxHours} />
-          </div>
-          <div class="form-group">
-            <label class="form-label" for="rule-min-rest">Mindestpause (Min.)</label>
-            <input id="rule-min-rest" type="number" min="0" max="240" step="15" class="form-input" bind:value={ruleMinRest} />
-          </div>
-        </div>
-
-        <!-- Preferred Rooms -->
-        <div class="form-group">
-          <label class="form-label" for="room-pref">Bevorzugte Studios / Räume</label>
-          <div class="checkbox-grid">
-            {#each rooms as room}
-              <button 
-                id="room-pref-{room.id}"
-                type="button"
-                class="checkbox-chip" 
-                class:active={rulePreferredRooms.includes(room.id)}
-                onclick={() => togglePreferredRoom(room.id)}
-              >
-                {room.name}
-              </button>
-            {/each}
-          </div>
-        </div>
-
-        <!-- Preferred Days (Prioritized days) -->
-        {#if roleType === 'sevaka'}
-          <div class="form-group">
-            <label class="form-label" for="day-pref">Bevorzugte Wochentage (Priorisierung der Einteilung)</label>
+            <label class="form-label" for="spec-hatha">Yoga-Stile / Qualifikationen</label>
             <div class="checkbox-grid">
-              {#each DAYS as day}
+              {#each SPECIALTY_OPTIONS as spec}
                 <button 
-                  id="day-pref-{day.value}"
-                  type="button"
+                  id="spec-{spec.toLowerCase().replace(' ', '-')}"
+                  type="button" 
                   class="checkbox-chip" 
-                  class:active={rulePreferredDays.includes(day.value)}
-                  onclick={() => togglePreferredDay(day.value)}
+                  class:active={formSpecialties.includes(spec)}
+                  onclick={() => toggleSpecialty(spec)}
                 >
-                  {day.label}
+                  {spec}
                 </button>
               {/each}
             </div>
           </div>
-        {/if}
 
-        <!-- Availability Schedule -->
-        <div class="form-group">
-          <label class="form-label" for="avail-day">Schichtzeiten & Verfügbarkeiten</label>
-          <div class="availability-builder">
-            <select id="avail-day" class="form-select" style="width: 130px;" bind:value={tempAvailDay}>
-              {#each DAYS as d}
-                <option value={d.value}>{d.label}</option>
-              {/each}
-            </select>
-            <div class="time-inputs">
-              <input id="avail-start" type="time" class="form-input" bind:value={tempAvailStart} />
-              <span>bis</span>
-              <input id="avail-end" type="time" class="form-input" bind:value={tempAvailEnd} />
+          <div class="divider"></div>
+          <div class="section-title">⚙️ Planungsregeln für die KI</div>
+
+          <div class="grid-cols-3" style="gap: 1rem;">
+            <div class="form-group">
+              <label class="form-label" for="rule-max-classes">Max. Klassen / Tag</label>
+              <input id="rule-max-classes" type="number" min="1" max="10" class="form-input" bind:value={ruleMaxClasses} />
             </div>
-            <button type="button" class="btn btn-secondary btn-icon" onclick={addAvailability}>
-              <span>➕ Hinzufügen</span>
-            </button>
+            <div class="form-group">
+              <label class="form-label" for="rule-max-hours">Max. Stunden / Woche</label>
+              <input id="rule-max-hours" type="number" min="1" max="50" class="form-input" bind:value={ruleMaxHours} />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="rule-min-rest">Mindestpause (Min.)</label>
+              <input id="rule-min-rest" type="number" min="0" max="240" step="15" class="form-input" bind:value={ruleMinRest} />
+            </div>
           </div>
 
-          <!-- Availability Slots List -->
-          {#if ruleAvailability.length === 0}
-            <div class="empty-state">Keine Arbeitszeiten hinterlegt (Lehrer ist dauerhaft blockiert).</div>
-          {:else}
-            <div class="slots-list">
-              {#each ruleAvailability as slot, index}
-                <div class="slot-item">
-                  <span class="slot-day">{DAYS.find(d => d.value === slot.day)?.label}</span>
-                  <span class="slot-time">⏰ {slot.start} - {slot.end} Uhr</span>
-                  <button type="button" class="delete-slot-btn" onclick={() => removeAvailability(index)}>✕</button>
-                </div>
+          <!-- Preferred Rooms -->
+          <div class="form-group">
+            <label class="form-label" for="room-pref">Bevorzugte Studios / Räume</label>
+            <div class="checkbox-grid">
+              {#each rooms as room}
+                <button 
+                  id="room-pref-{room.id}"
+                  type="button"
+                  class="checkbox-chip" 
+                  class:active={rulePreferredRooms.includes(room.id)}
+                  onclick={() => togglePreferredRoom(room.id)}
+                >
+                  {room.name}
+                </button>
               {/each}
             </div>
-          {/if}
-        </div>
+          </div>
+
+          <!-- Availability Schedule -->
+          <div class="form-group">
+            <label class="form-label" for="avail-day">Schichtzeiten & Verfügbarkeiten</label>
+            <div class="availability-builder">
+              <select id="avail-day" class="form-select" style="width: 130px;" bind:value={tempAvailDay}>
+                {#each DAYS as d}
+                  <option value={d.value}>{d.label}</option>
+                {/each}
+              </select>
+              <div class="time-inputs">
+                <input id="avail-start" type="time" class="form-input" bind:value={tempAvailStart} />
+                <span>bis</span>
+                <input id="avail-end" type="time" class="form-input" bind:value={tempAvailEnd} />
+              </div>
+              <button type="button" class="btn btn-secondary btn-icon" onclick={addAvailability}>
+                <span>➕ Hinzufügen</span>
+              </button>
+            </div>
+
+            <!-- Availability Slots List -->
+            {#if ruleAvailability.length === 0}
+              <div class="empty-state">Keine Arbeitszeiten hinterlegt (Lehrer ist dauerhaft blockiert).</div>
+            {:else}
+              <div class="slots-list">
+                {#each ruleAvailability as slot, index}
+                  <div class="slot-item">
+                    <span class="slot-day">{DAYS.find(d => d.value === slot.day)?.label}</span>
+                    <span class="slot-time">⏰ {slot.start} - {slot.end} Uhr</span>
+                    <button type="button" class="delete-slot-btn" onclick={() => removeAvailability(index)}>✕</button>
+                  </div>
+                {/each}
+              </div>
+            {/if}
+          </div>
+        {/if}
       </div>
 
       <div class="modal-footer">
