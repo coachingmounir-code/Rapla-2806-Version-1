@@ -17,29 +17,6 @@ global.localStorage = {
 
 // Populate rapla_teachers in mock localStorage so db.getTeachers() returns our teachers
 const teachers = db.getTeachers();
-
-// Load wishes from JSON if available on disk
-const wishesPath = './rapla-frontend/src/lib/data/sevakas_wishes.json';
-if (fs.existsSync(wishesPath)) {
-  try {
-    const wishesData = fs.readFileSync(wishesPath, 'utf-8');
-    const wishes = JSON.parse(wishesData);
-    if (Array.isArray(wishes)) {
-      wishes.forEach(wish => {
-        const idx = teachers.findIndex(t => t.id === wish.id || t.name === wish.name);
-        if (idx !== -1) {
-          teachers[idx].rules = { ...teachers[idx].rules, ...wish.rules };
-          if (wish.availabilityMode) teachers[idx].availabilityMode = wish.availabilityMode;
-          if (wish.specialties) teachers[idx].specialties = wish.specialties;
-          teachers[idx].customWishes = wish.customWishes;
-        }
-      });
-      console.log(`[PREPLANNING] ${wishes.length} Sevaka-Wünsche erfolgreich aus JSON geladen.`);
-    }
-  } catch (e) {
-    console.error('[PREPLANNING] Fehler beim Laden der Sevaka-Wünsche:', e);
-  }
-}
 localStorage.setItem('rapla_teachers', JSON.stringify(teachers));
 
 // Populate rapla_sevafrei in mock localStorage from EXCEL_ABSENCES

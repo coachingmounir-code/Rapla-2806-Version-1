@@ -210,18 +210,10 @@
 									<a 
 										href="/sevakas" 
 										class="nav-dropdown-item" 
-										class:active={page.url.pathname.startsWith('/sevakas') && !page.url.pathname.endsWith('/wuensche')}
+										class:active={page.url.pathname.startsWith('/sevakas')}
 									>
 										<span class="nav-icon">👥</span>
 										<span class="nav-label">Sevakas</span>
-									</a>
-									<a 
-										href="/sevakas/wuensche" 
-										class="nav-dropdown-item" 
-										class:active={page.url.pathname.includes('/sevakas/wuensche')}
-									>
-										<span class="nav-icon">📝</span>
-										<span class="nav-label">Sevaka-Wünsche</span>
 									</a>
 									<a 
 										href="/teachers" 
