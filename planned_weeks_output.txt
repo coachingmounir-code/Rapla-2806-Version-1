@@ -1260,7 +1260,7 @@
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-karuna-wapke",
+        "teacherId": "teacher-gen-mouniir-jaber",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -1948,7 +1948,7 @@
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-karuna-wapke",
+        "teacherId": "teacher-gen-satyam",
         "isAiPlanned": true,
         "status": "approved"
       },

@@ -662,6 +662,51 @@ export function validateAssignment(
         message: `${teacher.name} darf für maximal 4 Yogastunden wöchentlich eingeteilt werden.`
       });
     }
+    // Er leitet nie Om Namo Narayanaya
+    if (isOnnForSevaka) {
+      conflicts.push({
+        type: 'hard',
+        message: `${teacher.name} leitet nie Om Namo Narayanaya.`
+      });
+    }
+    // Er macht nicht zwei Yogastunden am selben Tag
+    if (isYogaClassForSevaka) {
+      const otherYogaSameDay = otherSevakaAssignments.some(c => {
+        const cName = c.name.toLowerCase();
+        const cStyle = c.style.toLowerCase();
+        const cIsMed = (cName.includes('meditation') || cName.includes('medi.') || cStyle.includes('meditation')) && !cName.includes('satsang');
+        const cIsSat = cName.includes('satsang');
+        const cIsOnn = cName.includes('om namo');
+        const cIsYoga = !cIsMed && !cIsSat && !cIsOnn;
+        return cIsYoga && c.dayOfWeek === course.dayOfWeek;
+      });
+      if (otherYogaSameDay) {
+        conflicts.push({
+          type: 'hard',
+          message: `${teacher.name} darf nicht zwei Yogastunden am selben Tag leiten.`
+        });
+      }
+    }
+    // Freitags und sonntags darf nur am Nachmittag für eine Yogastunde eingeteilt werden
+    if (isYogaClassForSevaka && [5, 0].includes(course.dayOfWeek)) {
+      if (timeToMinutes(course.startTime) < timeToMinutes('12:00')) {
+        conflicts.push({
+          type: 'hard',
+          message: `${teacher.name} darf freitags und sonntags nur am Nachmittag für eine Yogastunde eingeteilt werden.`
+        });
+      }
+    }
+  }
+
+  // 16. Karuna
+  if (teacherNameLower.includes('karuna')) {
+    // Sie leitet nie Om Namo Narayanaya
+    if (isOnnForSevaka) {
+      conflicts.push({
+        type: 'hard',
+        message: `${teacher.name} leitet nie Om Namo Narayanaya.`
+      });
+    }
   }
 
   // 0. Check if active Yoga Teacher (Soft)
@@ -1026,6 +1071,16 @@ export function runAiPlanning(
       if (teacher.name.toLowerCase().includes('mounir') || teacher.name.toLowerCase().includes('mouniir')) {
         if (course.name === 'Gef. Meditation' && course.dayOfWeek === 3 && course.startTime < '12:00') {
           score -= 150; // Large penalty so others are preferred
+        }
+      }
+
+      // Custom scoring rules for Ulrich: Friday and Sunday afternoon classes as emergency backup only
+      if (teacher.name.toLowerCase().includes('ulrich')) {
+        const isYogaClass = course.style.toLowerCase() !== 'meditation';
+        if (isYogaClass && [5, 0].includes(course.dayOfWeek)) {
+          if (timeToMinutes(course.startTime) >= timeToMinutes('12:00')) {
+            score -= 1000; // Deduct points so he is only chosen if nobody else is available
+          }
         }
       }
 
