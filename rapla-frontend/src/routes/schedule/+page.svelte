@@ -111,11 +111,12 @@
     const nameLower = course.name.toLowerCase();
     const styleLower = course.style.toLowerCase();
     const isYellow = 
-      nameLower.includes('meditation') || 
-      nameLower.includes('satsang') || 
-      nameLower.includes('om namo') || 
-      nameLower.includes('ankommen') ||
-      styleLower.includes('meditation');
+      (nameLower.includes('meditation') || 
+       nameLower.includes('satsang') || 
+       nameLower.includes('om namo') || 
+       nameLower.includes('ankommen') ||
+       styleLower.includes('meditation')) &&
+      !nameLower.includes('ankommensstunde');
     
     if (isYellow) {
       return {

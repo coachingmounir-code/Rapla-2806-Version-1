@@ -322,7 +322,7 @@ function getTeacherRules(name: string, isSevaka: boolean): {
     maxHoursPerWeek,
     maxClassesPerWeek,
     canLeadMeditation: isSevaka,
-    canLeadSatsang: isSevaka
+    canLeadSatsang: isSevaka && !['adam', 'hu', 'mounir', 'mouniir', 'teresa', 'satyam', 'ulrich', 'pranava'].some(n => nameLower.includes(n))
   };
 }
 
@@ -368,7 +368,12 @@ const GENERATED_TEACHERS: Teacher[] = NEW_TEACHER_NAMES.map((name, index) => {
   ];
   const avatarColor = colors[index % colors.length];
   const isSevaka = SEVAKA_NAMES.includes(name);
-  const isYogaTeacher = isSevaka ? !(name.toLowerCase().includes('teresa') || name.toLowerCase().includes('hu')) : true;
+  const isYogaTeacher = isSevaka ? !(
+    name.toLowerCase().includes('teresa') || 
+    name.toLowerCase().includes('hu') || 
+    name.toLowerCase().includes('mounir') || 
+    name.toLowerCase().includes('adam')
+  ) : true;
 
   const tRules = getTeacherRules(name, isSevaka);
 
@@ -9662,7 +9667,7 @@ function setStored<T>(key: string, value: T): void {
   }
 }
 
-const CURRENT_DB_VERSION = 23;
+const CURRENT_DB_VERSION = 24;
 
 // Database Actions
 export const db = {
@@ -9748,9 +9753,11 @@ export const db = {
         }
       }
 
-      if (t.isYogaTeacher === undefined) {
-        const defT = DEFAULT_TEACHERS.find(x => x.id === t.id || x.name === t.name);
-        t.isYogaTeacher = defT ? defT.isYogaTeacher : true;
+      const nameLower = t.name.toLowerCase();
+      const correctYogaTeacher = correctRole === 'sevaka' ? !['teresa', 'hu', 'mounir', 'adam'].some(n => nameLower.includes(n)) : true;
+      if (t.isYogaTeacher !== correctYogaTeacher) {
+        t.isYogaTeacher = correctYogaTeacher;
+        t.specialties = correctYogaTeacher ? ['Hatha', 'Vinyasa', 'Yin', 'Meditation', 'Power Yoga', 'Kundalini'] : ['Meditation'];
         updated = true;
       }
       if (t.availabilityMode === undefined) {
@@ -9789,7 +9796,7 @@ export const db = {
         updated = true;
       }
       const shouldLeadMeditation = correctRole === 'sevaka';
-      const shouldLeadSatsang = correctRole === 'sevaka';
+      const shouldLeadSatsang = correctRole === 'sevaka' && !['adam', 'hu', 'mounir', 'mouniir', 'teresa', 'satyam', 'ulrich', 'pranava'].some(n => nameLower.includes(n));
       if (t.rules.canLeadMeditation !== shouldLeadMeditation) {
         t.rules.canLeadMeditation = shouldLeadMeditation;
         updated = true;

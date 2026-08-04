@@ -332,8 +332,8 @@ export function validateAssignment(
     }
   }
 
-  // Teresa & Hu cannot lead yoga classes (hard constraint)
-  if ((teacher.isYogaTeacher === false || teacherNameLower.includes('teresa') || teacherNameLower.includes('hu')) && isYogaClassForSevaka) {
+  // Teresa, Hu, Mounir & Adam cannot lead yoga classes (hard constraint)
+  if ((teacher.isYogaTeacher === false || teacherNameLower.includes('teresa') || teacherNameLower.includes('hu') || teacherNameLower.includes('mounir') || teacherNameLower.includes('mouniir') || teacherNameLower.includes('adam')) && isYogaClassForSevaka) {
     conflicts.push({
       type: 'hard',
       message: `${teacher.name} gibt keine Yogastunden.`
@@ -491,6 +491,27 @@ export function validateAssignment(
         message: `${teacher.name} hat montags frei.`
       });
     }
+    // Er gibt keine Yogastunden
+    if (isYogaClassForSevaka) {
+      conflicts.push({
+        type: 'hard',
+        message: `${teacher.name} gibt keine Yogastunden.`
+      });
+    }
+    // Geführte Meditation nur mittwochs (wenn sonst niemand da ist)
+    if (course.name === 'Gef. Meditation' && course.dayOfWeek !== 3) {
+      conflicts.push({
+        type: 'hard',
+        message: `${teacher.name} darf geführte Meditationen nur mittwochs leiten.`
+      });
+    }
+    // Er gibt nie einen Satsang
+    if (isSatsangForSevaka) {
+      conflicts.push({
+        type: 'hard',
+        message: `${teacher.name} leitet nie Satsangs.`
+      });
+    }
   }
 
   // 9. Nirmaya
@@ -632,6 +653,20 @@ export function validateAssignment(
       conflicts.push({
         type: 'hard',
         message: `${teacher.name} leitet Om Namo Narayanaya maximal einmal wöchentlich.`
+      });
+    }
+    // Er gibt keine Yogastunden
+    if (isYogaClassForSevaka) {
+      conflicts.push({
+        type: 'hard',
+        message: `${teacher.name} gibt keine Yogastunden.`
+      });
+    }
+    // Er gibt keinen Satsang
+    if (isSatsangForSevaka) {
+      conflicts.push({
+        type: 'hard',
+        message: `${teacher.name} leitet nie Satsangs.`
       });
     }
   }
