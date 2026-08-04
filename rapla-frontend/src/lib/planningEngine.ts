@@ -95,7 +95,7 @@ export function validateAssignment(
           
           if (activeAbsence) {
             const isSatsang = course.name.toLowerCase().includes('satsang');
-            const isBypassedType = ['seminarleitung', 'frei', 'seminartage'].includes(activeAbsence.type.toLowerCase());
+            const isBypassedType = ['seminartage'].includes(activeAbsence.type.toLowerCase());
             if (isSatsang && isBypassedType) {
               // Bypassed for Satsangs
             } else {
@@ -266,7 +266,7 @@ export function validateAssignment(
                 entry.teacherId === karuna.id &&
                 courseDate >= entry.startDate &&
                 courseDate <= entry.endDate &&
-                !['seminarleitung', 'frei', 'seminartage'].includes(entry.type.toLowerCase())
+                !['seminartage'].includes(entry.type.toLowerCase())
               );
               if (activeAbsence) {
                 isKarunaAbsent = true;
@@ -311,7 +311,7 @@ export function validateAssignment(
                 entry.teacherId === narayani.id &&
                 courseDate >= entry.startDate &&
                 courseDate <= entry.endDate &&
-                !['seminarleitung', 'frei', 'seminartage'].includes(entry.type.toLowerCase())
+                !['seminartage'].includes(entry.type.toLowerCase())
               );
               if (activeAbsence) {
                 isNarayaniAbsent = true;
@@ -1100,7 +1100,7 @@ export function runAiPlanning(
                     entry.teacherId === karuna.id &&
                     courseDate >= entry.startDate &&
                     courseDate <= entry.endDate &&
-                    !['seminarleitung', 'frei', 'seminartage'].includes(entry.type.toLowerCase())
+                    !['seminartage'].includes(entry.type.toLowerCase())
                   );
                   if (activeAbsence) {
                     isKarunaAbsent = true;
@@ -1140,7 +1140,7 @@ export function runAiPlanning(
                     entry.teacherId === narayani.id &&
                     courseDate >= entry.startDate &&
                     courseDate <= entry.endDate &&
-                    !['seminarleitung', 'frei', 'seminartage'].includes(entry.type.toLowerCase())
+                    !['seminartage'].includes(entry.type.toLowerCase())
                   );
                   if (activeAbsence) {
                     isNarayaniAbsent = true;

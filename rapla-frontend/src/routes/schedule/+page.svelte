@@ -227,7 +227,7 @@
           });
           if (activeAbsence) {
             const isSatsang = c.name.toLowerCase().includes('satsang');
-            const isBypassedType = ['seminarleitung', 'frei', 'seminartage'].includes(activeAbsence.type.toLowerCase());
+            const isBypassedType = ['seminartage'].includes(activeAbsence.type.toLowerCase());
             if (isSatsang && isBypassedType) {
               // Bypassed for Satsangs
             } else {
