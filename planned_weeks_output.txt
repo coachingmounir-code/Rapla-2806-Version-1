@@ -680,7 +680,7 @@
         "startTime": "20:00",
         "endTime": "21:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-narayani-kedenburg",
+        "teacherId": "teacher-gen-abha-morkoetter",
         "isAiPlanned": true,
         "status": "approved"
       }
@@ -1020,8 +1020,8 @@
         "startTime": "20:00",
         "endTime": "21:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-nirmaya-fodor",
-        "isAiPlanned": true,
+        "teacherId": null,
+        "isAiPlanned": false,
         "status": "approved"
       },
       {
@@ -1116,7 +1116,7 @@
         "startTime": "20:00",
         "endTime": "21:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-nirmaya-fodor",
+        "teacherId": "teacher-gen-abha-morkoetter",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -2744,7 +2744,7 @@
         "startTime": "20:00",
         "endTime": "21:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-narayani-kedenburg",
+        "teacherId": "teacher-gen-anjali-gelzleichter",
         "isAiPlanned": true,
         "status": "approved"
       }

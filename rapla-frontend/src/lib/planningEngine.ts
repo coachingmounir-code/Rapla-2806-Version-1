@@ -247,6 +247,17 @@ export function validateAssignment(
           type: 'hard',
           message: `${teacher.name} darf morgens keinen Satsang leiten. Nur Anjali, Nirmaya, Burnie, Harishakti, Narayani, Abha und Alexander sind dafür eingeteilt (Satsang-Regel 3).`
         });
+      } else {
+        // Harishakti, Burnie, Alexander oder Anjali dürfen im Rahmen ihrer Verfügbarkeit auch zwei Mal in einer Woche eingeteilt werden
+        const canDoTwo = ['harishakti', 'burnie', 'alexander', 'anjali'].some(name => teacherNameLower.includes(name));
+        const maxMorningSatsangs = canDoTwo ? 2 : 1;
+        const otherMorningSatsangs = otherSevakaAssignments.filter(c => c.name === 'Satsang' && c.startTime === '07:00');
+        if (otherMorningSatsangs.length >= maxMorningSatsangs) {
+          conflicts.push({
+            type: 'hard',
+            message: `${teacher.name} darf maximal ${maxMorningSatsangs} mal pro Woche für einen Satsang am Morgen eingeteilt werden (Satsang-Regel 3).`
+          });
+        }
       }
     }
 
@@ -284,13 +295,13 @@ export function validateAssignment(
               message: `Karuna leitet mittwochs bis sonntags den Abend-Satsang. Nur wenn sie laut sevafrei-Kalender nicht kann, werden andere eingeteilt (Satsang-Regel 2).`
             });
           } else {
-            // Wenn Karuna abwesend ist, werden Narayani, Abha und Anjali bevorzugt
+            // Wenn Karuna abwesend ist, werden Narayani, Abha und Anjali bevorzugt und sind als einzige erlaubt
             const preferredBackups = ['narayani', 'abha', 'anjali'];
             const isPreferredBackup = preferredBackups.some(name => teacherNameLower.includes(name));
             if (!isPreferredBackup) {
               conflicts.push({
-                type: 'soft',
-                message: `${teacher.name} ist nicht die bevorzugte Vertretung (Narayani, Abha, Anjali) für Karuna am Abend (Satsang-Regel 2).`
+                type: 'hard',
+                message: `${teacher.name} darf Karunas Abend-Satsang nicht vertreten. Nur Narayani, Abha und Anjali sind als Vertretung erlaubt (Satsang-Regel 2).`
               });
             }
           }
@@ -322,11 +333,23 @@ export function validateAssignment(
           }
         }
 
-        if (!teacherNameLower.includes('narayani') && !isNarayaniAbsent) {
-          conflicts.push({
-            type: 'hard',
-            message: `Narayani leitet montags den Abend-Satsang. Nur wenn sie laut sevafrei-Kalender nicht kann, werden andere eingeteilt (Satsang-Regel 2).`
-          });
+        if (!teacherNameLower.includes('narayani')) {
+          if (!isNarayaniAbsent) {
+            conflicts.push({
+              type: 'hard',
+              message: `Narayani leitet montags den Abend-Satsang. Nur wenn sie laut sevafrei-Kalender nicht kann, werden andere eingeteilt (Satsang-Regel 2).`
+            });
+          } else {
+            // Wenn Narayani abwesend ist, werden Abha und Anjali bevorzugt und sind als einzige erlaubt
+            const preferredBackups = ['abha', 'anjali'];
+            const isPreferredBackup = preferredBackups.some(name => teacherNameLower.includes(name));
+            if (!isPreferredBackup) {
+              conflicts.push({
+                type: 'hard',
+                message: `${teacher.name} darf Narayanis Abend-Satsang nicht vertreten. Nur Abha und Anjali sind als Vertretung erlaubt (Satsang-Regel 2).`
+              });
+            }
+          }
         }
       }
     }
@@ -349,13 +372,13 @@ export function validateAssignment(
         message: `${teacher.name} hat samstags, dienstags und freitags frei.`
       });
     }
-    // Max 1 Satsang am Morgen
+    // Max 2 Satsang am Morgen (Satsang-Regel 3)
     if (isSatsangForSevaka && course.startTime.toLowerCase() < '12:00') {
       const morningSatsangs = otherSevakaAssignments.filter(c => c.name.toLowerCase().includes('satsang') && c.startTime.toLowerCase() < '12:00');
-      if (morningSatsangs.length >= 1) {
+      if (morningSatsangs.length >= 2) {
         conflicts.push({
           type: 'hard',
-          message: `${teacher.name} kann nur einmal wöchentlich für einen Satsang am Morgen eingeteilt werden.`
+          message: `${teacher.name} kann maximal zweimal wöchentlich für einen Satsang am Morgen eingeteilt werden.`
         });
       }
     }
@@ -617,11 +640,11 @@ export function validateAssignment(
         message: `${teacher.name} hat sonntags und montags frei.`
       });
     }
-    // Max 1 Satsang per week
-    if (isSatsangForSevaka && counts.satsangCount > 1) {
+    // Max 2 Satsang per week (Satsang-Regel 3)
+    if (isSatsangForSevaka && counts.satsangCount > 2) {
       conflicts.push({
         type: 'hard',
-        message: `${teacher.name} kann maximal einmal wöchentlich für einen Satsang eingeteilt werden.`
+        message: `${teacher.name} kann maximal zweimal wöchentlich für einen Satsang eingeteilt werden.`
       });
     }
     // Max 1 guided meditation per week
@@ -1199,13 +1222,20 @@ export function runAiPlanning(
               }
               
               if (isKarunaAbsent) {
-                // Wenn Karuna abwesend ist, werden Narayani, Abha und Anjali bevorzugt
-                if (tNameLower.includes('narayani')) {
-                  score += 8000; // Höchste Vertretungs-Priorität
-                } else if (tNameLower.includes('abha') || tNameLower.includes('anjali')) {
-                  score += 6000; // Zweithöchste Vertretungs-Priorität
+                // Wenn Karuna abwesend ist, werden Narayani, Abha und Anjali bevorzugt und gleichermaßen eingeteilt
+                const isBackup = ['narayani', 'abha', 'anjali'].some(name => tNameLower.includes(name));
+                if (isBackup) {
+                  score += 8000; // Hohe Basis-Priorität
+                  
+                  // Balance: subtrahiere Punkte basierend auf der Anzahl bereits zugewiesener Abend-Satsangs in dieser Woche
+                  const eveningSatsangCount = workingCourses.filter(c => 
+                    c.teacherId === teacher.id && 
+                    c.name === 'Satsang' && 
+                    c.startTime === '20:00'
+                  ).length;
+                  score -= eveningSatsangCount * 2000;
                 } else {
-                  score += 100; // Niedrige Priorität für andere erlaubte Lehrer
+                  score -= 10000; // Andere abwerten
                 }
               } else {
                 score -= 10000; // Karuna ist nicht abwesend und Lehrer ist nicht Karuna
@@ -1239,7 +1269,21 @@ export function runAiPlanning(
               }
               
               if (isNarayaniAbsent) {
-                score += 500; // Erlaubt wenn Narayani abwesend ist
+                // Wenn Narayani abwesend ist, werden Abha und Anjali bevorzugt und gleichermaßen eingeteilt
+                const isBackup = ['abha', 'anjali'].some(name => tNameLower.includes(name));
+                if (isBackup) {
+                  score += 8000;
+                  
+                  // Balance: subtrahiere Punkte basierend auf der Anzahl bereits zugewiesener Abend-Satsangs in dieser Woche
+                  const eveningSatsangCount = workingCourses.filter(c => 
+                    c.teacherId === teacher.id && 
+                    c.name === 'Satsang' && 
+                    c.startTime === '20:00'
+                  ).length;
+                  score -= eveningSatsangCount * 2000;
+                } else {
+                  score -= 10000;
+                }
               } else {
                 score -= 10000; // Narayani ist nicht abwesend und Lehrer ist nicht Narayani
               }
