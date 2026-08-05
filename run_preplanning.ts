@@ -322,7 +322,7 @@ const standardCoursesDefs = [
 
   // Thursday (dayOfWeek: 4)
   { name: 'Gef. Meditation', style: 'Meditation', dayOfWeek: 4, startTime: '07:00', endTime: '07:30', roomId: 'room-5', teacherName: 'burnie' },
-  { name: 'Satsang', style: 'Meditation', dayOfWeek: 4, startTime: '07:00', endTime: '08:00', roomId: 'room-2', teacherName: 'Anjali, Abha' },
+  { name: 'Satsang', style: 'Meditation', dayOfWeek: 4, startTime: '07:00', endTime: '08:00', roomId: 'room-2', teacherName: 'Anjali' },
   { name: 'Anfänger', style: 'Hatha', dayOfWeek: 4, startTime: '09:15', endTime: '11:00', roomId: 'room-2', teacherName: 'Alexander' },
   { name: 'Mittelstufe', style: 'Hatha', dayOfWeek: 4, startTime: '09:15', endTime: '11:00', roomId: 'room-5', teacherName: 'Abha' },
   { name: 'Anfänger', style: 'Hatha', dayOfWeek: 4, startTime: '16:15', endTime: '18:00', roomId: 'room-2', teacherName: 'Ulrich' },
@@ -344,9 +344,10 @@ const standardCourses = standardCoursesDefs.map((c, index) => ({
   status: 'draft' as const
 }));
 
-// Run planning for weeks: W32 to W40
+// Run planning for weeks: W28 to W40
 const results: Record<string, any[]> = {};
 for (const week of [
+  '2026-W28', '2026-W29', '2026-W30', '2026-W31',
   '2026-W32', '2026-W33', '2026-W34', '2026-W35',
   '2026-W36', '2026-W37', '2026-W38', '2026-W39', '2026-W40'
 ]) {
@@ -396,7 +397,7 @@ if (fs.existsSync(dbPath)) {
   let dbContent = fs.readFileSync(dbPath, 'utf-8');
 
   // Find the target section to replace
-  const startIndex = dbContent.indexOf('    id: "plan-pre-2026-W32",');
+  const startIndex = dbContent.indexOf('    id: "plan-pre-2026-W28",');
   const braceStartIndex = dbContent.lastIndexOf('{', startIndex);
   const endPlanIndex = dbContent.indexOf('    id: "plan-pre-2026-W40",');
   const createdAtIndex = dbContent.indexOf('    createdAt:', endPlanIndex);
@@ -417,7 +418,7 @@ if (fs.existsSync(dbPath)) {
     );
     
     fs.writeFileSync(dbPath, updatedContent);
-    console.log(`[PREPLANNING] rapla-frontend/src/lib/db.ts wurde erfolgreich mit den neuen Wochenplänen ab W32 aktualisiert (CURRENT_DB_VERSION erhöht).`);
+    console.log(`[PREPLANNING] rapla-frontend/src/lib/db.ts wurde erfolgreich mit den neuen Wochenplänen ab W28 aktualisiert (CURRENT_DB_VERSION erhöht).`);
   } else {
     console.error('[PREPLANNING] Fehler beim Finden des Ersetzungsbereichs in db.ts');
   }
