@@ -1302,6 +1302,72 @@ export function runAiPlanning(
     // Sort candidates by score descending
     candidateScores.sort((a, b) => b.score - a.score);
 
+    // Fallback: If no candidate without hard conflicts was found for a Satsang, try again by relaxing rules
+    if (candidateScores.length === 0 && course.name === 'Satsang') {
+      logs.push(`  [NOTFALL] Kein konfliktfreier Lehrer für Satsang am Tag ${course.dayOfWeek} um ${course.startTime} gefunden. Versuche Regeln zu lockern...`);
+      for (const teacher of yogaTeachers) {
+        const teacherNameLower = teacher.name.toLowerCase();
+        
+        // Regel 4: Folgende Personen werden nie für einen Satsang eingeteilt: Adam, Hu, Mounir, Teresa, Satyam, Ulrich, Pranava
+        const forbiddenForSatsang = ['adam', 'hu', 'mounir', 'mouniir', 'teresa', 'satyam', 'ulrich', 'pranava'];
+        if (forbiddenForSatsang.some(name => teacherNameLower.includes(name))) {
+          continue; // Absolut verboten!
+        }
+
+        const tempLayout = workingCourses.map(x => x.id === course.id ? { ...x, teacherId: teacher.id } : { ...x });
+        adjustRoomsForRules(tempLayout, teachers);
+        const adjustedCourse = tempLayout.find(x => x.id === course.id)!;
+
+        const conflicts = validateAssignment(teacher, adjustedCourse, tempLayout, seminarLeaderIds, targetWeekCode, teachers);
+        
+        // Hard conflicts that are physical absence (cannot be relaxed under any circumstance)
+        const nonRelaxableConflicts = conflicts.filter(c => {
+          if (c.type !== 'hard') return false;
+          const msg = c.message.toLowerCase();
+          return msg.includes('abwesend') || msg.includes('urlaub') || msg.includes('krank') || msg.includes('satsang-regel 4') || msg.includes('nie für einen satsang');
+        });
+
+        if (nonRelaxableConflicts.length === 0) {
+          // Calculate score with high penalty for relaxed conflicts
+          let score = 100;
+          
+          // Apply regular scoring
+          const prefersRoom = teacher.rules.preferredRooms.includes(course.roomId);
+          if (prefersRoom) score += 30;
+          const preferredDays = teacher.rules.preferredDays || [];
+          if (preferredDays.includes(course.dayOfWeek)) score += 50;
+          const nonPreferredDaysVal = teacher.rules.nonPreferredDays || [];
+          if (nonPreferredDaysVal.includes(course.dayOfWeek)) score -= 40;
+          
+          const plannedHours = workingCourses
+            .filter(c => c.teacherId === teacher.id)
+            .reduce((sum, c) => sum + (timeToMinutes(c.endTime) - timeToMinutes(c.startTime)) / 60, 0);
+          const capacityRatio = plannedHours / teacher.rules.maxHoursPerWeek;
+          score -= capacityRatio * 50;
+
+          // Huge penalty for each hard conflict we relaxed
+          const hardConflictsToRelax = conflicts.filter(c => c.type === 'hard');
+          score -= hardConflictsToRelax.length * 10000;
+
+          const combinedSoftConflicts = conflicts.map(c => {
+            if (c.type === 'hard') {
+              return { type: 'soft' as const, message: `[Regellockerung] ${c.message}` };
+            }
+            return c;
+          });
+
+          candidateScores.push({
+            teacher,
+            score,
+            conflicts: combinedSoftConflicts
+          });
+        }
+      }
+
+      // Sort fallback candidates by score descending
+      candidateScores.sort((a, b) => b.score - a.score);
+    }
+
     if (candidateScores.length > 0) {
       const bestCandidate = candidateScores[0];
       const index = workingCourses.findIndex(c => c.id === course.id);

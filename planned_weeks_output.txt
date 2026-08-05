@@ -1020,8 +1020,8 @@
         "startTime": "20:00",
         "endTime": "21:00",
         "roomId": "room-2",
-        "teacherId": null,
-        "isAiPlanned": false,
+        "teacherId": "teacher-gen-nirmaya-fodor",
+        "isAiPlanned": true,
         "status": "approved"
       },
       {
