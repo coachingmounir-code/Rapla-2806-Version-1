@@ -1021,11 +1021,16 @@ export function runAiPlanning(
   coursesToPlan.forEach(c => {
     c.teacherId = null;
     c.isAiPlanned = false;
-    // Revert custom course names to original template names
-    if (c.name === 'Yoga Vidya meets Pavanmuktasana' || c.name === 'Anfänger Yin Yoga') {
-      c.name = 'Anfänger';
-    } else if (c.name === 'Yoga Flow Mittelstufe') {
-      c.name = 'Mittelstufe';
+    // Revert custom course names to original template names using template lookup
+    const templateCourse = db.getDefaultCourses?.().find(tc => tc.dayOfWeek === c.dayOfWeek && tc.startTime === c.startTime && tc.roomId === c.roomId);
+    if (templateCourse) {
+      c.name = templateCourse.name;
+    } else {
+      if (c.name === 'Yoga Vidya meets Pavanmuktasana' || c.name === 'Yoga Vidya Pavanmuktasana' || c.name === 'Anfänger Yin Yoga') {
+        c.name = 'Anfänger';
+      } else if (c.name === 'Yoga Flow Mittelstufe') {
+        c.name = 'Mittelstufe';
+      }
     }
   });
 
@@ -1125,6 +1130,40 @@ export function runAiPlanning(
         if (isYogaClass && [5, 0].includes(course.dayOfWeek)) {
           if (timeToMinutes(course.startTime) >= timeToMinutes('12:00')) {
             score -= 1000; // Deduct points so he is only chosen if nobody else is available
+          }
+        }
+      }
+
+      // Rule 8: Friday morning (09:15) Beginner class: Harishakti (primary) or Abha (backup)
+      if (course.dayOfWeek === 5 && course.startTime === '09:15' && course.name.toLowerCase().includes('anfänger')) {
+        if (teacher.name.toLowerCase().includes('harishakti')) {
+          score += 10000;
+        } else if (teacher.name.toLowerCase().includes('abha')) {
+          score += 5000;
+        }
+      }
+
+      // Rule 9: Friday morning (09:15) Intermediate class: Pranava (primary)
+      if (course.dayOfWeek === 5 && course.startTime === '09:15' && course.name.toLowerCase().includes('mittelstufe')) {
+        if (teacher.name.toLowerCase().includes('pranava')) {
+          score += 10000;
+        }
+      }
+
+      // Rule 6 & 7: Friday and Sunday 16:30 Mittelstufe Ankommensstunde
+      const isMittelstufeAnkommen = (course.dayOfWeek === 5 || course.dayOfWeek === 0) && 
+                                    course.startTime === '16:30' && 
+                                    course.name.toLowerCase().includes('mittelstufe');
+      if (isMittelstufeAnkommen) {
+        if (teacher.name.toLowerCase().includes('karuna')) {
+          score += 10000;
+        } else if (course.dayOfWeek === 0) { // Backup priorities only on Sunday
+          if (teacher.name.toLowerCase().includes('anjali')) {
+            score += 5000;
+          } else if (teacher.name.toLowerCase().includes('narayani')) {
+            score += 2500;
+          } else if (teacher.name.toLowerCase().includes('ulrich')) {
+            score += 2000; // offsets his standard -1000 penalty for weekend afternoon
           }
         }
       }
@@ -1364,14 +1403,30 @@ export function runAiPlanning(
 
         // Apply custom course name based on Sevaka rules
         const tNameLower = bestCandidate.teacher.name.toLowerCase();
-        if (tNameLower.includes('burnie') && workingCourses[index].name === 'Anfänger') {
-          workingCourses[index].name = 'Yoga Vidya meets Pavanmuktasana';
+        const isYoga = !workingCourses[index].name.toLowerCase().includes('meditation') &&
+                       !workingCourses[index].name.toLowerCase().includes('medi.') &&
+                       !workingCourses[index].style.toLowerCase().includes('meditation') &&
+                       !workingCourses[index].name.toLowerCase().includes('satsang') &&
+                       !workingCourses[index].name.toLowerCase().includes('om namo');
+
+        // Rule 5: Burnie beginner class rename
+        if (tNameLower.includes('burnie') && isYoga && workingCourses[index].name.toLowerCase().includes('anfänger')) {
+          workingCourses[index].name = 'Yoga Vidya Pavanmuktasana';
         } else if (tNameLower.includes('satyam') && workingCourses[index].name === 'Mittelstufe') {
           workingCourses[index].name = 'Yoga Flow Mittelstufe';
         } else if (tNameLower.includes('abha') && workingCourses[index].name === 'Anfänger') {
           const hasYin = workingCourses.some(wc => wc.teacherId === bestCandidate.teacher.id && wc.name === 'Anfänger Yin Yoga');
           if (!hasYin) {
             workingCourses[index].name = 'Anfänger Yin Yoga';
+          }
+        }
+
+        // Rule 9: Friday morning (09:15) intermediate class rename based on Pranava assignment
+        if (workingCourses[index].dayOfWeek === 5 && workingCourses[index].startTime === '09:15' && workingCourses[index].name.toLowerCase().includes('mittelstufe')) {
+          if (tNameLower.includes('pranava')) {
+            workingCourses[index].name = 'Mittelstufe Klangyogastunde';
+          } else {
+            workingCourses[index].name = 'Mittelstufe';
           }
         }
         
@@ -1384,6 +1439,44 @@ export function runAiPlanning(
       logs.push(`⚠️ Kein passender Yogalehrer ohne harte Konflikte für "${course.name}" gefunden.`);
     }
   }
+
+  // Final name sweep to ensure custom names are consistently applied
+  workingCourses.forEach(c => {
+    if (!c.teacherId) return;
+    const teacher = teachers.find(t => t.id === c.teacherId);
+    if (!teacher) return;
+    const tNameLower = teacher.name.toLowerCase();
+    const isYoga = !c.name.toLowerCase().includes('meditation') &&
+                   !c.name.toLowerCase().includes('medi.') &&
+                   !c.style.toLowerCase().includes('meditation') &&
+                   !c.name.toLowerCase().includes('satsang') &&
+                   !c.name.toLowerCase().includes('om namo');
+
+    // Rule 5: Burnie beginner class rename
+    if (tNameLower.includes('burnie') && isYoga && c.name.toLowerCase().includes('anfänger')) {
+      c.name = 'Yoga Vidya Pavanmuktasana';
+    } 
+    // Satyam: Yoga Flow Mittelstufe
+    else if (tNameLower.includes('satyam') && c.name === 'Mittelstufe') {
+      c.name = 'Yoga Flow Mittelstufe';
+    } 
+    // Abha: Anfänger Yin Yoga
+    else if (tNameLower.includes('abha') && c.name === 'Anfänger') {
+      const hasYin = workingCourses.some(wc => wc.teacherId === teacher.id && wc.name === 'Anfänger Yin Yoga');
+      if (!hasYin) {
+        c.name = 'Anfänger Yin Yoga';
+      }
+    }
+
+    // Rule 9: Friday morning (09:15) intermediate class rename based on Pranava assignment
+    if (c.dayOfWeek === 5 && c.startTime === '09:15' && c.name.toLowerCase().includes('mittelstufe')) {
+      if (tNameLower.includes('pranava')) {
+        c.name = 'Mittelstufe Klangyogastunde';
+      } else {
+        c.name = 'Mittelstufe';
+      }
+    }
+  });
 
   // Apply room rules to auto-adjust rooms based on final teacher assignments
   adjustRoomsForRules(workingCourses, teachers);

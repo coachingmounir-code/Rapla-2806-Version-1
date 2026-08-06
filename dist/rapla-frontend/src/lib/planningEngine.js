@@ -838,10 +838,15 @@ function runAiPlanning(courses, teachers, seminarLeaderIds = [], targetWeekCode)
   coursesToPlan.forEach((c) => {
     c.teacherId = null;
     c.isAiPlanned = false;
-    if (c.name === "Yoga Vidya meets Pavanmuktasana" || c.name === "Anf\xE4nger Yin Yoga") {
-      c.name = "Anf\xE4nger";
-    } else if (c.name === "Yoga Flow Mittelstufe") {
-      c.name = "Mittelstufe";
+    const templateCourse = import_db.db.getDefaultCourses?.().find((tc) => tc.dayOfWeek === c.dayOfWeek && tc.startTime === c.startTime && tc.roomId === c.roomId);
+    if (templateCourse) {
+      c.name = templateCourse.name;
+    } else {
+      if (c.name === "Yoga Vidya meets Pavanmuktasana" || c.name === "Yoga Vidya Pavanmuktasana" || c.name === "Anf\xE4nger Yin Yoga") {
+        c.name = "Anf\xE4nger";
+      } else if (c.name === "Yoga Flow Mittelstufe") {
+        c.name = "Mittelstufe";
+      }
     }
   });
   for (const course of coursesToPlan) {
@@ -896,6 +901,32 @@ function runAiPlanning(courses, teachers, seminarLeaderIds = [], targetWeekCode)
         if (isYogaClass && [5, 0].includes(course.dayOfWeek)) {
           if (timeToMinutes(course.startTime) >= timeToMinutes("12:00")) {
             score -= 1e3;
+          }
+        }
+      }
+      if (course.dayOfWeek === 5 && course.startTime === "09:15" && course.name.toLowerCase().includes("anf\xE4nger")) {
+        if (teacher.name.toLowerCase().includes("harishakti")) {
+          score += 1e4;
+        } else if (teacher.name.toLowerCase().includes("abha")) {
+          score += 5e3;
+        }
+      }
+      if (course.dayOfWeek === 5 && course.startTime === "09:15" && course.name.toLowerCase().includes("mittelstufe")) {
+        if (teacher.name.toLowerCase().includes("pranava")) {
+          score += 1e4;
+        }
+      }
+      const isMittelstufeAnkommen = (course.dayOfWeek === 5 || course.dayOfWeek === 0) && course.startTime === "16:30" && course.name.toLowerCase().includes("mittelstufe");
+      if (isMittelstufeAnkommen) {
+        if (teacher.name.toLowerCase().includes("karuna")) {
+          score += 1e4;
+        } else if (course.dayOfWeek === 0) {
+          if (teacher.name.toLowerCase().includes("anjali")) {
+            score += 5e3;
+          } else if (teacher.name.toLowerCase().includes("narayani")) {
+            score += 2500;
+          } else if (teacher.name.toLowerCase().includes("ulrich")) {
+            score += 2e3;
           }
         }
       }
@@ -1072,14 +1103,22 @@ function runAiPlanning(courses, teachers, seminarLeaderIds = [], targetWeekCode)
         workingCourses[index].teacherId = bestCandidate.teacher.id;
         workingCourses[index].isAiPlanned = true;
         const tNameLower = bestCandidate.teacher.name.toLowerCase();
-        if (tNameLower.includes("burnie") && workingCourses[index].name === "Anf\xE4nger") {
-          workingCourses[index].name = "Yoga Vidya meets Pavanmuktasana";
+        const isYoga = !workingCourses[index].name.toLowerCase().includes("meditation") && !workingCourses[index].name.toLowerCase().includes("medi.") && !workingCourses[index].style.toLowerCase().includes("meditation") && !workingCourses[index].name.toLowerCase().includes("satsang") && !workingCourses[index].name.toLowerCase().includes("om namo");
+        if (tNameLower.includes("burnie") && isYoga && workingCourses[index].name.toLowerCase().includes("anf\xE4nger")) {
+          workingCourses[index].name = "Yoga Vidya Pavanmuktasana";
         } else if (tNameLower.includes("satyam") && workingCourses[index].name === "Mittelstufe") {
           workingCourses[index].name = "Yoga Flow Mittelstufe";
         } else if (tNameLower.includes("abha") && workingCourses[index].name === "Anf\xE4nger") {
           const hasYin = workingCourses.some((wc) => wc.teacherId === bestCandidate.teacher.id && wc.name === "Anf\xE4nger Yin Yoga");
           if (!hasYin) {
             workingCourses[index].name = "Anf\xE4nger Yin Yoga";
+          }
+        }
+        if (workingCourses[index].dayOfWeek === 5 && workingCourses[index].startTime === "09:15" && workingCourses[index].name.toLowerCase().includes("mittelstufe")) {
+          if (tNameLower.includes("pranava")) {
+            workingCourses[index].name = "Mittelstufe Klangyogastunde";
+          } else {
+            workingCourses[index].name = "Mittelstufe";
           }
         }
         logs.push(`\u2713 Zuweisung erfolgreich: ${bestCandidate.teacher.name} (Score: ${bestCandidate.score.toFixed(0)})`);
@@ -1091,6 +1130,30 @@ function runAiPlanning(courses, teachers, seminarLeaderIds = [], targetWeekCode)
       logs.push(`\u26A0\uFE0F Kein passender Yogalehrer ohne harte Konflikte f\xFCr "${course.name}" gefunden.`);
     }
   }
+  workingCourses.forEach((c) => {
+    if (!c.teacherId) return;
+    const teacher = teachers.find((t) => t.id === c.teacherId);
+    if (!teacher) return;
+    const tNameLower = teacher.name.toLowerCase();
+    const isYoga = !c.name.toLowerCase().includes("meditation") && !c.name.toLowerCase().includes("medi.") && !c.style.toLowerCase().includes("meditation") && !c.name.toLowerCase().includes("satsang") && !c.name.toLowerCase().includes("om namo");
+    if (tNameLower.includes("burnie") && isYoga && c.name.toLowerCase().includes("anf\xE4nger")) {
+      c.name = "Yoga Vidya Pavanmuktasana";
+    } else if (tNameLower.includes("satyam") && c.name === "Mittelstufe") {
+      c.name = "Yoga Flow Mittelstufe";
+    } else if (tNameLower.includes("abha") && c.name === "Anf\xE4nger") {
+      const hasYin = workingCourses.some((wc) => wc.teacherId === teacher.id && wc.name === "Anf\xE4nger Yin Yoga");
+      if (!hasYin) {
+        c.name = "Anf\xE4nger Yin Yoga";
+      }
+    }
+    if (c.dayOfWeek === 5 && c.startTime === "09:15" && c.name.toLowerCase().includes("mittelstufe")) {
+      if (tNameLower.includes("pranava")) {
+        c.name = "Mittelstufe Klangyogastunde";
+      } else {
+        c.name = "Mittelstufe";
+      }
+    }
+  });
   adjustRoomsForRules(workingCourses, teachers);
   const assignedCount = workingCourses.filter((c) => c.teacherId !== null && c.isAiPlanned).length;
   logs.push(`Planung abgeschlossen. ${assignedCount} von ${coursesToPlan.length} Kursen wurden erfolgreich zugewiesen.`);
