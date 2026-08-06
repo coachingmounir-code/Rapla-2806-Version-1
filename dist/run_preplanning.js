@@ -286,14 +286,14 @@ const standardCoursesDefs = [
   { name: "Mittelstufe", style: "Hatha", dayOfWeek: 2, startTime: "16:15", endTime: "18:00", roomId: "room-5", teacherName: "Narayani" },
   { name: "Om Namo Narayanaya", style: "Meditation", dayOfWeek: 2, startTime: "19:30", endTime: "20:00", roomId: "room-2", teacherName: "Mouniir, Christopher" },
   // Wednesday (dayOfWeek: 3)
-  { name: "Gef\xFChrte Meditation", style: "Meditation", dayOfWeek: 3, startTime: "07:00", endTime: "07:30", roomId: "room-5", teacherName: "Mouniir" },
+  { name: "Gef\xFChrte Meditation", style: "Meditation", dayOfWeek: 3, startTime: "07:00", endTime: "07:30", roomId: "room-5", teacherName: "Satyam" },
   { name: "Satsang", style: "Meditation", dayOfWeek: 3, startTime: "07:00", endTime: "08:00", roomId: "room-2", teacherName: "Narayani" },
   { name: "Anf\xE4nger", style: "Hatha", dayOfWeek: 3, startTime: "09:15", endTime: "11:00", roomId: "room-2", teacherName: "Alexander" },
   { name: "Mittelstufe", style: "Hatha", dayOfWeek: 3, startTime: "09:15", endTime: "11:00", roomId: "room-5", teacherName: "Narayani" },
   { name: "Om Namo Narayanaya", style: "Meditation", dayOfWeek: 3, startTime: "19:30", endTime: "20:00", roomId: "room-2", teacherName: "Abha" },
   { name: "Satsang", style: "Meditation", dayOfWeek: 3, startTime: "20:00", endTime: "21:00", roomId: "room-2", teacherName: "Karuna" },
   // Thursday (dayOfWeek: 4)
-  { name: "Gef\xFChrte Meditation", style: "Meditation", dayOfWeek: 4, startTime: "07:00", endTime: "07:30", roomId: "room-5", teacherName: "burnie" },
+  { name: "Gef\xFChrte Meditation", style: "Meditation", dayOfWeek: 4, startTime: "07:00", endTime: "07:30", roomId: "room-5", teacherName: "Christopher" },
   { name: "Satsang", style: "Meditation", dayOfWeek: 4, startTime: "07:00", endTime: "08:00", roomId: "room-2", teacherName: "Anjali" },
   { name: "Anf\xE4nger", style: "Hatha", dayOfWeek: 4, startTime: "09:15", endTime: "11:00", roomId: "room-2", teacherName: "Alexander" },
   { name: "Mittelstufe", style: "Hatha", dayOfWeek: 4, startTime: "09:15", endTime: "11:00", roomId: "room-5", teacherName: "Abha" },

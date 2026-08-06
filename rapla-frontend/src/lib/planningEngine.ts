@@ -521,13 +521,6 @@ export function validateAssignment(
         message: `${teacher.name} gibt keine Yogastunden.`
       });
     }
-    // Geführte Meditation nur mittwochs (wenn sonst niemand da ist)
-    if (course.name === 'Geführte Meditation' && course.dayOfWeek !== 3) {
-      conflicts.push({
-        type: 'hard',
-        message: `${teacher.name} darf geführte Meditationen nur mittwochs leiten.`
-      });
-    }
     // Er gibt nie einen Satsang
     if (isSatsangForSevaka) {
       conflicts.push({
@@ -806,24 +799,25 @@ export function validateAssignment(
   }
   
   // 1. Check Specialty (Hard) & Meditation/Satsang Qualifications
-  if (!isSevaka) {
-    const isMeditationCourse = course.name === 'Geführte Meditation';
+  const isMeditationCourse = course.name === 'Geführte Meditation';
+  if (isMeditationCourse) {
+    if (!teacher.rules.canLeadMeditation) {
+      conflicts.push({
+        type: 'hard',
+        message: `${teacher.name} ist nicht für geführte Meditationen qualifiziert.`
+      });
+    }
+  }
 
-    if (isMeditationCourse) {
-      if (!teacher.rules.canLeadMeditation) {
-        conflicts.push({
-          type: 'hard',
-          message: `${teacher.name} ist nicht für geführte Meditationen qualifiziert.`
-        });
-      }
-    } else if (isSatsangCourse) {
+  if (!isSevaka) {
+    if (isSatsangCourse) {
       if (!teacher.rules.canLeadSatsang) {
         conflicts.push({
           type: 'hard',
           message: `${teacher.name} ist nicht für Satsang-Leitungen qualifiziert.`
         });
       }
-    } else {
+    } else if (!isMeditationCourse) {
       const isQualified = teacher.specialties.some(
         spec => spec.toLowerCase() === course.style.toLowerCase()
       );
@@ -1122,13 +1116,6 @@ export function runAiPlanning(
       if (teacher.name.toLowerCase().includes('narayani')) {
         if (course.name.toLowerCase().includes('mittelstufe')) {
           score += 150; // High bonus for her preferred style
-        }
-      }
-
-      // Custom scoring rules for Mounir: Wednesday morning meditation backup only
-      if (teacher.name.toLowerCase().includes('mounir') || teacher.name.toLowerCase().includes('mouniir')) {
-        if (course.name === 'Geführte Meditation' && course.dayOfWeek === 3 && course.startTime < '12:00') {
-          score -= 150; // Large penalty so others are preferred
         }
       }
 

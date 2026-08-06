@@ -445,12 +445,6 @@ function validateAssignment(teacher, course, allCourses, seminarLeaderIds = [], 
         message: `${teacher.name} gibt keine Yogastunden.`
       });
     }
-    if (course.name === "Gef\xFChrte Meditation" && course.dayOfWeek !== 3) {
-      conflicts.push({
-        type: "hard",
-        message: `${teacher.name} darf gef\xFChrte Meditationen nur mittwochs leiten.`
-      });
-    }
     if (isSatsangForSevaka) {
       conflicts.push({
         type: "hard",
@@ -681,23 +675,24 @@ function validateAssignment(teacher, course, allCourses, seminarLeaderIds = [], 
       message: `${teacher.name} ist als externer Seminarleiter markiert, leitet aber in dieser Woche kein Seminar.`
     });
   }
+  const isMeditationCourse = course.name === "Gef\xFChrte Meditation";
+  if (isMeditationCourse) {
+    if (!teacher.rules.canLeadMeditation) {
+      conflicts.push({
+        type: "hard",
+        message: `${teacher.name} ist nicht f\xFCr gef\xFChrte Meditationen qualifiziert.`
+      });
+    }
+  }
   if (!isSevaka) {
-    const isMeditationCourse = course.name === "Gef\xFChrte Meditation";
-    if (isMeditationCourse) {
-      if (!teacher.rules.canLeadMeditation) {
-        conflicts.push({
-          type: "hard",
-          message: `${teacher.name} ist nicht f\xFCr gef\xFChrte Meditationen qualifiziert.`
-        });
-      }
-    } else if (isSatsangCourse) {
+    if (isSatsangCourse) {
       if (!teacher.rules.canLeadSatsang) {
         conflicts.push({
           type: "hard",
           message: `${teacher.name} ist nicht f\xFCr Satsang-Leitungen qualifiziert.`
         });
       }
-    } else {
+    } else if (!isMeditationCourse) {
       const isQualified = teacher.specialties.some(
         (spec) => spec.toLowerCase() === course.style.toLowerCase()
       );
@@ -894,11 +889,6 @@ function runAiPlanning(courses, teachers, seminarLeaderIds = [], targetWeekCode)
       if (teacher.name.toLowerCase().includes("narayani")) {
         if (course.name.toLowerCase().includes("mittelstufe")) {
           score += 150;
-        }
-      }
-      if (teacher.name.toLowerCase().includes("mounir") || teacher.name.toLowerCase().includes("mouniir")) {
-        if (course.name === "Gef\xFChrte Meditation" && course.dayOfWeek === 3 && course.startTime < "12:00") {
-          score -= 150;
         }
       }
       if (teacher.name.toLowerCase().includes("ulrich")) {
