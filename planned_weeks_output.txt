@@ -2,7 +2,7 @@
 [
       {
         "id": "course-2026-W28-1",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 5,
         "startTime": "07:00",
@@ -122,7 +122,7 @@
       },
       {
         "id": "course-2026-W28-11",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 6,
         "startTime": "07:00",
@@ -230,7 +230,7 @@
       },
       {
         "id": "course-2026-W28-20",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 0,
         "startTime": "07:00",
@@ -338,7 +338,7 @@
       },
       {
         "id": "course-2026-W28-29",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 1,
         "startTime": "07:00",
@@ -434,7 +434,7 @@
       },
       {
         "id": "course-2026-W28-37",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 2,
         "startTime": "07:00",
@@ -518,7 +518,7 @@
       },
       {
         "id": "course-2026-W28-44",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 3,
         "startTime": "07:00",
@@ -590,7 +590,7 @@
       },
       {
         "id": "course-2026-W28-50",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 4,
         "startTime": "07:00",
@@ -690,7 +690,7 @@
 [
       {
         "id": "course-2026-W29-1",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 5,
         "startTime": "07:00",
@@ -810,7 +810,7 @@
       },
       {
         "id": "course-2026-W29-11",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 6,
         "startTime": "07:00",
@@ -918,7 +918,7 @@
       },
       {
         "id": "course-2026-W29-20",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 0,
         "startTime": "07:00",
@@ -1026,7 +1026,7 @@
       },
       {
         "id": "course-2026-W29-29",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 1,
         "startTime": "07:00",
@@ -1122,7 +1122,7 @@
       },
       {
         "id": "course-2026-W29-37",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 2,
         "startTime": "07:00",
@@ -1206,7 +1206,7 @@
       },
       {
         "id": "course-2026-W29-44",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 3,
         "startTime": "07:00",
@@ -1278,7 +1278,7 @@
       },
       {
         "id": "course-2026-W29-50",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 4,
         "startTime": "07:00",
@@ -1378,7 +1378,7 @@
 [
       {
         "id": "course-2026-W30-1",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 5,
         "startTime": "07:00",
@@ -1498,7 +1498,7 @@
       },
       {
         "id": "course-2026-W30-11",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 6,
         "startTime": "07:00",
@@ -1606,7 +1606,7 @@
       },
       {
         "id": "course-2026-W30-20",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 0,
         "startTime": "07:00",
@@ -1714,7 +1714,7 @@
       },
       {
         "id": "course-2026-W30-29",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 1,
         "startTime": "07:00",
@@ -1810,7 +1810,7 @@
       },
       {
         "id": "course-2026-W30-37",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 2,
         "startTime": "07:00",
@@ -1894,7 +1894,7 @@
       },
       {
         "id": "course-2026-W30-44",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 3,
         "startTime": "07:00",
@@ -1966,7 +1966,7 @@
       },
       {
         "id": "course-2026-W30-50",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 4,
         "startTime": "07:00",
@@ -2066,7 +2066,7 @@
 [
       {
         "id": "course-2026-W31-1",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 5,
         "startTime": "07:00",
@@ -2186,7 +2186,7 @@
       },
       {
         "id": "course-2026-W31-11",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 6,
         "startTime": "07:00",
@@ -2294,7 +2294,7 @@
       },
       {
         "id": "course-2026-W31-20",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 0,
         "startTime": "07:00",
@@ -2402,7 +2402,7 @@
       },
       {
         "id": "course-2026-W31-29",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 1,
         "startTime": "07:00",
@@ -2498,7 +2498,7 @@
       },
       {
         "id": "course-2026-W31-37",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 2,
         "startTime": "07:00",
@@ -2582,7 +2582,7 @@
       },
       {
         "id": "course-2026-W31-44",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 3,
         "startTime": "07:00",
@@ -2654,7 +2654,7 @@
       },
       {
         "id": "course-2026-W31-50",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 4,
         "startTime": "07:00",
@@ -2754,7 +2754,7 @@
 [
       {
         "id": "course-2026-W32-1",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 5,
         "startTime": "07:00",
@@ -2874,7 +2874,7 @@
       },
       {
         "id": "course-2026-W32-11",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 6,
         "startTime": "07:00",
@@ -2982,7 +2982,7 @@
       },
       {
         "id": "course-2026-W32-20",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 0,
         "startTime": "07:00",
@@ -3090,7 +3090,7 @@
       },
       {
         "id": "course-2026-W32-29",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 1,
         "startTime": "07:00",
@@ -3186,7 +3186,7 @@
       },
       {
         "id": "course-2026-W32-37",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 2,
         "startTime": "07:00",
@@ -3270,7 +3270,7 @@
       },
       {
         "id": "course-2026-W32-44",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 3,
         "startTime": "07:00",
@@ -3342,7 +3342,7 @@
       },
       {
         "id": "course-2026-W32-50",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 4,
         "startTime": "07:00",
@@ -3442,7 +3442,7 @@
 [
       {
         "id": "course-2026-W33-1",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 5,
         "startTime": "07:00",
@@ -3562,7 +3562,7 @@
       },
       {
         "id": "course-2026-W33-11",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 6,
         "startTime": "07:00",
@@ -3670,7 +3670,7 @@
       },
       {
         "id": "course-2026-W33-20",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 0,
         "startTime": "07:00",
@@ -3778,7 +3778,7 @@
       },
       {
         "id": "course-2026-W33-29",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 1,
         "startTime": "07:00",
@@ -3874,7 +3874,7 @@
       },
       {
         "id": "course-2026-W33-37",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 2,
         "startTime": "07:00",
@@ -3958,7 +3958,7 @@
       },
       {
         "id": "course-2026-W33-44",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 3,
         "startTime": "07:00",
@@ -4030,7 +4030,7 @@
       },
       {
         "id": "course-2026-W33-50",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 4,
         "startTime": "07:00",
@@ -4130,7 +4130,7 @@
 [
       {
         "id": "course-2026-W34-1",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 5,
         "startTime": "07:00",
@@ -4250,7 +4250,7 @@
       },
       {
         "id": "course-2026-W34-11",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 6,
         "startTime": "07:00",
@@ -4358,7 +4358,7 @@
       },
       {
         "id": "course-2026-W34-20",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 0,
         "startTime": "07:00",
@@ -4466,7 +4466,7 @@
       },
       {
         "id": "course-2026-W34-29",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 1,
         "startTime": "07:00",
@@ -4562,7 +4562,7 @@
       },
       {
         "id": "course-2026-W34-37",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 2,
         "startTime": "07:00",
@@ -4646,7 +4646,7 @@
       },
       {
         "id": "course-2026-W34-44",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 3,
         "startTime": "07:00",
@@ -4718,7 +4718,7 @@
       },
       {
         "id": "course-2026-W34-50",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 4,
         "startTime": "07:00",
@@ -4818,7 +4818,7 @@
 [
       {
         "id": "course-2026-W35-1",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 5,
         "startTime": "07:00",
@@ -4938,7 +4938,7 @@
       },
       {
         "id": "course-2026-W35-11",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 6,
         "startTime": "07:00",
@@ -5046,7 +5046,7 @@
       },
       {
         "id": "course-2026-W35-20",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 0,
         "startTime": "07:00",
@@ -5154,7 +5154,7 @@
       },
       {
         "id": "course-2026-W35-29",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 1,
         "startTime": "07:00",
@@ -5250,7 +5250,7 @@
       },
       {
         "id": "course-2026-W35-37",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 2,
         "startTime": "07:00",
@@ -5334,7 +5334,7 @@
       },
       {
         "id": "course-2026-W35-44",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 3,
         "startTime": "07:00",
@@ -5406,7 +5406,7 @@
       },
       {
         "id": "course-2026-W35-50",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 4,
         "startTime": "07:00",
@@ -5506,7 +5506,7 @@
 [
       {
         "id": "course-2026-W36-1",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 5,
         "startTime": "07:00",
@@ -5626,7 +5626,7 @@
       },
       {
         "id": "course-2026-W36-11",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 6,
         "startTime": "07:00",
@@ -5734,7 +5734,7 @@
       },
       {
         "id": "course-2026-W36-20",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 0,
         "startTime": "07:00",
@@ -5842,7 +5842,7 @@
       },
       {
         "id": "course-2026-W36-29",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 1,
         "startTime": "07:00",
@@ -5938,7 +5938,7 @@
       },
       {
         "id": "course-2026-W36-37",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 2,
         "startTime": "07:00",
@@ -6022,7 +6022,7 @@
       },
       {
         "id": "course-2026-W36-44",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 3,
         "startTime": "07:00",
@@ -6094,7 +6094,7 @@
       },
       {
         "id": "course-2026-W36-50",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 4,
         "startTime": "07:00",
@@ -6194,7 +6194,7 @@
 [
       {
         "id": "course-2026-W37-1",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 5,
         "startTime": "07:00",
@@ -6314,7 +6314,7 @@
       },
       {
         "id": "course-2026-W37-11",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 6,
         "startTime": "07:00",
@@ -6422,7 +6422,7 @@
       },
       {
         "id": "course-2026-W37-20",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 0,
         "startTime": "07:00",
@@ -6530,7 +6530,7 @@
       },
       {
         "id": "course-2026-W37-29",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 1,
         "startTime": "07:00",
@@ -6626,7 +6626,7 @@
       },
       {
         "id": "course-2026-W37-37",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 2,
         "startTime": "07:00",
@@ -6710,7 +6710,7 @@
       },
       {
         "id": "course-2026-W37-44",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 3,
         "startTime": "07:00",
@@ -6782,7 +6782,7 @@
       },
       {
         "id": "course-2026-W37-50",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 4,
         "startTime": "07:00",
@@ -6882,7 +6882,7 @@
 [
       {
         "id": "course-2026-W38-1",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 5,
         "startTime": "07:00",
@@ -7002,7 +7002,7 @@
       },
       {
         "id": "course-2026-W38-11",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 6,
         "startTime": "07:00",
@@ -7110,7 +7110,7 @@
       },
       {
         "id": "course-2026-W38-20",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 0,
         "startTime": "07:00",
@@ -7218,7 +7218,7 @@
       },
       {
         "id": "course-2026-W38-29",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 1,
         "startTime": "07:00",
@@ -7314,7 +7314,7 @@
       },
       {
         "id": "course-2026-W38-37",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 2,
         "startTime": "07:00",
@@ -7398,7 +7398,7 @@
       },
       {
         "id": "course-2026-W38-44",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 3,
         "startTime": "07:00",
@@ -7470,7 +7470,7 @@
       },
       {
         "id": "course-2026-W38-50",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 4,
         "startTime": "07:00",
@@ -7570,7 +7570,7 @@
 [
       {
         "id": "course-2026-W39-1",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 5,
         "startTime": "07:00",
@@ -7690,7 +7690,7 @@
       },
       {
         "id": "course-2026-W39-11",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 6,
         "startTime": "07:00",
@@ -7798,7 +7798,7 @@
       },
       {
         "id": "course-2026-W39-20",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 0,
         "startTime": "07:00",
@@ -7906,7 +7906,7 @@
       },
       {
         "id": "course-2026-W39-29",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 1,
         "startTime": "07:00",
@@ -8002,7 +8002,7 @@
       },
       {
         "id": "course-2026-W39-37",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 2,
         "startTime": "07:00",
@@ -8086,7 +8086,7 @@
       },
       {
         "id": "course-2026-W39-44",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 3,
         "startTime": "07:00",
@@ -8158,7 +8158,7 @@
       },
       {
         "id": "course-2026-W39-50",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 4,
         "startTime": "07:00",
@@ -8258,7 +8258,7 @@
 [
       {
         "id": "course-2026-W40-1",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 5,
         "startTime": "07:00",
@@ -8378,7 +8378,7 @@
       },
       {
         "id": "course-2026-W40-11",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 6,
         "startTime": "07:00",
@@ -8486,7 +8486,7 @@
       },
       {
         "id": "course-2026-W40-20",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 0,
         "startTime": "07:00",
@@ -8594,7 +8594,7 @@
       },
       {
         "id": "course-2026-W40-29",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 1,
         "startTime": "07:00",
@@ -8690,7 +8690,7 @@
       },
       {
         "id": "course-2026-W40-37",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 2,
         "startTime": "07:00",
@@ -8774,7 +8774,7 @@
       },
       {
         "id": "course-2026-W40-44",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 3,
         "startTime": "07:00",
@@ -8846,7 +8846,7 @@
       },
       {
         "id": "course-2026-W40-50",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 4,
         "startTime": "07:00",

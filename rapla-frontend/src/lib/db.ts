@@ -531,7 +531,7 @@ const generateDefaultCourses = (): Course[] => {
 
   const rawDefs: RawCourseDef[] = [
     // Friday (dayOfWeek: 5)
-    { name: 'Gef. Meditation', style: 'Meditation', dayOfWeek: 5, startTime: '07:00', endTime: '07:30', roomId: 'room-5', teacherName: 'Pranava' },
+    { name: 'Geführte Meditation', style: 'Meditation', dayOfWeek: 5, startTime: '07:00', endTime: '07:30', roomId: 'room-5', teacherName: 'Pranava' },
     { name: 'Satsang', style: 'Meditation', dayOfWeek: 5, startTime: '07:00', endTime: '08:00', roomId: 'room-2', teacherName: 'Nirmaya' },
     { name: 'Anfänger', style: 'Hatha', dayOfWeek: 5, startTime: '09:15', endTime: '11:00', roomId: 'room-5', teacherName: 'Harishakti' },
     { name: 'Mittelstufe Klangyogastunde', style: 'Hatha', dayOfWeek: 5, startTime: '09:15', endTime: '11:00', roomId: 'room-2', teacherName: 'Pranava' },
@@ -543,7 +543,7 @@ const generateDefaultCourses = (): Course[] => {
 
     // Saturday (dayOfWeek: 6)
     { name: 'Fortgeschrittenes Pranayama', style: 'Hatha', dayOfWeek: 6, startTime: '06:00', endTime: '06:50', roomId: 'room-2', teacherName: 'Karuna' },
-    { name: 'Gef. Meditation', style: 'Meditation', dayOfWeek: 6, startTime: '07:00', endTime: '07:30', roomId: 'room-5', teacherName: 'Nirmaya' },
+    { name: 'Geführte Meditation', style: 'Meditation', dayOfWeek: 6, startTime: '07:00', endTime: '07:30', roomId: 'room-5', teacherName: 'Nirmaya' },
     { name: 'Satsang', style: 'Meditation', dayOfWeek: 6, startTime: '07:00', endTime: '08:00', roomId: 'room-2', teacherName: 'Abha' },
     { name: 'Anfänger', style: 'Hatha', dayOfWeek: 6, startTime: '09:15', endTime: '11:00', roomId: 'room-2', teacherName: 'Pranava' },
     { name: 'Mittelstufe', style: 'Hatha', dayOfWeek: 6, startTime: '09:15', endTime: '11:00', roomId: 'room-5', teacherName: 'Abha' },
@@ -554,7 +554,7 @@ const generateDefaultCourses = (): Course[] => {
 
     // Sunday (dayOfWeek: 0)
     { name: 'Fortgeschrittenes Pranayama', style: 'Hatha', dayOfWeek: 0, startTime: '06:00', endTime: '06:50', roomId: 'room-2', teacherName: 'burnie' },
-    { name: 'Gef. Meditation', style: 'Meditation', dayOfWeek: 0, startTime: '07:00', endTime: '07:30', roomId: 'room-5', teacherName: 'Harishakti' },
+    { name: 'Geführte Meditation', style: 'Meditation', dayOfWeek: 0, startTime: '07:00', endTime: '07:30', roomId: 'room-5', teacherName: 'Harishakti' },
     { name: 'Satsang', style: 'Meditation', dayOfWeek: 0, startTime: '07:00', endTime: '08:00', roomId: 'room-2', teacherName: 'burnie' },
     { name: 'Anfänger', style: 'Hatha', dayOfWeek: 0, startTime: '09:15', endTime: '11:00', roomId: 'room-2', teacherName: 'burnie' },
     { name: 'Mittelstufe', style: 'Hatha', dayOfWeek: 0, startTime: '09:15', endTime: '11:00', roomId: 'room-5', teacherName: 'Anjali' },
@@ -565,7 +565,7 @@ const generateDefaultCourses = (): Course[] => {
     { name: 'Satsang', style: 'Meditation', dayOfWeek: 0, startTime: '20:00', endTime: '21:00', roomId: 'room-2', teacherName: 'Karuna' },
 
     // Monday (dayOfWeek: 1)
-    { name: 'Gef. Meditation', style: 'Meditation', dayOfWeek: 1, startTime: '07:00', endTime: '07:30', roomId: 'room-5', teacherName: 'Hu' },
+    { name: 'Geführte Meditation', style: 'Meditation', dayOfWeek: 1, startTime: '07:00', endTime: '07:30', roomId: 'room-5', teacherName: 'Hu' },
     { name: 'Satsang', style: 'Meditation', dayOfWeek: 1, startTime: '07:00', endTime: '08:00', roomId: 'room-2', teacherName: 'Anjali' },
     { name: 'Anfänger', style: 'Hatha', dayOfWeek: 1, startTime: '09:15', endTime: '11:00', roomId: 'room-2', teacherName: 'Burnie' },
     { name: 'Mittelstufe', style: 'Hatha', dayOfWeek: 1, startTime: '09:15', endTime: '11:00', roomId: 'room-5', teacherName: 'Harishakti' },
@@ -575,7 +575,7 @@ const generateDefaultCourses = (): Course[] => {
     { name: 'Satsang', style: 'Meditation', dayOfWeek: 1, startTime: '20:00', endTime: '21:00', roomId: 'room-2', teacherName: 'Narayani' },
 
     // Tuesday (dayOfWeek: 2)
-    { name: 'Gef. Meditation', style: 'Meditation', dayOfWeek: 2, startTime: '07:00', endTime: '07:30', roomId: 'room-5', teacherName: 'Alexander' },
+    { name: 'Geführte Meditation', style: 'Meditation', dayOfWeek: 2, startTime: '07:00', endTime: '07:30', roomId: 'room-5', teacherName: 'Alexander' },
     { name: 'Satsang', style: 'Meditation', dayOfWeek: 2, startTime: '07:00', endTime: '08:00', roomId: 'room-2', teacherName: 'Harishakti' },
     { name: 'Anfänger', style: 'Hatha', dayOfWeek: 2, startTime: '09:15', endTime: '11:00', roomId: 'room-2', teacherName: 'Harishakti' },
     { name: 'Mittelstufe', style: 'Hatha', dayOfWeek: 2, startTime: '09:15', endTime: '11:00', roomId: 'room-5', teacherName: 'Anjali' },
@@ -584,7 +584,7 @@ const generateDefaultCourses = (): Course[] => {
     { name: 'Om Namo Narayanaya', style: 'Meditation', dayOfWeek: 2, startTime: '19:30', endTime: '20:00', roomId: 'room-2', teacherName: 'Mounir' },
 
     // Wednesday (dayOfWeek: 3)
-    { name: 'Gef. Meditation', style: 'Meditation', dayOfWeek: 3, startTime: '07:00', endTime: '07:30', roomId: 'room-5', teacherName: 'Mounir' },
+    { name: 'Geführte Meditation', style: 'Meditation', dayOfWeek: 3, startTime: '07:00', endTime: '07:30', roomId: 'room-5', teacherName: 'Mounir' },
     { name: 'Satsang', style: 'Meditation', dayOfWeek: 3, startTime: '07:00', endTime: '08:00', roomId: 'room-2', teacherName: 'Narayani' },
     { name: 'Anfänger', style: 'Hatha', dayOfWeek: 3, startTime: '09:15', endTime: '11:00', roomId: 'room-2', teacherName: 'Alexander' },
     { name: 'Mittelstufe', style: 'Hatha', dayOfWeek: 3, startTime: '09:15', endTime: '11:00', roomId: 'room-5', teacherName: 'Narayani' },
@@ -592,7 +592,7 @@ const generateDefaultCourses = (): Course[] => {
     { name: 'Satsang', style: 'Meditation', dayOfWeek: 3, startTime: '20:00', endTime: '21:00', roomId: 'room-2', teacherName: 'Karuna' },
 
     // Thursday (dayOfWeek: 4)
-    { name: 'Gef. Meditation', style: 'Meditation', dayOfWeek: 4, startTime: '07:00', endTime: '07:30', roomId: 'room-5', teacherName: 'Burnie' },
+    { name: 'Geführte Meditation', style: 'Meditation', dayOfWeek: 4, startTime: '07:00', endTime: '07:30', roomId: 'room-5', teacherName: 'Burnie' },
     { name: 'Satsang', style: 'Meditation', dayOfWeek: 4, startTime: '07:00', endTime: '08:00', roomId: 'room-2', teacherName: 'Anjali' },
     { name: 'Anfänger', style: 'Hatha', dayOfWeek: 4, startTime: '09:15', endTime: '11:00', roomId: 'room-2', teacherName: 'Alexander' },
     { name: 'Mittelstufe', style: 'Hatha', dayOfWeek: 4, startTime: '09:15', endTime: '11:00', roomId: 'room-5', teacherName: 'Abha' },
@@ -634,7 +634,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
     createdAt: new Date().toISOString()
   },
   // --- PREPLANNED WEEKS ---
-    {
+      {
     id: "plan-pre-2026-W28",
     name: "Vorplanung 2026-W28 (Automatisch)",
     status: "approved",
@@ -642,7 +642,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
     courses: [
       {
         "id": "course-2026-W28-1",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 5,
         "startTime": "07:00",
@@ -762,7 +762,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W28-11",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 6,
         "startTime": "07:00",
@@ -870,7 +870,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W28-20",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 0,
         "startTime": "07:00",
@@ -978,7 +978,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W28-29",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 1,
         "startTime": "07:00",
@@ -1074,7 +1074,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W28-37",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 2,
         "startTime": "07:00",
@@ -1158,7 +1158,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W28-44",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 3,
         "startTime": "07:00",
@@ -1230,7 +1230,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W28-50",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 4,
         "startTime": "07:00",
@@ -1335,7 +1335,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
     courses: [
       {
         "id": "course-2026-W29-1",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 5,
         "startTime": "07:00",
@@ -1455,7 +1455,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W29-11",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 6,
         "startTime": "07:00",
@@ -1563,7 +1563,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W29-20",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 0,
         "startTime": "07:00",
@@ -1671,7 +1671,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W29-29",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 1,
         "startTime": "07:00",
@@ -1767,7 +1767,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W29-37",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 2,
         "startTime": "07:00",
@@ -1851,7 +1851,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W29-44",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 3,
         "startTime": "07:00",
@@ -1923,7 +1923,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W29-50",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 4,
         "startTime": "07:00",
@@ -2028,7 +2028,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
     courses: [
       {
         "id": "course-2026-W30-1",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 5,
         "startTime": "07:00",
@@ -2148,7 +2148,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W30-11",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 6,
         "startTime": "07:00",
@@ -2256,7 +2256,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W30-20",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 0,
         "startTime": "07:00",
@@ -2364,7 +2364,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W30-29",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 1,
         "startTime": "07:00",
@@ -2460,7 +2460,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W30-37",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 2,
         "startTime": "07:00",
@@ -2544,7 +2544,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W30-44",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 3,
         "startTime": "07:00",
@@ -2616,7 +2616,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W30-50",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 4,
         "startTime": "07:00",
@@ -2721,7 +2721,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
     courses: [
       {
         "id": "course-2026-W31-1",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 5,
         "startTime": "07:00",
@@ -2841,7 +2841,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W31-11",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 6,
         "startTime": "07:00",
@@ -2949,7 +2949,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W31-20",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 0,
         "startTime": "07:00",
@@ -3057,7 +3057,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W31-29",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 1,
         "startTime": "07:00",
@@ -3153,7 +3153,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W31-37",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 2,
         "startTime": "07:00",
@@ -3237,7 +3237,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W31-44",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 3,
         "startTime": "07:00",
@@ -3309,7 +3309,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W31-50",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 4,
         "startTime": "07:00",
@@ -3414,7 +3414,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
     courses: [
       {
         "id": "course-2026-W32-1",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 5,
         "startTime": "07:00",
@@ -3534,7 +3534,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W32-11",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 6,
         "startTime": "07:00",
@@ -3642,7 +3642,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W32-20",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 0,
         "startTime": "07:00",
@@ -3750,7 +3750,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W32-29",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 1,
         "startTime": "07:00",
@@ -3846,7 +3846,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W32-37",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 2,
         "startTime": "07:00",
@@ -3930,7 +3930,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W32-44",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 3,
         "startTime": "07:00",
@@ -4002,7 +4002,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W32-50",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 4,
         "startTime": "07:00",
@@ -4107,7 +4107,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
     courses: [
       {
         "id": "course-2026-W33-1",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 5,
         "startTime": "07:00",
@@ -4227,7 +4227,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W33-11",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 6,
         "startTime": "07:00",
@@ -4335,7 +4335,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W33-20",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 0,
         "startTime": "07:00",
@@ -4443,7 +4443,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W33-29",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 1,
         "startTime": "07:00",
@@ -4539,7 +4539,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W33-37",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 2,
         "startTime": "07:00",
@@ -4623,7 +4623,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W33-44",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 3,
         "startTime": "07:00",
@@ -4695,7 +4695,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W33-50",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 4,
         "startTime": "07:00",
@@ -4800,7 +4800,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
     courses: [
       {
         "id": "course-2026-W34-1",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 5,
         "startTime": "07:00",
@@ -4920,7 +4920,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W34-11",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 6,
         "startTime": "07:00",
@@ -5028,7 +5028,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W34-20",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 0,
         "startTime": "07:00",
@@ -5136,7 +5136,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W34-29",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 1,
         "startTime": "07:00",
@@ -5232,7 +5232,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W34-37",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 2,
         "startTime": "07:00",
@@ -5316,7 +5316,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W34-44",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 3,
         "startTime": "07:00",
@@ -5388,7 +5388,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W34-50",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 4,
         "startTime": "07:00",
@@ -5493,7 +5493,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
     courses: [
       {
         "id": "course-2026-W35-1",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 5,
         "startTime": "07:00",
@@ -5613,7 +5613,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W35-11",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 6,
         "startTime": "07:00",
@@ -5721,7 +5721,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W35-20",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 0,
         "startTime": "07:00",
@@ -5829,7 +5829,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W35-29",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 1,
         "startTime": "07:00",
@@ -5925,7 +5925,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W35-37",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 2,
         "startTime": "07:00",
@@ -6009,7 +6009,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W35-44",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 3,
         "startTime": "07:00",
@@ -6081,7 +6081,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W35-50",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 4,
         "startTime": "07:00",
@@ -6186,7 +6186,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
     courses: [
       {
         "id": "course-2026-W36-1",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 5,
         "startTime": "07:00",
@@ -6306,7 +6306,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W36-11",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 6,
         "startTime": "07:00",
@@ -6414,7 +6414,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W36-20",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 0,
         "startTime": "07:00",
@@ -6522,7 +6522,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W36-29",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 1,
         "startTime": "07:00",
@@ -6618,7 +6618,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W36-37",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 2,
         "startTime": "07:00",
@@ -6702,7 +6702,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W36-44",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 3,
         "startTime": "07:00",
@@ -6774,7 +6774,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W36-50",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 4,
         "startTime": "07:00",
@@ -6879,7 +6879,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
     courses: [
       {
         "id": "course-2026-W37-1",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 5,
         "startTime": "07:00",
@@ -6999,7 +6999,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W37-11",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 6,
         "startTime": "07:00",
@@ -7107,7 +7107,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W37-20",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 0,
         "startTime": "07:00",
@@ -7215,7 +7215,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W37-29",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 1,
         "startTime": "07:00",
@@ -7311,7 +7311,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W37-37",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 2,
         "startTime": "07:00",
@@ -7395,7 +7395,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W37-44",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 3,
         "startTime": "07:00",
@@ -7467,7 +7467,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W37-50",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 4,
         "startTime": "07:00",
@@ -7572,7 +7572,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
     courses: [
       {
         "id": "course-2026-W38-1",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 5,
         "startTime": "07:00",
@@ -7692,7 +7692,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W38-11",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 6,
         "startTime": "07:00",
@@ -7800,7 +7800,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W38-20",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 0,
         "startTime": "07:00",
@@ -7908,7 +7908,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W38-29",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 1,
         "startTime": "07:00",
@@ -8004,7 +8004,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W38-37",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 2,
         "startTime": "07:00",
@@ -8088,7 +8088,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W38-44",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 3,
         "startTime": "07:00",
@@ -8160,7 +8160,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W38-50",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 4,
         "startTime": "07:00",
@@ -8265,7 +8265,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
     courses: [
       {
         "id": "course-2026-W39-1",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 5,
         "startTime": "07:00",
@@ -8385,7 +8385,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W39-11",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 6,
         "startTime": "07:00",
@@ -8493,7 +8493,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W39-20",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 0,
         "startTime": "07:00",
@@ -8601,7 +8601,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W39-29",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 1,
         "startTime": "07:00",
@@ -8697,7 +8697,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W39-37",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 2,
         "startTime": "07:00",
@@ -8781,7 +8781,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W39-44",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 3,
         "startTime": "07:00",
@@ -8853,7 +8853,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W39-50",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 4,
         "startTime": "07:00",
@@ -8958,7 +8958,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
     courses: [
       {
         "id": "course-2026-W40-1",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 5,
         "startTime": "07:00",
@@ -9078,7 +9078,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W40-11",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 6,
         "startTime": "07:00",
@@ -9186,7 +9186,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W40-20",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 0,
         "startTime": "07:00",
@@ -9294,7 +9294,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W40-29",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 1,
         "startTime": "07:00",
@@ -9390,7 +9390,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W40-37",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 2,
         "startTime": "07:00",
@@ -9474,7 +9474,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W40-44",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 3,
         "startTime": "07:00",
@@ -9546,7 +9546,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W40-50",
-        "name": "Gef. Meditation",
+        "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 4,
         "startTime": "07:00",
@@ -9667,7 +9667,7 @@ function setStored<T>(key: string, value: T): void {
   }
 }
 
-const CURRENT_DB_VERSION = 30;
+const CURRENT_DB_VERSION = 31;
 
 // Database Actions
 export const db = {
