@@ -74,8 +74,21 @@ export async function POST({ request }) {
 
     // Parse custom wishes to constraints
     let customConstraints = [];
+    
+    const aggregatedWishes: string[] = [];
     if (customWishes && customWishes.trim()) {
-      customConstraints = await parseCustomWishes(customWishes, teachers, courses);
+      aggregatedWishes.push(`Wöchentliche Sonderwünsche (Allgemein):\n"${customWishes.trim()}"`);
+    }
+    
+    teachers.forEach((t: any) => {
+      if (t.customWishes && t.customWishes.trim()) {
+        aggregatedWishes.push(`Sonderwunsch für ${t.name} (ID: ${t.id}):\n"${t.customWishes.trim()}"`);
+      }
+    });
+
+    if (aggregatedWishes.length > 0) {
+      const combinedWishes = aggregatedWishes.join('\n\n');
+      customConstraints = await parseCustomWishes(combinedWishes, teachers, courses);
     }
 
     // Prepare solver payload

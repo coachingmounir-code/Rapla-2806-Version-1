@@ -341,19 +341,49 @@ def main():
         if r_type == "exclude" and r_teacher_id:
             r_day = rule.get("dayOfWeek")
             r_start = rule.get("startTime")
+            r_course_name = rule.get("courseName")
+            r_course_style = rule.get("courseStyle")
+            
             for c in courses:
-                if c["dayOfWeek"] == r_day:
-                    if not r_start or c["startTime"] == r_start:
-                        model.Add(x[c["id"], r_teacher_id] == 0)
-                        logs.append(f"[KI-REGEL] Schließe Lehrer {r_teacher_id} für Kurs '{c['name']}' am Wochentag {r_day} aus.")
+                match = True
+                if r_day is not None and c["dayOfWeek"] != r_day:
+                    match = False
+                if r_start is not None and c["startTime"] != r_start:
+                    match = False
+                if r_course_name is not None and r_course_name.lower() not in c["name"].lower():
+                    match = False
+                if r_course_style is not None and r_course_style.lower() not in c["style"].lower():
+                    match = False
+                
+                if match:
+                    model.Add(x[c["id"], r_teacher_id] == 0)
+                    logs.append(f"[KI-REGEL] Schließe Lehrer {r_teacher_id} für Kurs '{c['name']}' ({c['startTime']}) aus.")
                         
         # inclusion rule
         elif r_type == "include" and r_teacher_id:
             r_course_id = rule.get("courseId")
-            for c in courses:
-                if c["id"] == r_course_id:
-                    model.Add(x[c["id"], r_teacher_id] == 1)
-                    logs.append(f"[KI-REGEL] Zwinge Zuweisung von Lehrer {r_teacher_id} für Kurs '{c['name']}' (ID: {r_course_id}).")
+            r_day = rule.get("dayOfWeek")
+            r_start = rule.get("startTime")
+            r_course_name = rule.get("courseName")
+            
+            if r_course_id:
+                for c in courses:
+                    if c["id"] == r_course_id:
+                        model.Add(x[c["id"], r_teacher_id] == 1)
+                        logs.append(f"[KI-REGEL] Zwinge Zuweisung von Lehrer {r_teacher_id} für Kurs '{c['name']}' (ID: {r_course_id}).")
+            elif r_course_name:
+                for c in courses:
+                    match = True
+                    if r_day is not None and c["dayOfWeek"] != r_day:
+                        match = False
+                    if r_start is not None and c["startTime"] != r_start:
+                        match = False
+                    if r_course_name.lower() not in c["name"].lower():
+                        match = False
+                        
+                    if match:
+                        model.Add(x[c["id"], r_teacher_id] == 1)
+                        logs.append(f"[KI-REGEL] Zwinge Zuweisung von Lehrer {r_teacher_id} für Kurs '{c['name']}' ({c['startTime']}).")
 
     # 11. Optimization Objective Setup
     objective_terms = []

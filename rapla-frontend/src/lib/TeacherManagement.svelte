@@ -22,6 +22,7 @@
   let formSpecialties = $state<string[]>([]);
   let formIsYogaTeacher = $state(true);
   let formAvailabilityMode = $state<'always' | 'seminar_only'>('always');
+  let formCustomWishes = $state('');
   let selectedTeacherIds = $state<string[]>([]);
   
   // Rule fields
@@ -93,8 +94,8 @@
     formPhone = '';
     formSpecialties = [];
     formIsYogaTeacher = true;
-    // Sevakas are always available by default; external teachers are seminar-only by default
     formAvailabilityMode = roleType === 'sevaka' ? 'always' : 'seminar_only';
+    formCustomWishes = '';
     ruleMaxClasses = 2;
     ruleMaxHours = 10;
     ruleMinRest = 30;
@@ -138,6 +139,7 @@
     formSpecialties = [...teacher.specialties];
     formIsYogaTeacher = teacher.isYogaTeacher !== false;
     formAvailabilityMode = teacher.availabilityMode || 'always';
+    formCustomWishes = teacher.customWishes || '';
     ruleMaxClasses = teacher.rules.maxClassesPerDay;
     ruleMaxHours = teacher.rules.maxHoursPerWeek;
     ruleMinRest = teacher.rules.minRestTime;
@@ -193,6 +195,7 @@
       isYogaTeacher: formIsYogaTeacher,
       availabilityMode: formAvailabilityMode,
       roleType, // Assigns current page roleType ('sevaka' or 'external')
+      customWishes: formCustomWishes,
       rules: {
         maxClassesPerDay: ruleMaxClasses,
         maxHoursPerWeek: ruleMaxHours,
@@ -460,6 +463,18 @@
             <input type="checkbox" bind:checked={formIsYogaTeacher} />
             <span class="checkbox-label-text">Unterrichtet Yoga (für automatische KI-Planung berücksichtigen)</span>
           </label>
+        </div>
+
+        <!-- Custom wishes text field per teacher -->
+        <div class="form-group" style="margin-bottom: 1.5rem;">
+          <label class="form-label" for="teacher-custom-wishes">Individuelle Sonderwünsche & Spezialregeln (Freitext)</label>
+          <textarea 
+            id="teacher-custom-wishes" 
+            placeholder="z. B. Ulrich macht nie das Om Namo Narayanaya. Oder: Satyam unterrichtet gerne sonntags Pranayama." 
+            class="form-input" 
+            style="min-height: 80px; resize: vertical; font-family: inherit;"
+            bind:value={formCustomWishes}
+          ></textarea>
         </div>
 
         {#if roleType === 'sevaka'}
