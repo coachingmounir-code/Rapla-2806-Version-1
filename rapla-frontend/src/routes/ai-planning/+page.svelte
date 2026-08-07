@@ -30,6 +30,7 @@
 
   // Current selected course for manual modification in review panel
   let selectedCourseForEdit = $state<Course | null>(null);
+  let customRulesText = $state('');
 
   const DAYS = [
     { value: 1, label: 'Montag' },
@@ -90,13 +91,13 @@
     loadingLogs = [];
     planningLogs = [];
     
-    loadingLogs = [...loadingLogs, `[SYSTEM] Starte 4-Wochen-KI-Vorplanung...`];
+    loadingLogs = [...loadingLogs, `[SYSTEM] Starte 4-Wochen-KI-Vorplanung via CP-SAT Solver...`];
     await new Promise(resolve => setTimeout(resolve, 300));
     
     for (let i = 0; i < upcomingPlans.length; i++) {
       const plan = upcomingPlans[i];
-      loadingStep = `Plane ${plan.name}...`;
-      loadingLogs = [...loadingLogs, `[INFO] Berechne Dienstplan für ${plan.name}...`];
+      loadingStep = `Berechne ${plan.name}...`;
+      loadingLogs = [...loadingLogs, `[INFO] Rufe CP-SAT Solver auf für ${plan.name}...`];
       
       // Reset plan's courses to a fresh copy of the Blankowoche template courses before planning
       const template = db.getWeekPlan('plan-template-1');
@@ -110,25 +111,54 @@
         }));
       }
 
-      const result = runAiPlanning(plan.courses, teachers, plan.seminarLeaderIds || [], plan.targetWeekCode);
-      
-      plan.courses = result.plannedCourses;
-      plan.status = 'draft';
-      db.updateWeekPlan(plan);
-      
-      planningLogs = [
-        ...planningLogs,
-        `=== LOGS FÜR ${plan.name} ===`,
-        ...result.logs,
-        `✓ ${plan.name} erfolgreich berechnet.`,
-        ''
-      ];
+      try {
+        const absences = typeof window !== 'undefined' ? JSON.parse(localStorage.getItem('rapla_sevafrei') || '[]') : [];
+        const response = await fetch('/api/plan', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            courses: plan.courses,
+            teachers: teachers,
+            absences: absences,
+            seminarLeaderIds: plan.seminarLeaderIds || [],
+            targetWeekCode: plan.targetWeekCode,
+            customWishes: customRulesText
+          })
+        });
+
+        if (!response.ok) {
+          const errData = await response.json();
+          throw new Error(errData.error || `Server Fehler: ${response.status}`);
+        }
+
+        const result = await response.json();
+        
+        plan.courses = result.plannedCourses;
+        plan.status = 'draft';
+        db.updateWeekPlan(plan);
+        
+        planningLogs = [
+          ...planningLogs,
+          `=== LOGS FÜR ${plan.name} ===`,
+          ...(result.logs || []),
+          `✓ ${plan.name} erfolgreich berechnet.`,
+          ''
+        ];
+      } catch (err: any) {
+        console.error(err);
+        loadingLogs = [...loadingLogs, `❌ Fehler bei ${plan.name}: ${err.message}`];
+        planningLogs = [
+          ...planningLogs,
+          `❌ FEHLER FÜR ${plan.name}: ${err.message}`,
+          ''
+        ];
+      }
       
       await new Promise(resolve => setTimeout(resolve, 400));
     }
     
-    loadingStep = 'Fertig gestellt!';
-    loadingLogs = [...loadingLogs, `[SYSTEM] Alle 4 Wochen erfolgreich berechnet.`];
+    loadingStep = 'Planung abgeschlossen!';
+    loadingLogs = [...loadingLogs, `[SYSTEM] Alle Wochen erfolgreich berechnet.`];
     await new Promise(resolve => setTimeout(resolve, 500));
     
     loadData();
@@ -390,6 +420,19 @@
             <p>Die Auslastung wird gleichmäßig auf alle verfügbaren Lehrer aufgeteilt.</p>
           </div>
         </div>
+      </div>
+
+      <!-- Custom Rules Freitext Section -->
+      <div class="custom-rules-container" style="margin-top: 1.5rem; margin-bottom: 1.5rem;">
+        <label for="custom-wishes-text" style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: var(--primary-hover);">
+          ✍️ Wöchentliche Sonderwünsche & Spezialregeln (Freitext)
+        </label>
+        <textarea 
+          id="custom-wishes-text" 
+          placeholder="z. B. Karuna darf diese Woche freitags abends nicht eingeteilt werden. Oder: Mounir übernimmt am Sonntag die Hausführung." 
+          bind:value={customRulesText}
+          style="width: 100%; min-height: 100px; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 8px; font-family: inherit; font-size: 0.9rem; resize: vertical;"
+        ></textarea>
       </div>
 
       <div class="action-footer">

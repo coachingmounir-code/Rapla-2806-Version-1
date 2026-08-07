@@ -32,6 +32,22 @@
   let rulePreferredDays = $state<number[]>([]);
   let ruleCanLeadMeditation = $state(false);
   let ruleCanLeadSatsang = $state(false);
+  let ruleCanLeadPranayama = $state(false);
+  let ruleCanLeadOnn = $state(false);
+  let ruleCanLeadSatsangEinfuehrung = $state(false);
+  let ruleCanLeadHausfuehrung = $state(false);
+  let ruleCanLeadSpaziergang = $state(false);
+  let ruleMaxYogaClasses = $state<number | null>(null);
+  let ruleMaxMeditation = $state<number | null>(null);
+  let ruleMaxSatsangs = $state<number | null>(null);
+  let ruleMaxOnn = $state<number | null>(null);
+  let ruleMaxMorningSatsangs = $state<number | null>(null);
+  let ruleNoTwoYogaSameDay = $state(false);
+  let ruleWeekendAfternoonOnly = $state(false);
+  let ruleWeekendAsBackupOnly = $state(false);
+  let ruleNoYogaOnWeekend = $state(false);
+  let rulePrefersMittelstufe = $state(false);
+  let ruleCustomCourseNamesText = $state('');
   let ruleAvailability = $state<TimeSlot[]>([]);
   
   // Temp availability slot builder
@@ -86,6 +102,22 @@
     rulePreferredDays = [];
     ruleCanLeadMeditation = false;
     ruleCanLeadSatsang = false;
+    ruleCanLeadPranayama = false;
+    ruleCanLeadOnn = false;
+    ruleCanLeadSatsangEinfuehrung = false;
+    ruleCanLeadHausfuehrung = false;
+    ruleCanLeadSpaziergang = false;
+    ruleMaxYogaClasses = null;
+    ruleMaxMeditation = null;
+    ruleMaxSatsangs = null;
+    ruleMaxOnn = null;
+    ruleMaxMorningSatsangs = null;
+    ruleNoTwoYogaSameDay = false;
+    ruleWeekendAfternoonOnly = false;
+    ruleWeekendAsBackupOnly = false;
+    ruleNoYogaOnWeekend = false;
+    rulePrefersMittelstufe = false;
+    ruleCustomCourseNamesText = '';
     ruleAvailability = [
       { day: 1, start: '08:00', end: '22:00' },
       { day: 2, start: '08:00', end: '22:00' },
@@ -113,12 +145,43 @@
     rulePreferredDays = [...(teacher.rules.preferredDays || [])];
     ruleCanLeadMeditation = !!teacher.rules.canLeadMeditation;
     ruleCanLeadSatsang = !!teacher.rules.canLeadSatsang;
+    ruleCanLeadPranayama = !!teacher.rules.canLeadPranayama;
+    ruleCanLeadOnn = !!teacher.rules.canLeadOnn;
+    ruleCanLeadSatsangEinfuehrung = !!teacher.rules.canLeadSatsangEinfuehrung;
+    ruleCanLeadHausfuehrung = !!teacher.rules.canLeadHausfuehrung;
+    ruleCanLeadSpaziergang = !!teacher.rules.canLeadSpaziergang;
+    ruleMaxYogaClasses = teacher.rules.maxYogaClassesPerWeek ?? null;
+    ruleMaxMeditation = teacher.rules.maxMeditationPerWeek ?? null;
+    ruleMaxSatsangs = teacher.rules.maxSatsangsPerWeek ?? null;
+    ruleMaxOnn = teacher.rules.maxOnnPerWeek ?? null;
+    ruleMaxMorningSatsangs = teacher.rules.maxMorningSatsangsPerWeek ?? null;
+    ruleNoTwoYogaSameDay = !!teacher.rules.noTwoYogaSameDay;
+    ruleWeekendAfternoonOnly = !!teacher.rules.weekendAfternoonOnly;
+    ruleWeekendAsBackupOnly = !!teacher.rules.weekendAsBackupOnly;
+    ruleNoYogaOnWeekend = !!teacher.rules.noYogaOnWeekend;
+    rulePrefersMittelstufe = !!teacher.rules.prefersMittelstufe;
+    ruleCustomCourseNamesText = (teacher.rules.customCourseNames || [])
+      .map(c => `${c.originalName}: ${c.customName}`)
+      .join(', ');
     ruleAvailability = [...teacher.rules.availability];
     isModalOpen = true;
   }
 
   function handleSave() {
     if (!formName) return alert('Bitte Namen eingeben');
+
+    const customCourseNames: { originalName: string; customName: string }[] = [];
+    if (ruleCustomCourseNamesText.trim()) {
+      ruleCustomCourseNamesText.split(',').forEach(item => {
+        const parts = item.split(':');
+        if (parts.length === 2) {
+          customCourseNames.push({
+            originalName: parts[0].trim(),
+            customName: parts[1].trim()
+          });
+        }
+      });
+    }
 
     const teacherData: Teacher = {
       id: editingTeacher?.id || 'teacher-' + Date.now(),
@@ -138,6 +201,22 @@
         preferredDays: rulePreferredDays,
         canLeadMeditation: ruleCanLeadMeditation,
         canLeadSatsang: ruleCanLeadSatsang,
+        canLeadPranayama: ruleCanLeadPranayama,
+        canLeadOnn: ruleCanLeadOnn,
+        canLeadSatsangEinfuehrung: ruleCanLeadSatsangEinfuehrung,
+        canLeadHausfuehrung: ruleCanLeadHausfuehrung,
+        canLeadSpaziergang: ruleCanLeadSpaziergang,
+        maxYogaClassesPerWeek: ruleMaxYogaClasses === null ? undefined : ruleMaxYogaClasses,
+        maxMeditationPerWeek: ruleMaxMeditation === null ? undefined : ruleMaxMeditation,
+        maxSatsangsPerWeek: ruleMaxSatsangs === null ? undefined : ruleMaxSatsangs,
+        maxOnnPerWeek: ruleMaxOnn === null ? undefined : ruleMaxOnn,
+        maxMorningSatsangsPerWeek: ruleMaxMorningSatsangs === null ? undefined : ruleMaxMorningSatsangs,
+        noTwoYogaSameDay: ruleNoTwoYogaSameDay,
+        weekendAfternoonOnly: ruleWeekendAfternoonOnly,
+        weekendAsBackupOnly: ruleWeekendAsBackupOnly,
+        noYogaOnWeekend: ruleNoYogaOnWeekend,
+        prefersMittelstufe: rulePrefersMittelstufe,
+        customCourseNames: customCourseNames.length > 0 ? customCourseNames : undefined,
         availability: ruleAvailability
       }
     };
@@ -383,7 +462,147 @@
           </label>
         </div>
 
-        {#if roleType !== 'sevaka'}
+        {#if roleType === 'sevaka'}
+          <div class="divider"></div>
+          <div class="section-title">⚙️ Planungsregeln für Sevaka</div>
+
+          <div class="grid-cols-3" style="gap: 1rem; margin-bottom: 1rem;">
+            <div class="form-group">
+              <label class="form-label" for="rule-max-classes-sevaka">Max. Klassen / Tag</label>
+              <input id="rule-max-classes-sevaka" type="number" min="1" max="10" class="form-input" bind:value={ruleMaxClasses} />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="rule-max-hours-sevaka">Max. Stunden / Woche</label>
+              <input id="rule-max-hours-sevaka" type="number" min="1" max="50" class="form-input" bind:value={ruleMaxHours} />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="rule-min-rest-sevaka">Mindestpause (Min.)</label>
+              <input id="rule-min-rest-sevaka" type="number" min="0" max="240" step="15" class="form-input" bind:value={ruleMinRest} />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Spezifische Qualifikationen</label>
+            <div class="checkbox-grid-3">
+              <label class="checkbox-chip-label">
+                <input type="checkbox" bind:checked={ruleCanLeadMeditation} />
+                <span>Meditation</span>
+              </label>
+              <label class="checkbox-chip-label">
+                <input type="checkbox" bind:checked={ruleCanLeadSatsang} />
+                <span>Satsang</span>
+              </label>
+              <label class="checkbox-chip-label">
+                <input type="checkbox" bind:checked={ruleCanLeadPranayama} />
+                <span>Pranayama</span>
+              </label>
+              <label class="checkbox-chip-label">
+                <input type="checkbox" bind:checked={ruleCanLeadOnn} />
+                <span>ONN</span>
+              </label>
+              <label class="checkbox-chip-label">
+                <input type="checkbox" bind:checked={ruleCanLeadSatsangEinfuehrung} />
+                <span>Satsang Einf.</span>
+              </label>
+              <label class="checkbox-chip-label">
+                <input type="checkbox" bind:checked={ruleCanLeadHausfuehrung} />
+                <span>Hausführung</span>
+              </label>
+              <label class="checkbox-chip-label">
+                <input type="checkbox" bind:checked={ruleCanLeadSpaziergang} />
+                <span>Spaziergang</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="section-title" style="font-size: 0.95rem; margin-top: 1rem;">Wöchentliche Limits (Optional)</div>
+          <div class="grid-cols-3" style="gap: 1rem; margin-bottom: 1rem;">
+            <div class="form-group">
+              <label class="form-label" for="rule-max-yoga-week">Yogastunden / Woche</label>
+              <input id="rule-max-yoga-week" type="number" placeholder="Kein Limit" class="form-input" bind:value={ruleMaxYogaClasses} />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="rule-max-med-week">Meditationen / Woche</label>
+              <input id="rule-max-med-week" type="number" placeholder="Kein Limit" class="form-input" bind:value={ruleMaxMeditation} />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="rule-max-sat-week">Satsangs / Woche</label>
+              <input id="rule-max-sat-week" type="number" placeholder="Kein Limit" class="form-input" bind:value={ruleMaxSatsangs} />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="rule-max-onn-week">ONN / Woche</label>
+              <input id="rule-max-onn-week" type="number" placeholder="Kein Limit" class="form-input" bind:value={ruleMaxOnn} />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="rule-max-morn-sat">Morgen-Satsangs / Woche</label>
+              <input id="rule-max-morn-sat" type="number" placeholder="Kein Limit" class="form-input" bind:value={ruleMaxMorningSatsangs} />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Besondere Planungsbedingungen</label>
+            <div class="checkbox-grid-2">
+              <label class="checkbox-chip-label">
+                <input type="checkbox" bind:checked={ruleNoTwoYogaSameDay} />
+                <span>Max 1 Yogastunde/Tag</span>
+              </label>
+              <label class="checkbox-chip-label">
+                <input type="checkbox" bind:checked={ruleWeekendAfternoonOnly} />
+                <span>WE: Nur nachmittags Yoga</span>
+              </label>
+              <label class="checkbox-chip-label">
+                <input type="checkbox" bind:checked={ruleWeekendAsBackupOnly} />
+                <span>WE: Nur als Notvertretung</span>
+              </label>
+              <label class="checkbox-chip-label">
+                <input type="checkbox" bind:checked={ruleNoYogaOnWeekend} />
+                <span>WE: Keine Yogastunden</span>
+              </label>
+              <label class="checkbox-chip-label">
+                <input type="checkbox" bind:checked={rulePrefersMittelstufe} />
+                <span>Bevorzugt Mittelstufe</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 1.5rem;">
+            <label class="form-label" for="rule-custom-names">Kurs-Umbennungen (z.B. "Anfänger: meets Pavanmuktasana")</label>
+            <input id="rule-custom-names" type="text" placeholder="z. B. Anfänger: meets Pavanmuktasana, Mittelstufe: Yoga Flow" class="form-input" bind:value={ruleCustomCourseNamesText} />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="avail-day-sevaka">Arbeitszeiten & Freie Tage</label>
+            <div class="availability-builder">
+              <select id="avail-day-sevaka" class="form-select" style="width: 130px;" bind:value={tempAvailDay}>
+                {#each DAYS as d}
+                  <option value={d.value}>{d.label}</option>
+                {/each}
+              </select>
+              <div class="time-inputs">
+                <input id="avail-start-sevaka" type="time" class="form-input" bind:value={tempAvailStart} />
+                <span>bis</span>
+                <input id="avail-end-sevaka" type="time" class="form-input" bind:value={tempAvailEnd} />
+              </div>
+              <button type="button" class="btn btn-secondary btn-icon" onclick={addAvailability}>
+                <span>➕ Hinzufügen</span>
+              </button>
+            </div>
+
+            {#if ruleAvailability.length === 0}
+              <div class="empty-state">Keine Arbeitszeiten hinterlegt (Lehrer ist dauerhaft blockiert).</div>
+            {:else}
+              <div class="slots-list" style="max-height: 150px; overflow-y: auto;">
+                {#each ruleAvailability as slot, index}
+                  <div class="slot-item">
+                    <span class="slot-day">{DAYS.find(d => d.value === slot.day)?.label}</span>
+                    <span class="slot-time">⏰ {slot.start} - {slot.end} Uhr</span>
+                    <button type="button" class="delete-slot-btn" onclick={() => removeAvailability(index)}>✕</button>
+                  </div>
+                {/each}
+              </div>
+            {/if}
+          </div>
+        {:else}
           {#if formIsYogaTeacher}
             <div class="form-group" style="margin-bottom: 1.5rem;">
               <label class="form-label" for="teacher-avail-mode">Einteilungs-Verfügbarkeit</label>
@@ -859,5 +1078,48 @@
     .bulk-buttons {
       justify-content: center;
     }
+  }
+
+  .checkbox-grid-3 {
+    display: grid;
+    grid-template-cols: repeat(3, minmax(0, 1fr));
+    gap: 0.5rem;
+  }
+
+  .checkbox-grid-2 {
+    display: grid;
+    grid-template-cols: repeat(2, minmax(0, 1fr));
+    gap: 0.5rem;
+  }
+
+  .checkbox-chip-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 500;
+    padding: 0.5rem 0.75rem;
+    transition: var(--transition-smooth);
+    user-select: none;
+  }
+
+  .checkbox-chip-label:hover {
+    background: #f8fafc;
+    border-color: #94a3b8;
+  }
+
+  .checkbox-chip-label:has(input:checked) {
+    background: var(--primary-glow);
+    border-color: var(--primary);
+    color: var(--primary);
+  }
+
+  .checkbox-chip-label input {
+    cursor: pointer;
   }
 </style>

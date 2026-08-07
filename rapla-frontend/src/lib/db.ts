@@ -15,6 +15,22 @@ export interface TeacherRules {
   nonPreferredDays?: number[]; // list of days (0-6) where this teacher prefers not to teach
   canLeadMeditation?: boolean;
   canLeadSatsang?: boolean;
+  canLeadPranayama?: boolean;
+  canLeadOnn?: boolean;
+  canLeadSatsangEinfuehrung?: boolean;
+  canLeadHausfuehrung?: boolean;
+  canLeadSpaziergang?: boolean;
+  maxYogaClassesPerWeek?: number;
+  maxMeditationPerWeek?: number;
+  maxSatsangsPerWeek?: number;
+  maxOnnPerWeek?: number;
+  maxMorningSatsangsPerWeek?: number;
+  noTwoYogaSameDay?: boolean;
+  weekendAfternoonOnly?: boolean;
+  weekendAsBackupOnly?: boolean;
+  noYogaOnWeekend?: boolean;
+  prefersMittelstufe?: boolean;
+  customCourseNames?: { originalName: string; customName: string }[];
   availability: TimeSlot[];
 }
 
@@ -279,13 +295,7 @@ function getTeacherAvailability(name: string, isSevaka: boolean): TimeSlot[] {
   return [0, 1, 2, 3, 4, 5, 6].map(d => ({ day: d, start: '06:00', end: '22:00' }));
 }
 
-function getTeacherRules(name: string, isSevaka: boolean): {
-  maxClassesPerDay: number;
-  maxHoursPerWeek: number;
-  maxClassesPerWeek?: number;
-  canLeadMeditation: boolean;
-  canLeadSatsang: boolean;
-} {
+function getTeacherRules(name: string, isSevaka: boolean): Partial<TeacherRules> {
   const nameLower = name.toLowerCase();
   const isKaruna = nameLower.includes('karuna');
   
@@ -317,13 +327,74 @@ function getTeacherRules(name: string, isSevaka: boolean): {
     maxClassesPerWeek = 4;
   }
 
-  return {
+  const rules: Partial<TeacherRules> = {
     maxClassesPerDay,
     maxHoursPerWeek,
     maxClassesPerWeek,
     canLeadMeditation: ['pranava', 'harishakti', 'alexander', 'burnie', 'satyam', 'nirmaya', 'narayani', 'mounir', 'mouniir', 'hu', 'christopher'].some(n => nameLower.includes(n)),
     canLeadSatsang: isSevaka && !['adam', 'hu', 'mounir', 'mouniir', 'teresa', 'satyam', 'ulrich', 'pranava'].some(n => nameLower.includes(n))
   };
+
+  if (isSevaka) {
+    if (nameLower.includes('burnie')) {
+      rules.canLeadPranayama = true;
+      rules.maxMeditationPerWeek = 1;
+      rules.maxSatsangsPerWeek = 1;
+      rules.maxMorningSatsangsPerWeek = 2;
+      rules.customCourseNames = [{ originalName: "Anfänger", customName: "Yoga Vidya meets Pavanmuktasana" }];
+    } else if (nameLower.includes('satyam')) {
+      rules.maxYogaClassesPerWeek = 2;
+      rules.customCourseNames = [{ originalName: "Mittelstufe", customName: "Yoga Flow Mittelstufe" }];
+    } else if (nameLower.includes('teresa')) {
+      rules.canLeadOnn = true;
+      rules.maxOnnPerWeek = 1;
+    } else if (nameLower.includes('abha')) {
+      rules.canLeadPranayama = true;
+      rules.maxYogaClassesPerWeek = 3;
+      rules.maxOnnPerWeek = 1;
+    } else if (nameLower.includes('anjali')) {
+      rules.maxYogaClassesPerWeek = 3;
+    } else if (nameLower.includes('karuna')) {
+      rules.canLeadPranayama = true;
+      rules.maxYogaClassesPerWeek = 3;
+    } else if (nameLower.includes('hu')) {
+      rules.canLeadSatsangEinfuehrung = true;
+    } else if (nameLower.includes('mounir') || nameLower.includes('mouniir')) {
+      rules.canLeadSatsangEinfuehrung = true;
+    } else if (nameLower.includes('nirmaya')) {
+      rules.canLeadSatsangEinfuehrung = true;
+      rules.maxMeditationPerWeek = 1;
+      rules.maxMorningSatsangsPerWeek = 1;
+      rules.maxYogaClassesPerWeek = 2;
+      rules.noYogaOnWeekend = true;
+    } else if (nameLower.includes('narayani')) {
+      rules.canLeadPranayama = true;
+      rules.maxYogaClassesPerWeek = 3;
+      rules.prefersMittelstufe = true;
+      rules.maxMorningSatsangsPerWeek = 1;
+      rules.maxMeditationPerWeek = 1;
+    } else if (nameLower.includes('pranava')) {
+      rules.canLeadSatsangEinfuehrung = true;
+      rules.maxYogaClassesPerWeek = 4;
+      rules.maxMeditationPerWeek = 1;
+    } else if (nameLower.includes('alexander')) {
+      rules.maxSatsangsPerWeek = 1;
+      rules.maxMeditationPerWeek = 1;
+      rules.maxYogaClassesPerWeek = 2;
+    } else if (nameLower.includes('adam')) {
+      rules.canLeadOnn = true;
+      rules.maxOnnPerWeek = 1;
+    } else if (nameLower.includes('harishakti')) {
+      rules.maxYogaClassesPerWeek = 3;
+    } else if (nameLower.includes('ulrich')) {
+      rules.maxYogaClassesPerWeek = 4;
+      rules.noTwoYogaSameDay = true;
+      rules.weekendAfternoonOnly = true;
+      rules.weekendAsBackupOnly = true;
+    }
+  }
+
+  return rules;
 }
 
 const GENERATED_TEACHERS: Teacher[] = NEW_TEACHER_NAMES.map((name, index) => {
@@ -388,17 +459,16 @@ const GENERATED_TEACHERS: Teacher[] = NEW_TEACHER_NAMES.map((name, index) => {
     availabilityMode: isSevaka ? 'always' : 'seminar_only',
     roleType: isSevaka ? 'sevaka' : 'external',
     rules: {
-      maxClassesPerDay: tRules.maxClassesPerDay,
-      maxHoursPerWeek: tRules.maxHoursPerWeek,
+      maxClassesPerDay: tRules.maxClassesPerDay || 2,
+      maxHoursPerWeek: tRules.maxHoursPerWeek || 10,
       maxClassesPerWeek: tRules.maxClassesPerWeek,
       minRestTime: 30,
       preferredRooms: [],
       preferredDays: [],
-      canLeadMeditation: tRules.canLeadMeditation,
-      canLeadSatsang: tRules.canLeadSatsang,
+      ...tRules,
       availability: getTeacherAvailability(name, isSevaka)
     }
-  };
+  } as Teacher;
 });
 
 const DEFAULT_TEACHERS: Teacher[] = [

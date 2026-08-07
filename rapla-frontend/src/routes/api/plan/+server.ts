@@ -1,0 +1,137 @@
+import { json } from '@sveltejs/kit';
+import { spawn } from 'child_process';
+import fs from 'fs';
+import path from 'path';
+
+async function parseCustomWishes(customWishes: string, teachers: any[], courses: any[]) {
+  const apiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
+  if (!apiKey || !customWishes.trim()) {
+    return [];
+  }
+
+  try {
+    const teacherContext = teachers.map(t => ({ id: t.id, name: t.name }));
+    const courseContext = courses.map(c => ({ id: c.id, name: c.name, dayOfWeek: c.dayOfWeek, startTime: c.startTime, style: c.style }));
+
+    const prompt = `
+Du bist ein präziser Dienstplan-Assistent. Deine Aufgabe ist es, Sonderwünsche in strukturierte JSON-Ausschlüsse oder -Einteilungen zu übersetzen.
+
+Hier sind die verfügbaren Lehrer:
+${JSON.stringify(teacherContext)}
+
+Hier sind die Kurse dieser Woche:
+${JSON.stringify(courseContext)}
+
+Sonderwünsche:
+"${customWishes}"
+
+Übersetze diese Wünsche in ein valides JSON-Array. Verwende NUR folgende zwei Objekte:
+1. Ausschluss:
+{"type": "exclude", "teacherId": "LEHRER_ID", "dayOfWeek": WOCHENTAG_NUMMER (0=So, 1=Mo, etc.), "startTime": "HH:MM" (optional, falls für bestimmten Kurs)}
+
+2. Feste Einteilung:
+{"type": "include", "teacherId": "LEHRER_ID", "courseId": "KURS_ID"}
+
+Gib ausschließlich das JSON-Array zurück. Keine Markdown-Formatierung, kein Begleittext!
+`;
+
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: prompt }] }]
+      })
+    });
+
+    if (!response.ok) {
+      console.warn('[GEMINI API ERROR]', response.statusText);
+      return [];
+    }
+
+    const resData = await response.json();
+    let text = resData.candidates?.[0]?.content?.parts?.[0]?.text || '';
+    text = text.trim();
+
+    // Clean JSON markdown blocks if any
+    if (text.startsWith('```')) {
+      const lines = text.split('\n');
+      if (lines[0].startsWith('```json') || lines[0].startsWith('```')) {
+        text = lines.slice(1, -1).join('\n');
+      }
+    }
+
+    return JSON.parse(text.trim());
+  } catch (err) {
+    console.warn('[GEMINI PARSE WARNING]', err);
+    return [];
+  }
+}
+
+export async function POST({ request }) {
+  try {
+    const payload = await request.json();
+    const { courses, teachers, customWishes } = payload;
+
+    // Parse custom wishes to constraints
+    let customConstraints = [];
+    if (customWishes && customWishes.trim()) {
+      customConstraints = await parseCustomWishes(customWishes, teachers, courses);
+    }
+
+    // Prepare solver payload
+    const solverPayload = {
+      ...payload,
+      customConstraints
+    };
+
+    // Find solver.py in root or parent directories
+    let solverPath = path.resolve('solver.py');
+    if (!fs.existsSync(solverPath)) {
+      solverPath = path.resolve('../solver.py');
+    }
+    if (!fs.existsSync(solverPath)) {
+      solverPath = path.resolve('../../solver.py');
+    }
+    
+    if (!fs.existsSync(solverPath)) {
+      return json({ error: 'Solver script solver.py not found.' }, { status: 500 });
+    }
+
+    return new Promise((resolve) => {
+      const pythonProcess = spawn('python3', [solverPath]);
+      let stdout = '';
+      let stderr = '';
+
+      pythonProcess.stdout.on('data', (data) => {
+        stdout += data.toString();
+      });
+
+      pythonProcess.stderr.on('data', (data) => {
+        stderr += data.toString();
+      });
+
+      pythonProcess.on('close', (code) => {
+        if (code !== 0) {
+          console.error('[SOLVER ERROR]', stderr);
+          resolve(json({ error: `Solver failed with code ${code}`, stderr }, { status: 500 }));
+          return;
+        }
+
+        try {
+          const result = JSON.parse(stdout);
+          resolve(json(result));
+        } catch (e) {
+          console.error('[SOLVER PARSE ERROR]', stdout);
+          resolve(json({ error: 'Failed to parse solver output', stdout, stderr }, { status: 500 }));
+        }
+      });
+
+      // Write Svelte payload to Python script via stdin
+      pythonProcess.stdin.write(JSON.stringify(solverPayload));
+      pythonProcess.stdin.end();
+    });
+  } catch (err: any) {
+    console.error('[API ERROR]', err);
+    return json({ error: err.message }, { status: 500 });
+  }
+}
