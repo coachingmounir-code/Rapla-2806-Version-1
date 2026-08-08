@@ -3,6 +3,7 @@ import { spawn } from 'child_process';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import solverSource from '$lib/solver.py?raw';
 
 async function parseCustomWishes(customWishes: string, teachers: any[], courses: any[]) {
   const apiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
@@ -82,11 +83,6 @@ Gib ausschließlich das JSON-Array zurück. Keine Markdown-Formatierung, kein Be
 
 export async function POST({ request }) {
   try {
-    // Force Vercel NFT compiler to trace and bundle solver.py in Vercel Lambda
-    try {
-      fs.readFileSync(path.join(process.cwd(), 'solver.py'), 'utf8');
-    } catch (e) {}
-
     const payload = await request.json();
     const { courses, teachers, customWishes } = payload;
 
@@ -118,52 +114,9 @@ export async function POST({ request }) {
       customConstraints
     };
 
-    // Build check paths
-    const checkedPaths = [];
-    
-    // Path 1: process.cwd() / solver.py
-    let solverPath = path.join(process.cwd(), 'solver.py');
-    checkedPaths.push(solverPath);
-    
-    // Path 2: process.cwd() / rapla-frontend / solver.py
-    if (!fs.existsSync(solverPath)) {
-      solverPath = path.join(process.cwd(), 'rapla-frontend', 'solver.py');
-      checkedPaths.push(solverPath);
-    }
-    
-    // Path 3: relative to built files
-    if (!fs.existsSync(solverPath)) {
-      try {
-        const __filename = fileURLToPath(import.meta.url);
-        const __dirname = path.dirname(__filename);
-        solverPath = path.join(__dirname, 'solver.py');
-        checkedPaths.push(solverPath);
-        
-        if (!fs.existsSync(solverPath)) {
-          solverPath = path.join(__dirname, '..', '..', '..', '..', 'solver.py');
-          checkedPaths.push(solverPath);
-        }
-      } catch (e: any) {
-        checkedPaths.push(`URL-Parse-Error: ${e.message}`);
-      }
-    }
-    
-    // Final check
-    let exists = false;
-    for (const p of checkedPaths) {
-      if (p.startsWith('/') && fs.existsSync(p)) {
-        solverPath = p;
-        exists = true;
-        break;
-      }
-    }
-    
-    if (!exists) {
-      return json({ 
-        error: `Solver script solver.py not found. Checked paths:\n${checkedPaths.join('\n')}`,
-        cwd: process.cwd()
-      }, { status: 500 });
-    }
+    // Write solverSource directly to /tmp/solver.py so it's always available at runtime on Vercel
+    const solverPath = path.join('/tmp', 'solver.py');
+    fs.writeFileSync(solverPath, solverSource, 'utf8');
 
     return new Promise((resolve) => {
       const pythonProcess = spawn('python3', [solverPath]);
