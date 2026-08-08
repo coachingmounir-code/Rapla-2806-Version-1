@@ -2,6 +2,7 @@ import { json } from '@sveltejs/kit';
 import { spawn } from 'child_process';
 import fs from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
 
 async function parseCustomWishes(customWishes: string, teachers: any[], courses: any[]) {
   const apiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
@@ -112,17 +113,51 @@ export async function POST({ request }) {
       customConstraints
     };
 
-    // Find solver.py in root or parent directories
-    let solverPath = path.resolve('solver.py');
+    // Build check paths
+    const checkedPaths = [];
+    
+    // Path 1: process.cwd() / solver.py
+    let solverPath = path.join(process.cwd(), 'solver.py');
+    checkedPaths.push(solverPath);
+    
+    // Path 2: process.cwd() / rapla-frontend / solver.py
     if (!fs.existsSync(solverPath)) {
-      solverPath = path.resolve('../solver.py');
-    }
-    if (!fs.existsSync(solverPath)) {
-      solverPath = path.resolve('../../solver.py');
+      solverPath = path.join(process.cwd(), 'rapla-frontend', 'solver.py');
+      checkedPaths.push(solverPath);
     }
     
+    // Path 3: relative to built files
     if (!fs.existsSync(solverPath)) {
-      return json({ error: 'Solver script solver.py not found.' }, { status: 500 });
+      try {
+        const __filename = fileURLToPath(import.meta.url);
+        const __dirname = path.dirname(__filename);
+        solverPath = path.join(__dirname, 'solver.py');
+        checkedPaths.push(solverPath);
+        
+        if (!fs.existsSync(solverPath)) {
+          solverPath = path.join(__dirname, '..', '..', '..', '..', 'solver.py');
+          checkedPaths.push(solverPath);
+        }
+      } catch (e: any) {
+        checkedPaths.push(`URL-Parse-Error: ${e.message}`);
+      }
+    }
+    
+    // Final check
+    let exists = false;
+    for (const p of checkedPaths) {
+      if (p.startsWith('/') && fs.existsSync(p)) {
+        solverPath = p;
+        exists = true;
+        break;
+      }
+    }
+    
+    if (!exists) {
+      return json({ 
+        error: `Solver script solver.py not found. Checked paths:\n${checkedPaths.join('\n')}`,
+        cwd: process.cwd()
+      }, { status: 500 });
     }
 
     return new Promise((resolve) => {
