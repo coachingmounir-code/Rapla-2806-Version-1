@@ -5,8 +5,11 @@ import path from 'path';
 
 async function parseCustomWishes(customWishes: string, teachers: any[], courses: any[]) {
   const apiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
-  if (!apiKey || !customWishes.trim()) {
-    return [];
+  if (!apiKey) {
+    return { constraints: [], warning: 'Google Gemini API-Key fehlt in den Vercel-Umgebungsvariablen.' };
+  }
+  if (!customWishes.trim()) {
+    return { constraints: [], warning: '' };
   }
 
   try {
@@ -44,8 +47,17 @@ Gib ausschließlich das JSON-Array zurück. Keine Markdown-Formatierung, kein Be
     });
 
     if (!response.ok) {
-      console.warn('[GEMINI API ERROR]', response.statusText);
-      return [];
+      let errText = '';
+      try {
+        const errJson = await response.json();
+        errText = errJson.error?.message || response.statusText;
+      } catch {
+        errText = response.statusText;
+      }
+      return { 
+        constraints: [], 
+        warning: `Gemini API-Aufruf fehlgeschlagen (${response.status}): ${errText}. Bitte prüfen Sie Ihren API-Key.` 
+      };
     }
 
     const resData = await response.json();
@@ -60,10 +72,10 @@ Gib ausschließlich das JSON-Array zurück. Keine Markdown-Formatierung, kein Be
       }
     }
 
-    return JSON.parse(text.trim());
-  } catch (err) {
+    return { constraints: JSON.parse(text.trim()), warning: '' };
+  } catch (err: any) {
     console.warn('[GEMINI PARSE WARNING]', err);
-    return [];
+    return { constraints: [], warning: `Fehler beim Verarbeiten der KI-Rückgabe: ${err.message}` };
   }
 }
 
@@ -73,7 +85,8 @@ export async function POST({ request }) {
     const { courses, teachers, customWishes } = payload;
 
     // Parse custom wishes to constraints
-    let customConstraints = [];
+    let customConstraints: any[] = [];
+    let geminiWarning = '';
     
     const aggregatedWishes: string[] = [];
     if (customWishes && customWishes.trim()) {
@@ -88,7 +101,9 @@ export async function POST({ request }) {
 
     if (aggregatedWishes.length > 0) {
       const combinedWishes = aggregatedWishes.join('\n\n');
-      customConstraints = await parseCustomWishes(combinedWishes, teachers, courses);
+      const result = await parseCustomWishes(combinedWishes, teachers, courses);
+      customConstraints = result.constraints;
+      geminiWarning = result.warning;
     }
 
     // Prepare solver payload
@@ -132,6 +147,12 @@ export async function POST({ request }) {
 
         try {
           const result = JSON.parse(stdout);
+          if (geminiWarning) {
+            result.logs = [
+              `⚠️ [KI-WARNUNG] ${geminiWarning}`,
+              ...(result.logs || [])
+            ];
+          }
           resolve(json(result));
         } catch (e) {
           console.error('[SOLVER PARSE ERROR]', stdout);
