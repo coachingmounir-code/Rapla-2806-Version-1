@@ -82,6 +82,11 @@ Gib ausschließlich das JSON-Array zurück. Keine Markdown-Formatierung, kein Be
 
 export async function POST({ request }) {
   try {
+    // Force Vercel NFT compiler to trace and bundle solver.py in Vercel Lambda
+    try {
+      fs.readFileSync(path.join(process.cwd(), 'solver.py'), 'utf8');
+    } catch (e) {}
+
     const payload = await request.json();
     const { courses, teachers, customWishes } = payload;
 
