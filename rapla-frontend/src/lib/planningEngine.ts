@@ -172,9 +172,18 @@ export function validateAssignment(
     }
   }
 
-  // Satsang Einführung rule: Friday only Pranava, Sunday only Nirmaya, Anjali, Hu, Mounir
+  // Satsang Einführung rule: Friday only Pranava, Sunday only Nirmaya, Hu, Pranava, Mounir, Burnie
   const isSatsangEinfuehrung = courseNameLower.includes('satsang einführung') || courseNameLower.includes('satsang-einführung') || courseNameLower.includes('satsangeinführung');
   if (isSatsangEinfuehrung) {
+    const generalAllowed = ['pranava', 'nirmaya', 'hu', 'anjali', 'mounir', 'burnie'];
+    const isGeneralAllowed = generalAllowed.some(a => teacherNameLower.includes(a));
+    if (!isGeneralAllowed) {
+      conflicts.push({
+        type: 'hard',
+        message: `Die Satsang Einführung darf nur von Pranava, Nirmaya, Hu, Anjali, Mounir oder Burnie geleitet werden.`
+      });
+    }
+
     if (course.dayOfWeek === 5) {
       let isPranavaAbsent = false;
       const pranava = (teachers || db.getTeachers()).find(t => t.name.toLowerCase().includes('pranava'));
@@ -205,12 +214,12 @@ export function validateAssignment(
         });
       }
     } else if (course.dayOfWeek === 0) {
-      const allowed = ['nirmaya', 'anjali', 'hu', 'mounir'];
+      const allowed = ['nirmaya', 'hu', 'pranava', 'mounir', 'burnie'];
       const isAllowed = allowed.some(a => teacherNameLower.includes(a));
       if (!isAllowed) {
         conflicts.push({
           type: 'hard',
-          message: `Sonntags darf die Satsang Einführung nur von Nirmaya, Anjali, Hu oder Mounir geleitet werden.`
+          message: `Sonntags darf die Satsang Einführung nur von Nirmaya, Hu, Pranava, Mounir oder Burnie geleitet werden.`
         });
       }
     }
@@ -1242,14 +1251,14 @@ export function runAiPlanning(
         }
       }
 
-      // Custom scoring rules for Sunday Satsang Einführung: only Nirmaya, Anjali, Hu, Mounir
+      // Custom scoring rules for Sunday Satsang Einführung: only Nirmaya, Hu, Pranava, Mounir, Burnie
       const isSatsangEinfuehrungCourse = course.name.toLowerCase().includes('satsang einführung') || course.name.toLowerCase().includes('satsang-einführung');
       if (isSatsangEinfuehrungCourse && course.dayOfWeek === 0) {
-        const allowed = ['nirmaya', 'anjali', 'hu', 'mounir'];
+        const allowed = ['nirmaya', 'hu', 'pranava', 'mounir', 'burnie'];
         const tNameLower = teacher.name.toLowerCase();
         const isAllowed = allowed.some(a => tNameLower.includes(a));
         if (isAllowed) {
-          score += 500; // Prioritize these four
+          score += 500; // Prioritize these five
           
           // Parse week number for rotation
           let weekNum = 0;
