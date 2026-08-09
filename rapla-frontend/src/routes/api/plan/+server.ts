@@ -4,6 +4,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import solverSource from '$lib/solver.py?raw';
+import { runAiPlanning } from '$lib/planningEngine';
 
 async function parseCustomWishes(customWishes: string, teachers: any[], courses: any[]) {
   const apiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
@@ -116,7 +117,39 @@ export async function POST({ request }) {
 
     // Write solverSource directly to /tmp/solver.py so it's always available at runtime on Vercel
     const solverPath = path.join('/tmp', 'solver.py');
-    fs.writeFileSync(solverPath, solverSource, 'utf8');
+    try {
+      fs.writeFileSync(solverPath, solverSource, 'utf8');
+    } catch (e) {
+      console.warn('Could not write solver.py to /tmp, fallback will still work:', e);
+    }
+
+    const runJsFallback = () => {
+      console.log('[FALLBACK] Running SvelteKit client-side planning engine on server');
+      try {
+        const result = runAiPlanning(
+          courses,
+          teachers,
+          payload.seminarLeaderIds || [],
+          payload.targetWeekCode,
+          customConstraints
+        );
+        
+        result.logs = [
+          `ℹ️ [SYSTEM] Python-Solver nicht verfügbar auf Vercel. Führe automatischen JavaScript-Ausweichplaner aus...`,
+          ...(result.logs || [])
+        ];
+        if (geminiWarning) {
+          result.logs = [
+            `⚠️ [KI-WARNUNG] ${geminiWarning}`,
+            ...result.logs
+          ];
+        }
+        return result;
+      } catch (err: any) {
+        console.error('[FALLBACK ERROR]', err);
+        throw err;
+      }
+    };
 
     return new Promise((resolve) => {
       const pythonProcess = spawn('python3', [solverPath]);
@@ -124,10 +157,13 @@ export async function POST({ request }) {
       let stderr = '';
 
       pythonProcess.on('error', (err) => {
-        console.error('[SPAWN ERROR]', err);
-        resolve(json({ 
-          error: `Fehler beim Starten des Solvers: ${err.message}. Python3 ist in dieser Umgebung eventuell nicht verfügbar.` 
-        }, { status: 500 }));
+        console.warn('[SPAWN ERROR] Python process spawn failed, using JS fallback:', err);
+        try {
+          const fallbackResult = runJsFallback();
+          resolve(json(fallbackResult));
+        } catch (fallbackErr: any) {
+          resolve(json({ error: `Solver failed and fallback also failed: ${fallbackErr.message}` }, { status: 500 }));
+        }
       });
 
       pythonProcess.stdout.on('data', (data) => {
@@ -140,8 +176,13 @@ export async function POST({ request }) {
 
       pythonProcess.on('close', (code) => {
         if (code !== 0) {
-          console.error('[SOLVER ERROR]', stderr);
-          resolve(json({ error: `Solver failed with code ${code}`, stderr }, { status: 500 }));
+          console.warn(`[SOLVER ERROR] Python solver exited with code ${code}, using JS fallback. Stderr:`, stderr);
+          try {
+            const fallbackResult = runJsFallback();
+            resolve(json(fallbackResult));
+          } catch (fallbackErr: any) {
+            resolve(json({ error: `Solver failed with code ${code} and fallback also failed: ${fallbackErr.message}`, stderr }, { status: 500 }));
+          }
           return;
         }
 
@@ -156,7 +197,13 @@ export async function POST({ request }) {
           resolve(json(result));
         } catch (e) {
           console.error('[SOLVER PARSE ERROR]', stdout);
-          resolve(json({ error: 'Failed to parse solver output', stdout, stderr }, { status: 500 }));
+          console.warn('Parser failed, using JS fallback as emergency fallback.');
+          try {
+            const fallbackResult = runJsFallback();
+            resolve(json(fallbackResult));
+          } catch (fallbackErr: any) {
+            resolve(json({ error: 'Failed to parse solver output and fallback also failed', stdout, stderr }, { status: 500 }));
+          }
         }
       });
 

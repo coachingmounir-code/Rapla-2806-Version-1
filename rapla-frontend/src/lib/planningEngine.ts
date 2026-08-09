@@ -975,7 +975,8 @@ export function runAiPlanning(
   courses: Course[],
   teachers: Teacher[],
   seminarLeaderIds: string[] = [],
-  targetWeekCode?: string
+  targetWeekCode?: string,
+  customConstraints: any[] = []
 ): {
   plannedCourses: Course[];
   logs: string[];
@@ -1063,9 +1064,64 @@ export function runAiPlanning(
         // Teacher has hard conflicts, skip them or give them negative/zero scoring
         continue;
       }
+
+      // Apply custom constraints (parsed from Gemini)
+      let customExcluded = false;
+      let customForced = false;
+      let forceOther = false;
+
+      if (customConstraints && customConstraints.length > 0) {
+        for (const rule of customConstraints) {
+          const ruleTeacherId = rule.teacherId;
+          if (!ruleTeacherId) continue;
+
+          // Fuzzy match candidate teacher
+          let matchTeacher = false;
+          const tIdLower = teacher.id.toLowerCase();
+          const tNameLower = teacher.name.toLowerCase();
+          const rIdLower = ruleTeacherId.toLowerCase();
+          if (tIdLower === rIdLower || rIdLower.includes(tIdLower) || rIdLower.includes(tNameLower) || tNameLower.includes(rIdLower)) {
+            matchTeacher = true;
+          }
+
+          const rDay = rule.dayOfWeek;
+          const rStart = rule.startTime;
+          const rCourseName = rule.courseName;
+          const rCourseStyle = rule.courseStyle;
+
+          // Check if course matches rule
+          let matchCourse = true;
+          if (rDay !== undefined && rDay !== null && course.dayOfWeek !== rDay) matchCourse = false;
+          if (rStart !== undefined && rStart !== null && course.startTime !== rStart) matchCourse = false;
+          if (rCourseName !== undefined && rCourseName !== null && !course.name.toLowerCase().includes(rCourseName.toLowerCase())) matchCourse = false;
+          if (rCourseStyle !== undefined && rCourseStyle !== null && !course.style.toLowerCase().includes(rCourseStyle.toLowerCase())) matchCourse = false;
+
+          if (matchCourse) {
+            if (rule.type === 'exclude' && matchTeacher) {
+              customExcluded = true;
+              logs.push(`  [KI-REGEL-JS] Schließe ${teacher.name} für Kurs "${course.name}" (${course.startTime}) aus.`);
+            }
+            if (rule.type === 'include') {
+              if (matchTeacher) {
+                customForced = true;
+                logs.push(`  [KI-REGEL-JS] Zwinge Zuweisung von ${teacher.name} für Kurs "${course.name}" (${course.startTime}).`);
+              } else {
+                forceOther = true;
+              }
+            }
+          }
+        }
+      }
+
+      if (customExcluded || forceOther) {
+        continue; // Skip this teacher for this course
+      }
       
       // Calculate score base (starts at 100)
       let score = 100;
+      if (customForced) {
+        score += 100000;
+      }
       
       // Preferred room bonus
       const prefersRoom = teacher.rules.preferredRooms.includes(course.roomId);
