@@ -103,6 +103,10 @@ export async function POST({ request }) {
     });
 
     const diagnosticLogs: string[] = [];
+    const activeKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY || '';
+    const keyPrefix = activeKey ? `${activeKey.substring(0, 6)}...${activeKey.substring(activeKey.length - 4)}` : 'Keiner';
+    diagnosticLogs.push(`ℹ️ [DIAGNOSE] Aktiver API-Key auf Vercel (gekürzt): ${keyPrefix}`);
+
     if (aggregatedWishes.length > 0) {
       diagnosticLogs.push(`ℹ️ [DIAGNOSE] Empfangene Sonderwünsche:\n${aggregatedWishes.map(w => '  - ' + w.replace(/\n/g, ' ')).join('\n')}`);
       
