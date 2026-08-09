@@ -102,11 +102,18 @@ export async function POST({ request }) {
       }
     });
 
+    const diagnosticLogs: string[] = [];
     if (aggregatedWishes.length > 0) {
+      diagnosticLogs.push(`ℹ️ [DIAGNOSE] Empfangene Sonderwünsche:\n${aggregatedWishes.map(w => '  - ' + w.replace(/\n/g, ' ')).join('\n')}`);
+      
       const combinedWishes = aggregatedWishes.join('\n\n');
       const result = await parseCustomWishes(combinedWishes, teachers, courses);
       customConstraints = result.constraints;
       geminiWarning = result.warning;
+      
+      diagnosticLogs.push(`ℹ️ [DIAGNOSE] Von Gemini extrahierte Regeln: ${JSON.stringify(customConstraints)}`);
+    } else {
+      diagnosticLogs.push(`ℹ️ [DIAGNOSE] Keine Sonderwünsche im Payload empfangen.`);
     }
 
     // Prepare solver payload
@@ -136,6 +143,7 @@ export async function POST({ request }) {
         
         result.logs = [
           `ℹ️ [SYSTEM] Python-Solver nicht verfügbar auf Vercel. Führe automatischen JavaScript-Ausweichplaner aus...`,
+          ...diagnosticLogs,
           ...(result.logs || [])
         ];
         if (geminiWarning) {
@@ -188,6 +196,10 @@ export async function POST({ request }) {
 
         try {
           const result = JSON.parse(stdout);
+          result.logs = [
+            ...diagnosticLogs,
+            ...(result.logs || [])
+          ];
           if (geminiWarning) {
             result.logs = [
               `⚠️ [KI-WARNUNG] ${geminiWarning}`,
