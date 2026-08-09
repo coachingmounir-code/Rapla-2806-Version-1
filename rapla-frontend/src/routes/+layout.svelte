@@ -40,7 +40,7 @@
 			if (!path.startsWith('/wochenplan') && path !== '/login') {
 				goto('/wochenplan');
 			}
-		} else if (storedRole === 'admin') {
+		} else if (storedRole === 'admin' || storedRole === 'viewer') {
 			if (path === '/login') {
 				goto('/');
 			}
@@ -115,7 +115,7 @@
 </svelte:head>
 
 {#if authChecked}
-	{#if userRole === 'admin' || (userRole === 'team' && page.url.pathname.startsWith('/wochenplan')) || page.url.pathname === '/login'}
+	{#if userRole === 'admin' || userRole === 'viewer' || (userRole === 'team' && page.url.pathname.startsWith('/wochenplan')) || page.url.pathname === '/login'}
 		{#if page.url.pathname.startsWith('/wochenplan') || page.url.pathname === '/login'}
 			{@render children()}
 		{:else}

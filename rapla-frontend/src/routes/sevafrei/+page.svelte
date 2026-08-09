@@ -55,6 +55,7 @@
   let searchQuery = $state('');
   let calendarWrapperEl = $state<HTMLElement | null>(null);
   let isFullscreen = $state(false);
+  let userRole = $state('');
 
   // Excel Quota Data
   const quotas: QuotaEntry[] = [
@@ -219,6 +220,8 @@
   }
 
   onMount(() => {
+    userRole = localStorage.getItem('rapla_user_role') || '';
+
     // Load Sevakas
     sevakas = db.getTeachers().filter(t => t.roleType === 'sevaka');
     if (sevakas.length > 0) {
@@ -498,14 +501,16 @@
     <h1>Sevafrei Kalender</h1>
     <p>Übersicht der Ferien, Ausgleiche und regulären freien Tage der Sevakas. Automatisch verknüpft mit der KI-Planung.</p>
   </div>
-  <div class="actions-group">
-    <button class="btn btn-secondary" onclick={() => importExcelData(true)} style="margin-right: 0.5rem;">
-      🔄 Excel-Daten laden
-    </button>
-    <button class="btn btn-primary" onclick={() => showModal = true}>
-      <span>➕</span> Sevafrei eintragen
-    </button>
-  </div>
+  {#if userRole !== 'viewer'}
+    <div class="actions-group">
+      <button class="btn btn-secondary" onclick={() => importExcelData(true)} style="margin-right: 0.5rem;">
+        🔄 Excel-Daten laden
+      </button>
+      <button class="btn btn-primary" onclick={() => showModal = true}>
+        <span>➕</span> Sevafrei eintragen
+      </button>
+    </div>
+  {/if}
 </div>
 
 <!-- Switch view mode and summary row -->
@@ -755,7 +760,9 @@
 
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" onclick={() => showModal = false}>Abbrechen</button>
-          <button type="submit" class="btn btn-primary">Speichern</button>
+          {#if userRole !== 'viewer'}
+            <button type="submit" class="btn btn-primary">Speichern</button>
+          {/if}
         </div>
       </form>
     </div>

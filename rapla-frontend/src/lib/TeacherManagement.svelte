@@ -14,6 +14,7 @@
   // Modal states
   let isModalOpen = $state(false);
   let editingTeacher = $state<Teacher | null>(null);
+  let userRole = $state('');
   
   // Form fields
   let formName = $state('');
@@ -78,6 +79,7 @@
   ];
 
   onMount(() => {
+    userRole = localStorage.getItem('rapla_user_role') || '';
     loadData();
   });
 
@@ -326,9 +328,11 @@
     <h1>{roleType === 'sevaka' ? 'Sevakas' : 'Externe'}</h1>
     <p>{roleType === 'sevaka' ? 'Verwalten Sie das interne Kernteam (Sevakas) und legen Sie Richtlinien für die KI-Vorplanung fest.' : 'Verwalten Sie das externe Lehrpersonal und legen Sie Richtlinien für die KI-Vorplanung fest.'}</p>
   </div>
-  <button class="btn btn-primary" onclick={openAddModal}>
-    <span>➕</span> {roleType === 'sevaka' ? 'Sevaka hinzufügen' : 'Lehrer hinzufügen'}
-  </button>
+  {#if userRole !== 'viewer'}
+    <button class="btn btn-primary" onclick={openAddModal}>
+      <span>➕</span> {roleType === 'sevaka' ? 'Sevaka hinzufügen' : 'Lehrer hinzufügen'}
+    </button>
+  {/if}
 </div>
 
 <!-- Teachers Grid -->
@@ -720,20 +724,22 @@
       </div>
 
       <div class="modal-footer">
-        {#if editingTeacher}
+        {#if editingTeacher && userRole !== 'viewer'}
           <button class="btn btn-danger" style="margin-right: auto;" onclick={() => editingTeacher && handleDelete(editingTeacher.id)}>
             🗑️ Löschen
           </button>
         {/if}
         <button class="btn btn-secondary" onclick={() => isModalOpen = false}>Abbrechen</button>
-        <button class="btn btn-primary" onclick={handleSave}>Speichern</button>
+        {#if userRole !== 'viewer'}
+          <button class="btn btn-primary" onclick={handleSave}>Speichern</button>
+        {/if}
       </div>
     </div>
   </div>
 {/if}
 
 <!-- Floating Bulk Actions Bar -->
-{#if selectedTeacherIds.length > 0}
+{#if selectedTeacherIds.length > 0 && userRole !== 'viewer'}
   <div class="bulk-actions-bar glass-card animate-fade-in">
     <div class="bulk-info">
       <span class="bulk-count">⚡ {selectedTeacherIds.length} ausgewählt</span>

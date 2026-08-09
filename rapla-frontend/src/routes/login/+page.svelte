@@ -11,7 +11,7 @@
   onMount(() => {
     // If already logged in, redirect away from login
     const storedRole = localStorage.getItem('rapla_user_role');
-    if (storedRole === 'admin') {
+    if (storedRole === 'admin' || storedRole === 'viewer') {
       goto('/');
     } else if (storedRole === 'team') {
       goto('/wochenplan');
@@ -40,7 +40,7 @@
         localStorage.setItem('rapla_user_role', data.role);
         
         // Broadcast role update or trigger redirect immediately
-        if (data.role === 'admin') {
+        if (data.role === 'admin' || data.role === 'viewer') {
           await goto('/');
         } else {
           await goto('/wochenplan');
@@ -78,7 +78,7 @@
       {/if}
 
       <div class="form-group">
-        <label for="password">Passwort / Teamcode</label>
+        <label for="password">Passwort / Teamcode / Ansicht</label>
         <div class="password-input-wrapper">
           <input
             id="password"

@@ -12,6 +12,7 @@
   let currentPlan = $state<WeekPlan | null>(null);
   let upcomingPlans = $state<WeekPlan[]>([]);
   let activeWeekIndex = $state(0);
+  let userRole = $state('');
 
   // Deriving active plan ID from URL query param
   let planId = $derived(page.url.searchParams.get('planId') || '');
@@ -43,6 +44,7 @@
   ];
 
   onMount(() => {
+    userRole = localStorage.getItem('rapla_user_role') || '';
     loadData();
   });
 
@@ -279,7 +281,7 @@
   <aside class="plans-sidebar glass-card">
     <div class="sidebar-header-row">
       <h3>Dienstpläne</h3>
-      <button class="btn btn-secondary btn-small" onclick={createBlankWeek} title="Neue Blankowoche erstellen">
+      <button class="btn btn-secondary btn-small" onclick={createBlankWeek} title="Neue Blankowoche erstellen" disabled={userRole === 'viewer'}>
         ➕ Neu
       </button>
     </div>
@@ -431,6 +433,7 @@
           id="custom-wishes-text" 
           placeholder="z. B. Karuna darf diese Woche freitags abends nicht eingeteilt werden. Oder: Mounir übernimmt am Sonntag die Hausführung." 
           bind:value={customRulesText}
+          disabled={userRole === 'viewer'}
           style="width: 100%; min-height: 100px; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 8px; font-family: inherit; font-size: 0.9rem; resize: vertical;"
         ></textarea>
       </div>
@@ -441,7 +444,7 @@
             ℹ️ Alle Kurse haben bereits feste Lehrerzuweisungen. Sie können die KI-Vorplanung dennoch starten, um Zuweisungen optimieren zu lassen.
           </div>
         {/if}
-        <button class="btn btn-accent btn-large pulse-glow" onclick={startAiPlanning}>
+        <button class="btn btn-accent btn-large pulse-glow" onclick={startAiPlanning} disabled={userRole === 'viewer'}>
           ⚡ 4-Wochen-KI-Vorplanung starten
         </button>
       </div>
@@ -475,8 +478,8 @@
         <p>Die KI hat Lehrkräfte zugeteilt. Bitte prüfen Sie den Entwurf und nehmen Sie ggf. manuelle Korrekturen vor.</p>
       </div>
       <div class="review-actions">
-        <button class="btn btn-secondary" onclick={discardPlan}>Alle 4 Wochen verwerfen</button>
-        <button class="btn btn-primary" onclick={approvePlan}>Alle 4 Wochen freigeben</button>
+        <button class="btn btn-secondary" onclick={discardPlan} disabled={userRole === 'viewer'}>Alle 4 Wochen verwerfen</button>
+        <button class="btn btn-primary" onclick={approvePlan} disabled={userRole === 'viewer'}>Alle 4 Wochen freigeben</button>
       </div>
     </div>
 
@@ -589,54 +592,56 @@
             {/if}
 
             <!-- Change teacher selector -->
-            <div class="form-group" style="margin-top: 1rem;">
-              <label class="form-label" for="reassign-select">Anderen Lehrer zuteilen:</label>
-              <div class="teacher-options-list">
-                <!-- Unassigned Option -->
-                <button 
-                  class="teacher-option-row"
-                  class:active={course.teacherId === null}
-                  onclick={() => handleReassignTeacher(course.id, null)}
-                >
-                  <span class="to-avatar">🛑</span>
-                  <div class="to-info">
-                    <strong>Kurs unbesetzt lassen</strong>
-                  </div>
-                </button>
-
-                <!-- Qualified Teachers options -->
-                {#each getQualifiedTeachersForCourse(course) as item}
-                  {@const hasHard = item.conflicts.some(c => c.type === 'hard')}
-                  {@const hasSoft = item.conflicts.some(c => c.type === 'soft')}
+            {#if userRole !== 'viewer'}
+              <div class="form-group" style="margin-top: 1rem;">
+                <label class="form-label" for="reassign-select">Anderen Lehrer zuteilen:</label>
+                <div class="teacher-options-list">
+                  <!-- Unassigned Option -->
                   <button 
                     class="teacher-option-row"
-                    class:active={course.teacherId === item.teacher.id}
-                    class:warning={hasSoft && !hasHard}
-                    class:conflict={hasHard}
-                    onclick={() => handleReassignTeacher(course.id, item.teacher.id)}
+                    class:active={course.teacherId === null}
+                    onclick={() => handleReassignTeacher(course.id, null)}
                   >
-                    <span class="to-avatar bg-gradient-to-br {item.teacher.avatarColor}">
-                      {item.teacher.name.split(' ').map(n => n[0]).join('')}
-                    </span>
+                    <span class="to-avatar">🛑</span>
                     <div class="to-info">
-                      <strong style="display: flex; align-items: center; gap: 0.25rem;">
-                        {item.teacher.name} 
-                        <span class="role-micro-tag {item.teacher.roleType === 'sevaka' ? 'role-sevaka' : 'role-external'}">
-                          {item.teacher.roleType === 'sevaka' ? 'Sevaka' : 'Extern'}
-                        </span>
-                      </strong>
-                      {#if hasHard}
-                        <span class="error-msg">🚨 {item.conflicts.find(c => c.type === 'hard')?.message}</span>
-                      {:else if hasSoft}
-                        <span class="warning-msg">⚠️ {item.conflicts.find(c => c.type === 'soft')?.message}</span>
-                      {:else}
-                        <span class="success-msg">✓ Konfliktfrei & qualifiziert</span>
-                      {/if}
+                      <strong>Kurs unbesetzt lassen</strong>
                     </div>
                   </button>
-                {/each}
+
+                  <!-- Qualified Teachers options -->
+                  {#each getQualifiedTeachersForCourse(course) as item}
+                    {@const hasHard = item.conflicts.some(c => c.type === 'hard')}
+                    {@const hasSoft = item.conflicts.some(c => c.type === 'soft')}
+                    <button 
+                      class="teacher-option-row"
+                      class:active={course.teacherId === item.teacher.id}
+                      class:warning={hasSoft && !hasHard}
+                      class:conflict={hasHard}
+                      onclick={() => handleReassignTeacher(course.id, item.teacher.id)}
+                    >
+                      <span class="to-avatar bg-gradient-to-br {item.teacher.avatarColor}">
+                        {item.teacher.name.split(' ').map(n => n[0]).join('')}
+                      </span>
+                      <div class="to-info">
+                        <strong style="display: flex; align-items: center; gap: 0.25rem;">
+                          {item.teacher.name} 
+                          <span class="role-micro-tag {item.teacher.roleType === 'sevaka' ? 'role-sevaka' : 'role-external'}">
+                            {item.teacher.roleType === 'sevaka' ? 'Sevaka' : 'Extern'}
+                          </span>
+                        </strong>
+                        {#if hasHard}
+                          <span class="error-msg">🚨 {item.conflicts.find(c => c.type === 'hard')?.message}</span>
+                        {:else if hasSoft}
+                          <span class="warning-msg">⚠️ {item.conflicts.find(c => c.type === 'soft')?.message}</span>
+                        {:else}
+                          <span class="success-msg">✓ Konfliktfrei & qualifiziert</span>
+                        {/if}
+                      </div>
+                    </button>
+                  {/each}
+                </div>
               </div>
-            </div>
+            {/if}
           {:else}
             <div class="editor-empty-state">
               <span>👈</span>

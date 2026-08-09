@@ -10,10 +10,13 @@
   let error = $state('');
   let successMessage = $state('');
 
+  let userRole = $state('');
+
   onMount(() => {
     // Basic verification just in case layout guard hasn't triggered
     const storedRole = localStorage.getItem('rapla_user_role');
-    if (storedRole !== 'admin') {
+    if (storedRole) userRole = storedRole;
+    if (storedRole !== 'admin' && storedRole !== 'viewer') {
       goto('/wochenplan');
     }
   });
@@ -85,6 +88,12 @@
             Ausschließlich Lesezugriff auf den Wochenplan (`/wochenplan`). Kann den Gesamtplan sehen oder nach eigenen Stunden filtern. Kann keine Regeln, Zeiten oder Besetzungen ändern.
           </div>
         </div>
+        <div class="role-item">
+          <div class="role-badge" style="background-color: #f3e8ff; color: #7e22ce; border: 1px solid #d8b4fe;">Ansicht (Viewer)</div>
+          <div class="role-desc">
+            Lesezugriff auf die Admin-Oberfläche. Kann alle Daten und KI-Planungen einsehen, aber keine Änderungen vornehmen oder speichern.
+          </div>
+        </div>
       </div>
       
       <div class="info-alert">
@@ -109,6 +118,11 @@
           </div>
         {/if}
 
+        {#if userRole === 'viewer'}
+          <div class="alert alert-danger" style="margin-bottom: 1rem;">
+            <span>🔒</span> Du bist im Ansichtsmodus eingeloggt und kannst keine Einstellungen ändern.
+          </div>
+        {/if}
         <div class="form-group">
           <label for="newAdminPassword">Neues Admin-Passwort</label>
           <input
@@ -116,7 +130,7 @@
             type="password"
             placeholder="Leer lassen für keine Änderung"
             bind:value={newAdminPassword}
-            disabled={loading}
+            disabled={loading || userRole === 'viewer'}
           />
           <span class="input-help">Passwort für den vollen Zugriff (Planung & Admin).</span>
         </div>
@@ -128,7 +142,7 @@
             type="password"
             placeholder="Leer lassen für keine Änderung"
             bind:value={newTeamPassword}
-            disabled={loading}
+            disabled={loading || userRole === 'viewer'}
           />
           <span class="input-help">Passwort für den Lesezugriff auf den Wochenplan.</span>
         </div>
@@ -142,13 +156,13 @@
             type="password"
             placeholder="Zur Bestätigung hier eingeben..."
             bind:value={currentAdminPassword}
-            disabled={loading}
+            disabled={loading || userRole === 'viewer'}
             required
           />
           <span class="input-help-required">Erforderlich, um die Änderungen zu speichern.</span>
         </div>
 
-        <button type="submit" class="save-btn" disabled={loading}>
+        <button type="submit" class="save-btn" disabled={loading || userRole === 'viewer'}>
           {#if loading}
             <span class="spinner-btn"></span> Speichere...
           {:else}

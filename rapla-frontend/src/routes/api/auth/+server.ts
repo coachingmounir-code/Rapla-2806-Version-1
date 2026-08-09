@@ -11,7 +11,8 @@ const CONFIG_PATH = fs.existsSync(path2) ? path2 : path1;
 function getPasswords() {
   const defaults = {
     adminPassword: env.RAPLA_ADMIN_PASSWORD || 'Erfolgsalbum1981!',
-    teamPassword: env.RAPLA_TEAM_PASSWORD || 'team'
+    teamPassword: env.RAPLA_TEAM_PASSWORD || 'team',
+    viewPassword: env.RAPLA_VIEW_PASSWORD || 'ansicht'
   };
   try {
     if (fs.existsSync(CONFIG_PATH)) {
@@ -19,7 +20,8 @@ function getPasswords() {
       const parsed = JSON.parse(data);
       return {
         adminPassword: env.RAPLA_ADMIN_PASSWORD || parsed.adminPassword || defaults.adminPassword,
-        teamPassword: env.RAPLA_TEAM_PASSWORD || parsed.teamPassword || defaults.teamPassword
+        teamPassword: env.RAPLA_TEAM_PASSWORD || parsed.teamPassword || defaults.teamPassword,
+        viewPassword: env.RAPLA_VIEW_PASSWORD || parsed.viewPassword || defaults.viewPassword
       };
     }
   } catch (e) {
@@ -37,6 +39,8 @@ export const POST: RequestHandler = async ({ request }) => {
       return json({ success: true, role: 'admin' });
     } else if (password === config.teamPassword) {
       return json({ success: true, role: 'team' });
+    } else if (password === config.viewPassword) {
+      return json({ success: true, role: 'viewer' });
     } else {
       return json({ success: false, error: 'Ungültiges Passwort' }, { status: 401 });
     }
@@ -48,7 +52,7 @@ export const POST: RequestHandler = async ({ request }) => {
 
 export const PUT: RequestHandler = async ({ request }) => {
   try {
-    const { currentAdminPassword, newAdminPassword, newTeamPassword } = await request.json();
+    const { currentAdminPassword, newAdminPassword, newTeamPassword, newViewPassword } = await request.json();
     const config = getPasswords();
     
     if (currentAdminPassword !== config.adminPassword) {
@@ -57,7 +61,8 @@ export const PUT: RequestHandler = async ({ request }) => {
     
     const newConfig = {
       adminPassword: newAdminPassword || config.adminPassword,
-      teamPassword: newTeamPassword || config.teamPassword
+      teamPassword: newTeamPassword || config.teamPassword,
+      viewPassword: newViewPassword || config.viewPassword
     };
     
     try {
@@ -70,7 +75,7 @@ export const PUT: RequestHandler = async ({ request }) => {
       console.warn('Could not write configuration file to disk:', fsError);
       return json({ 
         success: false, 
-        error: 'Passwortänderung fehlgeschlagen: Das Dateisystem ist schreibgeschützt (z. B. auf Vercel). Bitte ändere die Passwörter über die Vercel-Umgebungsvariablen RAPLA_ADMIN_PASSWORD und RAPLA_TEAM_PASSWORD.' 
+        error: 'Passwortänderung fehlgeschlagen: Das Dateisystem ist schreibgeschützt (z. B. auf Vercel). Bitte ändere die Passwörter über die Vercel-Umgebungsvariablen.' 
       }, { status: 403 });
     }
     return json({ success: true });
