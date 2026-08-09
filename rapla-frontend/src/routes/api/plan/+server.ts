@@ -123,6 +123,13 @@ export async function POST({ request }) {
       let stdout = '';
       let stderr = '';
 
+      pythonProcess.on('error', (err) => {
+        console.error('[SPAWN ERROR]', err);
+        resolve(json({ 
+          error: `Fehler beim Starten des Solvers: ${err.message}. Python3 ist in dieser Umgebung eventuell nicht verfügbar.` 
+        }, { status: 500 }));
+      });
+
       pythonProcess.stdout.on('data', (data) => {
         stdout += data.toString();
       });
