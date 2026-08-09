@@ -10,89 +10,115 @@
   }
 
   const seminars: Seminar[] = [
-    { title: "Die 10-Wochenend-Weiterbildung für Yogalehrer", date: "29.11.24–11.10.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 0, leader: "" },
-    { title: "Die 10-Wochenend-Weiterbildung für Yogalehrer", date: "10.10.25–9.5.27", isWE: false, location: "Nordsee", maxTN: 0, currentTN: 0, leader: "" },
-    { title: "Die 10-Wochenend-Weiterbildung für Yogalehrer", date: "5.12.25–10.10.27", isWE: false, location: "Nordsee", maxTN: 0, currentTN: 0, leader: "" },
-    { title: "Grundlagen der Psychologischen Yogatherapie", date: "28.6.–5.7.26", isWE: false, location: "Nordsee", maxTN: 16, currentTN: 6, leader: "Shivakami Bretz, Sarada Drautzburg" },
-    { title: "Yoga und Meditation Einführung", date: "3.–5.7.26", isWE: true, location: "Nordsee", maxTN: 10, currentTN: 8, leader: "" },
-    { title: "Feldenkrais und Stimme", date: "3.–5.7.26", isWE: true, location: "Nordsee", maxTN: 8, currentTN: 4, leader: "Hagit Noam" },
-    { title: "Die 5 Elemente im Yin Yoga und Tanz erfahren", date: "5.–10.7.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 2, leader: "Abha Morkötter" },
-    { title: "Hatha Yoga Prävention Ferienwoche", date: "5.–10.7.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 7, leader: "Narayani Kedenburg" },
-    { title: "Ganzheitliche Stimmbildung mit Mantra-Tönen", date: "5.–10.7.26", isWE: false, location: "Nordsee", maxTN: 0, currentTN: 9, leader: "Hagit Noam" },
-    { title: "Chakra-Reise mit spirituellem Singen und Tönen", date: "10.–12.7.26", isWE: true, location: "Nordsee", maxTN: 8, currentTN: 2, leader: "Hagit Noam" },
-    { title: "Harmonium Lernseminar", date: "10.–12.7.26", isWE: true, location: "Nordsee", maxTN: 10, currentTN: 6, leader: "Annette Pritschow" },
-    { title: "Ich bin ich – Gesund in der eigenen Mitte leben", date: "10.–12.7.26", isWE: true, location: "Nordsee", maxTN: 10, currentTN: 3, leader: "Amyana Finkel" },
-    { title: "Hormon Yoga für Frauen nach Dinah Rodrigues", date: "12.–17.7.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 10, leader: "Karuna M. Wapke" },
-    { title: "Yoga für Kinder 7–12 Jahre", date: "12.–17.7.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 5, leader: "" },
-    { title: "Mantra Ferienwoche mit Gruppe Mudita", date: "12.–17.7.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 6, leader: "Gruppe Mudita" },
-    { title: "Yoga, Natur und Wattwandern", date: "12.–17.7.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 8, leader: "Ananda Schaak" },
-    { title: "Maha-Samadhi Swami Sivananda", date: "14.7.26", isWE: false, location: "Nordsee", maxTN: 2, currentTN: 0, leader: "" },
-    { title: "Ausrichtung nach dem Spiralprinzip", date: "17.–19.7.26", isWE: true, location: "Nordsee", maxTN: 10, currentTN: 5, leader: "Jnanadev Wallaschkowski" },
-    { title: "Yoga und Meditation Einführung", date: "17.–19.7.26", isWE: true, location: "Nordsee", maxTN: 10, currentTN: 5, leader: "" },
-    { title: "Yoga für Kinder 7–12 Jahre", date: "17.–19.7.26", isWE: true, location: "Nordsee", maxTN: 8, currentTN: 0, leader: "Padma Stolte" },
-    { title: "Yogalehrer Vorbereitung", date: "17.–19.7.26", isWE: true, location: "Nordsee", maxTN: 10, currentTN: 3, leader: "" },
-    { title: "Yoga Ferienwoche", date: "19.–24.7.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 14, leader: "Mirabai Seifert" },
-    { title: "Yoga für Kinder 7–12 Jahre", date: "19.–24.7.26", isWE: false, location: "Nordsee", maxTN: 8, currentTN: 2, leader: "Padma Stolte" },
-    { title: "Kitesurfen meets Inner Flow Yoga", date: "19.–24.7.26", isWE: false, location: "Nordsee", maxTN: 0, currentTN: 1, leader: "Satyananda Wahl, Aziza Lena Alemi" },
-    { title: "Themenwoche mit Swami Yatidharmananda – Geschichten, Yoga Nidra, Mantras", date: "19.–24.7.26", isWE: false, location: "Nordsee", maxTN: 8, currentTN: 2, leader: "Swami Yatidharmananda" },
-    { title: "Yoga, Wandern und Fahrradfahren", date: "19.–24.7.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 7, leader: "Ananda Schaak" },
-    { title: "Gesang und Stimmbildung", date: "24.–26.7.26", isWE: true, location: "Nordsee", maxTN: 10, currentTN: 7, leader: "Thomas Hundsalz" },
-    { title: "Yajna Woche – 108 Stunden vedische Feuerzeremonie", date: "24.–31.7.26", isWE: false, location: "Nordsee", maxTN: 5, currentTN: 1, leader: "Satyananda Wahl" },
-    { title: "Hilfe! Alltag! Yoga für Eltern mit ihren Kindern", date: "24.–26.7.26", isWE: true, location: "Nordsee", maxTN: 15, currentTN: 4, leader: "Radhika Siegenbruk, Maik Piorek" },
-    { title: "Yoga – Tanz & Meditation", date: "24.–26.7.26", isWE: true, location: "Nordsee", maxTN: 8, currentTN: 8, leader: "Maha Siddhi Wittop, Sambhu Groteheide" },
-    { title: "Yoga Erlebniswoche", date: "26.–31.7.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 9, leader: "Radhika Siegenbruk, Maik Piorek" },
-    { title: "Stimm- und Sprechtraining Kursleiterausbildung", date: "26.–31.7.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 3, leader: "Thomas Hundsalz" },
-    { title: "Yoga für die Familie", date: "26.–31.7.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 8, leader: "Cornelia Surya Haag" },
-    { title: "Guru Purnima", date: "29.7.26", isWE: false, location: "Nordsee", maxTN: 0, currentTN: 0, leader: "" },
-    { title: "Yoga und Meditation Einführung", date: "31.7.–2.8.26", isWE: true, location: "Nordsee", maxTN: 10, currentTN: 4, leader: "" },
-    { title: "Yoga für Kinder 7–12 Jahre", date: "31.7.–2.8.26", isWE: true, location: "Nordsee", maxTN: 8, currentTN: 2, leader: "" },
-    { title: "Mantras und Gitarre", date: "31.7.–2.8.26", isWE: true, location: "Nordsee", maxTN: 10, currentTN: 4, leader: "Thomas Hundsalz" },
-    { title: "Stand Up Paddling meets Yoga - Einsteiger", date: "31.7.-2.8.26", isWE: true, location: "Nordsee", maxTN: 10, currentTN: 12, leader: "Radhika Siegenbruk, Maik Piorek" },
-    { title: "Ayuryoga - mehr Balance und Zufriedenheit im Alltag", date: "2.-7.8.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 0, leader: "Cornelia Surya Haag" },
-    { title: "Yoga Ferienwoche", date: "2.-7.8.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 9, leader: "Carina van Anken" },
-    { title: "Geschmeidige Muskeln - gesunde Beweglichkeit", date: "2.-7.8.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 4, leader: "Amyana Finkel" },
-    { title: "Yoga für Kinder 7-12 Jahre", date: "2.-7.8.26", isWE: false, location: "Nordsee", maxTN: 8, currentTN: 6, leader: "Anika Roth" },
-    { title: "Stand Up Paddling meets Yoga", date: "2.-7.8.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 5, leader: "Radhika Siegenbruk, Maik Piorek" },
-    { title: "Yoga für Kinder 7-12 Jahre", date: "7.-9.8.26", isWE: true, location: "Nordsee", maxTN: 5, currentTN: 3, leader: "Cornelia Surya Haag" },
-    { title: "Vata Dosha stabilisieren", date: "7.-9.8.26", isWE: true, location: "Nordsee", maxTN: 10, currentTN: 1, leader: "Aziza Lena Alemi" },
-    { title: "Yoga und Chakren", date: "7.-9.8.26", isWE: true, location: "Nordsee", maxTN: 10, currentTN: 2, leader: "Carina van Anken" },
-    { title: "Yoga und Ukulele spielen lernen", date: "7.-9.8.26", isWE: true, location: "Nordsee", maxTN: 10, currentTN: 7, leader: "Kamala Lubina" },
     { title: "Yoga Ferienwoche", date: "9.-14.8.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 19, leader: "Beate Menkarski" },
-    { title: "Insel-Yoga", date: "9.-14.8.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 9, leader: "Ananda Schaak" },
+    { title: "Insel-Yoga", date: "9.-14.8.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 13, leader: "Ananda Schaak" },
     { title: "Yoga für Kinder 7-12 Jahre", date: "9.-14.8.26", isWE: false, location: "Nordsee", maxTN: 8, currentTN: 2, leader: "Suniti Jacob" },
-    { title: "Yoga für den Rücken", date: "9.-14.8.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 1, leader: "Kamala Lubina" },
-    { title: "Yin Yoga", date: "9.-14.8.26", isWE: false, location: "Nordsee", maxTN: 15, currentTN: 5, leader: "Cornelia Surya Haag" },
-    { title: "Die Satsang-Trommeln der Kirtan-Musik", date: "14.-16.8.26", isWE: true, location: "Nordsee", maxTN: 10, currentTN: 8, leader: "Bernardo Juni" },
-    { title: "Vinyasa Power Yoga - Meditation in Bewegung", date: "14.-16.8.26", isWE: true, location: "Nordsee", maxTN: 10, currentTN: 6, leader: "Kamala Lubina" },
-    { title: "Weg mit der Brille - Yoga für die Augen", date: "14.-16.8.26", isWE: true, location: "Nordsee", maxTN: 10, currentTN: 1, leader: "Susan Holze" },
-    { title: "Yoga Ferienwoche", date: "16.-21.8.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 5, leader: "Ananda Schaak" },
-    { title: "Shakti Yoga - Erwecke die Kraft deiner Weiblichkeit", date: "16.-21.8.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 5, leader: "Susan Holze" },
-    { title: "Swings, Vibrations, Rotations", date: "16.-21.8.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 3, leader: "Monika Adele Camara" },
-    { title: "Yogaferien mit Surfen", date: "16.-21.8.26", isWE: false, location: "Nordsee", maxTN: 8, currentTN: 4, leader: "Abha Morkötter" },
-    { title: "Yoga und Meditation Einführung", date: "21.-23.8.26", isWE: true, location: "Nordsee", maxTN: 10, currentTN: 3, leader: "Jnanadev David Ianni" },
-    { title: "Hawaiianischer Tanz und Yoga am Meer", date: "21.-23.8.26", isWE: true, location: "Nordsee", maxTN: 10, currentTN: 3, leader: "Monika Adele Camara" },
+    { title: "Yoga für den Rücken", date: "9.-14.8.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 0, leader: "Kamala Lubina" },
+    { title: "Yin Yoga", date: "9.-14.8.26", isWE: false, location: "Nordsee", maxTN: 15, currentTN: 8, leader: "Cornelia Surya Haag" },
+    { title: "Die Satsang-Trommeln der Kirtan-Musik", date: "14.-16.8.26", isWE: true, location: "Nordsee", maxTN: 10, currentTN: 11, leader: "Bernardo Juni" },
+    { title: "Vinyasa Power Yoga - Meditation in Bewegung", date: "14.-16.8.26", isWE: true, location: "Nordsee", maxTN: 10, currentTN: 8, leader: "Kamala Lubina" },
+    { title: "Weg mit der Brille - Yoga für die Augen", date: "14.-16.8.26", isWE: true, location: "Nordsee", maxTN: 10, currentTN: 3, leader: "Susan Holze" },
+    { title: "Yoga Ferienwoche", date: "16.-21.8.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 7, leader: "Ananda Schaak" },
+    { title: "Shakti Yoga - Erwecke die Kraft deiner Weiblichkeit", date: "16.-21.8.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 7, leader: "Susan Holze" },
+    { title: "Swings, Vibrations, Rotations", date: "16.-21.8.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 5, leader: "Monika Adele Camara" },
+    { title: "Yogaferien mit Surfen", date: "16.-21.8.26", isWE: false, location: "Nordsee", maxTN: 8, currentTN: 3, leader: "Abha Morkötter" },
+    { title: "Yoga und Meditation Einführung", date: "21.-23.8.26", isWE: true, location: "Nordsee", maxTN: 10, currentTN: 4, leader: "Jnanadev David Ianni" },
+    { title: "Hawaiianischer Tanz und Yoga am Meer", date: "21.-23.8.26", isWE: true, location: "Nordsee", maxTN: 10, currentTN: 4, leader: "Monika Adele Camara" },
     { title: "Yogatherapie für die Atemwege an der Nordsee", date: "21.-23.8.26", isWE: true, location: "Nordsee", maxTN: 10, currentTN: 1, leader: "Susan Holze" },
-    { title: "Yoga Ferienwoche", date: "23.-28.8.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 5, leader: "Jnanadev David Ianni" },
-    { title: "Yoga rund um die Geburt - Yogalehrer Weiterbildung", date: "23.-28.8.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 2, leader: "Susan Holze" },
-    { title: "Schamanisches Kundalini Retreat", date: "23.-28.8.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 15, leader: "Satyadevi Bretz, Yogita Sari" },
-    { title: "Yoga, Wandern und Fahrradfahren", date: "23.-28.8.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 3, leader: "Ananda Schaak" },
-    { title: "Yoga und Meditation Einführung", date: "28.-30.8.26", isWE: true, location: "Nordsee", maxTN: 10, currentTN: 4, leader: "" },
+    { title: "Yoga Ferienwoche", date: "23.-28.8.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 11, leader: "Jnanadev David Ianni" },
+    { title: "Yoga rund um die Geburt - Yogalehrer Weiterbildung", date: "23.-30.8.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 2, leader: "Susan Holze" },
+    { title: "Schamanisches Kundalini Retreat", date: "23.-28.8.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 19, leader: "Satyadevi Bretz, Yogita Sari" },
+    { title: "Yoga, Wandern und Fahrradfahren", date: "23.-28.8.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 4, leader: "Ananda Schaak" },
+    { title: "Yoga und Meditation Einführung", date: "28.-30.8.26", isWE: true, location: "Nordsee", maxTN: 10, currentTN: 6, leader: "" },
     { title: "Meditation und Qi Gong", date: "28.-30.8.26", isWE: true, location: "Nordsee", maxTN: 10, currentTN: 3, leader: "Michael Büchel" },
-    { title: "Yoga Ferienwoche - Yin Yoga", date: "30.8.-4.9.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 2, leader: "Beate Menkarski" },
+    { title: "Yoga Ferienwoche - Yin Yoga", date: "30.8.-4.9.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 6, leader: "Beate Menkarski" },
     { title: "Themenwoche: Indische Rituale und Rezitationen mit Swami Nivedanananda", date: "30.8.-4.9.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 0, leader: "Swami Nivedanananda" },
-    { title: "Yogalehrer Ausbildung Intensivkurs Woche 1", date: "30.8.-4.9.26", isWE: false, location: "Nordsee", maxTN: 5, currentTN: 2, leader: "Karuna M. Wapke" },
-    { title: "Yogalehrer Ausbildung Intensivkurs", date: "30.8.-27.9.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 5, leader: "Karuna M. Wapke" },
-    { title: "Yogalehrer Ausbildung Intensivkurs Woche 1+2", date: "30.8.-11.9.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 2, leader: "Karuna M. Wapke" },
-    { title: "Yoga und Meditation Einführung", date: "4.-6.9.26", isWE: true, location: "Nordsee", maxTN: 10, currentTN: 2, leader: "" },
-    { title: "Erleben mit dem Bauchraum", date: "4.-6.9.26", isWE: true, location: "Nordsee", maxTN: 10, currentTN: 0, leader: "Erkan Batmaz" },
-    { title: "Krishna Jayanti", date: "4.9.26", isWE: false, location: "Nordsee", maxTN: 2, currentTN: 0, leader: "" }
+    { title: "Yogalehrer Ausbildung Intensivkurs Woche 1", date: "30.8.-4.9.26", isWE: false, location: "Nordsee", maxTN: 5, currentTN: 3, leader: "Karuna M. Wapke" },
+    { title: "Yogalehrer Ausbildung Intensivkurs", date: "30.8.-27.9.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 3, leader: "Karuna M. Wapke" },
+    { title: "Yogalehrer Ausbildung Intensivkurs Woche 1+2", date: "30.8.-11.9.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 4, leader: "Karuna M. Wapke" },
+    { title: "Yoga und Meditation Einführung", date: "4.-6.9.26", isWE: true, location: "Nordsee", maxTN: 10, currentTN: 3, leader: "" },
+    { title: "Erleben mit dem Bauchraum", date: "4.-6.9.26", isWE: true, location: "Nordsee", maxTN: 10, currentTN: 1, leader: "Erkan Batmaz" },
+    { title: "Krishna Jayanti", date: "4.9.26", isWE: false, location: "Nordsee", maxTN: 2, currentTN: 0, leader: "" },
+    { title: "Yogalehrer Ausbildung Intensivkurs Woche 2", date: "4.-11.9.26", isWE: false, location: "Nordsee", maxTN: 8, currentTN: 4, leader: "Karuna M. Wapke" },
+    { title: "Yoga Ferienwoche", date: "6.-11.9.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 5, leader: "Erkan Batmaz" },
+    { title: "Insel-Yoga", date: "6.-11.9.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 5, leader: "Pranava Heinz Pauly" },
+    { title: "Sivanandas Geburtstag", date: "8.9.26", isWE: false, location: "Nordsee", maxTN: 0, currentTN: 0, leader: "" },
+    { title: "Harmonium Lernseminar", date: "11.-13.9.26", isWE: true, location: "Nordsee", maxTN: 10, currentTN: 5, leader: "Jürgen Wade" },
+    { title: "Yogalehrer Ausbildung Intensivkurs Woche 3", date: "11.-18.9.26", isWE: false, location: "Nordsee", maxTN: 5, currentTN: 4, leader: "Karuna M. Wapke" },
+    { title: "Yogalehrer Ausbildung Intensivkurs Woche 3+4", date: "11.-27.9.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 6, leader: "Karuna M. Wapke" },
+    { title: "Yoga Ferienwoche", date: "13.-18.9.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 4, leader: "Madhavi Füllen, Gopala Kirill Serov" },
+    { title: "Yoga, Wandern und Fahrradfahren", date: "13.-18.9.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 5, leader: "Pranava Heinz Pauly" },
+    { title: "Yoga und Meditation Einführung", date: "18.-20.9.26", isWE: true, location: "Nordsee", maxTN: 10, currentTN: 4, leader: "Gopala Kirill Serov" },
+    { title: "Schamanismus als Medizin", date: "18.-20.9.26", isWE: true, location: "Nordsee", maxTN: 0, currentTN: 1, leader: "Maharani Fritsch de Navarrete" },
+    { title: "Yogalehrer Ausbildung Intensivkurs Woche 4", date: "18.-27.9.26", isWE: false, location: "Nordsee", maxTN: 5, currentTN: 1, leader: "Karuna M. Wapke" },
+    { title: "Yoga Ferienwoche", date: "20.-25.9.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 1, leader: "Chandradevi Winterhalter" },
+    { title: "Yoga und Meditation Einführung", date: "24.-26.9.26", isWE: true, location: "Nordsee", maxTN: 10, currentTN: 0, leader: "" },
+    { title: "Acro Yoga", date: "25.-27.9.26", isWE: true, location: "Nordsee", maxTN: 10, currentTN: 3, leader: "Jnanadev Wallaschkowski" },
+    { title: "Freude im Herzen - Mantra Singen und Yoga", date: "25.-27.9.26", isWE: true, location: "Nordsee", maxTN: 10, currentTN: 0, leader: "Gruppe Mudita" },
+    { title: "YLA Prüfungswochenende", date: "25.-27.9.26", isWE: true, location: "Nordsee", maxTN: 5, currentTN: 0, leader: "Karuna M. Wapke" },
+    { title: "Ayurvedisches Fasten für Pitta und Vata", date: "27.9.-2.10.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 6, leader: "Satyananda Wahl, Aziza Lena Alemi" },
+    { title: "Yoga Ferienwoche", date: "27.9.-2.10.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 1, leader: "Gita Irene Hofmann" },
+    { title: "Ayur-Yoga-Therapie für Schultern und Nacken", date: "2.-4.10.26", isWE: true, location: "Nordsee", maxTN: 10, currentTN: 5, leader: "Gita Irene Hofmann" },
+    { title: "Yoga und Meditation Einführung", date: "2.-4.10.26", isWE: true, location: "Nordsee", maxTN: 10, currentTN: 0, leader: "Parashakti Küttner" },
+    { title: "Meditation Intensiv Schweigend", date: "2.-4.10.26", isWE: true, location: "Nordsee", maxTN: 20, currentTN: 24, leader: "Karuna M. Wapke" },
+    { title: "Aufrichtung in der Asana erleben und verstehen", date: "4.-9.10.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 6, leader: "Gita Irene Hofmann" },
+    { title: "Wellnesswoche: Ayurveda, Massagen, Yoga & Medi(t)", date: "4.-9.10.26", isWE: false, location: "Nordsee", maxTN: 8, currentTN: 10, leader: "Madhavi Veronika Broszinski, Venulo Bernd Broszinski" },
+    { title: "Yin Yoga Übungsleiter Ausbildung", date: "4.-16.10.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 3, leader: "" },
+    { title: "Die 10-Wochenend-Weiterbildung für Yogalehrer", date: "9.10.26-21.5.28", isWE: false, location: "Nordsee", maxTN: 0, currentTN: 0, leader: "" },
+    { title: "Raja Yoga 2", date: "9.-11.10.26", isWE: true, location: "Nordsee", maxTN: 20, currentTN: 1, leader: "Karuna M. Wapke, Sukadev Bretz" },
+    { title: "Yoga Ferienwoche", date: "11.-16.10.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 3, leader: "Shankara Stefan Maune" },
+    { title: "Navaratri", date: "11.-20.10.26", isWE: false, location: "Nordsee", maxTN: 2, currentTN: 0, leader: "" },
+    { title: "Stärke deine Weiblichkeit im Frauentempel", date: "11.-16.10.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 0, leader: "Rajeshwari Gemnich" },
+    { title: "Yoga und Meditation Einführung", date: "16.-18.10.26", isWE: true, location: "Nordsee", maxTN: 10, currentTN: 0, leader: "Pranava Heinz Pauly" },
+    { title: "Jnana Yoga, Vedanta, Meditation und Schweigen", date: "16.-18.10.26", isWE: true, location: "Nordsee", maxTN: 20, currentTN: 0, leader: "Karuna M. Wapke" },
+    { title: "Mantra-Begleitung mit Ukulele | Aufbauseminar", date: "16.-18.10.26", isWE: true, location: "Nordsee", maxTN: 10, currentTN: 2, leader: "Shankari Susanne Hill" },
+    { title: "Yoga Ferienwoche", date: "18.-23.10.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 6, leader: "Erkan Batmaz" },
+    { title: "Nordsee Special: Yoga und Klangthemenwoche", date: "18.-23.10.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 2, leader: "Wolfgang Meisel, Jutta Kremer" },
+    { title: "Time out statt Burn out", date: "18.-23.10.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 1, leader: "Nicole Padmini Neumann" },
+    { title: "Vijaya Dashami", date: "20.10.26", isWE: false, location: "Nordsee", maxTN: 2, currentTN: 0, leader: "" },
+    { title: "Tag der offenen Tür - Haus Yoga Vidya Nordsee", date: "24.10.26", isWE: true, location: "Nordsee", maxTN: 20, currentTN: 4, leader: "Karuna M. Wapke" },
+    { title: "Hatha Yoga Prävention Ferienwoche", date: "25.-30.10.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 2, leader: "Pranava Heinz Pauly" },
+    { title: "Yin Yoga meets Vipassana", date: "25.-30.10.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 3, leader: "Christian Bliedtner" },
+    { title: "Yoga und Meditation Einführung", date: "30.10.-1.11.26", isWE: true, location: "Nordsee", maxTN: 10, currentTN: 2, leader: "" },
   ];
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  function getEndDate(dateStr: string): Date | null {
+    try {
+      const cleanStr = dateStr.replace(/WE/g, '').replace(/–/g, '-').trim();
+      const rangeParts = cleanStr.split('-');
+      const endPartStr = rangeParts[rangeParts.length - 1].trim();
+      const dateComponents = endPartStr.split('.').map(c => c.trim()).filter(Boolean);
+      
+      if (dateComponents.length < 3) return null;
+      
+      const day = parseInt(dateComponents[0], 10);
+      const month = parseInt(dateComponents[1], 10) - 1; // JS Month is 0-indexed
+      let year = parseInt(dateComponents[2], 10);
+      
+      if (year < 100) year += 2000;
+      
+      return new Date(year, month, day, 23, 59, 59); // End of the day
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function isUpcoming(dateStr: string): boolean {
+    const endDate = getEndDate(dateStr);
+    if (!endDate) return true;
+    return endDate >= today;
+  }
+
+  const upcomingSeminars = seminars.filter(s => isUpcoming(s.date));
 
   let searchQuery = $state('');
   let filterStatus = $state<'all' | 'open' | 'assigned'>('all');
 
   let filteredSeminars = $derived(
-    seminars.filter(s => {
+    upcomingSeminars.filter(s => {
       // Filter by open/assigned status
       if (filterStatus === 'open' && s.leader !== '') return false;
       if (filterStatus === 'assigned' && s.leader === '') return false;
@@ -110,8 +136,8 @@
     })
   );
 
-  let openCount = $derived(seminars.filter(s => s.leader === '').length);
-  let assignedCount = $derived(seminars.filter(s => s.leader !== '').length);
+  let openCount = $derived(upcomingSeminars.filter(s => s.leader === '').length);
+  let assignedCount = $derived(upcomingSeminars.filter(s => s.leader !== '').length);
 </script>
 
 <!-- Hero Section: "Yoga Orga Software" with mountains/river landscape background -->
@@ -145,7 +171,7 @@
         onclick={() => filterStatus = 'all'}
       >
         <span>🌟 Alle</span>
-        <span class="chip-count">{seminars.length}</span>
+        <span class="chip-count">{upcomingSeminars.length}</span>
       </button>
       <button 
         class="chip-btn chip-open" 
