@@ -93,13 +93,13 @@
     loadingLogs = [];
     planningLogs = [];
     
-    loadingLogs = [...loadingLogs, `[SYSTEM] Starte 4-Wochen-KI-Vorplanung via CP-SAT Solver...`];
+    loadingLogs = [...loadingLogs, `[SYSTEM] Starte 4-Wochen-Vorplanung via Regel-basiertem Planungsalgorithmus...`];
     await new Promise(resolve => setTimeout(resolve, 300));
     
     for (let i = 0; i < upcomingPlans.length; i++) {
       const plan = upcomingPlans[i];
       loadingStep = `Berechne ${plan.name}...`;
-      loadingLogs = [...loadingLogs, `[INFO] Rufe CP-SAT Solver auf für ${plan.name}...`];
+      loadingLogs = [...loadingLogs, `[INFO] Plane ${plan.name}...`];
       
       // Reset plan's courses to a fresh copy of the Blankowoche template courses before planning
       const template = db.getWeekPlan('plan-template-1');

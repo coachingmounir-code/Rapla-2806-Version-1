@@ -760,15 +760,18 @@ export function validateAssignment(
     }
   }
 
-  // 0. Check if active Yoga Teacher (Soft)
+  // 0. Check if active Yoga Teacher (Soft) - Ignored (profile rule)
+  /*
   if (teacher.isYogaTeacher === false) {
     conflicts.push({
       type: 'soft',
       message: `${teacher.name} ist nicht als aktiver Yogalehrer markiert (z. B. Seminarleiter).`
     });
   }
+  */
 
-  // 0x. Check non-preferred weekdays (Soft)
+  // 0x. Check non-preferred weekdays (Soft) - Ignored (profile rule)
+  /*
   if (!isSevaka) {
     const nonPreferredDays = teacher.rules.nonPreferredDays || [];
     if (nonPreferredDays.includes(course.dayOfWeek)) {
@@ -780,6 +783,7 @@ export function validateAssignment(
       });
     }
   }
+  */
 
   // 0y. Expose custom wishes/notes (Soft)
   if (teacher.customWishes && teacher.customWishes.trim().length > 0) {
@@ -790,25 +794,38 @@ export function validateAssignment(
   }
 
 
-  // 0b. Check if external seminar-only teacher is conducting a seminar this week
+  // 0b. Check if external seminar-only teacher is conducting a seminar this week - Ignored (profile rule)
+  /*
   if (teacher.availabilityMode === 'seminar_only' && !seminarLeaderIds.includes(teacher.id)) {
     conflicts.push({
       type: 'soft',
       message: `${teacher.name} ist als externer Seminarleiter markiert, leitet aber in dieser Woche kein Seminar.`
     });
   }
+  */
   
-  // 1. Check Specialty (Hard) & Meditation/Satsang Qualifications
-  const isMeditationCourse = course.name === 'Geführte Meditation';
+  // 1. Check Specialty & Meditation/Satsang Qualifications (Strictly Wochenplan rules, ignoring profile settings)
+  const isMeditationCourse = course.name === 'Geführte Meditation' || course.style.toLowerCase() === 'meditation';
   if (isMeditationCourse) {
-    if (!teacher.rules.canLeadMeditation) {
+    // Geführte Meditation rules from Geführte Meditation Regeln.txt:
+    // Allowed: Pranava, Harishakti, Alexander, Burnie, Satyam, Nirmaya, Narayani, Mounir, Hu und Christopher stehen zur Verfügung.
+    // Never lead: Karuna, Anjali, Abha, Ulrich, Adam, Teresa
+    const allowedMeditation = ['pranava', 'harishakti', 'alexander', 'burnie', 'satyam', 'nirmaya', 'narayani', 'mounir', 'hu', 'christopher'];
+    const forbiddenMeditation = ['karuna', 'anjali', 'abha', 'ulrich', 'adam', 'teresa'];
+    
+    const isAllowed = allowedMeditation.some(name => teacherNameLower.includes(name));
+    const isForbidden = forbiddenMeditation.some(name => teacherNameLower.includes(name));
+    
+    if (isForbidden || (!isAllowed && isSevaka)) {
       conflicts.push({
         type: 'hard',
-        message: `${teacher.name} ist nicht für geführte Meditationen qualifiziert.`
+        message: `${teacher.name} darf laut Meditation-Regeln nie die geführte Meditation am Morgen leiten.`
       });
     }
   }
 
+  // Disabled profile qualification and specialties checks
+  /*
   if (!isSevaka) {
     if (isSatsangCourse) {
       if (!teacher.rules.canLeadSatsang) {
@@ -829,8 +846,10 @@ export function validateAssignment(
       }
     }
   }
+  */
 
-  // 2. Check Availability (Hard)
+  // 2. Check Availability (Hard) - Ignored (profile rule)
+  /*
   if (!isSevaka) {
     const courseStart = timeToMinutes(course.startTime);
     const courseEnd = timeToMinutes(course.endTime);
@@ -849,6 +868,7 @@ export function validateAssignment(
       });
     }
   }
+  */
 
   // 3. Check Overlapping Classes (Hard)
   const otherAssignments = allCourses.filter(
@@ -866,7 +886,8 @@ export function validateAssignment(
     });
   }
 
-  // 4. Check Buffer / Rest Time (Hard)
+  // 4. Check Buffer / Rest Time (Hard) - Ignored (profile rule)
+  /*
   if (!isSevaka) {
     const restTime = teacher.rules.minRestTime;
     if (restTime > 0) {
@@ -896,8 +917,10 @@ export function validateAssignment(
       }
     }
   }
+  */
 
-  // 5. Check Daily Class Limit (Hard)
+  // 5. Check Daily Class Limit (Hard) - Ignored (profile rule)
+  /*
   if (!isSevaka) {
     const classesOnDay = otherAssignments.length + 1; // plus the current one
     if (classesOnDay > teacher.rules.maxClassesPerDay) {
@@ -907,8 +930,10 @@ export function validateAssignment(
       });
     }
   }
+  */
 
-  // 6. Check Weekly Hours Limit (Hard)
+  // 6. Check Weekly Hours Limit (Hard) - Ignored (profile rule)
+  /*
   if (!isSevaka) {
     const courseDurationMins = timeToMinutes(course.endTime) - timeToMinutes(course.startTime);
     const weeklyDurationMins = allCourses
@@ -923,8 +948,10 @@ export function validateAssignment(
       });
     }
   }
+  */
 
-  // 7. Check Room Preference (Soft)
+  // 7. Check Room Preference (Soft) - Ignored (profile rule)
+  /*
   if (!isSevaka) {
     if (teacher.rules.preferredRooms.length > 0) {
       const isPreferredRoom = teacher.rules.preferredRooms.includes(course.roomId);
@@ -936,6 +963,7 @@ export function validateAssignment(
       }
     }
   }
+  */
 
   // 8. Check Room Rules from Raum Regeln.txt (Hard)
   const roomConflicts = validateRoomRules(course, allCourses, teachers || db.getTeachers());
@@ -984,10 +1012,9 @@ export function runAiPlanning(
   const logs: string[] = [];
   logs.push('Starte automatischen KI-Planungsalgorithmus...');
   
-  // Only plan with Sevakas (Kernteam) that are active yoga teachers
+  // Only plan with Sevakas (Kernteam)
   const yogaTeachers = teachers.filter(t => 
-    t.roleType === 'sevaka' && 
-    t.isYogaTeacher !== false
+    t.roleType === 'sevaka'
   );
   logs.push(`Berücksichtige ${yogaTeachers.length} Sevakas (Kernteam) für die KI-Vorplanung.`);
   
@@ -1123,31 +1150,12 @@ export function runAiPlanning(
         score += 100000;
       }
       
-      // Preferred room bonus
-      const prefersRoom = teacher.rules.preferredRooms.includes(course.roomId);
-      if (prefersRoom) {
-        score += 30; // prefer room match
-      }
-
-      // Prioritized day bonus
-      const preferredDays = teacher.rules.preferredDays || [];
-      if (preferredDays.includes(course.dayOfWeek)) {
-        score += 50; // Give a large bonus to prioritize this teacher for courses on this day!
-      }
-
-      // Non-preferred day penalty
-      const nonPreferredDaysVal = teacher.rules.nonPreferredDays || [];
-      if (nonPreferredDaysVal.includes(course.dayOfWeek)) {
-        score -= 40; // Deduct points if the teacher prefers not to teach on this day!
-      }
-      
       // Preference: distribute hours evenly (favour teachers with fewer planned hours)
       const plannedHours = workingCourses
         .filter(c => c.teacherId === teacher.id)
         .reduce((sum, c) => sum + (timeToMinutes(c.endTime) - timeToMinutes(c.startTime)) / 60, 0);
       
-      const capacityRatio = plannedHours / teacher.rules.maxHoursPerWeek;
-      score -= capacityRatio * 50; // deduct points if close to max capacity to encourage balance
+      score -= plannedHours * 5; // deduct points to encourage balance (e.g. -5 points per planned hour)
       
       // Custom scoring rules for Karuna (Seminarhausleitung)
       if (teacher.name.toLowerCase().includes('karuna')) {
@@ -1259,6 +1267,44 @@ export function runAiPlanning(
               score += 1000; // Huge bonus for the rotating preference
             }
           }
+        }
+      }
+
+      // --- GEFÜHRTE MEDITATION SCORING RULES ---
+      const isMeditationCourse = course.name === 'Geführte Meditation' || course.style.toLowerCase() === 'meditation';
+      if (isMeditationCourse) {
+        const tNameLower = teacher.name.toLowerCase();
+        
+        // Allowed morning meditation list
+        const allowedMeditation = ['pranava', 'harishakti', 'alexander', 'burnie', 'satyam', 'nirmaya', 'narayani', 'mounir', 'hu', 'christopher'];
+        const isAllowed = allowedMeditation.some(name => tNameLower.includes(name));
+        
+        // Forbidden morning meditation list
+        const forbiddenMeditation = ['karuna', 'anjali', 'abha', 'ulrich', 'adam', 'teresa'];
+        const isForbidden = forbiddenMeditation.some(name => tNameLower.includes(name));
+        
+        if (isForbidden) {
+          score -= 10000;
+        } else if (isAllowed) {
+          score += 100; // base allowed bonus
+          
+          // Day-specific primary teacher bonus (rules 3-9)
+          const primaryMeditationTeachers: Record<number, string> = {
+            1: 'hu',
+            2: 'alexander',
+            3: 'satyam',
+            4: 'christopher',
+            5: 'pranava',
+            6: 'nirmaya',
+            0: 'harishakti'
+          };
+          
+          const primaryName = primaryMeditationTeachers[course.dayOfWeek];
+          if (primaryName && tNameLower.includes(primaryName)) {
+            score += 10000; // Make them the primary choice if available
+          }
+        } else if (teacher.roleType === 'sevaka') {
+          score -= 10000; // Not allowed for other sevakas
         }
       }
 
@@ -1413,19 +1459,10 @@ export function runAiPlanning(
           // Calculate score with high penalty for relaxed conflicts
           let score = 100;
           
-          // Apply regular scoring
-          const prefersRoom = teacher.rules.preferredRooms.includes(course.roomId);
-          if (prefersRoom) score += 30;
-          const preferredDays = teacher.rules.preferredDays || [];
-          if (preferredDays.includes(course.dayOfWeek)) score += 50;
-          const nonPreferredDaysVal = teacher.rules.nonPreferredDays || [];
-          if (nonPreferredDaysVal.includes(course.dayOfWeek)) score -= 40;
-          
           const plannedHours = workingCourses
             .filter(c => c.teacherId === teacher.id)
             .reduce((sum, c) => sum + (timeToMinutes(c.endTime) - timeToMinutes(c.startTime)) / 60, 0);
-          const capacityRatio = plannedHours / teacher.rules.maxHoursPerWeek;
-          score -= capacityRatio * 50;
+          score -= plannedHours * 5;
 
           // Huge penalty for each hard conflict we relaxed
           const hardConflictsToRelax = conflicts.filter(c => c.type === 'hard');
