@@ -48,7 +48,11 @@
 		authChecked = true;
 	});
 
-	onMount(async () => {
+	let isSyncing = $state(false);
+
+	async function syncData() {
+		if (isSyncing) return;
+		isSyncing = true;
 		// Sync wishes from server JSON to localStorage
 		try {
 			const wishesRes = await fetch('/api/sevakas-wishes');
@@ -76,7 +80,7 @@
 				}
 			}
 		} catch (e) {
-			console.error('Failed to sync wishes on load:', e);
+			console.error('Failed to sync wishes:', e);
 		}
 
 		// Sync absences from server JSON to localStorage
@@ -104,8 +108,21 @@
 				}
 			}
 		} catch (e) {
-			console.error('Failed to sync absences on load:', e);
+			console.error('Failed to sync absences:', e);
 		}
+		
+		// Small delay to make the sync animation visible
+		setTimeout(() => {
+			isSyncing = false;
+			// Reload page to reflect changes if manually triggered
+			if (typeof window !== 'undefined' && userRole) {
+				// Don't reload on mount, but reload when button is explicitly clicked
+			}
+		}, 600);
+	}
+
+	onMount(() => {
+		syncData();
 	});
 </script>
 
@@ -235,6 +252,24 @@
 							<span class="nav-icon">⚙️</span>
 							<span class="nav-label">Einstellungen</span>
 						</a>
+
+						<!-- Snycronisations Button -->
+						<button 
+							type="button" 
+							class="nav-item sync-action-btn" 
+							class:syncing={isSyncing}
+							onclick={() => {
+								syncData().then(() => {
+									// Optional: window.location.reload() to refresh the data on the current page immediately
+									window.location.reload();
+								});
+							}}
+							disabled={isSyncing}
+							title="Lade neueste Urlaube & Wünsche neu vom Server"
+						>
+							<span class="nav-icon icon-spin" class:spinning={isSyncing}>🔄</span>
+							<span class="nav-label">{isSyncing ? 'Synchronisiere...' : 'Daten synchronisieren'}</span>
+						</button>
 					</nav>
 
 					<!-- Bottom Greeting Card & Brand Slogan -->
@@ -689,5 +724,31 @@
 	@keyframes spin {
 		0% { transform: rotate(0deg); }
 		100% { transform: rotate(360deg); }
+	}
+
+	.sync-action-btn {
+		background: rgba(150, 0, 64, 0.05); /* very light primary */
+		border: 1px solid rgba(150, 0, 64, 0.15);
+		margin-top: 0.5rem;
+		width: 100%;
+		cursor: pointer;
+		font-family: inherit;
+		text-align: left;
+		color: var(--primary);
+	}
+
+	.sync-action-btn:hover {
+		background: rgba(150, 0, 64, 0.1);
+		color: var(--primary-hover);
+	}
+
+	.sync-action-btn.syncing {
+		opacity: 0.7;
+		cursor: not-allowed;
+	}
+
+	.icon-spin.spinning {
+		display: inline-block;
+		animation: spin 1s linear infinite;
 	}
 </style>
