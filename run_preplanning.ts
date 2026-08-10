@@ -270,6 +270,7 @@ localStorage.setItem('rapla_teachers', JSON.stringify(teachers));
 
 const standardCoursesDefs = [
   // Friday (dayOfWeek: 5)
+  { name: 'Hausführung', style: 'Sonstiges', dayOfWeek: 5, startTime: '19:00', endTime: '19:30', roomId: 'Rezeption', teacherName: 'Pranava, Satyam, Ulrich, burnie, Christopher, hu, Anjali' },
   { name: 'Geführte Meditation', style: 'Meditation', dayOfWeek: 5, startTime: '07:00', endTime: '07:30', roomId: 'room-5', teacherName: 'Pranava' },
   { name: 'Satsang', style: 'Meditation', dayOfWeek: 5, startTime: '07:00', endTime: '08:00', roomId: 'room-2', teacherName: 'Nirmaya' },
   { name: 'Anfänger', style: 'Hatha', dayOfWeek: 5, startTime: '09:15', endTime: '11:00', roomId: 'room-5', teacherName: 'Harishakti' },
@@ -292,6 +293,7 @@ const standardCoursesDefs = [
   { name: 'Satsang', style: 'Meditation', dayOfWeek: 6, startTime: '20:00', endTime: '21:00', roomId: 'room-2', teacherName: 'Karuna' },
 
   // Sunday (dayOfWeek: 0)
+  { name: 'Hausführung', style: 'Sonstiges', dayOfWeek: 0, startTime: '19:00', endTime: '19:30', roomId: 'Rezeption', teacherName: 'Pranava, Satyam, Ulrich, burnie, Christopher, hu, Anjali' },
   { name: 'Fortgeschrittenes Pranayama', style: 'Hatha', dayOfWeek: 0, startTime: '06:00', endTime: '06:50', roomId: 'room-2', teacherName: 'burnie, Narayani' },
   { name: 'Geführte Meditation', style: 'Meditation', dayOfWeek: 0, startTime: '07:00', endTime: '07:30', roomId: 'room-5', teacherName: 'Harishakti' },
   { name: 'Satsang', style: 'Meditation', dayOfWeek: 0, startTime: '07:00', endTime: '08:00', roomId: 'room-2', teacherName: 'burnie' },
