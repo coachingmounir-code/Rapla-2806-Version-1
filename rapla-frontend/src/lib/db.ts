@@ -597,7 +597,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
     createdAt: new Date().toISOString()
   },
   // --- PREPLANNED WEEKS ---
-                          {
+                              {
     id: "plan-pre-2026-W28",
     name: "Vorplanung 2026-W28 (Automatisch)",
     status: "approved",
@@ -707,7 +707,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "20:00",
         "endTime": "21:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-narayani-kedenburg",
+        "teacherId": "teacher-gen-abha-morkoetter",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -1175,7 +1175,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-narayani-kedenburg",
+        "teacherId": "teacher-gen-satyam",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -1868,8 +1868,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": null,
-        "isAiPlanned": false,
+        "teacherId": "teacher-gen-satyam",
+        "isAiPlanned": true,
         "status": "approved"
       },
       {
@@ -2561,7 +2561,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-hu-buerkle",
+        "teacherId": "teacher-gen-satyam",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -2882,8 +2882,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": null,
-        "isAiPlanned": false,
+        "teacherId": "teacher-gen-hu-buerkle",
+        "isAiPlanned": true,
         "status": "approved"
       },
       {
@@ -2990,7 +2990,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-burnie-bansemer",
+        "teacherId": "teacher-gen-hu-buerkle",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -3206,8 +3206,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "07:00",
         "endTime": "07:30",
         "roomId": "room-5",
-        "teacherId": null,
-        "isAiPlanned": false,
+        "teacherId": "teacher-gen-satyam",
+        "isAiPlanned": true,
         "status": "approved"
       },
       {
@@ -3479,7 +3479,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "20:00",
         "endTime": "21:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-narayani-kedenburg",
+        "teacherId": "teacher-gen-abha-morkoetter",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -3587,7 +3587,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "20:00",
         "endTime": "21:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-abha-morkoetter",
+        "teacherId": "teacher-gen-anjali-gelzleichter",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -3947,7 +3947,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-burnie-bansemer",
+        "teacherId": "teacher-gen-satyam",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -4640,7 +4640,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-hu-buerkle",
+        "teacherId": "teacher-gen-satyam",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -4865,7 +4865,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "20:00",
         "endTime": "21:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-narayani-kedenburg",
+        "teacherId": "teacher-gen-anjali-gelzleichter",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -5069,7 +5069,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-satyam",
+        "teacherId": "teacher-gen-hu-buerkle",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -5285,8 +5285,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "07:00",
         "endTime": "07:30",
         "roomId": "room-5",
-        "teacherId": null,
-        "isAiPlanned": false,
+        "teacherId": "teacher-gen-satyam",
+        "isAiPlanned": true,
         "status": "approved"
       },
       {
@@ -5333,7 +5333,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-burnie-bansemer",
+        "teacherId": "teacher-gen-satyam",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -6026,7 +6026,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-burnie-bansemer",
+        "teacherId": "teacher-gen-satyam",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -6251,7 +6251,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "20:00",
         "endTime": "21:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-narayani-kedenburg",
+        "teacherId": "teacher-gen-abha-morkoetter",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -6719,7 +6719,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-mouniir-jaber",
+        "teacherId": "teacher-gen-satyam",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -7412,7 +7412,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-mouniir-jaber",
+        "teacherId": "teacher-gen-satyam",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -8105,7 +8105,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-mouniir-jaber",
+        "teacherId": "teacher-gen-satyam",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -8798,7 +8798,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-narayani-kedenburg",
+        "teacherId": "teacher-gen-satyam",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -9491,7 +9491,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-mouniir-jaber",
+        "teacherId": "teacher-gen-satyam",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -9630,7 +9630,7 @@ function setStored<T>(key: string, value: T): void {
   }
 }
 
-const CURRENT_DB_VERSION = 41;
+const CURRENT_DB_VERSION = 43;
 
 // Database Actions
 export const db = {

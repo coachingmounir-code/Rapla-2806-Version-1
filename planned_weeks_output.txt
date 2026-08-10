@@ -104,7 +104,7 @@
         "startTime": "20:00",
         "endTime": "21:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-narayani-kedenburg",
+        "teacherId": "teacher-gen-abha-morkoetter",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -572,7 +572,7 @@
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-narayani-kedenburg",
+        "teacherId": "teacher-gen-satyam",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -1260,8 +1260,8 @@
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": null,
-        "isAiPlanned": false,
+        "teacherId": "teacher-gen-satyam",
+        "isAiPlanned": true,
         "status": "approved"
       },
       {
@@ -1948,7 +1948,7 @@
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-hu-buerkle",
+        "teacherId": "teacher-gen-satyam",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -2264,8 +2264,8 @@
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": null,
-        "isAiPlanned": false,
+        "teacherId": "teacher-gen-hu-buerkle",
+        "isAiPlanned": true,
         "status": "approved"
       },
       {
@@ -2372,7 +2372,7 @@
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-burnie-bansemer",
+        "teacherId": "teacher-gen-hu-buerkle",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -2588,8 +2588,8 @@
         "startTime": "07:00",
         "endTime": "07:30",
         "roomId": "room-5",
-        "teacherId": null,
-        "isAiPlanned": false,
+        "teacherId": "teacher-gen-satyam",
+        "isAiPlanned": true,
         "status": "approved"
       },
       {
@@ -2856,7 +2856,7 @@
         "startTime": "20:00",
         "endTime": "21:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-narayani-kedenburg",
+        "teacherId": "teacher-gen-abha-morkoetter",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -2964,7 +2964,7 @@
         "startTime": "20:00",
         "endTime": "21:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-abha-morkoetter",
+        "teacherId": "teacher-gen-anjali-gelzleichter",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -3324,7 +3324,7 @@
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-burnie-bansemer",
+        "teacherId": "teacher-gen-satyam",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -4012,7 +4012,7 @@
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-hu-buerkle",
+        "teacherId": "teacher-gen-satyam",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -4232,7 +4232,7 @@
         "startTime": "20:00",
         "endTime": "21:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-narayani-kedenburg",
+        "teacherId": "teacher-gen-anjali-gelzleichter",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -4436,7 +4436,7 @@
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-satyam",
+        "teacherId": "teacher-gen-hu-buerkle",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -4652,8 +4652,8 @@
         "startTime": "07:00",
         "endTime": "07:30",
         "roomId": "room-5",
-        "teacherId": null,
-        "isAiPlanned": false,
+        "teacherId": "teacher-gen-satyam",
+        "isAiPlanned": true,
         "status": "approved"
       },
       {
@@ -4700,7 +4700,7 @@
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-burnie-bansemer",
+        "teacherId": "teacher-gen-satyam",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -5388,7 +5388,7 @@
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-burnie-bansemer",
+        "teacherId": "teacher-gen-satyam",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -5608,7 +5608,7 @@
         "startTime": "20:00",
         "endTime": "21:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-narayani-kedenburg",
+        "teacherId": "teacher-gen-abha-morkoetter",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -6076,7 +6076,7 @@
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-mouniir-jaber",
+        "teacherId": "teacher-gen-satyam",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -6764,7 +6764,7 @@
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-mouniir-jaber",
+        "teacherId": "teacher-gen-satyam",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -7452,7 +7452,7 @@
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-mouniir-jaber",
+        "teacherId": "teacher-gen-satyam",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -8140,7 +8140,7 @@
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-narayani-kedenburg",
+        "teacherId": "teacher-gen-satyam",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -8828,7 +8828,7 @@
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-mouniir-jaber",
+        "teacherId": "teacher-gen-satyam",
         "isAiPlanned": true,
         "status": "approved"
       },

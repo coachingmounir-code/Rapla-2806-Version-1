@@ -20,10 +20,17 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
   isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
   mod
 ));
-var import_db = require("./rapla-frontend/src/lib/db.ts");
-var import_planningEngine = require("./rapla-frontend/src/lib/planningEngine.ts");
-var import_excel_absences = require("./rapla-frontend/src/lib/excel_absences.ts");
+var import_child_process = require("child_process");
 var import_fs = __toESM(require("fs"));
+var import_db = require("./rapla-frontend/src/lib/db.js");
+var import_planningEngine = require("./rapla-frontend/src/lib/planningEngine.js");
+var import_excel_absences = require("./rapla-frontend/src/lib/excel_absences.js");
+try {
+  console.log("[PREPLANNING] Triggering Wochenplan rules compilation...");
+  (0, import_child_process.execSync)("node rapla-frontend/scripts/compile_rules.js", { stdio: "inherit" });
+} catch (e) {
+  console.error("[PREPLANNING ERROR] Failed compiling rules:", e);
+}
 global.window = {};
 const mockLocalStorage = {};
 global.localStorage = {
