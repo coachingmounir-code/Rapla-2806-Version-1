@@ -120,6 +120,14 @@
 
     const nameLower = course.name.toLowerCase();
     const styleLower = course.style.toLowerCase();
+    
+    if (nameLower.includes('hausführung')) {
+      return {
+        bg: '#e0f2fe',
+        border: '#38bdf8'
+      };
+    }
+
     const isYellow = 
       (nameLower.includes('meditation') || 
        nameLower.includes('satsang') || 
