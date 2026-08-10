@@ -3,8 +3,19 @@
 	import favicon from '$lib/assets/favicon.svg';
 	import nataraja from '$lib/assets/nataraja.jpg';
 	import { onMount } from 'svelte';
+	import { todoManager } from '$lib/todoStore';
 
 	let { children } = $props();
+
+	function getCategoryLabel(cat: string) {
+		switch (cat) {
+			case 'check': return '🔍 Prüfen';
+			case 'prepare': return '🛠️ Vorbereiten';
+			case 'communicate': return '💬 Kommunizieren';
+			case 'materials': return '📦 Material';
+			default: return '📋 Aufgabe';
+		}
+	}
 
 	// Simple client-side page tracking
 	import { page } from '$app/state';
@@ -123,6 +134,13 @@
 
 	onMount(() => {
 		syncData();
+		
+		todoManager.checkReminders();
+		const interval = setInterval(() => {
+			todoManager.checkReminders();
+		}, 10000);
+		
+		return () => clearInterval(interval);
 	});
 </script>
 
@@ -327,6 +345,42 @@
 				</main>
 			</div>
 		{/if}
+	{/if}
+
+	{#if todoManager.activeReminder}
+		<!-- svelte-ignore a11y_click_events_have_key_events -->
+		<!-- svelte-ignore a11y_no_static_element_interactions -->
+		<div class="global-reminder-overlay" onclick={() => todoManager.dismissReminder(todoManager.activeReminder!.id)}>
+			<div class="global-reminder-card glass-card" onclick={(e) => e.stopPropagation()}>
+				<div class="reminder-header">
+					<span class="reminder-icon">⏰</span>
+					<h3>Seminar-Aufgabe fällig</h3>
+				</div>
+				<div class="reminder-body">
+					<p class="reminder-seminar">Seminar: <strong>{todoManager.activeReminder.seminarTitle}</strong> ({todoManager.activeReminder.seminarDate})</p>
+					<div class="reminder-task-box">
+						<span class="category-badge {todoManager.activeReminder.category}">
+							{getCategoryLabel(todoManager.activeReminder.category)}
+						</span>
+						<p class="reminder-text">{todoManager.activeReminder.text}</p>
+					</div>
+				</div>
+				<div class="reminder-footer">
+					<button type="button" class="btn btn-secondary btn-snooze" onclick={() => todoManager.snoozeTodo(todoManager.activeReminder!.id)}>
+						💤 Später (15 Min.)
+					</button>
+					<button type="button" class="btn btn-primary btn-done" onclick={() => {
+						todoManager.toggleTodo(todoManager.activeReminder!.id);
+						todoManager.activeReminder = null;
+					}}>
+						✓ Erledigt
+					</button>
+					<button type="button" class="btn btn-close-rem" onclick={() => todoManager.dismissReminder(todoManager.activeReminder!.id)}>
+						Ausblenden
+					</button>
+				</div>
+			</div>
+		</div>
 	{/if}
 {:else}
 	<div class="auth-loading-screen">
@@ -750,5 +804,162 @@
 	.icon-spin.spinning {
 		display: inline-block;
 		animation: spin 1s linear infinite;
+	}
+
+	/* Global Reminder Overlay Popup */
+	.global-reminder-overlay {
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100vw;
+		height: 100vh;
+		background: rgba(45, 50, 39, 0.45);
+		backdrop-filter: blur(4px);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		z-index: 9999;
+		animation: fadeIn 0.2s ease-out;
+		font-family: 'Outfit', sans-serif;
+	}
+
+	.global-reminder-card {
+		width: 100%;
+		max-width: 460px;
+		background: #ffffff;
+		border-radius: 20px;
+		border: 1px solid var(--border-color);
+		box-shadow: 0 10px 30px rgba(150, 0, 64, 0.12);
+		padding: 2rem;
+		display: flex;
+		flex-direction: column;
+		gap: 1.5rem;
+		animation: scaleUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+	}
+
+	.reminder-header {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+		border-bottom: 1px solid var(--border-color);
+		padding-bottom: 0.75rem;
+	}
+
+	.reminder-icon {
+		font-size: 1.75rem;
+	}
+
+	.reminder-header h3 {
+		font-family: 'Playfair Display', serif;
+		color: var(--primary);
+		margin: 0;
+		font-size: 1.4rem;
+	}
+
+	.reminder-body {
+		display: flex;
+		flex-direction: column;
+		gap: 0.75rem;
+	}
+
+	.reminder-seminar {
+		margin: 0;
+		font-size: 0.9rem;
+		color: var(--text-secondary);
+	}
+
+	.reminder-task-box {
+		background: #fdfbf7;
+		border: 1px solid var(--border-color);
+		border-radius: 12px;
+		padding: 1rem;
+		display: flex;
+		flex-direction: column;
+		gap: 0.75rem;
+	}
+
+	.category-badge {
+		align-self: flex-start;
+		font-size: 0.75rem;
+		font-weight: 700;
+		padding: 0.25rem 0.65rem;
+		border-radius: 999px;
+		text-transform: uppercase;
+	}
+
+	.category-badge.check {
+		background: rgba(0, 112, 243, 0.08);
+		color: #0070f3;
+	}
+
+	.category-badge.prepare {
+		background: rgba(230, 126, 34, 0.08);
+		color: #e67e22;
+	}
+
+	.category-badge.communicate {
+		background: rgba(142, 68, 173, 0.08);
+		color: #8e44ad;
+	}
+
+	.category-badge.materials {
+		background: rgba(39, 174, 96, 0.08);
+		color: #27ae60;
+	}
+
+	.reminder-text {
+		margin: 0;
+		font-size: 1.1rem;
+		font-weight: 600;
+		color: var(--text-primary);
+		line-height: 1.4;
+	}
+
+	.reminder-footer {
+		display: flex;
+		gap: 0.5rem;
+		justify-content: flex-end;
+		flex-wrap: wrap;
+	}
+
+	.btn-snooze {
+		background: #f5f2eb !important;
+		color: var(--text-primary) !important;
+		border: 1px solid var(--border-color) !important;
+	}
+
+	.btn-snooze:hover {
+		background: #e9e4d9 !important;
+	}
+
+	.btn-done {
+		background: #27ae60 !important;
+		color: #ffffff !important;
+		border: 1px solid #27ae60 !important;
+	}
+
+	.btn-done:hover {
+		background: #219653 !important;
+	}
+
+	.btn-close-rem {
+		background: transparent !important;
+		color: var(--text-secondary) !important;
+		border: 1px solid transparent !important;
+	}
+
+	.btn-close-rem:hover {
+		color: var(--text-primary) !important;
+		background: rgba(0, 0, 0, 0.04) !important;
+	}
+
+	@keyframes fadeIn {
+		from { opacity: 0; }
+		to { opacity: 1; }
+	}
+
+	@keyframes scaleUp {
+		from { transform: scale(0.95); opacity: 0; }
+		to { transform: scale(1); opacity: 1; }
 	}
 </style>

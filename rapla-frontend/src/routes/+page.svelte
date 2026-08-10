@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { todoManager } from '$lib/todoStore';
+
   interface Seminar {
     title: string;
     date: string;
@@ -138,6 +140,38 @@
 
   let openCount = $derived(upcomingSeminars.filter(s => s.leader === '').length);
   let assignedCount = $derived(upcomingSeminars.filter(s => s.leader !== '').length);
+
+  let activeSeminarForTodo = $state<Seminar | null>(null);
+  let newTodoText = $state('');
+  let newTodoCategory = $state<'check' | 'prepare' | 'communicate' | 'materials'>('check');
+  let newTodoReminderTime = $state('');
+
+  function handleAddTodo() {
+    if (!newTodoText.trim() || !activeSeminarForTodo) return;
+    todoManager.addTodo(
+      activeSeminarForTodo.title,
+      activeSeminarForTodo.date,
+      newTodoText.trim(),
+      newTodoCategory,
+      newTodoReminderTime ? newTodoReminderTime : null
+    );
+    newTodoText = '';
+    newTodoReminderTime = '';
+  }
+
+  function getSeminarTodos(title: string, date: string) {
+    return todoManager.todos.filter(t => t.seminarTitle === title && t.seminarDate === date);
+  }
+
+  function getCategoryLabel(cat: string) {
+    switch (cat) {
+      case 'check': return '🔍 Prüfen';
+      case 'prepare': return '🛠️ Vorbereiten';
+      case 'communicate': return '💬 Kommunizieren';
+      case 'materials': return '📦 Material';
+      default: return '📋 Aufgabe';
+    }
+  }
 </script>
 
 <!-- Hero Section: "Yoga Orga Software" with mountains/river landscape background -->
@@ -202,6 +236,8 @@
       </div>
     {:else}
       {#each filteredSeminars as seminar}
+        {@const todos = getSeminarTodos(seminar.title, seminar.date)}
+        {@const openTodos = todos.filter(t => t.status === 'pending')}
         <div class="seminar-card glass-card" class:unassigned={seminar.leader === ''}>
           <!-- Left Column: Date & Location Info -->
           <div class="seminar-date-sec">
@@ -231,6 +267,20 @@
                 <strong class="open-label">Offen / Nicht belegt</strong>
               </div>
             {/if}
+
+            <!-- To-Dos Section -->
+            <div class="todo-badge-wrapper">
+              <button type="button" class="btn-card-todo" onclick={() => activeSeminarForTodo = seminar}>
+                📋 To-Dos
+                {#if todos.length > 0}
+                  <span class="badge-count" class:has-pending={openTodos.length > 0}>
+                    {openTodos.length} offene ({todos.length} gesamt)
+                  </span>
+                {:else}
+                  <span class="badge-count empty">0 Aufgaben</span>
+                {/if}
+              </button>
+            </div>
           </div>
 
           <!-- Right Column: Registration / Capacity Info -->
@@ -264,6 +314,100 @@
     <p class="footer-timestamp">Stand: 04.07.2026 13:19:47 — Seite 1 & 2 von 8</p>
   </div>
 </div>
+
+{#if activeSeminarForTodo}
+  {@const currentTodos = getSeminarTodos(activeSeminarForTodo.title, activeSeminarForTodo.date)}
+  <!-- svelte-ignore a11y_click_events_have_key_events -->
+  <!-- svelte-ignore a11y_no_static_element_interactions -->
+  <div class="modal-backdrop" onclick={() => activeSeminarForTodo = null}>
+    <div class="modal-content glass-card todo-modal" onclick={(e) => e.stopPropagation()}>
+      <div class="modal-header">
+        <h2>📋 To-Dos & Erinnerungen</h2>
+        <button class="close-btn" onclick={() => activeSeminarForTodo = null}>✕</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="seminar-details-header">
+          <h3>{activeSeminarForTodo.title}</h3>
+          <p>📅 {activeSeminarForTodo.date} | 📍 {activeSeminarForTodo.location}</p>
+        </div>
+
+        <div class="todo-section">
+          <h4>Aufgabenliste</h4>
+          
+          {#if currentTodos.length === 0}
+            <p class="no-todos-msg">Bisher keine To-Dos für dieses Seminar angelegt.</p>
+          {:else}
+            <div class="todo-items-list">
+              {#each currentTodos as todo}
+                <div class="todo-item" class:completed={todo.status === 'completed'}>
+                  <input 
+                    type="checkbox" 
+                    checked={todo.status === 'completed'} 
+                    onchange={() => todoManager.toggleTodo(todo.id)} 
+                  />
+                  <div class="todo-item-info">
+                    <span class="category-badge {todo.category}">
+                      {getCategoryLabel(todo.category)}
+                    </span>
+                    <span class="todo-item-text">{todo.text}</span>
+                    {#if todo.reminderTime}
+                      <span class="todo-item-time">
+                        ⏰ {new Date(todo.reminderTime).toLocaleString('de-DE', { dateStyle: 'short', timeStyle: 'short' })}
+                      </span>
+                    {/if}
+                  </div>
+                  <button type="button" class="delete-todo-btn" onclick={() => todoManager.deleteTodo(todo.id)}>🗑️</button>
+                </div>
+              {/each}
+            </div>
+          {/if}
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="add-todo-section">
+          <h4>Neue Aufgabe hinzufügen</h4>
+          <div class="form-group">
+            <label class="form-label" for="new-todo-text">Aufgabe</label>
+            <input 
+              id="new-todo-text" 
+              type="text" 
+              class="form-input" 
+              placeholder="z. B. Skripte kopieren, Mail an SL senden..." 
+              bind:value={newTodoText} 
+            />
+          </div>
+
+          <div class="grid-cols-2" style="gap: 1rem; display: grid; grid-template-columns: 1fr 1fr;">
+            <div class="form-group">
+              <label class="form-label" for="new-todo-cat">Kategorie</label>
+              <select id="new-todo-cat" class="form-select" bind:value={newTodoCategory}>
+                <option value="check">🔍 Prüfen</option>
+                <option value="prepare">🛠️ Vorbereiten</option>
+                <option value="communicate">💬 Kommunizieren</option>
+                <option value="materials">📦 Material besorgen</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="new-todo-time">Erinnerung am</label>
+              <input 
+                id="new-todo-time" 
+                type="datetime-local" 
+                class="form-input" 
+                bind:value={newTodoReminderTime} 
+              />
+            </div>
+          </div>
+
+          <button type="button" class="btn btn-primary w-full" style="margin-top: 1rem; width: 100%;" onclick={handleAddTodo}>
+            ＋ Aufgabe hinzufügen
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+{/if}
 
 <style>
   /* Hero Card Banner */
@@ -691,5 +835,193 @@
     color: var(--text-secondary);
     font-weight: 600;
     font-style: italic;
+  }
+
+  /* Seminar Card To-Do Badge Button */
+  .todo-badge-wrapper {
+    margin-top: 0.75rem;
+  }
+
+  .btn-card-todo {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.4rem 0.8rem;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    background: #fdfbf7;
+    font-family: inherit;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: var(--transition-smooth);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+  }
+
+  .btn-card-todo:hover {
+    background: #fcf6e8;
+    color: var(--text-primary);
+    border-color: #ffe082;
+    box-shadow: 0 2px 5px rgba(150, 0, 64, 0.05);
+  }
+
+  .badge-count {
+    background: rgba(150, 0, 64, 0.06);
+    color: var(--primary);
+    padding: 0.1rem 0.4rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+  }
+
+  .badge-count.has-pending {
+    background: #ffeccf;
+    color: #d35400;
+  }
+
+  .badge-count.empty {
+    background: #f3efe5;
+    color: var(--text-secondary);
+    font-weight: 500;
+    opacity: 0.7;
+  }
+
+  /* To-Do Modal styling */
+  .todo-modal {
+    max-width: 580px !important;
+  }
+
+  .seminar-details-header {
+    background: rgba(150, 0, 64, 0.03);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .seminar-details-header h3 {
+    font-family: 'Playfair Display', serif;
+    color: var(--primary);
+    margin: 0 0 0.25rem 0;
+    font-size: 1.25rem;
+  }
+
+  .seminar-details-header p {
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    font-weight: 600;
+  }
+
+  .todo-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .todo-section h4, .add-todo-section h4 {
+    margin: 0 0 0.5rem 0;
+    font-size: 0.95rem;
+    color: var(--text-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    border-bottom: 1px dashed var(--border-color);
+    padding-bottom: 0.25rem;
+  }
+
+  .no-todos-msg {
+    margin: 0;
+    color: var(--text-secondary);
+    font-style: italic;
+    font-size: 0.9rem;
+    padding: 1.5rem 0;
+    text-align: center;
+  }
+
+  .todo-items-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    max-height: 240px;
+    overflow-y: auto;
+    padding-right: 0.25rem;
+  }
+
+  .todo-item {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.65rem 0.85rem;
+    background: #fdfdfb;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    transition: var(--transition-smooth);
+  }
+
+  .todo-item:hover {
+    background: #fffefb;
+    border-color: #ffe082;
+  }
+
+  .todo-item.completed {
+    background: #fcfbf8;
+    opacity: 0.6;
+  }
+
+  .todo-item.completed .todo-item-text {
+    text-decoration: line-through;
+    color: var(--text-secondary);
+  }
+
+  .todo-item-info {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .todo-item-text {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .todo-item-time {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+    background: rgba(0, 0, 0, 0.03);
+    padding: 0.1rem 0.35rem;
+    border-radius: 4px;
+  }
+
+  .delete-todo-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 0.9rem;
+    opacity: 0.4;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    padding: 0.2rem;
+  }
+
+  .delete-todo-btn:hover {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+
+  .add-todo-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+  }
+
+  .divider {
+    height: 1px;
+    background: var(--border-color);
+    margin: 1.5rem 0;
   }
 </style>
