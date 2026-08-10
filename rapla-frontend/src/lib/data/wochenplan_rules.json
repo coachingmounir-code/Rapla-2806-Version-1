@@ -8,8 +8,8 @@
         6
       ],
       "maxMeditationPerWeek": 1,
-      "maxSatsangsPerWeek": null,
-      "maxMorningSatsangsPerWeek": 2,
+      "maxSatsangsPerWeek": 1,
+      "maxMorningSatsangsPerWeek": 1,
       "maxYogaClassesPerWeek": null,
       "maxOnnPerWeek": null,
       "maxAnfaengerYogaPerWeek": null,
@@ -42,7 +42,7 @@
       "maxSatsangsPerWeek": 0,
       "maxMorningSatsangsPerWeek": 0,
       "maxYogaClassesPerWeek": 2,
-      "maxOnnPerWeek": null,
+      "maxOnnPerWeek": 0,
       "maxAnfaengerYogaPerWeek": null,
       "isYogaTeacher": true,
       "canLeadSatsang": false,
@@ -74,7 +74,7 @@
       "maxMorningSatsangsPerWeek": 0,
       "maxYogaClassesPerWeek": 0,
       "maxOnnPerWeek": 1,
-      "maxAnfaengerYogaPerWeek": 0,
+      "maxAnfaengerYogaPerWeek": null,
       "isYogaTeacher": false,
       "canLeadSatsang": false,
       "canLeadPranayama": false,
@@ -88,7 +88,7 @@
       "customCourseNames": [],
       "availabilityRestrictions": [],
       "preferredAvailability": [],
-      "maxClassesPerDay": 2
+      "maxClassesPerDay": 0
     },
     "abha": {
       "name": "Abha",
@@ -129,7 +129,7 @@
       ],
       "maxMeditationPerWeek": 0,
       "maxSatsangsPerWeek": null,
-      "maxMorningSatsangsPerWeek": 2,
+      "maxMorningSatsangsPerWeek": null,
       "maxYogaClassesPerWeek": 3,
       "maxOnnPerWeek": null,
       "maxAnfaengerYogaPerWeek": null,
@@ -190,12 +190,12 @@
       "freeDays": [
         2
       ],
-      "maxMeditationPerWeek": null,
+      "maxMeditationPerWeek": 1,
       "maxSatsangsPerWeek": 0,
       "maxMorningSatsangsPerWeek": 0,
       "maxYogaClassesPerWeek": 0,
-      "maxOnnPerWeek": null,
-      "maxAnfaengerYogaPerWeek": 0,
+      "maxOnnPerWeek": 0,
+      "maxAnfaengerYogaPerWeek": null,
       "isYogaTeacher": false,
       "canLeadSatsang": false,
       "canLeadPranayama": false,
@@ -220,19 +220,19 @@
         }
       ],
       "preferredAvailability": [],
-      "maxClassesPerDay": 2
+      "maxClassesPerDay": 0
     },
     "mounir": {
       "name": "Mounir",
       "freeDays": [
         1
       ],
-      "maxMeditationPerWeek": null,
+      "maxMeditationPerWeek": 1,
       "maxSatsangsPerWeek": 0,
       "maxMorningSatsangsPerWeek": 0,
       "maxYogaClassesPerWeek": 0,
-      "maxOnnPerWeek": null,
-      "maxAnfaengerYogaPerWeek": 0,
+      "maxOnnPerWeek": 0,
+      "maxAnfaengerYogaPerWeek": null,
       "isYogaTeacher": false,
       "canLeadSatsang": false,
       "canLeadPranayama": false,
@@ -246,7 +246,7 @@
       "customCourseNames": [],
       "availabilityRestrictions": [],
       "preferredAvailability": [],
-      "maxClassesPerDay": 2
+      "maxClassesPerDay": 0
     },
     "nirmaya": {
       "name": "Nirmaya",
@@ -255,7 +255,7 @@
         3
       ],
       "maxMeditationPerWeek": 1,
-      "maxSatsangsPerWeek": null,
+      "maxSatsangsPerWeek": 1,
       "maxMorningSatsangsPerWeek": 1,
       "maxYogaClassesPerWeek": 2,
       "maxOnnPerWeek": null,
@@ -285,7 +285,7 @@
       "maxSatsangsPerWeek": null,
       "maxMorningSatsangsPerWeek": null,
       "maxYogaClassesPerWeek": 3,
-      "maxOnnPerWeek": null,
+      "maxOnnPerWeek": 1,
       "maxAnfaengerYogaPerWeek": null,
       "isYogaTeacher": true,
       "canLeadSatsang": true,
@@ -301,7 +301,7 @@
       "availabilityRestrictions": [
         {
           "day": 0,
-          "timeBefore": "13:00",
+          "timeAfter": "13:00",
           "allowed": false
         }
       ],
@@ -318,7 +318,7 @@
       "maxSatsangsPerWeek": 0,
       "maxMorningSatsangsPerWeek": 0,
       "maxYogaClassesPerWeek": 4,
-      "maxOnnPerWeek": null,
+      "maxOnnPerWeek": 0,
       "maxAnfaengerYogaPerWeek": null,
       "isYogaTeacher": true,
       "canLeadSatsang": false,
@@ -330,12 +330,7 @@
       "weekendAfternoonOnly": false,
       "weekendAsBackupOnly": false,
       "prefersMittelstufe": false,
-      "customCourseNames": [
-        {
-          "originalName": "Mittelstufe",
-          "customName": "Mittelstufe Klangyogastunde"
-        }
-      ],
+      "customCourseNames": [],
       "availabilityRestrictions": [],
       "preferredAvailability": [],
       "maxClassesPerDay": 2
@@ -347,10 +342,10 @@
         1
       ],
       "maxMeditationPerWeek": 1,
-      "maxSatsangsPerWeek": null,
-      "maxMorningSatsangsPerWeek": 2,
+      "maxSatsangsPerWeek": 1,
+      "maxMorningSatsangsPerWeek": 1,
       "maxYogaClassesPerWeek": 2,
-      "maxOnnPerWeek": null,
+      "maxOnnPerWeek": 0,
       "maxAnfaengerYogaPerWeek": null,
       "isYogaTeacher": true,
       "canLeadSatsang": true,
@@ -377,7 +372,7 @@
       "maxMorningSatsangsPerWeek": 0,
       "maxYogaClassesPerWeek": 0,
       "maxOnnPerWeek": 1,
-      "maxAnfaengerYogaPerWeek": 0,
+      "maxAnfaengerYogaPerWeek": null,
       "isYogaTeacher": false,
       "canLeadSatsang": false,
       "canLeadPranayama": false,
@@ -391,7 +386,7 @@
       "customCourseNames": [],
       "availabilityRestrictions": [],
       "preferredAvailability": [],
-      "maxClassesPerDay": 2
+      "maxClassesPerDay": 0
     },
     "harishakti": {
       "name": "Harishakti",
@@ -400,7 +395,7 @@
       ],
       "maxMeditationPerWeek": null,
       "maxSatsangsPerWeek": null,
-      "maxMorningSatsangsPerWeek": 2,
+      "maxMorningSatsangsPerWeek": null,
       "maxYogaClassesPerWeek": 3,
       "maxOnnPerWeek": null,
       "maxAnfaengerYogaPerWeek": null,
@@ -605,10 +600,6 @@
       "burnie",
       "narayani",
       "abha"
-    ],
-    "prioritized": [
-      "karuna",
-      "burnie"
     ]
   }
 }

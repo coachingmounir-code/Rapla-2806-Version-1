@@ -833,12 +833,32 @@ export function runAiPlanning(
       // Custom scoring rules for Pranayama from compiled rules
       const isPranayamaCourse = course.name.toLowerCase().includes('pranayama') || course.style.toLowerCase().includes('pranayama');
       if (isPranayamaCourse) {
-        const prioritized = wochenplanRules.pranayama.prioritized || [];
         const allowed = wochenplanRules.pranayama.allowed || [];
-        if (prioritized.some((n: string) => teacherNameLower.includes(n))) {
-          score += 1000;
-        } else if (allowed.some((n: string) => teacherNameLower.includes(n))) {
-          score += 200;
+        const isAllowed = allowed.some((n: string) => teacherNameLower.includes(n));
+        if (isAllowed) {
+          score += 500;
+          
+          let weekNum = 0;
+          if (targetWeekCode) {
+            const match = targetWeekCode.match(/-W(\d+)/);
+            if (match) {
+              weekNum = parseInt(match[1], 10);
+            }
+          }
+          if (weekNum > 0) {
+            // Rotate the 4 teachers (Karuna, Burnie, Narayani, Abha) evenly.
+            // On a given week, assign different teachers to Saturday (day 6) and Sunday (day 0).
+            const orderedAllowed = ["karuna", "burnie", "narayani", "abha"];
+            const teacherIdx = orderedAllowed.findIndex((n: string) => teacherNameLower.includes(n));
+            if (teacherIdx !== -1) {
+              const dayOffset = course.dayOfWeek === 6 ? 0 : 1;
+              const targetIndexForDay = (2 * weekNum + dayOffset) % 4;
+              // Circular distance (how many weeks away from this teacher being primary)
+              const distance = (teacherIdx - targetIndexForDay + 4) % 4;
+              // Distance 0 is highest priority (boost +1000), distance 3 is lowest priority (boost +250)
+              score += 1000 - distance * 250;
+            }
+          }
         }
       }
 

@@ -157,8 +157,7 @@ ${filesText}
     }
   },
   "pranayama": {
-    "allowed": ["karuna", "burnie", "narayani", "abha"],
-    "prioritized": ["karuna", "burnie"]
+    "allowed": ["karuna", "burnie", "narayani", "abha"]
   }
 }
 
