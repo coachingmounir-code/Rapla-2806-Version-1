@@ -80,7 +80,7 @@ Gib ausschließlich das JSON-Array zurück. Keine Markdown-Formatierung, kein Be
 export async function POST({ request }) {
   try {
     const payload = await request.json();
-    const { courses, teachers, customWishes } = payload;
+    const { courses, teachers, customWishes, absences } = payload;
 
     // Parse custom wishes to constraints
     let customConstraints: any[] = [];
@@ -122,7 +122,8 @@ export async function POST({ request }) {
         teachers,
         payload.seminarLeaderIds || [],
         payload.targetWeekCode,
-        customConstraints
+        customConstraints,
+        absences
       );
       
       result.logs = [

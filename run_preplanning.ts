@@ -1,7 +1,17 @@
+import { execSync } from 'child_process';
+import path from 'path';
+import fs from 'fs';
+
+try {
+  console.log('[PREPLANNING] Triggering Wochenplan rules compilation...');
+  execSync('node rapla-frontend/scripts/compile_rules.js', { stdio: 'inherit' });
+} catch (e) {
+  console.error('[PREPLANNING ERROR] Failed compiling rules:', e);
+}
+
 import { db } from './rapla-frontend/src/lib/db.ts';
 import { runAiPlanning } from './rapla-frontend/src/lib/planningEngine.ts';
 import { EXCEL_ABSENCES } from './rapla-frontend/src/lib/excel_absences.ts';
-import fs from 'fs';
 
 // Mock browser globals before any db functions are called
 global.window = {} as any;

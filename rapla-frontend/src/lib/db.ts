@@ -1,4 +1,5 @@
 // LocalStorage Database helper for Yoga Studio Scheduler
+import wochenplanRules from './data/wochenplan_rules.json' with { type: 'json' };
 export interface TimeSlot {
   day: number; // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
   start: string; // "HH:MM"
@@ -198,203 +199,93 @@ const SEVAKA_NAMES = [
 ];
 
 function getTeacherAvailability(name: string, isSevaka: boolean): TimeSlot[] {
-  const nameLower = name.toLowerCase();
+  const nameLower = name.toLowerCase().trim();
   
   if (!isSevaka) {
     // Non-Sevakas (externals) are available all week from 08:00 to 22:00
     return [0, 1, 2, 3, 4, 5, 6].map(d => ({ day: d, start: '08:00', end: '22:00' }));
   }
 
-  // Sevakas by default are available from 06:00 to 22:00 on their active days
-  if (nameLower.includes('burnie')) {
-    // Free: Sat (6), Tue (2), Fri (5). Available: Sun (0), Mon (1), Wed (3), Thu (4)
-    return [0, 1, 3, 4].map(d => ({ day: d, start: '06:00', end: '22:00' }));
-  }
-  if (nameLower.includes('satyam')) {
-    // Free: Mon (1). Available: Sun (0), Tue (2), Wed (3), Thu (4), Fri (5), Sat (6)
-    return [0, 2, 3, 4, 5, 6].map(d => ({ day: d, start: '06:00', end: '22:00' }));
-  }
-  if (nameLower.includes('teresa')) {
-    // Free: Thu (4). Available: Sun (0), Mon (1), Tue (2), Wed (3), Fri (5), Sat (6)
-    return [0, 1, 2, 3, 5, 6].map(d => ({ day: d, start: '06:00', end: '22:00' }));
-  }
-  if (nameLower.includes('abha')) {
-    // Free: Sun (0), Wed (3). Available: Mon (1), Tue (2), Thu (4), Fri (5), Sat (6)
-    return [1, 2, 4, 5, 6].map(d => ({ day: d, start: '06:00', end: '22:00' }));
-  }
-  if (nameLower.includes('anjali')) {
-    // Free: Wed (3). Tue (2) before 12:00, Thu (4) after 11:00.
-    return [
-      { day: 0, start: '06:00', end: '22:00' },
-      { day: 1, start: '06:00', end: '22:00' },
-      { day: 2, start: '06:00', end: '12:00' },
-      { day: 4, start: '11:00', end: '22:00' },
-      { day: 5, start: '06:00', end: '22:00' },
-      { day: 6, start: '06:00', end: '22:00' }
-    ];
-  }
-  if (nameLower.includes('karuna')) {
-    // Free: Mon (1). Available: Sun (0), Tue (2), Wed (3), Thu (4), Fri (5), Sat (6)
-    return [0, 2, 3, 4, 5, 6].map(d => ({ day: d, start: '06:00', end: '22:00' }));
-  }
-  if (nameLower.includes('hu')) {
-    // Free: Tue (2). Mon (1) before 12:00, Wed (3) after 12:00.
-    return [
-      { day: 0, start: '06:00', end: '22:00' },
-      { day: 1, start: '06:00', end: '12:00' },
-      { day: 3, start: '12:00', end: '22:00' },
-      { day: 4, start: '06:00', end: '22:00' },
-      { day: 5, start: '06:00', end: '22:00' },
-      { day: 6, start: '06:00', end: '22:00' }
-    ];
-  }
-  if (nameLower.includes('mounir') || nameLower.includes('mouniir')) {
-    // Free: Mon (1). Available: Sun (0), Tue (2), Wed (3), Thu (4), Fri (5), Sat (6)
-    return [0, 2, 3, 4, 5, 6].map(d => ({ day: d, start: '06:00', end: '22:00' }));
-  }
-  if (nameLower.includes('nirmaya')) {
-    // Free: Tue (2), Wed (3). Available: Sun (0), Mon (1), Thu (4), Fri (5), Sat (6)
-    return [0, 1, 4, 5, 6].map(d => ({ day: d, start: '06:00', end: '22:00' }));
-  }
-  if (nameLower.includes('narayani')) {
-    // Free: Fri (5), Sat (6). Sun (0) before 13:00.
-    return [
-      { day: 0, start: '06:00', end: '13:00' },
-      { day: 1, start: '06:00', end: '22:00' },
-      { day: 2, start: '06:00', end: '22:00' },
-      { day: 3, start: '06:00', end: '22:00' },
-      { day: 4, start: '06:00', end: '22:00' }
-    ];
-  }
-  if (nameLower.includes('pranava')) {
-    // Free: Tue (2), Wed (3). Available: Sun (0), Mon (1), Thu (4), Fri (5), Sat (6)
-    return [0, 1, 4, 5, 6].map(d => ({ day: d, start: '06:00', end: '22:00' }));
-  }
-  if (nameLower.includes('alexander')) {
-    // Free: Sun (0), Mon (1). Available: Tue (2), Wed (3), Thu (4), Fri (5), Sat (6)
-    return [2, 3, 4, 5, 6].map(d => ({ day: d, start: '06:00', end: '22:00' }));
-  }
-  if (nameLower.includes('adam')) {
-    // Free: Tue (2). Available: Sun (0), Mon (1), Wed (3), Thu (4), Fri (5), Sat (6)
-    return [0, 1, 3, 4, 5, 6].map(d => ({ day: d, start: '06:00', end: '22:00' }));
-  }
-  if (nameLower.includes('harishakti')) {
-    // Free: Wed (3), Thu (4), Sat (6), Sun (0). Available: Mon (1), Tue (2, before 11:30), Fri (5, before 11:30)
-    return [
-      { day: 1, start: '06:30', end: '22:00' },
-      { day: 2, start: '06:30', end: '11:30' },
-      { day: 5, start: '06:30', end: '11:30' }
-    ];
-  }
-  if (nameLower.includes('ulrich')) {
-    // Free: Tue (2), Sat (6). Available: Sun (0), Mon (1), Wed (3), Thu (4), Fri (5)
-    return [0, 1, 3, 4, 5].map(d => ({ day: d, start: '06:00', end: '22:00' }));
+  // Look up rules in parsed JSON
+  const teacherKey = Object.keys(wochenplanRules.teachers).find(k => nameLower.includes(k) || k.includes(nameLower));
+  const tRules = teacherKey ? (wochenplanRules.teachers as any)[teacherKey] : null;
+
+  if (!tRules) {
+    // Default fallback for any other Sevaka
+    return [0, 1, 2, 3, 4, 5, 6].map(d => ({ day: d, start: '06:00', end: '22:00' }));
   }
 
-  // Default fallback for any other Sevaka
-  return [0, 1, 2, 3, 4, 5, 6].map(d => ({ day: d, start: '06:00', end: '22:00' }));
+  // Check preferredAvailability
+  if (tRules.preferredAvailability && tRules.preferredAvailability.length > 0) {
+    return tRules.preferredAvailability;
+  }
+
+  // Generate availability based on freeDays
+  const freeDays = tRules.freeDays || [];
+  const availDays = [0, 1, 2, 3, 4, 5, 6].filter(d => !freeDays.includes(d));
+
+  let slots: TimeSlot[] = availDays.map(d => ({ day: d, start: '06:00', end: '22:00' }));
+
+  // Check availabilityRestrictions
+  if (tRules.availabilityRestrictions && tRules.availabilityRestrictions.length > 0) {
+    slots = slots.map(slot => {
+      const rest = tRules.availabilityRestrictions.find((r: any) => r.day === slot.day && r.allowed === false);
+      if (rest) {
+        if (rest.timeAfter) {
+          // If not allowed after timeAfter, end is timeAfter
+          return { ...slot, end: rest.timeAfter };
+        }
+        if (rest.timeBefore) {
+          // If not allowed before timeBefore, start is timeBefore
+          return { ...slot, start: rest.timeBefore };
+        }
+      }
+      return slot;
+    });
+  }
+
+  return slots;
 }
 
 function getTeacherRules(name: string, isSevaka: boolean): Partial<TeacherRules> {
-  const nameLower = name.toLowerCase();
-  const isKaruna = nameLower.includes('karuna');
+  const nameLower = name.toLowerCase().trim();
   
-  let maxClassesPerDay = isKaruna ? 3 : 2;
-  let maxHoursPerWeek = isKaruna ? 30 : 10;
-  let maxClassesPerWeek: number | undefined = undefined;
+  // Look up rules in parsed JSON
+  const teacherKey = Object.keys(wochenplanRules.teachers).find(k => nameLower.includes(k) || k.includes(nameLower));
+  const tRules = teacherKey ? (wochenplanRules.teachers as any)[teacherKey] : null;
 
-  if (nameLower.includes('satyam')) {
-    maxClassesPerWeek = 2;
-  } else if (nameLower.includes('teresa')) {
-    maxClassesPerWeek = 1;
-  } else if (nameLower.includes('abha')) {
-    maxClassesPerWeek = 3;
-  } else if (nameLower.includes('anjali')) {
-    maxClassesPerWeek = 3;
-  } else if (nameLower.includes('karuna')) {
-    maxClassesPerWeek = 3; // for yoga classes
-  } else if (nameLower.includes('nirmaya')) {
-    maxClassesPerWeek = 2;
-  } else if (nameLower.includes('narayani')) {
-    maxClassesPerWeek = 3;
-  } else if (nameLower.includes('pranava')) {
-    maxClassesPerWeek = 4;
-  } else if (nameLower.includes('alexander')) {
-    maxClassesPerWeek = 2;
-  } else if (nameLower.includes('harishakti')) {
-    maxClassesPerWeek = 3;
-  } else if (nameLower.includes('ulrich')) {
-    maxClassesPerWeek = 4;
+  if (!isSevaka || !tRules) {
+    return {
+      maxClassesPerDay: 2,
+      maxHoursPerWeek: 10,
+      canLeadMeditation: false,
+      canLeadSatsang: false,
+      availability: getTeacherAvailability(name, isSevaka)
+    };
   }
 
+  // Build the rules object from the JSON rules
   const rules: Partial<TeacherRules> = {
-    maxClassesPerDay,
-    maxHoursPerWeek,
-    maxClassesPerWeek,
-    canLeadMeditation: ['pranava', 'harishakti', 'alexander', 'burnie', 'satyam', 'nirmaya', 'narayani', 'mounir', 'mouniir', 'hu', 'christopher'].some(n => nameLower.includes(n)),
-    canLeadSatsang: isSevaka && !['adam', 'hu', 'mounir', 'mouniir', 'teresa', 'satyam', 'ulrich', 'pranava'].some(n => nameLower.includes(n))
+    maxClassesPerDay: tRules.maxClassesPerDay || 2,
+    maxHoursPerWeek: tRules.maxHoursPerWeek || 10,
+    maxClassesPerWeek: tRules.maxClassesPerWeek || undefined,
+    maxYogaClassesPerWeek: tRules.maxYogaClassesPerWeek || undefined,
+    maxMeditationPerWeek: tRules.maxMeditationPerWeek !== null ? tRules.maxMeditationPerWeek : undefined,
+    maxSatsangsPerWeek: tRules.maxSatsangsPerWeek !== null ? tRules.maxSatsangsPerWeek : undefined,
+    maxMorningSatsangsPerWeek: tRules.maxMorningSatsangsPerWeek !== null ? tRules.maxMorningSatsangsPerWeek : undefined,
+    maxOnnPerWeek: tRules.maxOnnPerWeek !== null ? tRules.maxOnnPerWeek : undefined,
+    noTwoYogaSameDay: tRules.noTwoYogaSameDay || false,
+    weekendAfternoonOnly: tRules.weekendAfternoonOnly || false,
+    weekendAsBackupOnly: tRules.weekendAsBackupOnly || false,
+    noYogaOnWeekend: tRules.noYogaOnWeekend || false,
+    prefersMittelstufe: tRules.prefersMittelstufe || false,
+    canLeadMeditation: wochenplanRules.meditation.allowed.some((a: string) => nameLower.includes(a)),
+    canLeadSatsang: isSevaka && !wochenplanRules.satsang.forbidden.some((a: string) => nameLower.includes(a)),
+    canLeadPranayama: tRules.canLeadPranayama || false,
+    canLeadSatsangEinfuehrung: tRules.canLeadSatsangEinfuehrung || false,
+    canLeadOnn: tRules.canLeadOnn !== undefined ? tRules.canLeadOnn : true,
+    customCourseNames: tRules.customCourseNames || []
   };
-
-  if (isSevaka) {
-    if (nameLower.includes('burnie')) {
-      rules.canLeadPranayama = true;
-      rules.maxMeditationPerWeek = 1;
-      rules.maxSatsangsPerWeek = 1;
-      rules.maxMorningSatsangsPerWeek = 2;
-      rules.customCourseNames = [{ originalName: "Anfänger", customName: "Yoga Vidya meets Pavanmuktasana" }];
-      rules.canLeadSatsangEinfuehrung = true;
-    } else if (nameLower.includes('satyam')) {
-      rules.maxYogaClassesPerWeek = 2;
-      rules.customCourseNames = [{ originalName: "Mittelstufe", customName: "Yoga Flow Mittelstufe" }];
-    } else if (nameLower.includes('teresa')) {
-      rules.canLeadOnn = true;
-      rules.maxOnnPerWeek = 1;
-    } else if (nameLower.includes('abha')) {
-      rules.canLeadPranayama = true;
-      rules.maxYogaClassesPerWeek = 3;
-      rules.maxOnnPerWeek = 1;
-    } else if (nameLower.includes('anjali')) {
-      rules.maxYogaClassesPerWeek = 3;
-      rules.canLeadSatsangEinfuehrung = true;
-    } else if (nameLower.includes('karuna')) {
-      rules.canLeadPranayama = true;
-      rules.maxYogaClassesPerWeek = 3;
-    } else if (nameLower.includes('hu')) {
-      rules.canLeadSatsangEinfuehrung = true;
-    } else if (nameLower.includes('mounir') || nameLower.includes('mouniir')) {
-      rules.canLeadSatsangEinfuehrung = true;
-    } else if (nameLower.includes('nirmaya')) {
-      rules.canLeadSatsangEinfuehrung = true;
-      rules.maxMeditationPerWeek = 1;
-      rules.maxMorningSatsangsPerWeek = 1;
-      rules.maxYogaClassesPerWeek = 2;
-      rules.noYogaOnWeekend = true;
-    } else if (nameLower.includes('narayani')) {
-      rules.canLeadPranayama = true;
-      rules.maxYogaClassesPerWeek = 3;
-      rules.prefersMittelstufe = true;
-      rules.maxMorningSatsangsPerWeek = 1;
-      rules.maxMeditationPerWeek = 1;
-    } else if (nameLower.includes('pranava')) {
-      rules.canLeadSatsangEinfuehrung = true;
-      rules.maxYogaClassesPerWeek = 4;
-      rules.maxMeditationPerWeek = 1;
-    } else if (nameLower.includes('alexander')) {
-      rules.maxSatsangsPerWeek = 1;
-      rules.maxMeditationPerWeek = 1;
-      rules.maxYogaClassesPerWeek = 2;
-    } else if (nameLower.includes('adam')) {
-      rules.canLeadOnn = true;
-      rules.maxOnnPerWeek = 1;
-    } else if (nameLower.includes('harishakti')) {
-      rules.maxYogaClassesPerWeek = 3;
-    } else if (nameLower.includes('ulrich')) {
-      rules.maxYogaClassesPerWeek = 4;
-      rules.noTwoYogaSameDay = true;
-      rules.weekendAfternoonOnly = true;
-      rules.weekendAsBackupOnly = true;
-    }
-  }
 
   return rules;
 }
@@ -706,7 +597,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
     createdAt: new Date().toISOString()
   },
   // --- PREPLANNED WEEKS ---
-                      {
+                          {
     id: "plan-pre-2026-W28",
     name: "Vorplanung 2026-W28 (Automatisch)",
     status: "approved",
@@ -780,7 +671,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "16:30",
         "endTime": "18:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-alexander-melior",
+        "teacherId": "teacher-gen-satyam",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -816,7 +707,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "20:00",
         "endTime": "21:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-alexander-melior",
+        "teacherId": "teacher-gen-narayani-kedenburg",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -864,8 +755,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "09:15",
         "endTime": "11:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-satyam",
-        "isAiPlanned": true,
+        "teacherId": null,
+        "isAiPlanned": false,
         "status": "approved"
       },
       {
@@ -966,7 +857,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W28-22",
-        "name": "Yoga Vidya Pavanmuktasana",
+        "name": "Yoga Vidya meets Pavanmuktasana",
         "style": "Hatha",
         "dayOfWeek": 0,
         "startTime": "09:15",
@@ -996,8 +887,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "16:30",
         "endTime": "18:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-satyam",
-        "isAiPlanned": true,
+        "teacherId": null,
+        "isAiPlanned": false,
         "status": "approved"
       },
       {
@@ -1032,7 +923,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "20:00",
         "endTime": "20:35",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-hu-buerkle",
+        "teacherId": "teacher-gen-burnie-bansemer",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -1074,7 +965,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W28-31",
-        "name": "Yoga Vidya Pavanmuktasana",
+        "name": "Yoga Vidya meets Pavanmuktasana",
         "style": "Hatha",
         "dayOfWeek": 1,
         "startTime": "09:15",
@@ -1098,14 +989,14 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W28-33",
-        "name": "Yoga Vidya Pavanmuktasana",
+        "name": "Anfänger Rückenstunde",
         "style": "Hatha",
         "dayOfWeek": 1,
         "startTime": "16:15",
         "endTime": "18:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-burnie-bansemer",
-        "isAiPlanned": true,
+        "teacherId": null,
+        "isAiPlanned": false,
         "status": "approved"
       },
       {
@@ -1128,7 +1019,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-narayani-kedenburg",
+        "teacherId": "teacher-gen-burnie-bansemer",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -1260,8 +1151,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "09:15",
         "endTime": "11:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-ulrich-nebel",
-        "isAiPlanned": true,
+        "teacherId": null,
+        "isAiPlanned": false,
         "status": "approved"
       },
       {
@@ -1284,7 +1175,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-satyam",
+        "teacherId": "teacher-gen-narayani-kedenburg",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -1332,8 +1223,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "09:15",
         "endTime": "11:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-narayani-kedenburg",
-        "isAiPlanned": true,
+        "teacherId": null,
+        "isAiPlanned": false,
         "status": "approved"
       },
       {
@@ -1362,13 +1253,13 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W28-55",
-        "name": "Mittelstufe",
+        "name": "Yoga Flow Mittelstufe",
         "style": "Hatha",
         "dayOfWeek": 4,
         "startTime": "16:15",
         "endTime": "18:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-burnie-bansemer",
+        "teacherId": "teacher-gen-satyam",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -1443,12 +1334,12 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W29-4",
-        "name": "Mittelstufe",
+        "name": "Yoga Flow",
         "style": "Hatha",
         "dayOfWeek": 5,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-5",
+        "roomId": "room-2",
         "teacherId": "teacher-gen-satyam",
         "isAiPlanned": true,
         "status": "approved"
@@ -1497,7 +1388,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "20:00",
         "endTime": "20:35",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-hu-buerkle",
+        "teacherId": "teacher-gen-anjali-gelzleichter",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -1557,8 +1448,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "09:15",
         "endTime": "11:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-satyam",
-        "isAiPlanned": true,
+        "teacherId": null,
+        "isAiPlanned": false,
         "status": "approved"
       },
       {
@@ -1659,7 +1550,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W29-22",
-        "name": "Yoga Vidya Pavanmuktasana",
+        "name": "Yoga Vidya meets Pavanmuktasana",
         "style": "Hatha",
         "dayOfWeek": 0,
         "startTime": "09:15",
@@ -1683,14 +1574,14 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W29-24",
-        "name": "Yoga Vidya Pavanmuktasana",
+        "name": "Anfänger Ankommensstunde",
         "style": "Hatha",
         "dayOfWeek": 0,
         "startTime": "16:30",
         "endTime": "18:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-burnie-bansemer",
-        "isAiPlanned": true,
+        "teacherId": null,
+        "isAiPlanned": false,
         "status": "approved"
       },
       {
@@ -1749,7 +1640,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "07:00",
         "endTime": "07:30",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-narayani-kedenburg",
+        "teacherId": "teacher-gen-burnie-bansemer",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -1767,7 +1658,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W29-31",
-        "name": "Yoga Vidya Pavanmuktasana",
+        "name": "Yoga Vidya meets Pavanmuktasana",
         "style": "Hatha",
         "dayOfWeek": 1,
         "startTime": "09:15",
@@ -1797,8 +1688,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "16:15",
         "endTime": "18:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-narayani-kedenburg",
-        "isAiPlanned": true,
+        "teacherId": null,
+        "isAiPlanned": false,
         "status": "approved"
       },
       {
@@ -1821,7 +1712,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-burnie-bansemer",
+        "teacherId": "teacher-gen-narayani-kedenburg",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -1977,8 +1868,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-satyam",
-        "isAiPlanned": true,
+        "teacherId": null,
+        "isAiPlanned": false,
         "status": "approved"
       },
       {
@@ -2352,7 +2243,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W30-22",
-        "name": "Yoga Vidya Pavanmuktasana",
+        "name": "Yoga Vidya meets Pavanmuktasana",
         "style": "Hatha",
         "dayOfWeek": 0,
         "startTime": "09:15",
@@ -2406,7 +2297,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-harishakti",
+        "teacherId": "teacher-gen-mouniir-jaber",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -2460,7 +2351,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W30-31",
-        "name": "Yoga Vidya Pavanmuktasana",
+        "name": "Yoga Vidya meets Pavanmuktasana",
         "style": "Hatha",
         "dayOfWeek": 1,
         "startTime": "09:15",
@@ -2526,7 +2417,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "20:00",
         "endTime": "21:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-nirmaya-fodor",
+        "teacherId": "teacher-gen-anjali-gelzleichter",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -2670,7 +2561,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-satyam",
+        "teacherId": "teacher-gen-hu-buerkle",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -2991,8 +2882,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-hu-buerkle",
-        "isAiPlanned": true,
+        "teacherId": null,
+        "isAiPlanned": false,
         "status": "approved"
       },
       {
@@ -3045,7 +2936,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W31-22",
-        "name": "Yoga Vidya Pavanmuktasana",
+        "name": "Yoga Vidya meets Pavanmuktasana",
         "style": "Hatha",
         "dayOfWeek": 0,
         "startTime": "09:15",
@@ -3099,7 +2990,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-harishakti",
+        "teacherId": "teacher-gen-burnie-bansemer",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -3111,7 +3002,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "20:00",
         "endTime": "20:35",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-hu-buerkle",
+        "teacherId": "teacher-gen-nirmaya-fodor",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -3153,7 +3044,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W31-31",
-        "name": "Yoga Vidya Pavanmuktasana",
+        "name": "Yoga Vidya meets Pavanmuktasana",
         "style": "Hatha",
         "dayOfWeek": 1,
         "startTime": "09:15",
@@ -3315,8 +3206,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "07:00",
         "endTime": "07:30",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-satyam",
-        "isAiPlanned": true,
+        "teacherId": null,
+        "isAiPlanned": false,
         "status": "approved"
       },
       {
@@ -3588,7 +3479,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "20:00",
         "endTime": "21:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-nirmaya-fodor",
+        "teacherId": "teacher-gen-narayani-kedenburg",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -3696,7 +3587,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "20:00",
         "endTime": "21:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-alexander-melior",
+        "teacherId": "teacher-gen-abha-morkoetter",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -3738,7 +3629,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W32-22",
-        "name": "Yoga Vidya Pavanmuktasana",
+        "name": "Yoga Vidya meets Pavanmuktasana",
         "style": "Hatha",
         "dayOfWeek": 0,
         "startTime": "09:15",
@@ -3780,8 +3671,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "16:30",
         "endTime": "18:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-ulrich-nebel",
-        "isAiPlanned": true,
+        "teacherId": null,
+        "isAiPlanned": false,
         "status": "approved"
       },
       {
@@ -3804,7 +3695,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "20:00",
         "endTime": "20:35",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-pranava-pauly",
+        "teacherId": "teacher-gen-nirmaya-fodor",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -3816,7 +3707,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "20:00",
         "endTime": "21:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-burnie-bansemer",
+        "teacherId": "teacher-gen-narayani-kedenburg",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -3846,7 +3737,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W32-31",
-        "name": "Yoga Vidya Pavanmuktasana",
+        "name": "Yoga Vidya meets Pavanmuktasana",
         "style": "Hatha",
         "dayOfWeek": 1,
         "startTime": "09:15",
@@ -4056,7 +3947,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-satyam",
+        "teacherId": "teacher-gen-burnie-bansemer",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -4281,7 +4172,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "20:00",
         "endTime": "21:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-nirmaya-fodor",
+        "teacherId": "teacher-gen-abha-morkoetter",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -4389,7 +4280,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "20:00",
         "endTime": "21:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-alexander-melior",
+        "teacherId": "teacher-gen-anjali-gelzleichter",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -4431,7 +4322,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W33-22",
-        "name": "Yoga Vidya Pavanmuktasana",
+        "name": "Yoga Vidya meets Pavanmuktasana",
         "style": "Hatha",
         "dayOfWeek": 0,
         "startTime": "09:15",
@@ -4473,8 +4364,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "16:30",
         "endTime": "18:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-ulrich-nebel",
-        "isAiPlanned": true,
+        "teacherId": null,
+        "isAiPlanned": false,
         "status": "approved"
       },
       {
@@ -4485,7 +4376,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-harishakti",
+        "teacherId": "teacher-gen-mouniir-jaber",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -4509,7 +4400,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "20:00",
         "endTime": "21:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-burnie-bansemer",
+        "teacherId": "teacher-gen-anjali-gelzleichter",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -4539,7 +4430,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W33-31",
-        "name": "Yoga Vidya Pavanmuktasana",
+        "name": "Yoga Vidya meets Pavanmuktasana",
         "style": "Hatha",
         "dayOfWeek": 1,
         "startTime": "09:15",
@@ -4605,7 +4496,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "20:00",
         "endTime": "21:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-nirmaya-fodor",
+        "teacherId": "teacher-gen-abha-morkoetter",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -4749,7 +4640,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-satyam",
+        "teacherId": "teacher-gen-hu-buerkle",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -4803,13 +4694,13 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W33-53",
-        "name": "Mittelstufe",
+        "name": "Yoga Flow Mittelstufe",
         "style": "Hatha",
         "dayOfWeek": 4,
         "startTime": "09:15",
         "endTime": "11:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-narayani-kedenburg",
+        "teacherId": "teacher-gen-satyam",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -4926,8 +4817,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "16:30",
         "endTime": "18:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-satyam",
-        "isAiPlanned": true,
+        "teacherId": null,
+        "isAiPlanned": false,
         "status": "approved"
       },
       {
@@ -4938,7 +4829,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "16:30",
         "endTime": "18:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-ulrich-nebel",
+        "teacherId": "teacher-gen-satyam",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -4974,7 +4865,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "20:00",
         "endTime": "21:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-nirmaya-fodor",
+        "teacherId": "teacher-gen-narayani-kedenburg",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -5082,7 +4973,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "20:00",
         "endTime": "21:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-nirmaya-fodor",
+        "teacherId": "teacher-gen-anjali-gelzleichter",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -5124,7 +5015,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W34-22",
-        "name": "Yoga Vidya Pavanmuktasana",
+        "name": "Yoga Vidya meets Pavanmuktasana",
         "style": "Hatha",
         "dayOfWeek": 0,
         "startTime": "09:15",
@@ -5166,8 +5057,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "16:30",
         "endTime": "18:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-ulrich-nebel",
-        "isAiPlanned": true,
+        "teacherId": null,
+        "isAiPlanned": false,
         "status": "approved"
       },
       {
@@ -5178,7 +5069,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-harishakti",
+        "teacherId": "teacher-gen-satyam",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -5232,7 +5123,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W34-31",
-        "name": "Yoga Vidya Pavanmuktasana",
+        "name": "Yoga Vidya meets Pavanmuktasana",
         "style": "Hatha",
         "dayOfWeek": 1,
         "startTime": "09:15",
@@ -5394,8 +5285,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "07:00",
         "endTime": "07:30",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-satyam",
-        "isAiPlanned": true,
+        "teacherId": null,
+        "isAiPlanned": false,
         "status": "approved"
       },
       {
@@ -5442,7 +5333,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-satyam",
+        "teacherId": "teacher-gen-burnie-bansemer",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -5595,8 +5486,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "09:15",
         "endTime": "11:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-satyam",
-        "isAiPlanned": true,
+        "teacherId": null,
+        "isAiPlanned": false,
         "status": "approved"
       },
       {
@@ -5817,7 +5708,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W35-22",
-        "name": "Yoga Vidya Pavanmuktasana",
+        "name": "Yoga Vidya meets Pavanmuktasana",
         "style": "Hatha",
         "dayOfWeek": 0,
         "startTime": "09:15",
@@ -5925,7 +5816,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W35-31",
-        "name": "Yoga Vidya Pavanmuktasana",
+        "name": "Yoga Vidya meets Pavanmuktasana",
         "style": "Hatha",
         "dayOfWeek": 1,
         "startTime": "09:15",
@@ -6135,7 +6026,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-satyam",
+        "teacherId": "teacher-gen-burnie-bansemer",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -6360,7 +6251,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "20:00",
         "endTime": "21:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-nirmaya-fodor",
+        "teacherId": "teacher-gen-narayani-kedenburg",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -6510,7 +6401,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W36-22",
-        "name": "Yoga Vidya Pavanmuktasana",
+        "name": "Yoga Vidya meets Pavanmuktasana",
         "style": "Hatha",
         "dayOfWeek": 0,
         "startTime": "09:15",
@@ -6576,7 +6467,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "20:00",
         "endTime": "20:35",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-hu-buerkle",
+        "teacherId": "teacher-gen-nirmaya-fodor",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -6618,7 +6509,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W36-31",
-        "name": "Yoga Vidya Pavanmuktasana",
+        "name": "Yoga Vidya meets Pavanmuktasana",
         "style": "Hatha",
         "dayOfWeek": 1,
         "startTime": "09:15",
@@ -6828,7 +6719,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-satyam",
+        "teacherId": "teacher-gen-mouniir-jaber",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -7203,7 +7094,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W37-22",
-        "name": "Yoga Vidya Pavanmuktasana",
+        "name": "Yoga Vidya meets Pavanmuktasana",
         "style": "Hatha",
         "dayOfWeek": 0,
         "startTime": "09:15",
@@ -7269,7 +7160,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "20:00",
         "endTime": "20:35",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-pranava-pauly",
+        "teacherId": "teacher-gen-nirmaya-fodor",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -7311,7 +7202,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W37-31",
-        "name": "Yoga Vidya Pavanmuktasana",
+        "name": "Yoga Vidya meets Pavanmuktasana",
         "style": "Hatha",
         "dayOfWeek": 1,
         "startTime": "09:15",
@@ -7521,7 +7412,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-satyam",
+        "teacherId": "teacher-gen-mouniir-jaber",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -7896,7 +7787,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W38-22",
-        "name": "Yoga Vidya Pavanmuktasana",
+        "name": "Yoga Vidya meets Pavanmuktasana",
         "style": "Hatha",
         "dayOfWeek": 0,
         "startTime": "09:15",
@@ -7962,7 +7853,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "20:00",
         "endTime": "20:35",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-hu-buerkle",
+        "teacherId": "teacher-gen-nirmaya-fodor",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -8004,7 +7895,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W38-31",
-        "name": "Yoga Vidya Pavanmuktasana",
+        "name": "Yoga Vidya meets Pavanmuktasana",
         "style": "Hatha",
         "dayOfWeek": 1,
         "startTime": "09:15",
@@ -8214,7 +8105,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-satyam",
+        "teacherId": "teacher-gen-mouniir-jaber",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -8589,7 +8480,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W39-22",
-        "name": "Yoga Vidya Pavanmuktasana",
+        "name": "Yoga Vidya meets Pavanmuktasana",
         "style": "Hatha",
         "dayOfWeek": 0,
         "startTime": "09:15",
@@ -8643,7 +8534,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-harishakti",
+        "teacherId": "teacher-gen-mouniir-jaber",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -8697,7 +8588,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W39-31",
-        "name": "Yoga Vidya Pavanmuktasana",
+        "name": "Yoga Vidya meets Pavanmuktasana",
         "style": "Hatha",
         "dayOfWeek": 1,
         "startTime": "09:15",
@@ -8907,7 +8798,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-satyam",
+        "teacherId": "teacher-gen-narayani-kedenburg",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -9282,7 +9173,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W40-22",
-        "name": "Yoga Vidya Pavanmuktasana",
+        "name": "Yoga Vidya meets Pavanmuktasana",
         "style": "Hatha",
         "dayOfWeek": 0,
         "startTime": "09:15",
@@ -9390,7 +9281,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W40-31",
-        "name": "Yoga Vidya Pavanmuktasana",
+        "name": "Yoga Vidya meets Pavanmuktasana",
         "style": "Hatha",
         "dayOfWeek": 1,
         "startTime": "09:15",
@@ -9600,7 +9491,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-satyam",
+        "teacherId": "teacher-gen-mouniir-jaber",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -9739,7 +9630,7 @@ function setStored<T>(key: string, value: T): void {
   }
 }
 
-const CURRENT_DB_VERSION = 39;
+const CURRENT_DB_VERSION = 41;
 
 // Database Actions
 export const db = {

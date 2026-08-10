@@ -1,4 +1,5 @@
 import { db, type Teacher, type Course, type Room, type TimeSlot } from './db';
+import wochenplanRules from './data/wochenplan_rules.json' with { type: 'json' };
 
 export interface ConflictMessage {
   type: 'hard' | 'soft'; // hard = invalid assignment, soft = warning/preference
@@ -59,6 +60,49 @@ export function getLocalDateForDay(weekCode: string, dayOfWeek: number): string 
   return `${yyyy}-${mm}-${dd}`;
 }
 
+export function getDayName(day: number): string {
+  const dayNames = ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag'];
+  return dayNames[day] || '';
+}
+
+export function getAbsenceDetails(teacherName: string, dayOfWeek: number, targetWeekCode?: string, absences?: any[]): any | null {
+  if (!targetWeekCode) return null;
+  const courseDate = getLocalDateForDay(targetWeekCode, dayOfWeek);
+  
+  if (absences && absences.length > 0) {
+    const entry = absences.find((entry: any) => {
+      if (!entry) return false;
+      const entryName = entry.teacherName.toLowerCase().trim();
+      const isMatch = entryName.includes(teacherName) || teacherName.includes(entryName.split(' ')[0]);
+      return isMatch && courseDate >= entry.startDate && courseDate <= entry.endDate;
+    });
+    if (entry) return entry;
+  }
+  
+  if (typeof window !== 'undefined') {
+    try {
+      const saved = localStorage.getItem('rapla_sevafrei');
+      if (saved) {
+        const sevafreiList = JSON.parse(saved);
+        const entry = sevafreiList.find((entry: any) => {
+          if (!entry) return false;
+          const entryName = entry.teacherName.toLowerCase().trim();
+          const isMatch = entryName.includes(teacherName) || teacherName.includes(entryName.split(' ')[0]);
+          return isMatch && courseDate >= entry.startDate && courseDate <= entry.endDate;
+        });
+        if (entry) return entry;
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  }
+  return null;
+}
+
+export function isTeacherAbsent(teacherName: string, dayOfWeek: number, targetWeekCode?: string, absences?: any[]): boolean {
+  return getAbsenceDetails(teacherName, dayOfWeek, targetWeekCode, absences) !== null;
+}
+
 // Validate a single assignment and return all conflict messages
 export function validateAssignment(
   teacher: Teacher,
@@ -66,66 +110,52 @@ export function validateAssignment(
   allCourses: Course[],
   seminarLeaderIds: string[] = [],
   targetWeekCode?: string,
-  teachers?: Teacher[]
+  teachers?: Teacher[],
+  absences?: any[]
 ): ConflictMessage[] {
   const conflicts: ConflictMessage[] = [];
 
   // 0a. Check active Sevafrei / Abwesenheiten (Hard)
-  if (typeof window !== 'undefined' && targetWeekCode) {
-    try {
-      const courseDate = getLocalDateForDay(targetWeekCode, course.dayOfWeek);
-      const saved = localStorage.getItem('rapla_sevafrei');
-      if (saved) {
-        const sevafreiList = JSON.parse(saved);
-        
-        // Support composite teacher names (e.g. "Adam, Anjali")
-        const namesToCheck: string[] = [];
-        if (teacher.name.includes(',')) {
-          teacher.name.split(',').forEach(n => namesToCheck.push(n.trim().toLowerCase()));
+  if (targetWeekCode) {
+    // Support composite teacher names (e.g. "Adam, Anjali")
+    const namesToCheck: string[] = [];
+    if (teacher.name.includes(',')) {
+      teacher.name.split(',').forEach(n => namesToCheck.push(n.trim().toLowerCase()));
+    } else {
+      namesToCheck.push(teacher.name.toLowerCase().trim());
+    }
+    
+    for (const name of namesToCheck) {
+      const activeAbsence = getAbsenceDetails(name, course.dayOfWeek, targetWeekCode, absences);
+      if (activeAbsence) {
+        const isSatsang = course.name.toLowerCase().includes('satsang');
+        const isBypassedType = ['seminartage'].includes(activeAbsence.type.toLowerCase());
+        if (isSatsang && isBypassedType) {
+          // Bypassed for Satsangs
         } else {
-          namesToCheck.push(teacher.name.toLowerCase().trim());
-        }
-        
-        for (const name of namesToCheck) {
-          const activeAbsence = sevafreiList.find((entry: any) => {
-            const entryName = entry.teacherName.toLowerCase().trim();
-            const isMatch = entryName.includes(name) || name.includes(entryName.split(' ')[0]);
-            return isMatch && courseDate >= entry.startDate && courseDate <= entry.endDate;
+          conflicts.push({
+            type: 'hard',
+            message: `${teacher.name} ist an diesem Datum (${getLocalDateForDay(targetWeekCode, course.dayOfWeek)}) abwesend (${activeAbsence.type}: ${activeAbsence.note || 'Keine Angabe'}).`
           });
-          
-          if (activeAbsence) {
-            const isSatsang = course.name.toLowerCase().includes('satsang');
-            const isBypassedType = ['seminartage'].includes(activeAbsence.type.toLowerCase());
-            if (isSatsang && isBypassedType) {
-              // Bypassed for Satsangs
-            } else {
-              conflicts.push({
-                type: 'hard',
-                message: `${teacher.name} ist an diesem Datum (${courseDate}) abwesend (${activeAbsence.type}: ${activeAbsence.note || 'Keine Angabe'}).`
-              });
-              break;
-            }
-          }
+          break;
         }
       }
-    } catch (e) {
-      console.error('Error during Sevafrei validation', e);
     }
   }
 
-  // --- SEVAKA RULES FROM TXT FILE ---
-  const isSevaka = teacher.roleType === 'sevaka';
   const teacherNameLower = teacher.name.toLowerCase();
   const courseNameLower = course.name.toLowerCase();
   const courseStyleLower = course.style.toLowerCase();
 
+  // --- SEVAKA RULES FROM JSON ---
+  const isSevaka = teacher.roleType === 'sevaka';
+  
   // Categorize course types
   const isMeditationForSevaka = (courseNameLower.includes('meditation') || courseNameLower.includes('medi.') || courseStyleLower.includes('meditation')) && !courseNameLower.includes('satsang');
   const isSatsangForSevaka = courseNameLower.includes('satsang');
   const isOnnForSevaka = courseNameLower.includes('om namo');
   const isYogaClassForSevaka = !isMeditationForSevaka && !isSatsangForSevaka && !isOnnForSevaka;
 
-  // Let's filter the other assignments for the weekly counts
   const otherSevakaAssignments = allCourses.filter(
     c => c.teacherId === teacher.id && c.id !== course.id
   );
@@ -159,727 +189,33 @@ export function validateAssignment(
 
   const counts = getWeeklyCounts();
 
-  // Pranayama constraints: only Karuna, Burnie, Narayani, Abha
-  const isPranayama = courseNameLower.includes('pranayama') || courseStyleLower.includes('pranayama');
-  if (isPranayama) {
-    const allowed = ['karuna', 'burnie', 'narayani', 'abha'];
-    const isAllowed = allowed.some(a => teacherNameLower.includes(a));
-    if (!isAllowed) {
-      conflicts.push({
-        type: 'hard',
-        message: `Pranayama darf nur von Karuna, Burnie, Narayani oder Abha unterrichtet werden.`
-      });
-    }
-  }
+  // Look up teacher rules dynamically from wochenplanRules.teachers
+  const teacherKey = Object.keys(wochenplanRules.teachers).find(k => teacherNameLower.includes(k) || k.includes(teacherNameLower));
+  const tRules = teacherKey ? (wochenplanRules.teachers as any)[teacherKey] : null;
 
-  // Satsang Einführung rule: Friday only Pranava, Sunday only Nirmaya, Hu, Pranava, Mounir, Burnie
-  const isSatsangEinfuehrung = courseNameLower.includes('satsang einführung') || courseNameLower.includes('satsang-einführung') || courseNameLower.includes('satsangeinführung');
-  if (isSatsangEinfuehrung) {
-    const generalAllowed = ['pranava', 'nirmaya', 'hu', 'anjali', 'mounir', 'burnie'];
-    const isGeneralAllowed = generalAllowed.some(a => teacherNameLower.includes(a));
-    if (!isGeneralAllowed) {
-      conflicts.push({
-        type: 'hard',
-        message: `Die Satsang Einführung darf nur von Pranava, Nirmaya, Hu, Anjali, Mounir oder Burnie geleitet werden.`
-      });
-    }
-
-    if (course.dayOfWeek === 5) {
-      let isPranavaAbsent = false;
-      const pranava = (teachers || db.getTeachers()).find(t => t.name.toLowerCase().includes('pranava'));
-      if (typeof window !== 'undefined' && targetWeekCode && pranava) {
-        try {
-          const courseDate = getLocalDateForDay(targetWeekCode, course.dayOfWeek);
-          const saved = localStorage.getItem('rapla_sevafrei');
-          if (saved) {
-            const sevafreiList = JSON.parse(saved);
-            const activeAbsence = sevafreiList.find((entry: any) =>
-              entry.teacherId === pranava.id &&
-              courseDate >= entry.startDate &&
-              courseDate <= entry.endDate
-            );
-            if (activeAbsence) {
-              isPranavaAbsent = true;
-            }
-          }
-        } catch (e) {
-          console.error(e);
-        }
-      }
-
-      if (!teacherNameLower.includes('pranava') && !isPranavaAbsent) {
-        conflicts.push({
-          type: 'hard',
-          message: `Freitags darf die Satsang Einführung nur von Pranava geleitet werden.`
-        });
-      }
-    } else if (course.dayOfWeek === 0) {
-      const allowed = ['nirmaya', 'hu', 'pranava', 'mounir', 'burnie'];
-      const isAllowed = allowed.some(a => teacherNameLower.includes(a));
-      if (!isAllowed) {
-        conflicts.push({
-          type: 'hard',
-          message: `Sonntags darf die Satsang Einführung nur von Nirmaya, Hu, Pranava, Mounir oder Burnie geleitet werden.`
-        });
-      }
-    }
-  }
-
-  // --- SATSANG REGELN ---
-  const isSatsangCourse = course.name === 'Satsang';
-
-  if (isSatsangCourse) {
-    // Regel 4: Folgende Personen werden nie für einen Satsang eingeteilt: Adam, Hu, Mounir, Teresa, Satyam, Ulrich, Pranava
-    const forbiddenForSatsang = ['adam', 'hu', 'mounir', 'mouniir', 'teresa', 'satyam', 'ulrich', 'pranava'];
-    const isForbidden = forbiddenForSatsang.some(name => teacherNameLower.includes(name));
-    if (isForbidden) {
-      conflicts.push({
-        type: 'hard',
-        message: `${teacher.name} darf laut Satsang-Regel 4 nie für einen Satsang eingeteilt werden.`
-      });
-    }
-
-    // Regel 1: Dienstagabends gibt es nie einen Satsang
-    if (course.dayOfWeek === 2 && course.startTime === '20:00') {
-      conflicts.push({
-        type: 'hard',
-        message: `Dienstagabends gibt es nie einen Satsang (Satsang-Regel 1).`
-      });
-    }
-
-    // Regel 3: Morgens um 7.00Uhr bis 8.00Uhr werden folgende Personen immer wieder eingeteilt: Anjali, Nirmaya, Burnie, Harishakti, Narayani, Abha, Alexander
-    if (course.startTime === '07:00') {
-      const allowedMorningSatsang = ['anjali', 'nirmaya', 'burnie', 'harishakti', 'narayani', 'abha', 'alexander'];
-      const isAllowedMorning = allowedMorningSatsang.some(name => teacherNameLower.includes(name));
-      if (!isAllowedMorning) {
-        conflicts.push({
-          type: 'hard',
-          message: `${teacher.name} darf morgens keinen Satsang leiten. Nur Anjali, Nirmaya, Burnie, Harishakti, Narayani, Abha und Alexander sind dafür eingeteilt (Satsang-Regel 3).`
-        });
-      } else {
-        // Harishakti, Burnie, Alexander oder Anjali dürfen im Rahmen ihrer Verfügbarkeit auch zwei Mal in einer Woche eingeteilt werden
-        const canDoTwo = ['harishakti', 'burnie', 'alexander', 'anjali'].some(name => teacherNameLower.includes(name));
-        const maxMorningSatsangs = canDoTwo ? 2 : 1;
-        const otherMorningSatsangs = otherSevakaAssignments.filter(c => c.name === 'Satsang' && c.startTime === '07:00');
-        if (otherMorningSatsangs.length >= maxMorningSatsangs) {
-          conflicts.push({
-            type: 'hard',
-            message: `${teacher.name} darf maximal ${maxMorningSatsangs} mal pro Woche für einen Satsang am Morgen eingeteilt werden (Satsang-Regel 3).`
-          });
-        }
-      }
-    }
-
-    // Regel 2: Abend-Satsang (20:00 - 21:00)
-    if (course.startTime === '20:00') {
-      // Mittwochs bis sonntags (3, 4, 5, 6, 0) leitet Karuna den Satsang am Abend
-      if ([3, 4, 5, 6, 0].includes(course.dayOfWeek)) {
-        let isKarunaAbsent = false;
-        const karuna = (teachers || db.getTeachers()).find(t => t.name.toLowerCase().includes('karuna'));
-        if (typeof window !== 'undefined' && targetWeekCode && karuna) {
-          try {
-            const courseDate = getLocalDateForDay(targetWeekCode, course.dayOfWeek);
-            const saved = localStorage.getItem('rapla_sevafrei');
-            if (saved) {
-              const sevafreiList = JSON.parse(saved);
-              const activeAbsence = sevafreiList.find((entry: any) =>
-                entry.teacherId === karuna.id &&
-                courseDate >= entry.startDate &&
-                courseDate <= entry.endDate &&
-                !['seminartage'].includes(entry.type.toLowerCase())
-              );
-              if (activeAbsence) {
-                isKarunaAbsent = true;
-              }
-            }
-          } catch (e) {
-            console.error(e);
-          }
-        }
-
-        if (!teacherNameLower.includes('karuna')) {
-          if (!isKarunaAbsent) {
-            conflicts.push({
-              type: 'hard',
-              message: `Karuna leitet mittwochs bis sonntags den Abend-Satsang. Nur wenn sie laut sevafrei-Kalender nicht kann, werden andere eingeteilt (Satsang-Regel 2).`
-            });
-          } else {
-            // Wenn Karuna abwesend ist, werden Narayani, Abha und Anjali bevorzugt und sind als einzige erlaubt
-            const preferredBackups = ['narayani', 'abha', 'anjali'];
-            const isPreferredBackup = preferredBackups.some(name => teacherNameLower.includes(name));
-            if (!isPreferredBackup) {
-              conflicts.push({
-                type: 'hard',
-                message: `${teacher.name} darf Karunas Abend-Satsang nicht vertreten. Nur Narayani, Abha und Anjali sind als Vertretung erlaubt (Satsang-Regel 2).`
-              });
-            }
-          }
-        }
-      }
-
-      // Montag abends um 20.00Uhr leitet Narayani den Satsang
-      if (course.dayOfWeek === 1) {
-        let isNarayaniAbsent = false;
-        const narayani = (teachers || db.getTeachers()).find(t => t.name.toLowerCase().includes('narayani'));
-        if (typeof window !== 'undefined' && targetWeekCode && narayani) {
-          try {
-            const courseDate = getLocalDateForDay(targetWeekCode, course.dayOfWeek);
-            const saved = localStorage.getItem('rapla_sevafrei');
-            if (saved) {
-              const sevafreiList = JSON.parse(saved);
-              const activeAbsence = sevafreiList.find((entry: any) =>
-                entry.teacherId === narayani.id &&
-                courseDate >= entry.startDate &&
-                courseDate <= entry.endDate &&
-                !['seminartage'].includes(entry.type.toLowerCase())
-              );
-              if (activeAbsence) {
-                isNarayaniAbsent = true;
-              }
-            }
-          } catch (e) {
-            console.error(e);
-          }
-        }
-
-        if (!teacherNameLower.includes('narayani')) {
-          if (!isNarayaniAbsent) {
-            conflicts.push({
-              type: 'hard',
-              message: `Narayani leitet montags den Abend-Satsang. Nur wenn sie laut sevafrei-Kalender nicht kann, werden andere eingeteilt (Satsang-Regel 2).`
-            });
-          } else {
-            // Wenn Narayani abwesend ist, werden Abha und Anjali bevorzugt und sind als einzige erlaubt
-            const preferredBackups = ['abha', 'anjali'];
-            const isPreferredBackup = preferredBackups.some(name => teacherNameLower.includes(name));
-            if (!isPreferredBackup) {
-              conflicts.push({
-                type: 'hard',
-                message: `${teacher.name} darf Narayanis Abend-Satsang nicht vertreten. Nur Abha und Anjali sind als Vertretung erlaubt (Satsang-Regel 2).`
-              });
-            }
-          }
-        }
-      }
-    }
-  }
-
-  // Teresa, Hu, Mounir & Adam cannot lead yoga classes (hard constraint)
-  if ((teacher.isYogaTeacher === false || teacherNameLower.includes('teresa') || teacherNameLower.includes('hu') || teacherNameLower.includes('mounir') || teacherNameLower.includes('mouniir') || teacherNameLower.includes('adam')) && isYogaClassForSevaka) {
-    conflicts.push({
-      type: 'hard',
-      message: `${teacher.name} gibt keine Yogastunden.`
-    });
-  }
-
-  // 1. Burnie
-  if (teacherNameLower.includes('burnie')) {
-    // Samstag, Dienstag, Freitag are free
-    if ([2, 5, 6].includes(course.dayOfWeek)) {
-      conflicts.push({
-        type: 'hard',
-        message: `${teacher.name} hat samstags, dienstags und freitags frei.`
-      });
-    }
-    // Max 2 Satsang am Morgen (Satsang-Regel 3)
-    if (isSatsangForSevaka && course.startTime.toLowerCase() < '12:00') {
-      const morningSatsangs = otherSevakaAssignments.filter(c => c.name.toLowerCase().includes('satsang') && c.startTime.toLowerCase() < '12:00');
-      if (morningSatsangs.length >= 2) {
-        conflicts.push({
-          type: 'hard',
-          message: `${teacher.name} kann maximal zweimal wöchentlich für einen Satsang am Morgen eingeteilt werden.`
-        });
-      }
-    }
-    // Max 1 geführte Meditation per week
-    if (isMeditationForSevaka && counts.meditationCount > 1) {
-      conflicts.push({
-        type: 'hard',
-        message: `${teacher.name} kann nur einmal wöchentlich für eine geführte Meditation eingeteilt werden.`
-      });
-    }
-  }
-
-  // 2. Satyam
-  if (teacherNameLower.includes('satyam')) {
-    if (course.dayOfWeek === 1) {
-      conflicts.push({
-        type: 'hard',
-        message: `${teacher.name} hat montags frei.`
-      });
-    }
-    // Max 2 yoga classes per week
-    if (isYogaClassForSevaka && counts.yogaCount > 2) {
-      conflicts.push({
-        type: 'hard',
-        message: `${teacher.name} kann maximal zweimal wöchentlich für Yogastunden eingeteilt werden.`
-      });
-    }
-  }
-
-  // 3. Teresa
-  if (teacherNameLower.includes('teresa')) {
-    if (course.dayOfWeek === 4) {
-      conflicts.push({
-        type: 'hard',
-        message: `${teacher.name} hat donnerstags frei.`
-      });
-    }
-    // Max 1 ONN per week
-    if (isOnnForSevaka && counts.onnCount > 1) {
-      conflicts.push({
-        type: 'hard',
-        message: `${teacher.name} leitet Om Namo Narayanaya maximal einmal wöchentlich.`
-      });
-    }
-  }
-
-  // 4. Abha
-  if (teacherNameLower.includes('abha')) {
-    if ([0, 3].includes(course.dayOfWeek)) {
-      conflicts.push({
-        type: 'hard',
-        message: `${teacher.name} hat sonntags und mittwochs frei.`
-      });
-    }
-    // Yin Yoga Anfängerstunde: max 1 per week
-    const isYinAnfaenger = courseNameLower.includes('anfänger') && courseStyleLower.includes('yin');
-    if (isYinAnfaenger) {
-      const otherYinAnfaenger = otherSevakaAssignments.filter(c => c.name.toLowerCase().includes('anfänger') && c.style.toLowerCase().includes('yin'));
-      if (otherYinAnfaenger.length >= 1) {
-        conflicts.push({
-          type: 'hard',
-          message: `${teacher.name} kann nur einmal wöchentlich für eine Yin Yoga Anfängerstunde eingeteilt werden.`
-        });
-      }
-    }
-    // Max 3 yoga classes per week
-    if (isYogaClassForSevaka && counts.yogaCount > 3) {
-      conflicts.push({
-        type: 'hard',
-        message: `${teacher.name} darf für maximal 3 Yogastunden wöchentlich eingeteilt werden.`
-      });
-    }
-  }
-
-  // 5. Anjali
-  if (teacherNameLower.includes('anjali')) {
-    if (course.dayOfWeek === 3) {
-      conflicts.push({
-        type: 'hard',
-        message: `${teacher.name} hat mittwochs frei.`
-      });
-    }
-    // Tue after 12:00 and Thu before 11:00
-    if (course.dayOfWeek === 2 && timeToMinutes(course.startTime) >= timeToMinutes('12:00')) {
-      conflicts.push({
-        type: 'hard',
-        message: `${teacher.name} ist dienstags ab 12.00 Uhr nicht einteilbar.`
-      });
-    }
-    if (course.dayOfWeek === 4 && timeToMinutes(course.startTime) < timeToMinutes('11:00')) {
-      conflicts.push({
-        type: 'hard',
-        message: `${teacher.name} ist donnerstags bis 11.00 Uhr nicht einteilbar.`
-      });
-    }
-    // Max 3 yoga classes per week
-    if (isYogaClassForSevaka && counts.yogaCount > 3) {
-      conflicts.push({
-        type: 'hard',
-        message: `${teacher.name} darf für maximal 3 Yogastunden wöchentlich eingeteilt werden.`
-      });
-    }
-  }
-
-  // 7. Hu
-  if (teacherNameLower.includes('hu')) {
-    if (course.dayOfWeek === 2) {
-      conflicts.push({
-        type: 'hard',
-        message: `${teacher.name} hat dienstags frei.`
-      });
-    }
-    // Mon after 12:00 and Wed before 12:00
-    if (course.dayOfWeek === 1 && timeToMinutes(course.startTime) >= timeToMinutes('12:00')) {
-      conflicts.push({
-        type: 'hard',
-        message: `${teacher.name} ist montags nur bis 12.00 Uhr einplanbar.`
-      });
-    }
-    if (course.dayOfWeek === 3 && timeToMinutes(course.startTime) < timeToMinutes('12:00')) {
-      conflicts.push({
-        type: 'hard',
-        message: `${teacher.name} ist mittwochs erst ab 12.00 Uhr einplanbar.`
-      });
-    }
-  }
-
-  // 8. Mounir
-  if (teacherNameLower.includes('mounir') || teacherNameLower.includes('mouniir')) {
-    if (course.dayOfWeek === 1) {
-      conflicts.push({
-        type: 'hard',
-        message: `${teacher.name} hat montags frei.`
-      });
-    }
-    // Er gibt keine Yogastunden
-    if (isYogaClassForSevaka) {
-      conflicts.push({
-        type: 'hard',
-        message: `${teacher.name} gibt keine Yogastunden.`
-      });
-    }
-    // Er gibt nie einen Satsang
-    if (isSatsangForSevaka) {
-      conflicts.push({
-        type: 'hard',
-        message: `${teacher.name} leitet nie Satsangs.`
-      });
-    }
-  }
-
-  // 9. Nirmaya
-  if (teacherNameLower.includes('nirmaya')) {
-    if ([2, 3].includes(course.dayOfWeek)) {
-      conflicts.push({
-        type: 'hard',
-        message: `${teacher.name} hat dienstags und mittwochs frei.`
-      });
-    }
-    // Max 1 guided meditation per week
-    if (isMeditationForSevaka && counts.meditationCount > 1) {
-      conflicts.push({
-        type: 'hard',
-        message: `${teacher.name} kann jede Woche nur für eine geführte Meditation eingeteilt werden.`
-      });
-    }
-    // Max 1 morning satsang per week
-    if (isSatsangForSevaka && course.startTime.toLowerCase() < '12:00' && counts.satsangCount > 1) {
-      conflicts.push({
-        type: 'hard',
-        message: `${teacher.name} kann jede Woche nur für einen Satsang am Morgen eingeteilt werden.`
-      });
-    }
-    // Max 2 Anfänger yoga classes per week
-    const isAnfaengerYoga = isYogaClassForSevaka && courseNameLower.includes('anfänger');
-    if (isAnfaengerYoga) {
-      const otherAnfaengerYoga = otherSevakaAssignments.filter(c => {
-        const cName = c.name.toLowerCase();
-        const cStyle = c.style.toLowerCase();
-        const cIsYoga = !cName.includes('meditation') && !cName.includes('medi.') && !cStyle.includes('meditation') && !cName.includes('satsang') && !cName.includes('om namo');
-        return cIsYoga && cName.includes('anfänger');
-      });
-      if (otherAnfaengerYoga.length >= 2) {
-        conflicts.push({
-          type: 'hard',
-          message: `${teacher.name} kann maximal zweimal wöchentlich für eine Anfängerstunde eingeteilt werden.`
-        });
-      }
-    }
-    // No yoga classes on Fridays, Saturdays, Sundays
-    if (isYogaClassForSevaka && [5, 6, 0].includes(course.dayOfWeek)) {
-      conflicts.push({
-        type: 'hard',
-        message: `${teacher.name} unterrichtet freitags, samstags und sonntags keine Yogastunden.`
-      });
-    }
-  }
-
-  // 10. Narayani
-  if (teacherNameLower.includes('narayani')) {
-    if ([5, 6].includes(course.dayOfWeek)) {
-      conflicts.push({
-        type: 'hard',
-        message: `${teacher.name} hat freitags und samstags frei.`
-      });
-    }
-    // Sun after 13:00
-    if (course.dayOfWeek === 0 && timeToMinutes(course.startTime) >= timeToMinutes('13:00')) {
-      conflicts.push({
-        type: 'hard',
-        message: `${teacher.name} ist sonntags ab 13.00 Uhr nicht mehr einteilbar.`
-      });
-    }
-    // Max 3 yoga classes per week
-    if (isYogaClassForSevaka && counts.yogaCount > 3) {
-      conflicts.push({
-        type: 'hard',
-        message: `${teacher.name} darf für maximal 3 Yogastunden wöchentlich eingeteilt werden.`
-      });
-    }
-  }
-
-  // 11. Pranava
-  if (teacherNameLower.includes('pranava')) {
-    if ([2, 3].includes(course.dayOfWeek)) {
-      conflicts.push({
-        type: 'hard',
-        message: `${teacher.name} hat dienstags und mittwochs frei.`
-      });
-    }
-    // Max 4 yoga classes per week
-    if (isYogaClassForSevaka && counts.yogaCount > 4) {
-      conflicts.push({
-        type: 'hard',
-        message: `${teacher.name} darf für maximal 4 Yogastunden wöchentlich eingeteilt werden.`
-      });
-    }
-    // Max 1 guided meditation per week
-    if (isMeditationForSevaka && counts.meditationCount > 1) {
-      conflicts.push({
-        type: 'hard',
-        message: `${teacher.name} kann maximal einmal wöchentlich für eine geführte Meditation eingeteilt werden.`
-      });
-    }
-  }
-
-  // 12. Alexander
-  if (teacherNameLower.includes('alexander')) {
-    if ([0, 1].includes(course.dayOfWeek)) {
-      conflicts.push({
-        type: 'hard',
-        message: `${teacher.name} hat sonntags und montags frei.`
-      });
-    }
-    // Max 2 Satsang per week (Satsang-Regel 3)
-    if (isSatsangForSevaka && counts.satsangCount > 2) {
-      conflicts.push({
-        type: 'hard',
-        message: `${teacher.name} kann maximal zweimal wöchentlich für einen Satsang eingeteilt werden.`
-      });
-    }
-    // Max 1 guided meditation per week
-    if (isMeditationForSevaka && counts.meditationCount > 1) {
-      conflicts.push({
-        type: 'hard',
-        message: `${teacher.name} kann maximal einmal wöchentlich für eine geführte Meditation eingeteilt werden.`
-      });
-    }
-    // Max 2 yoga classes per week
-    if (isYogaClassForSevaka && counts.yogaCount > 2) {
-      conflicts.push({
-        type: 'hard',
-        message: `${teacher.name} darf für maximal 2 Yogastunden wöchentlich eingeteilt werden.`
-      });
-    }
-  }
-
-  // 13. Adam
-  if (teacherNameLower.includes('adam')) {
-    if (course.dayOfWeek === 2) {
-      conflicts.push({
-        type: 'hard',
-        message: `${teacher.name} hat dienstags frei.`
-      });
-    }
-    // Max 1 ONN per week
-    if (isOnnForSevaka && counts.onnCount > 1) {
-      conflicts.push({
-        type: 'hard',
-        message: `${teacher.name} leitet Om Namo Narayanaya maximal einmal wöchentlich.`
-      });
-    }
-    // Er gibt keine Yogastunden
-    if (isYogaClassForSevaka) {
-      conflicts.push({
-        type: 'hard',
-        message: `${teacher.name} gibt keine Yogastunden.`
-      });
-    }
-    // Er gibt keinen Satsang
-    if (isSatsangForSevaka) {
-      conflicts.push({
-        type: 'hard',
-        message: `${teacher.name} leitet nie Satsangs.`
-      });
-    }
-  }
-
-  // 14. Harishakti
-  if (teacherNameLower.includes('harishakti')) {
-    // Max 3 yoga classes per week
-    if (isYogaClassForSevaka && counts.yogaCount > 3) {
-      conflicts.push({
-        type: 'hard',
-        message: `${teacher.name} darf für maximal 3 Yogastunden wöchentlich eingeteilt werden.`
-      });
-    }
-  }
-
-  // 15. Ulrich
-  if (teacherNameLower.includes('ulrich')) {
-    if ([2, 6].includes(course.dayOfWeek)) {
-      conflicts.push({
-        type: 'hard',
-        message: `${teacher.name} hat dienstags und samstags frei.`
-      });
-    }
-    // Max 4 yoga classes per week
-    if (isYogaClassForSevaka && counts.yogaCount > 4) {
-      conflicts.push({
-        type: 'hard',
-        message: `${teacher.name} darf für maximal 4 Yogastunden wöchentlich eingeteilt werden.`
-      });
-    }
-    // Er leitet nie Om Namo Narayanaya
-    if (isOnnForSevaka) {
-      conflicts.push({
-        type: 'hard',
-        message: `${teacher.name} leitet nie Om Namo Narayanaya.`
-      });
-    }
-    // Er macht nicht zwei Yogastunden am selben Tag
-    if (isYogaClassForSevaka) {
-      const otherYogaSameDay = otherSevakaAssignments.some(c => {
-        const cName = c.name.toLowerCase();
-        const cStyle = c.style.toLowerCase();
-        const cIsMed = (cName.includes('meditation') || cName.includes('medi.') || cStyle.includes('meditation')) && !cName.includes('satsang');
-        const cIsSat = cName.includes('satsang');
-        const cIsOnn = cName.includes('om namo');
-        const cIsYoga = !cIsMed && !cIsSat && !cIsOnn;
-        return cIsYoga && c.dayOfWeek === course.dayOfWeek;
-      });
-      if (otherYogaSameDay) {
-        conflicts.push({
-          type: 'hard',
-          message: `${teacher.name} darf nicht zwei Yogastunden am selben Tag leiten.`
-        });
-      }
-    }
-    // Freitags und sonntags darf nur am Nachmittag für eine Yogastunde eingeteilt werden
-    if (isYogaClassForSevaka && [5, 0].includes(course.dayOfWeek)) {
-      if (timeToMinutes(course.startTime) < timeToMinutes('12:00')) {
-        conflicts.push({
-          type: 'hard',
-          message: `${teacher.name} darf freitags und sonntags nur am Nachmittag für eine Yogastunde eingeteilt werden.`
-        });
-      }
-    }
-  }
-
-  // 16. Karuna
-  if (teacherNameLower.includes('karuna')) {
-    // Sie leitet nie Om Namo Narayanaya
-    if (isOnnForSevaka) {
-      conflicts.push({
-        type: 'hard',
-        message: `${teacher.name} leitet nie Om Namo Narayanaya.`
-      });
-    }
-  }
-
-  // 0. Check if active Yoga Teacher (Soft) - Ignored (profile rule)
-  /*
-  if (teacher.isYogaTeacher === false) {
-    conflicts.push({
-      type: 'soft',
-      message: `${teacher.name} ist nicht als aktiver Yogalehrer markiert (z. B. Seminarleiter).`
-    });
-  }
-  */
-
-  // 0x. Check non-preferred weekdays (Soft) - Ignored (profile rule)
-  /*
-  if (!isSevaka) {
-    const nonPreferredDays = teacher.rules.nonPreferredDays || [];
-    if (nonPreferredDays.includes(course.dayOfWeek)) {
-      const dayNames = ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag'];
-      const dayName = dayNames[course.dayOfWeek] || course.dayOfWeek.toString();
-      conflicts.push({
-        type: 'soft',
-        message: `${teacher.name} möchte am ${dayName} bevorzugt nicht unterrichten (nicht bevorzugter Wochentag).`
-      });
-    }
-  }
-  */
-
-  // 0y. Expose custom wishes/notes (Soft)
-  if (teacher.customWishes && teacher.customWishes.trim().length > 0) {
-    conflicts.push({
-      type: 'soft',
-      message: `Spezifischer Wunsch von ${teacher.name}: "${teacher.customWishes}"`
-    });
-  }
-
-
-  // 0b. Check if external seminar-only teacher is conducting a seminar this week - Ignored (profile rule)
-  /*
-  if (teacher.availabilityMode === 'seminar_only' && !seminarLeaderIds.includes(teacher.id)) {
-    conflicts.push({
-      type: 'soft',
-      message: `${teacher.name} ist als externer Seminarleiter markiert, leitet aber in dieser Woche kein Seminar.`
-    });
-  }
-  */
+  // 1. Check availability / Free days (Hard)
+  const courseStart = timeToMinutes(course.startTime);
+  const courseEnd = timeToMinutes(course.endTime);
+  const daySlots = teacher.rules.availability.filter(slot => slot.day === course.dayOfWeek);
   
-  // 1. Check Specialty & Meditation/Satsang Qualifications (Strictly Wochenplan rules, ignoring profile settings)
-  const isMeditationCourse = course.name === 'Geführte Meditation' || course.style.toLowerCase() === 'meditation';
-  if (isMeditationCourse) {
-    // Geführte Meditation rules from Geführte Meditation Regeln.txt:
-    // Allowed: Pranava, Harishakti, Alexander, Burnie, Satyam, Nirmaya, Narayani, Mounir, Hu und Christopher stehen zur Verfügung.
-    // Never lead: Karuna, Anjali, Abha, Ulrich, Adam, Teresa
-    const allowedMeditation = ['pranava', 'harishakti', 'alexander', 'burnie', 'satyam', 'nirmaya', 'narayani', 'mounir', 'hu', 'christopher'];
-    const forbiddenMeditation = ['karuna', 'anjali', 'abha', 'ulrich', 'adam', 'teresa'];
-    
-    const isAllowed = allowedMeditation.some(name => teacherNameLower.includes(name));
-    const isForbidden = forbiddenMeditation.some(name => teacherNameLower.includes(name));
-    
-    if (isForbidden || (!isAllowed && isSevaka)) {
+  const fitsAvailability = daySlots.some(slot => {
+    const availStart = timeToMinutes(slot.start);
+    const availEnd = timeToMinutes(slot.end);
+    return courseStart >= availStart && courseEnd <= availEnd;
+  });
+
+  if (!fitsAvailability) {
+    const isWalk = courseNameLower.includes('spaziergang');
+    const isPranava = teacherNameLower.includes('pranava');
+    if (!(isWalk && isPranava)) {
       conflicts.push({
         type: 'hard',
-        message: `${teacher.name} darf laut Meditation-Regeln nie die geführte Meditation am Morgen leiten.`
+        message: `${teacher.name} ist am ${getDayName(course.dayOfWeek)} zur Kurszeit (${course.startTime} - ${course.endTime}) laut Regeln/Freitagen nicht verfügbar.`
       });
     }
   }
 
-  // Disabled profile qualification and specialties checks
-  /*
-  if (!isSevaka) {
-    if (isSatsangCourse) {
-      if (!teacher.rules.canLeadSatsang) {
-        conflicts.push({
-          type: 'hard',
-          message: `${teacher.name} ist nicht für Satsang-Leitungen qualifiziert.`
-        });
-      }
-    } else if (!isMeditationCourse) {
-      const isQualified = teacher.specialties.some(
-        spec => spec.toLowerCase() === course.style.toLowerCase()
-      );
-      if (!isQualified) {
-        conflicts.push({
-          type: 'hard',
-          message: `${teacher.name} hat keine Spezialisierung für den Yoga-Stil "${course.style}".`
-        });
-      }
-    }
-  }
-  */
-
-  // 2. Check Availability (Hard) - Ignored (profile rule)
-  /*
-  if (!isSevaka) {
-    const courseStart = timeToMinutes(course.startTime);
-    const courseEnd = timeToMinutes(course.endTime);
-    const daySlots = teacher.rules.availability.filter(slot => slot.day === course.dayOfWeek);
-    
-    const fitsAvailability = daySlots.some(slot => {
-      const availStart = timeToMinutes(slot.start);
-      const availEnd = timeToMinutes(slot.end);
-      return courseStart >= availStart && courseEnd <= availEnd;
-    });
-
-    if (!fitsAvailability) {
-      conflicts.push({
-        type: 'hard',
-        message: `${teacher.name} ist am gewählten Wochentag zur Kurszeit (${course.startTime} - ${course.endTime}) laut Arbeitszeiten nicht verfügbar.`
-      });
-    }
-  }
-  */
-
-  // 3. Check Overlapping Classes (Hard)
+  // 2. Check Overlapping Classes (Hard)
   const otherAssignments = allCourses.filter(
     c => c.teacherId === teacher.id && c.id !== course.id && c.dayOfWeek === course.dayOfWeek
   );
@@ -895,86 +231,362 @@ export function validateAssignment(
     });
   }
 
-  // 4. Check Buffer / Rest Time (Hard) - Ignored (profile rule)
-  /*
-  if (!isSevaka) {
-    const restTime = teacher.rules.minRestTime;
-    if (restTime > 0) {
-      const hasBufferConflict = otherAssignments.some(other => {
-        const c1Start = timeToMinutes(course.startTime);
-        const c1End = timeToMinutes(course.endTime);
-        const c2Start = timeToMinutes(other.startTime);
-        const c2End = timeToMinutes(other.endTime);
-        
-        // Calculate gap between them
-        let gap = 0;
-        if (c1Start >= c2End) {
-          gap = c1Start - c2End;
-        } else if (c2Start >= c1End) {
-          gap = c2Start - c1End;
+  // Check absence
+  if (targetWeekCode) {
+    try {
+      const courseDate = getLocalDateForDay(targetWeekCode, course.dayOfWeek);
+      const saved = typeof window !== 'undefined' ? localStorage.getItem('rapla_sevafrei') : null;
+      let activeAbsence = null;
+      
+      const checkList = absences || (saved ? JSON.parse(saved) : []);
+      if (checkList && checkList.length > 0) {
+        // Handle composite names
+        const namesToCheck: string[] = [];
+        if (teacher.name.includes(',')) {
+          teacher.name.split(',').forEach(n => namesToCheck.push(n.trim().toLowerCase()));
         } else {
-          return true; // overlapping, handled above but also counts as buffer conflict
+          namesToCheck.push(teacher.name.toLowerCase().trim());
         }
-        return gap < restTime;
-      });
 
-      if (hasBufferConflict) {
+        for (const name of namesToCheck) {
+          activeAbsence = checkList.find((entry: any) => {
+            if (!entry) return false;
+            const entryName = entry.teacherName.toLowerCase().trim();
+            const isMatch = entryName.includes(name) || name.includes(entryName.split(' ')[0]);
+            return isMatch && courseDate >= entry.startDate && courseDate <= entry.endDate;
+          });
+          if (activeAbsence) {
+            // Check if this is a composite teacher or if they are bypassed
+            if (activeAbsence.type.toLowerCase() === 'seminartage' && isSatsangForSevaka) {
+              // Bypassed for Satsangs
+            } else {
+              conflicts.push({
+                type: 'hard',
+                message: `${teacher.name} ist an diesem Datum (${courseDate}) abwesend (${activeAbsence.type}: ${activeAbsence.note || 'Keine Angabe'}).`
+              });
+              break;
+            }
+          }
+        }
+      }
+    } catch (e) {
+      console.error('Error during Sevafrei validation', e);
+    }
+  }
+
+  // 3. Pranayama constraints
+  const isPranayama = courseNameLower.includes('pranayama') || courseStyleLower.includes('pranayama');
+  if (isPranayama) {
+    const allowed = wochenplanRules.pranayama.allowed;
+    const isAllowed = allowed.some((a: string) => teacherNameLower.includes(a));
+    if (!isAllowed) {
+      conflicts.push({
+        type: 'hard',
+        message: `Pranayama darf nur von ${allowed.join(', ').toUpperCase()} unterrichtet werden.`
+      });
+    }
+  }
+
+  // 4. Satsang Einführung rule
+  const isSatsangEinfuehrung = courseNameLower.includes('satsang einführung') || courseNameLower.includes('satsang-einführung') || courseNameLower.includes('satsangeinführung');
+  if (isSatsangEinfuehrung) {
+    const generalAllowed = wochenplanRules.satsangEinfuehrung.allowed;
+    const isGeneralAllowed = generalAllowed.some((a: string) => teacherNameLower.includes(a));
+    if (!isGeneralAllowed) {
+      conflicts.push({
+        type: 'hard',
+        message: `Die Satsang Einführung darf nur von ${generalAllowed.join(', ').toUpperCase()} geleitet werden.`
+      });
+    }
+
+    if (course.dayOfWeek === 5) {
+      const primary = wochenplanRules.satsangEinfuehrung.friday;
+      const isPrimaryAbsent = isTeacherAbsent(primary, course.dayOfWeek, targetWeekCode, absences);
+      if (!teacherNameLower.includes(primary) && !isPrimaryAbsent) {
         conflicts.push({
           type: 'hard',
-          message: `${teacher.name} benötigt zwischen den Kursen eine Mindestpause von ${restTime} Minuten.`
+          message: `Freitags darf die Satsang Einführung nur von ${primary.toUpperCase()} geleitet werden.`
         });
       }
-    }
-  }
-  */
-
-  // 5. Check Daily Class Limit (Hard) - Ignored (profile rule)
-  /*
-  if (!isSevaka) {
-    const classesOnDay = otherAssignments.length + 1; // plus the current one
-    if (classesOnDay > teacher.rules.maxClassesPerDay) {
-      conflicts.push({
-        type: 'hard',
-        message: `${teacher.name} überschreitet das Tageslimit von ${teacher.rules.maxClassesPerDay} Einheiten.`
-      });
-    }
-  }
-  */
-
-  // 6. Check Weekly Hours Limit (Hard) - Ignored (profile rule)
-  /*
-  if (!isSevaka) {
-    const courseDurationMins = timeToMinutes(course.endTime) - timeToMinutes(course.startTime);
-    const weeklyDurationMins = allCourses
-      .filter(c => c.teacherId === teacher.id && c.id !== course.id)
-      .reduce((sum, c) => sum + (timeToMinutes(c.endTime) - timeToMinutes(c.startTime)), 0) + courseDurationMins;
-    
-    const weeklyHours = weeklyDurationMins / 60;
-    if (weeklyHours > teacher.rules.maxHoursPerWeek) {
-      conflicts.push({
-        type: 'hard',
-        message: `${teacher.name} überschreitet die wöchentliche maximale Arbeitszeit von ${teacher.rules.maxHoursPerWeek} Std. (Geplant: ${weeklyHours.toFixed(1)} Std.).`
-      });
-    }
-  }
-  */
-
-  // 7. Check Room Preference (Soft) - Ignored (profile rule)
-  /*
-  if (!isSevaka) {
-    if (teacher.rules.preferredRooms.length > 0) {
-      const isPreferredRoom = teacher.rules.preferredRooms.includes(course.roomId);
-      if (!isPreferredRoom) {
+    } else if (course.dayOfWeek === 0) {
+      const allowed = wochenplanRules.satsangEinfuehrung.sunday;
+      const isAllowed = allowed.some((a: string) => teacherNameLower.includes(a));
+      if (!isAllowed) {
         conflicts.push({
-          type: 'soft',
-          message: `${teacher.name} unterrichtet bevorzugt in anderen Räumen.`
+          type: 'hard',
+          message: `Sonntags darf die Satsang Einführung nur von ${allowed.join(', ').toUpperCase()} geleitet werden.`
         });
       }
     }
   }
-  */
 
-  // 8. Check Room Rules from Raum Regeln.txt (Hard)
+  // 5. Satsang rules
+  const isSatsangCourse = course.name === 'Satsang';
+  if (isSatsangCourse) {
+    const forbiddenForSatsang = wochenplanRules.satsang.forbidden;
+    const isForbidden = forbiddenForSatsang.some((name: string) => teacherNameLower.includes(name));
+    if (isForbidden) {
+      conflicts.push({
+        type: 'hard',
+        message: `${teacher.name} darf laut Satsang-Regeln nie für einen Satsang eingeteilt werden.`
+      });
+    }
+
+    if (course.dayOfWeek === 2 && course.startTime === '20:00') {
+      conflicts.push({
+        type: 'hard',
+        message: `Dienstagabends gibt es nie einen Satsang.`
+      });
+    }
+
+    if (course.startTime === '07:00') {
+      const allowedMorningSatsang = wochenplanRules.satsang.morningAllowed;
+      const isAllowedMorning = allowedMorningSatsang.some((name: string) => teacherNameLower.includes(name));
+      if (!isAllowedMorning) {
+        conflicts.push({
+          type: 'hard',
+          message: `${teacher.name} darf morgens keinen Satsang leiten. Nur ${allowedMorningSatsang.join(', ').toUpperCase()} sind dafür eingeteilt.`
+        });
+      } else {
+        const canDoTwo = wochenplanRules.satsang.morningMaxTwo.some((name: string) => teacherNameLower.includes(name));
+        const maxMorningSatsangs = canDoTwo ? 2 : 1;
+        const otherMorningSatsangs = otherSevakaAssignments.filter(c => c.name === 'Satsang' && c.startTime === '07:00');
+        if (otherMorningSatsangs.length >= maxMorningSatsangs) {
+          conflicts.push({
+            type: 'hard',
+            message: `${teacher.name} darf maximal ${maxMorningSatsangs} mal pro Woche für einen Satsang am Morgen eingeteilt werden.`
+          });
+        }
+      }
+    }
+
+    if (course.startTime === '20:00') {
+      if ([3, 4, 5, 6, 0].includes(course.dayOfWeek)) {
+        const primary = wochenplanRules.satsang.evening.wedSun.primary;
+        const isPrimaryAbsent = isTeacherAbsent(primary, course.dayOfWeek, targetWeekCode, absences);
+        if (!teacherNameLower.includes(primary)) {
+          if (!isPrimaryAbsent) {
+            conflicts.push({
+              type: 'hard',
+              message: `${primary.toUpperCase()} leitet mittwochs bis sonntags den Abend-Satsang. Nur wenn sie laut sevafrei-Kalender nicht kann, werden andere eingeteilt.`
+            });
+          } else {
+            const backups = wochenplanRules.satsang.evening.wedSun.backups;
+            const isBackup = backups.some((name: string) => teacherNameLower.includes(name));
+            if (!isBackup) {
+              conflicts.push({
+                type: 'hard',
+                message: `${teacher.name} darf ${primary.toUpperCase()}s Abend-Satsang nicht vertreten. Nur ${backups.join(', ').toUpperCase()} sind als Vertretung erlaubt.`
+              });
+            }
+          }
+        }
+      }
+
+      if (course.dayOfWeek === 1) {
+        const primary = wochenplanRules.satsang.evening.mon.primary;
+        const isPrimaryAbsent = isTeacherAbsent(primary, course.dayOfWeek, targetWeekCode, absences);
+        if (!teacherNameLower.includes(primary)) {
+          if (!isPrimaryAbsent) {
+            conflicts.push({
+              type: 'hard',
+              message: `${primary.toUpperCase()} leitet montags den Abend-Satsang. Nur wenn sie laut sevafrei-Kalender nicht kann, werden andere eingeteilt.`
+            });
+          } else {
+            const backups = wochenplanRules.satsang.evening.mon.backups;
+            const isBackup = backups.some((name: string) => teacherNameLower.includes(name));
+            if (!isBackup) {
+              conflicts.push({
+                type: 'hard',
+                message: `${teacher.name} darf ${primary.toUpperCase()}s Abend-Satsang nicht vertreten. Nur ${backups.join(', ').toUpperCase()} sind als Vertretung erlaubt.`
+              });
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // 6. Meditation daily primary
+  if (isMeditationForSevaka && course.startTime === '07:00') {
+    const primaryName = (wochenplanRules.meditation.dailyPrimary as any)[course.dayOfWeek];
+    if (primaryName) {
+      const isPrimaryAbsent = isTeacherAbsent(primaryName, course.dayOfWeek, targetWeekCode, absences);
+      if (!isPrimaryAbsent && !teacherNameLower.includes(primaryName)) {
+        conflicts.push({
+          type: 'hard',
+          message: `Die geführte Meditation am ${getDayName(course.dayOfWeek)} darf nur von ${primaryName.toUpperCase()} geleitet werden (es sei denn, ${primaryName.toUpperCase()} ist laut sevafrei-Kalender abwesend).`
+        });
+      }
+    }
+  }
+
+  // 7. Mittelstufe Ankommensstunde rules
+  const isMittelstufeAnkommen = (course.dayOfWeek === 5 || course.dayOfWeek === 0) &&
+                                course.startTime === '16:30' &&
+                                courseNameLower.includes('mittelstufe');
+  if (isMittelstufeAnkommen) {
+    const primary = wochenplanRules.yoga.fridayMittelstufeAnkommen.primary;
+    const isPrimaryAbsent = isTeacherAbsent(primary, course.dayOfWeek, targetWeekCode, absences);
+    if (!isPrimaryAbsent) {
+      if (!teacherNameLower.includes(primary)) {
+        conflicts.push({
+          type: 'hard',
+          message: `${primary.toUpperCase()} muss die Mittelstufe Ankommensstunde leiten, da sie laut sevafrei-Kalender verfügbar ist.`
+        });
+      }
+    } else if (course.dayOfWeek === 0) {
+      const backups = wochenplanRules.yoga.sundayMittelstufeAnkommen.backups;
+      let assignedBackup = null;
+      for (const backupName of backups) {
+        const isBackupAbsent = isTeacherAbsent(backupName, course.dayOfWeek, targetWeekCode, absences);
+        if (!isBackupAbsent) {
+          assignedBackup = backupName;
+          break;
+        }
+      }
+      if (assignedBackup && !teacherNameLower.includes(assignedBackup)) {
+        conflicts.push({
+          type: 'hard',
+          message: `Da ${primary.toUpperCase()} abwesend ist, muss ${assignedBackup.toUpperCase()} die Mittelstufe Ankommensstunde am Sonntag leiten.`
+        });
+      }
+    }
+  }
+
+  // 8. Friday 09:15 Anfängerstunde
+  const isFridayMorningAnfaenger = course.dayOfWeek === 5 &&
+                                   course.startTime === '09:15' &&
+                                   courseNameLower.includes('anfänger');
+  if (isFridayMorningAnfaenger) {
+    const primary = wochenplanRules.yoga.fridayMorningAnfaenger.primary;
+    const isPrimaryAbsent = isTeacherAbsent(primary, course.dayOfWeek, targetWeekCode, absences);
+    if (!isPrimaryAbsent) {
+      if (!teacherNameLower.includes(primary)) {
+        conflicts.push({
+          type: 'hard',
+          message: `${primary.toUpperCase()} muss die Anfängerstunde am Freitag um 09:15 Uhr leiten, da sie verfügbar ist.`
+        });
+      }
+    } else {
+      const backup = wochenplanRules.yoga.fridayMorningAnfaenger.backup;
+      const isBackupAbsent = isTeacherAbsent(backup, course.dayOfWeek, targetWeekCode, absences);
+      if (!isBackupAbsent && !teacherNameLower.includes(backup)) {
+        conflicts.push({
+          type: 'hard',
+          message: `Da ${primary.toUpperCase()} abwesend ist, muss ${backup.toUpperCase()} die Anfängerstunde am Freitag um 09:15 Uhr leiten.`
+        });
+      }
+    }
+  }
+
+  // 9. Generic limits from JSON
+  if (teacher.isYogaTeacher === false && isYogaClassForSevaka) {
+    conflicts.push({
+      type: 'hard',
+      message: `${teacher.name} gibt keine Yogastunden.`
+    });
+  }
+
+  if (teacher.rules.canLeadSatsang === false && isSatsangForSevaka) {
+    conflicts.push({
+      type: 'hard',
+      message: `${teacher.name} leitet nie Satsangs.`
+    });
+  }
+
+  if (teacher.rules.maxYogaClassesPerWeek !== undefined && isYogaClassForSevaka && counts.yogaCount > teacher.rules.maxYogaClassesPerWeek) {
+    conflicts.push({
+      type: 'hard',
+      message: `${teacher.name} darf für maximal ${teacher.rules.maxYogaClassesPerWeek} Yogastunden wöchentlich eingeteilt werden.`
+    });
+  }
+
+  if (teacher.rules.maxMeditationPerWeek !== undefined && isMeditationForSevaka && counts.meditationCount > teacher.rules.maxMeditationPerWeek) {
+    conflicts.push({
+      type: 'hard',
+      message: `${teacher.name} kann maximal ${teacher.rules.maxMeditationPerWeek} mal pro Woche für eine geführte Meditation eingeteilt werden.`
+    });
+  }
+
+  if (teacher.rules.maxMorningSatsangsPerWeek !== undefined && isSatsangForSevaka && course.startTime < '12:00') {
+    const morningSatsangs = otherSevakaAssignments.filter(c => c.name.toLowerCase().includes('satsang') && c.startTime < '12:00').length + 1;
+    if (morningSatsangs > teacher.rules.maxMorningSatsangsPerWeek) {
+      conflicts.push({
+        type: 'hard',
+        message: `${teacher.name} kann maximal ${teacher.rules.maxMorningSatsangsPerWeek} mal pro Woche für einen Satsang am Morgen eingeteilt werden.`
+      });
+    }
+  }
+
+  if (teacher.rules.maxOnnPerWeek !== undefined && isOnnForSevaka && counts.onnCount > teacher.rules.maxOnnPerWeek) {
+    conflicts.push({
+      type: 'hard',
+      message: `${teacher.name} leitet Om Namo Narayanaya maximal ${teacher.rules.maxOnnPerWeek} mal wöchentlich.`
+    });
+  }
+
+  if (teacher.rules.noYogaOnWeekend && isYogaClassForSevaka && [5, 6, 0].includes(course.dayOfWeek)) {
+    conflicts.push({
+      type: 'hard',
+      message: `${teacher.name} unterrichtet freitags, samstags und sonntags keine Yogastunden.`
+    });
+  }
+
+  if (teacher.rules.noTwoYogaSameDay && isYogaClassForSevaka) {
+    const otherYogaOnDay = otherSevakaAssignments.some(c => {
+      const cName = c.name.toLowerCase();
+      const cStyle = c.style.toLowerCase();
+      const cIsYoga = !cName.includes('meditation') && !cName.includes('medi.') && !cStyle.includes('meditation') && !cName.includes('satsang') && !cName.includes('om namo');
+      return cIsYoga && c.dayOfWeek === course.dayOfWeek;
+    });
+    if (otherYogaOnDay) {
+      conflicts.push({
+        type: 'hard',
+        message: `${teacher.name} darf nicht zwei Yogastunden am selben Tag leiten.`
+      });
+    }
+  }
+
+  if (teacher.rules.weekendAfternoonOnly && isYogaClassForSevaka && [5, 6, 0].includes(course.dayOfWeek)) {
+    const isAfternoon = timeToMinutes(course.startTime) >= timeToMinutes('12:00');
+    if (!isAfternoon) {
+      conflicts.push({
+        type: 'hard',
+        message: `Am Wochenende darf ${teacher.name} nur am Nachmittag für eine Yogastunde eingeteilt werden.`
+      });
+    }
+  }
+
+  if (tRules && tRules.maxYinYogaAnfaengerPerWeek !== undefined) {
+    const isYinAnfaenger = courseNameLower.includes('anfänger') && courseStyleLower.includes('yin');
+    if (isYinAnfaenger) {
+      const otherYinAnfaenger = otherSevakaAssignments.filter(c => c.name.toLowerCase().includes('anfänger') && c.style.toLowerCase().includes('yin')).length + 1;
+      if (otherYinAnfaenger > tRules.maxYinYogaAnfaengerPerWeek) {
+        conflicts.push({
+          type: 'hard',
+          message: `${teacher.name} kann nur ${tRules.maxYinYogaAnfaengerPerWeek} mal wöchentlich für eine Yin Yoga Anfängerstunde eingeteilt werden.`
+        });
+      }
+    }
+  }
+
+  if (tRules && tRules.maxAnfaengerYogaPerWeek !== undefined && isYogaClassForSevaka && courseNameLower.includes('anfänger')) {
+    const anfaengerYogaCount = otherSevakaAssignments.filter(c => {
+      const cName = c.name.toLowerCase();
+      const cStyle = c.style.toLowerCase();
+      const cIsYoga = !cName.includes('meditation') && !cName.includes('medi.') && !cStyle.includes('meditation') && !cName.includes('satsang') && !cName.includes('om namo');
+      return cIsYoga && cName.includes('anfänger');
+    }).length + 1;
+    if (anfaengerYogaCount > tRules.maxAnfaengerYogaPerWeek) {
+      conflicts.push({
+        type: 'hard',
+        message: `${teacher.name} kann maximal ${tRules.maxAnfaengerYogaPerWeek} mal wöchentlich für eine Anfängerstunde eingeteilt werden.`
+      });
+    }
+  }
+
+  // 10. Check Room Rules from Raum Regeln.txt (Hard)
   const roomConflicts = validateRoomRules(course, allCourses, teachers || db.getTeachers());
   conflicts.push(...roomConflicts);
 
@@ -986,7 +598,8 @@ export function validateAllCourses(
   courses: Course[],
   teachers: Teacher[],
   seminarLeaderIds: string[] = [],
-  targetWeekCode?: string
+  targetWeekCode?: string,
+  absences?: any[]
 ): Record<string, ConflictMessage[]> {
   const validationMap: Record<string, ConflictMessage[]> = {};
   
@@ -1001,7 +614,7 @@ export function validateAllCourses(
       validationMap[course.id] = validateRoomRules(course, courses, teachers);
       return;
     }
-    validationMap[course.id] = validateAssignment(teacher, course, courses, seminarLeaderIds, targetWeekCode, teachers);
+    validationMap[course.id] = validateAssignment(teacher, course, courses, seminarLeaderIds, targetWeekCode, teachers, absences);
   });
   
   return validationMap;
@@ -1013,7 +626,8 @@ export function runAiPlanning(
   teachers: Teacher[],
   seminarLeaderIds: string[] = [],
   targetWeekCode?: string,
-  customConstraints: any[] = []
+  customConstraints: any[] = [],
+  absences?: any[]
 ): {
   plannedCourses: Course[];
   logs: string[];
@@ -1041,7 +655,7 @@ export function runAiPlanning(
     adjustRoomsForRules(tempLayout, teachers);
     const adjustedCourse = tempLayout.find(x => x.id === c.id)!;
 
-    const conflicts = validateAssignment(teacher, adjustedCourse, tempLayout, seminarLeaderIds, targetWeekCode, teachers);
+    const conflicts = validateAssignment(teacher, adjustedCourse, tempLayout, seminarLeaderIds, targetWeekCode, teachers, absences);
     const hasAbsenceConflict = conflicts.some(conf => conf.type === 'hard' && conf.message.includes('abwesend'));
     if (hasAbsenceConflict) {
       const dayNames = ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag'];
@@ -1091,7 +705,8 @@ export function runAiPlanning(
       adjustRoomsForRules(tempLayout, teachers);
       const adjustedCourse = tempLayout.find(x => x.id === course.id)!;
 
-      const conflicts = validateAssignment(teacher, adjustedCourse, tempLayout, seminarLeaderIds, targetWeekCode, teachers);
+      const conflicts = validateAssignment(teacher, adjustedCourse, tempLayout, seminarLeaderIds, targetWeekCode, teachers, absences);
+      const teacherNameLower = teacher.name.toLowerCase();
       
       const hardConflicts = conflicts.filter(c => c.type === 'hard');
       const softConflicts = conflicts.filter(c => c.type === 'soft');
@@ -1166,101 +781,75 @@ export function runAiPlanning(
       
       score -= plannedHours * 5; // deduct points to encourage balance (e.g. -5 points per planned hour)
       
-      // Custom scoring rules for Karuna (Seminarhausleitung)
-      if (teacher.name.toLowerCase().includes('karuna')) {
-        const isYogaClass = course.style.toLowerCase() !== 'meditation';
+      // Custom scoring rules from compiled rules: prefers Mittelstufe
+      if (teacher.rules.prefersMittelstufe && course.name.toLowerCase().includes('mittelstufe')) {
+        score += 150;
+      }
 
-        // 2. Ankommensyogastunden (Friday and Sunday at 16:30, Hatha style/Mittelstufe name)
-        const isAnkommYoga = isYogaClass &&
-                             (course.name === 'Mittelstufe Ankommensstunde' || course.name === 'Mittelstufe AS' || course.name === 'Mittelstufe') &&
-                             (course.dayOfWeek === 5 || course.dayOfWeek === 0) &&
-                             course.startTime === '16:30';
-        if (isAnkommYoga) {
-          score += 1000;
-        }
-
-        // 3. Saturday Yoga class: Emergency backup option ONLY
-        if (isYogaClass && course.dayOfWeek === 6) {
-          score -= 500;
-        }
-
-        // 4. Other Yoga classes on normal weekdays: Penalize slightly to avoid preempting other teachers
-        if (isYogaClass && !isAnkommYoga && course.dayOfWeek !== 6) {
-          score -= 200;
+      // Custom scoring rules from compiled rules: weekend as backup only
+      if (teacher.rules.weekendAsBackupOnly && [5, 6, 0].includes(course.dayOfWeek) && course.style.toLowerCase() !== 'meditation') {
+        if (timeToMinutes(course.startTime) >= timeToMinutes('12:00')) {
+          score -= 1000;
         }
       }
 
-      // Custom scoring rules for Narayani: prefers Mittelstufe
-      if (teacher.name.toLowerCase().includes('narayani')) {
-        if (course.name.toLowerCase().includes('mittelstufe')) {
-          score += 150; // High bonus for her preferred style
-        }
-      }
-
-      // Custom scoring rules for Ulrich: Friday and Sunday afternoon classes as emergency backup only
-      if (teacher.name.toLowerCase().includes('ulrich')) {
-        const isYogaClass = course.style.toLowerCase() !== 'meditation';
-        if (isYogaClass && [5, 0].includes(course.dayOfWeek)) {
-          if (timeToMinutes(course.startTime) >= timeToMinutes('12:00')) {
-            score -= 1000; // Deduct points so he is only chosen if nobody else is available
-          }
-        }
-      }
-
-      // Rule 8: Friday morning (09:15) Beginner class: Harishakti (primary) or Abha (backup)
+      // Rule 8: Friday morning (09:15) Beginner class from compiled rules
+      const yogaRules = wochenplanRules.yoga;
       if (course.dayOfWeek === 5 && course.startTime === '09:15' && course.name.toLowerCase().includes('anfänger')) {
-        if (teacher.name.toLowerCase().includes('harishakti')) {
+        if (teacherNameLower.includes(yogaRules.fridayMorningAnfaenger.primary)) {
           score += 10000;
-        } else if (teacher.name.toLowerCase().includes('abha')) {
+        } else if (teacherNameLower.includes(yogaRules.fridayMorningAnfaenger.backup)) {
           score += 5000;
         }
       }
 
-      // Rule 9: Friday morning (09:15) Intermediate class: Pranava (primary)
+      // Rule 9: Friday morning (09:15) Intermediate class from compiled rules
       if (course.dayOfWeek === 5 && course.startTime === '09:15' && course.name.toLowerCase().includes('mittelstufe')) {
-        if (teacher.name.toLowerCase().includes('pranava')) {
+        if (teacherNameLower.includes(yogaRules.fridayMorningMittelstufe.primary)) {
           score += 10000;
         }
       }
 
-      // Rule 6 & 7: Friday and Sunday 16:30 Mittelstufe Ankommensstunde
+      // Rule 6 & 7: Friday and Sunday 16:30 Mittelstufe Ankommensstunde from compiled rules
       const isMittelstufeAnkommen = (course.dayOfWeek === 5 || course.dayOfWeek === 0) && 
                                     course.startTime === '16:30' && 
                                     course.name.toLowerCase().includes('mittelstufe');
       if (isMittelstufeAnkommen) {
-        if (teacher.name.toLowerCase().includes('karuna')) {
+        const primary = yogaRules.fridayMittelstufeAnkommen.primary;
+        if (teacherNameLower.includes(primary)) {
           score += 10000;
         } else if (course.dayOfWeek === 0) { // Backup priorities only on Sunday
-          if (teacher.name.toLowerCase().includes('anjali')) {
-            score += 5000;
-          } else if (teacher.name.toLowerCase().includes('narayani')) {
-            score += 2500;
-          } else if (teacher.name.toLowerCase().includes('ulrich')) {
-            score += 2000; // offsets his standard -1000 penalty for weekend afternoon
+          const backups = yogaRules.sundayMittelstufeAnkommen.backups;
+          const idx = backups.findIndex((b: string) => teacherNameLower.includes(b));
+          if (idx !== -1) {
+            score += 5000 - idx * 2500;
+            if (backups[idx] === 'ulrich') {
+              score += 2000; // offset Ulrich's standard weekend penalty
+            }
           }
         }
       }
 
-      // Custom scoring rules for Pranayama: prioritize Karuna and Burnie first, then Narayani and Abha
+      // Custom scoring rules for Pranayama from compiled rules
       const isPranayamaCourse = course.name.toLowerCase().includes('pranayama') || course.style.toLowerCase().includes('pranayama');
       if (isPranayamaCourse) {
-        if (teacher.name.toLowerCase().includes('karuna') || teacher.name.toLowerCase().includes('burnie')) {
-          score += 1000; // Prioritize Karuna and Burnie
-        } else if (teacher.name.toLowerCase().includes('narayani') || teacher.name.toLowerCase().includes('abha')) {
-          score += 200; // Secondary option
+        const prioritized = wochenplanRules.pranayama.prioritized || [];
+        const allowed = wochenplanRules.pranayama.allowed || [];
+        if (prioritized.some((n: string) => teacherNameLower.includes(n))) {
+          score += 1000;
+        } else if (allowed.some((n: string) => teacherNameLower.includes(n))) {
+          score += 200;
         }
       }
 
-      // Custom scoring rules for Sunday Satsang Einführung: only Nirmaya, Hu, Pranava, Mounir, Burnie
+      // Custom scoring rules for Sunday Satsang Einführung from compiled rules
       const isSatsangEinfuehrungCourse = course.name.toLowerCase().includes('satsang einführung') || course.name.toLowerCase().includes('satsang-einführung');
       if (isSatsangEinfuehrungCourse && course.dayOfWeek === 0) {
-        const allowed = ['nirmaya', 'hu', 'pranava', 'mounir', 'burnie'];
-        const tNameLower = teacher.name.toLowerCase();
-        const isAllowed = allowed.some(a => tNameLower.includes(a));
+        const allowed = wochenplanRules.satsangEinfuehrung.sunday;
+        const isAllowed = allowed.some((a: string) => teacherNameLower.includes(a));
         if (isAllowed) {
-          score += 500; // Prioritize these five
+          score += 500;
           
-          // Parse week number for rotation
           let weekNum = 0;
           if (targetWeekCode) {
             const match = targetWeekCode.match(/-W(\d+)/);
@@ -1269,11 +858,10 @@ export function runAiPlanning(
             }
           }
           if (weekNum > 0) {
-            // Rotate preferred teacher based on week index
             const preferredIndex = weekNum % allowed.length;
             const preferredName = allowed[preferredIndex];
-            if (tNameLower.includes(preferredName)) {
-              score += 1000; // Huge bonus for the rotating preference
+            if (teacherNameLower.includes(preferredName)) {
+              score += 1000;
             }
           }
         }
@@ -1282,52 +870,34 @@ export function runAiPlanning(
       // --- GEFÜHRTE MEDITATION SCORING RULES ---
       const isMeditationCourse = course.name === 'Geführte Meditation' || course.style.toLowerCase() === 'meditation';
       if (isMeditationCourse) {
-        const tNameLower = teacher.name.toLowerCase();
-        
-        // Allowed morning meditation list
-        const allowedMeditation = ['pranava', 'harishakti', 'alexander', 'burnie', 'satyam', 'nirmaya', 'narayani', 'mounir', 'hu', 'christopher'];
-        const isAllowed = allowedMeditation.some(name => tNameLower.includes(name));
-        
-        // Forbidden morning meditation list
-        const forbiddenMeditation = ['karuna', 'anjali', 'abha', 'ulrich', 'adam', 'teresa'];
-        const isForbidden = forbiddenMeditation.some(name => tNameLower.includes(name));
+        const allowed = wochenplanRules.meditation.allowed;
+        const forbidden = wochenplanRules.meditation.forbidden;
+        const isAllowed = allowed.some((name: string) => teacherNameLower.includes(name));
+        const isForbidden = forbidden.some((name: string) => teacherNameLower.includes(name));
         
         if (isForbidden) {
           score -= 10000;
         } else if (isAllowed) {
-          score += 100; // base allowed bonus
+          score += 100;
           
-          // Day-specific primary teacher bonus (rules 3-9)
-          const primaryMeditationTeachers: Record<number, string> = {
-            1: 'hu',
-            2: 'alexander',
-            3: 'satyam',
-            4: 'christopher',
-            5: 'pranava',
-            6: 'nirmaya',
-            0: 'harishakti'
-          };
-          
-          const primaryName = primaryMeditationTeachers[course.dayOfWeek];
-          if (primaryName && tNameLower.includes(primaryName)) {
-            score += 10000; // Make them the primary choice if available
+          const primaryName = (wochenplanRules.meditation.dailyPrimary as any)[course.dayOfWeek];
+          if (primaryName && teacherNameLower.includes(primaryName)) {
+            score += 10000;
           }
         } else if (teacher.roleType === 'sevaka') {
-          score -= 10000; // Not allowed for other sevakas
+          score -= 10000;
         }
       }
 
       // --- SATSANG SCORING RULES ---
       if (course.name === 'Satsang') {
-        const tNameLower = teacher.name.toLowerCase();
-        
         // Morgen-Satsang (07:00):
         if (course.startTime === '07:00') {
-          const allowedMorningSatsang = ['anjali', 'nirmaya', 'burnie', 'harishakti', 'narayani', 'abha', 'alexander'];
-          if (allowedMorningSatsang.some(name => tNameLower.includes(name))) {
-            score += 500; // Priorisiere erlaubte Morgen-Satsang-Leiter
+          const allowedMorningSatsang = wochenplanRules.satsang.morningAllowed;
+          if (allowedMorningSatsang.some((name: string) => teacherNameLower.includes(name))) {
+            score += 500;
           } else {
-            score -= 10000; // Andere stark abwerten (obwohl harter Konflikt sie filtert)
+            score -= 10000;
           }
         }
         
@@ -1335,83 +905,16 @@ export function runAiPlanning(
         if (course.startTime === '20:00') {
           // Mittwochs bis sonntags: Karuna ist Standard
           if ([3, 4, 5, 6, 0].includes(course.dayOfWeek)) {
-            if (tNameLower.includes('karuna')) {
-              score += 10000; // Extrem hohe Priorität für Karuna
+            const primary = wochenplanRules.satsang.evening.wedSun.primary;
+            if (teacherNameLower.includes(primary)) {
+              score += 10000;
             } else {
-              // Prüfe ob Karuna abwesend ist
-              let isKarunaAbsent = false;
-              const karuna = (teachers || db.getTeachers()).find(t => t.name.toLowerCase().includes('karuna'));
-              if (targetWeekCode && karuna) {
-                const courseDate = getLocalDateForDay(targetWeekCode, course.dayOfWeek);
-                const saved = typeof window !== 'undefined' ? localStorage.getItem('rapla_sevafrei') : null;
-                if (saved) {
-                  const sevafreiList = JSON.parse(saved);
-                  const activeAbsence = sevafreiList.find((entry: any) =>
-                    entry.teacherId === karuna.id &&
-                    courseDate >= entry.startDate &&
-                    courseDate <= entry.endDate &&
-                    !['seminartage'].includes(entry.type.toLowerCase())
-                  );
-                  if (activeAbsence) {
-                    isKarunaAbsent = true;
-                  }
-                }
-              }
-              
-              if (isKarunaAbsent) {
-                // Wenn Karuna abwesend ist, werden Narayani, Abha und Anjali bevorzugt und gleichermaßen eingeteilt
-                const isBackup = ['narayani', 'abha', 'anjali'].some(name => tNameLower.includes(name));
-                if (isBackup) {
-                  score += 8000; // Hohe Basis-Priorität
-                  
-                  // Balance: subtrahiere Punkte basierend auf der Anzahl bereits zugewiesener Abend-Satsangs in dieser Woche
-                  const eveningSatsangCount = workingCourses.filter(c => 
-                    c.teacherId === teacher.id && 
-                    c.name === 'Satsang' && 
-                    c.startTime === '20:00'
-                  ).length;
-                  score -= eveningSatsangCount * 2000;
-                } else {
-                  score -= 10000; // Andere abwerten
-                }
-              } else {
-                score -= 10000; // Karuna ist nicht abwesend und Lehrer ist nicht Karuna
-              }
-            }
-          }
-          
-          // Montag: Narayani ist Standard
-          if (course.dayOfWeek === 1) {
-            if (tNameLower.includes('narayani')) {
-              score += 10000; // Extrem hohe Priorität für Narayani
-            } else {
-              // Prüfe ob Narayani abwesend ist
-              let isNarayaniAbsent = false;
-              const narayani = (teachers || db.getTeachers()).find(t => t.name.toLowerCase().includes('narayani'));
-              if (targetWeekCode && narayani) {
-                const courseDate = getLocalDateForDay(targetWeekCode, course.dayOfWeek);
-                const saved = typeof window !== 'undefined' ? localStorage.getItem('rapla_sevafrei') : null;
-                if (saved) {
-                  const sevafreiList = JSON.parse(saved);
-                  const activeAbsence = sevafreiList.find((entry: any) =>
-                    entry.teacherId === narayani.id &&
-                    courseDate >= entry.startDate &&
-                    courseDate <= entry.endDate &&
-                    !['seminartage'].includes(entry.type.toLowerCase())
-                  );
-                  if (activeAbsence) {
-                    isNarayaniAbsent = true;
-                  }
-                }
-              }
-              
-              if (isNarayaniAbsent) {
-                // Wenn Narayani abwesend ist, werden Abha und Anjali bevorzugt und gleichermaßen eingeteilt
-                const isBackup = ['abha', 'anjali'].some(name => tNameLower.includes(name));
+              const isPrimaryAbsent = isTeacherAbsent(primary, course.dayOfWeek, targetWeekCode, absences);
+              if (isPrimaryAbsent) {
+                const backups = wochenplanRules.satsang.evening.wedSun.backups;
+                const isBackup = backups.some((name: string) => teacherNameLower.includes(name));
                 if (isBackup) {
                   score += 8000;
-                  
-                  // Balance: subtrahiere Punkte basierend auf der Anzahl bereits zugewiesener Abend-Satsangs in dieser Woche
                   const eveningSatsangCount = workingCourses.filter(c => 
                     c.teacherId === teacher.id && 
                     c.name === 'Satsang' && 
@@ -1422,7 +925,34 @@ export function runAiPlanning(
                   score -= 10000;
                 }
               } else {
-                score -= 10000; // Narayani ist nicht abwesend und Lehrer ist nicht Narayani
+                score -= 10000;
+              }
+            }
+          }
+          
+          // Montag: Narayani ist Standard
+          if (course.dayOfWeek === 1) {
+            const primary = wochenplanRules.satsang.evening.mon.primary;
+            if (teacherNameLower.includes(primary)) {
+              score += 10000;
+            } else {
+              const isPrimaryAbsent = isTeacherAbsent(primary, course.dayOfWeek, targetWeekCode, absences);
+              if (isPrimaryAbsent) {
+                const backups = wochenplanRules.satsang.evening.mon.backups;
+                const isBackup = backups.some((name: string) => teacherNameLower.includes(name));
+                if (isBackup) {
+                  score += 8000;
+                  const eveningSatsangCount = workingCourses.filter(c => 
+                    c.teacherId === teacher.id && 
+                    c.name === 'Satsang' && 
+                    c.startTime === '20:00'
+                  ).length;
+                  score -= eveningSatsangCount * 2000;
+                } else {
+                  score -= 10000;
+                }
+              } else {
+                score -= 10000;
               }
             }
           }
@@ -1455,7 +985,7 @@ export function runAiPlanning(
         adjustRoomsForRules(tempLayout, teachers);
         const adjustedCourse = tempLayout.find(x => x.id === course.id)!;
 
-        const conflicts = validateAssignment(teacher, adjustedCourse, tempLayout, seminarLeaderIds, targetWeekCode, teachers);
+        const conflicts = validateAssignment(teacher, adjustedCourse, tempLayout, seminarLeaderIds, targetWeekCode, teachers, absences);
         
         // Hard conflicts that are physical absence (cannot be relaxed under any circumstance)
         const nonRelaxableConflicts = conflicts.filter(c => {
@@ -1548,35 +1078,16 @@ export function runAiPlanning(
     const teacher = teachers.find(t => t.id === c.teacherId);
     if (!teacher) return;
     const tNameLower = teacher.name.toLowerCase();
-    const isYoga = !c.name.toLowerCase().includes('meditation') &&
-                   !c.name.toLowerCase().includes('medi.') &&
-                   !c.style.toLowerCase().includes('meditation') &&
-                   !c.name.toLowerCase().includes('satsang') &&
-                   !c.name.toLowerCase().includes('om namo');
 
-    // Rule 5: Burnie beginner class rename
-    if (tNameLower.includes('burnie') && isYoga && c.name.toLowerCase().includes('anfänger')) {
-      c.name = 'Yoga Vidya Pavanmuktasana';
-    } 
-    // Satyam: Yoga Flow Mittelstufe
-    else if (tNameLower.includes('satyam') && c.name === 'Mittelstufe') {
-      c.name = 'Yoga Flow Mittelstufe';
-    } 
-    // Abha: Anfänger Yin Yoga
-    else if (tNameLower.includes('abha') && c.name === 'Anfänger') {
-      const hasYin = workingCourses.some(wc => wc.teacherId === teacher.id && wc.name === 'Anfänger Yin Yoga');
-      if (!hasYin) {
-        c.name = 'Anfänger Yin Yoga';
-      }
-    }
-
-    // Rule 9: Friday morning (09:15) intermediate class rename based on Pranava assignment
-    if (c.dayOfWeek === 5 && c.startTime === '09:15' && c.name.toLowerCase().includes('mittelstufe')) {
-      if (tNameLower.includes('pranava')) {
-        c.name = 'Mittelstufe Klangyogastunde';
-      } else {
-        c.name = 'Mittelstufe';
-      }
+    // Look up teacher custom course renames dynamically
+    const teacherKey = Object.keys(wochenplanRules.teachers).find(k => tNameLower.includes(k) || k.includes(tNameLower));
+    const tRules = teacherKey ? (wochenplanRules.teachers as any)[teacherKey] : null;
+    if (tRules && tRules.customCourseNames && tRules.customCourseNames.length > 0) {
+      tRules.customCourseNames.forEach((item: any) => {
+        if (c.name.trim() === item.originalName.trim()) {
+          c.name = item.customName;
+        }
+      });
     }
   });
 
@@ -1722,5 +1233,77 @@ export function adjustRoomsForRules(courses: Course[], teachers: Teacher[]): Cou
     }
   });
 
+  return courses;
+}
+
+// Name auto-adjustment logic
+export function adjustNamesForRules(courses: Course[], teachers: Teacher[]): Course[] {
+  courses.forEach(course => {
+    if (!course.teacherId) {
+      // Revert to template name if possible, or keep original
+      if (course.name === 'Yoga Vidya Pavanmuktasana' || course.name === 'Yoga Flow Mittelstufe' || course.name === 'Anfänger Yin Yoga') {
+        course.name = course.name.toLowerCase().includes('anfänger') ? 'Anfänger' : 'Mittelstufe';
+      }
+      if (course.dayOfWeek === 5 && course.startTime === '09:15' && course.name === 'Mittelstufe Klangyogastunde') {
+        course.name = 'Mittelstufe';
+      }
+      return;
+    }
+    const teacher = teachers.find(t => t.id === course.teacherId);
+    if (!teacher) return;
+    const tNameLower = teacher.name.toLowerCase();
+
+    const isYoga = !course.name.toLowerCase().includes('meditation') &&
+                   !course.name.toLowerCase().includes('medi.') &&
+                   !course.style.toLowerCase().includes('meditation') &&
+                   !course.name.toLowerCase().includes('satsang') &&
+                   !course.name.toLowerCase().includes('om namo');
+
+    if (isYoga) {
+      // 1. Burnie Anfänger Yoga
+      if (tNameLower.includes('burnie') && course.name.toLowerCase().includes('anfänger')) {
+        course.name = 'Yoga Vidya Pavanmuktasana';
+      }
+      // 2. Satyam Mittelstufe
+      else if (tNameLower.includes('satyam') && course.name.toLowerCase().includes('mittelstufe')) {
+        course.name = 'Yoga Flow Mittelstufe';
+      }
+      // 3. Abha Anfänger -> Anfänger Yin Yoga
+      else if (tNameLower.includes('abha') && course.name.toLowerCase().includes('anfänger')) {
+        course.name = 'Anfänger Yin Yoga';
+      }
+      // Revert if someone else is assigned to these custom courses
+      else {
+        if (course.name === 'Yoga Vidya Pavanmuktasana' || course.name === 'Yoga Flow Mittelstufe' || course.name === 'Anfänger Yin Yoga') {
+          if (course.dayOfWeek === 5 || course.dayOfWeek === 0) {
+            if (course.startTime === '16:30') {
+              course.name = course.name.toLowerCase().includes('anfänger') ? 'Anfänger Ankommensstunde' : 'Mittelstufe Ankommensstunde';
+            } else {
+              course.name = course.name.toLowerCase().includes('anfänger') ? 'Anfänger' : 'Mittelstufe';
+            }
+          } else {
+            course.name = course.name.toLowerCase().includes('anfänger') ? 'Anfänger' : 'Mittelstufe';
+          }
+        }
+      }
+    }
+
+    // 4. Friday morning (09:15) intermediate class rename based on Pranava assignment
+    if (course.dayOfWeek === 5 && course.startTime === '09:15' && course.name.toLowerCase().includes('mittelstufe')) {
+      if (tNameLower.includes('pranava')) {
+        course.name = 'Mittelstufe Klangyogastunde';
+      } else {
+        course.name = 'Mittelstufe';
+      }
+    }
+  });
+
+  return courses;
+}
+
+// Combined adjustment logic
+export function adjustCoursesForRules(courses: Course[], teachers: Teacher[]): Course[] {
+  adjustNamesForRules(courses, teachers);
+  adjustRoomsForRules(courses, teachers);
   return courses;
 }
