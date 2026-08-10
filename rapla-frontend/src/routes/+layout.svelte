@@ -3,7 +3,7 @@
 	import favicon from '$lib/assets/favicon.svg';
 	import nataraja from '$lib/assets/nataraja.jpg';
 	import { onMount } from 'svelte';
-	import { todoManager } from '$lib/todoStore';
+	import { todoManager } from '$lib/todoStore.svelte';
 
 	let { children } = $props();
 

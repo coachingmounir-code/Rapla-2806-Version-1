@@ -8,8 +8,8 @@
         6
       ],
       "maxMeditationPerWeek": 1,
-      "maxSatsangsPerWeek": 1,
-      "maxMorningSatsangsPerWeek": 1,
+      "maxSatsangsPerWeek": null,
+      "maxMorningSatsangsPerWeek": 2,
       "maxYogaClassesPerWeek": null,
       "maxOnnPerWeek": null,
       "maxAnfaengerYogaPerWeek": null,
@@ -88,7 +88,7 @@
       "customCourseNames": [],
       "availabilityRestrictions": [],
       "preferredAvailability": [],
-      "maxClassesPerDay": 0
+      "maxClassesPerDay": 2
     },
     "abha": {
       "name": "Abha",
@@ -165,7 +165,7 @@
         1
       ],
       "maxMeditationPerWeek": 0,
-      "maxSatsangsPerWeek": 5,
+      "maxSatsangsPerWeek": null,
       "maxMorningSatsangsPerWeek": 0,
       "maxYogaClassesPerWeek": null,
       "maxOnnPerWeek": 0,
@@ -190,11 +190,11 @@
       "freeDays": [
         2
       ],
-      "maxMeditationPerWeek": 1,
+      "maxMeditationPerWeek": null,
       "maxSatsangsPerWeek": 0,
       "maxMorningSatsangsPerWeek": 0,
       "maxYogaClassesPerWeek": 0,
-      "maxOnnPerWeek": 0,
+      "maxOnnPerWeek": null,
       "maxAnfaengerYogaPerWeek": 0,
       "isYogaTeacher": false,
       "canLeadSatsang": false,
@@ -220,18 +220,18 @@
         }
       ],
       "preferredAvailability": [],
-      "maxClassesPerDay": 0
+      "maxClassesPerDay": 2
     },
     "mounir": {
       "name": "Mounir",
       "freeDays": [
         1
       ],
-      "maxMeditationPerWeek": 1,
+      "maxMeditationPerWeek": null,
       "maxSatsangsPerWeek": 0,
       "maxMorningSatsangsPerWeek": 0,
       "maxYogaClassesPerWeek": 0,
-      "maxOnnPerWeek": 0,
+      "maxOnnPerWeek": null,
       "maxAnfaengerYogaPerWeek": 0,
       "isYogaTeacher": false,
       "canLeadSatsang": false,
@@ -246,7 +246,7 @@
       "customCourseNames": [],
       "availabilityRestrictions": [],
       "preferredAvailability": [],
-      "maxClassesPerDay": 0
+      "maxClassesPerDay": 2
     },
     "nirmaya": {
       "name": "Nirmaya",
@@ -255,10 +255,10 @@
         3
       ],
       "maxMeditationPerWeek": 1,
-      "maxSatsangsPerWeek": 1,
+      "maxSatsangsPerWeek": null,
       "maxMorningSatsangsPerWeek": 1,
       "maxYogaClassesPerWeek": 2,
-      "maxOnnPerWeek": 0,
+      "maxOnnPerWeek": null,
       "maxAnfaengerYogaPerWeek": 2,
       "isYogaTeacher": true,
       "canLeadSatsang": true,
@@ -318,7 +318,7 @@
       "maxSatsangsPerWeek": 0,
       "maxMorningSatsangsPerWeek": 0,
       "maxYogaClassesPerWeek": 4,
-      "maxOnnPerWeek": 0,
+      "maxOnnPerWeek": null,
       "maxAnfaengerYogaPerWeek": null,
       "isYogaTeacher": true,
       "canLeadSatsang": false,
@@ -347,8 +347,8 @@
         1
       ],
       "maxMeditationPerWeek": 1,
-      "maxSatsangsPerWeek": 1,
-      "maxMorningSatsangsPerWeek": 1,
+      "maxSatsangsPerWeek": null,
+      "maxMorningSatsangsPerWeek": 2,
       "maxYogaClassesPerWeek": 2,
       "maxOnnPerWeek": null,
       "maxAnfaengerYogaPerWeek": null,
@@ -391,7 +391,7 @@
       "customCourseNames": [],
       "availabilityRestrictions": [],
       "preferredAvailability": [],
-      "maxClassesPerDay": 0
+      "maxClassesPerDay": 2
     },
     "harishakti": {
       "name": "Harishakti",
@@ -466,13 +466,13 @@
       "name": "Christopher",
       "freeDays": [],
       "maxMeditationPerWeek": null,
-      "maxSatsangsPerWeek": 0,
-      "maxMorningSatsangsPerWeek": 0,
-      "maxYogaClassesPerWeek": 0,
-      "maxOnnPerWeek": 0,
-      "maxAnfaengerYogaPerWeek": 0,
-      "isYogaTeacher": false,
-      "canLeadSatsang": false,
+      "maxSatsangsPerWeek": null,
+      "maxMorningSatsangsPerWeek": null,
+      "maxYogaClassesPerWeek": null,
+      "maxOnnPerWeek": null,
+      "maxAnfaengerYogaPerWeek": null,
+      "isYogaTeacher": true,
+      "canLeadSatsang": true,
       "canLeadPranayama": false,
       "canLeadSatsangEinfuehrung": false,
       "canLeadOnn": false,
@@ -484,7 +484,7 @@
       "customCourseNames": [],
       "availabilityRestrictions": [],
       "preferredAvailability": [],
-      "maxClassesPerDay": 0
+      "maxClassesPerDay": 2
     }
   },
   "meditation": {

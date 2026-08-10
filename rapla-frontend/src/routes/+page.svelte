@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { todoManager } from '$lib/todoStore';
+  import { todoManager } from '$lib/todoStore.svelte';
 
   interface Seminar {
     title: string;
