@@ -253,7 +253,7 @@
           }
         }
         
-        if (isAbsent) {
+        if (isAbsent && c.isAiPlanned) {
           return { ...c, teacherId: null };
         }
         return c;
