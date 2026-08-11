@@ -899,19 +899,23 @@ export function runAiPlanning(
         
       if (isEntspannungsangebot && wochenplanRules.entspannungsangebot) {
         const erules = wochenplanRules.entspannungsangebot;
+        let isDesignatedTeacher = false;
         if (course.dayOfWeek === 1 && erules.montag?.primary) {
           if (teacherNameLower.includes(erules.montag.primary.toLowerCase())) {
             score += 10000;
+            isDesignatedTeacher = true;
           }
         } else if (course.dayOfWeek === 3 && erules.mittwoch?.primary) {
           if (teacherNameLower.includes(erules.mittwoch.primary.toLowerCase())) {
             score += 10000;
+            isDesignatedTeacher = true;
           }
         } else if (course.dayOfWeek === 4 && erules.donnerstag?.alternating) {
           const allowed = erules.donnerstag.alternating;
           const isAllowed = allowed.some((a: string) => teacherNameLower.includes(a.toLowerCase()));
           if (isAllowed) {
             score += 5000;
+            isDesignatedTeacher = true;
             let weekNum = 0;
             if (targetWeekCode) {
               const match = targetWeekCode.match(/-W(\d+)/);
@@ -927,6 +931,10 @@ export function runAiPlanning(
               }
             }
           }
+        }
+        
+        if (!isDesignatedTeacher) {
+          score -= 20000; // Nobody else is allowed to teach this!
         }
       }
 
