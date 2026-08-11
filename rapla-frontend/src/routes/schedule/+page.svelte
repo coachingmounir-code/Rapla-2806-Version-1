@@ -372,10 +372,13 @@
     if (formStartTime >= formEndTime) return alert('Endzeit muss nach Startzeit liegen');
 
     // If there are hard conflicts, confirm with user
-    const hasHardConflict = activeConflicts.some(c => c.type === 'hard');
-    if (hasHardConflict) {
+    const hardConflicts = activeConflicts.filter(c => c.type === 'hard');
+    if (hardConflicts.length > 0) {
+      const reasons = hardConflicts.map(c => '- ' + c.message).join('\n');
       const proceed = confirm(
-        'Warnung: Diese Zuweisung verletzt harte Planungsregeln (z. B. Überschneidung oder fehlende Pause). Möchten Sie trotzdem speichern?'
+        'Achtung: Es gibt harte Konflikte bei dieser Zuweisung:\n' +
+        reasons + '\n\n' +
+        'Möchtest du diese Person trotzdem einteilen?'
       );
       if (!proceed) return;
     }

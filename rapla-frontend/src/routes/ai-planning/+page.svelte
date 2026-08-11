@@ -167,7 +167,18 @@
     planningState = 'review';
   }
 
-  function handleReassignTeacher(courseId: string, teacherId: string | null) {
+  function handleReassignTeacher(courseId: string, teacherId: string | null, conflicts: ConflictMessage[] = []) {
+    const hardConflicts = conflicts.filter(c => c.type === 'hard');
+    if (hardConflicts.length > 0) {
+      const reasons = hardConflicts.map(c => '- ' + c.message).join('\n');
+      const proceed = confirm(
+        'Achtung: Es gibt harte Konflikte bei dieser Zuweisung:\n' +
+        reasons + '\n\n' +
+        'Möchtest du diese Person trotzdem einteilen?'
+      );
+      if (!proceed) return;
+    }
+
     const index = plannedCourses.findIndex(c => c.id === courseId);
     if (index !== -1) {
       plannedCourses[index].teacherId = teacherId;
@@ -617,7 +628,7 @@
                       class:active={course.teacherId === item.teacher.id}
                       class:warning={hasSoft && !hasHard}
                       class:conflict={hasHard}
-                      onclick={() => handleReassignTeacher(course.id, item.teacher.id)}
+                      onclick={() => handleReassignTeacher(course.id, item.teacher.id, item.conflicts)}
                     >
                       <span class="to-avatar bg-gradient-to-br {item.teacher.avatarColor}">
                         {item.teacher.name.split(' ').map(n => n[0]).join('')}
