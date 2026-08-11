@@ -10617,8 +10617,8 @@ export const db = {
       if (idx === -1) {
         list.push(defPlan);
         updated = true;
-      } else if (isOutdated || defPlan.id.startsWith('plan-pre-')) {
-        // Always force update preplanned weeks or all default plans on DB version mismatch to prevent stale state
+      } else if (isOutdated) {
+        // Always force update all default plans on DB version mismatch to prevent stale state
         list[idx] = defPlan;
         updated = true;
       }
