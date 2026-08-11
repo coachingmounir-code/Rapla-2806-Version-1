@@ -848,17 +848,29 @@ export function runAiPlanning(
             }
           }
           if (weekNum > 0) {
-            // Rotate the 4 teachers (Karuna, Burnie, Narayani, Abha) evenly.
-            // On a given week, assign different teachers to Saturday (day 6) and Sunday (day 0).
-            const orderedAllowed = ["karuna", "burnie", "narayani", "abha"];
-            const teacherIdx = orderedAllowed.findIndex((n: string) => teacherNameLower.includes(n));
-            if (teacherIdx !== -1) {
-              const dayOffset = course.dayOfWeek === 6 ? 0 : 1;
-              const targetIndexForDay = (2 * weekNum + dayOffset) % 4;
-              // Circular distance (how many weeks away from this teacher being primary)
-              const distance = (teacherIdx - targetIndexForDay + 4) % 4;
-              // Distance 0 is highest priority (boost +1000), distance 3 is lowest priority (boost +250)
-              score += 1000 - distance * 250;
+            // Rule 4: Burnie is primarily assigned on Sundays.
+            if (course.dayOfWeek === 0) {
+              if (teacherNameLower.includes('burnie')) {
+                score += 2000;
+              } else {
+                // If Burnie is sevafrei, rotate the others
+                const backups = ["karuna", "narayani", "abha"];
+                const teacherIdx = backups.findIndex((n: string) => teacherNameLower.includes(n));
+                if (teacherIdx !== -1) {
+                  const targetIndex = (weekNum + 1) % 3;
+                  const distance = (teacherIdx - targetIndex + 3) % 3;
+                  score += 1000 - distance * 300;
+                }
+              }
+            } else if (course.dayOfWeek === 6) {
+              // On Saturdays, rotate the remaining eligible teachers
+              const backups = ["karuna", "narayani", "abha"];
+              const teacherIdx = backups.findIndex((n: string) => teacherNameLower.includes(n));
+              if (teacherIdx !== -1) {
+                const targetIndex = weekNum % 3;
+                const distance = (teacherIdx - targetIndex + 3) % 3;
+                score += 1000 - distance * 300;
+              }
             }
           }
         }
