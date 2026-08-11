@@ -1104,6 +1104,9 @@ export function runAiPlanning(
           const allowedMorningSatsang = wochenplanRules.satsang.morningAllowed;
           if (allowedMorningSatsang.some((name: string) => teacherNameLower.includes(name))) {
             score += 500;
+            if (teacherNameLower.includes('burnie') && course.dayOfWeek === 1) {
+              score += 2000;
+            }
           } else {
             score -= 10000;
           }
