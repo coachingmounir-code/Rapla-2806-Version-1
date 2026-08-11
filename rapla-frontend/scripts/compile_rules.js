@@ -175,6 +175,16 @@ ${filesText}
         "harishakti": "Fantasiereise"
       }
     }
+  },
+  "hausfuehrung": {
+    "allowed": ["namen", "die", "für", "hausführung", "in", "frage", "kommen", "in", "kleinschreibung"],
+    "friday": {
+      "primary": "name_der_immer_freitags_eingeteilt_wird",
+      "backup": "name_der_freitags_vertretung_macht"
+    },
+    "sunday": {
+      "alternating": ["namen", "die", "sonntags", "abwechseln"]
+    }
   }
 }
 

@@ -155,7 +155,8 @@ export function validateAssignment(
   const isSatsangForSevaka = courseNameLower.includes('satsang');
   const isOnnForSevaka = courseNameLower.includes('om namo');
   const isEntspannungForSevaka = courseStyleLower.includes('entspannung') || courseNameLower.includes('entspannung');
-  const isYogaClassForSevaka = !isMeditationForSevaka && !isSatsangForSevaka && !isOnnForSevaka && !isEntspannungForSevaka;
+  const isSonstigesForSevaka = courseStyleLower.includes('sonstiges') || courseNameLower.includes('hausführung') || courseNameLower.includes('hausfuehrung');
+  const isYogaClassForSevaka = !isMeditationForSevaka && !isSatsangForSevaka && !isOnnForSevaka && !isEntspannungForSevaka && !isSonstigesForSevaka;
 
   const otherSevakaAssignments = allCourses.filter(
     c => c.teacherId === teacher.id && c.id !== course.id
@@ -174,8 +175,9 @@ export function validateAssignment(
       const cIsSat = cName.includes('satsang');
       const cIsOnn = cName.includes('om namo');
       const cIsEntspannung = cStyle.includes('entspannung') || cName.includes('entspannung');
+      const cIsSonstiges = cStyle.includes('sonstiges') || cName.includes('hausführung') || cName.includes('hausfuehrung');
 
-      if (!cIsMed && !cIsSat && !cIsOnn && !cIsEntspannung) {
+      if (!cIsMed && !cIsSat && !cIsOnn && !cIsEntspannung && !cIsSonstiges) {
         yogaCount++;
       } else if (cIsMed) {
         meditationCount++;
@@ -286,6 +288,19 @@ export function validateAssignment(
         type: 'hard',
         message: `Pranayama darf nur von ${allowed.join(', ').toUpperCase()} unterrichtet werden.`
       });
+    }
+
+    // 3.5 Pranayama Sunday Rule (Burnie must be assigned if available)
+    if (course.dayOfWeek === 0) {
+      const isBurnieAbsent = isTeacherAbsent('burnie', course.dayOfWeek, targetWeekCode, absences);
+      if (!isBurnieAbsent) {
+        if (!teacherNameLower.includes('burnie')) {
+          conflicts.push({
+            type: 'hard',
+            message: `Burnie steht am Sonntag zur Verfügung und muss für Pranayama eingeteilt werden.`
+          });
+        }
+      }
     }
   }
 
@@ -478,6 +493,85 @@ export function validateAssignment(
           type: 'hard',
           message: `Da ${primary.toUpperCase()} abwesend ist, muss ${backup.toUpperCase()} die Anfängerstunde am Freitag um 09:15 Uhr leiten.`
         });
+      }
+    }
+  }
+
+  // 8.5 Hausführung rules
+  const isHausfuehrung = courseNameLower.includes('hausführung') || courseNameLower.includes('hausfuehrung');
+  if (isHausfuehrung) {
+    const rules = (wochenplanRules as any).hausfuehrung;
+    if (rules) {
+      const isAllowed = rules.allowed.some((a: string) => teacherNameLower.includes(a));
+      if (!isAllowed) {
+        conflicts.push({
+          type: 'hard',
+          message: `Für die Hausführung dürfen nur ${rules.allowed.join(', ').toUpperCase()} eingeteilt werden.`
+        });
+      }
+
+      if (course.dayOfWeek === 5) { // Freitag
+        const primary = rules.friday.primary;
+        const isPrimaryAbsent = isTeacherAbsent(primary, course.dayOfWeek, targetWeekCode, absences);
+        if (!isPrimaryAbsent) {
+          if (!teacherNameLower.includes(primary)) {
+            conflicts.push({
+              type: 'hard',
+              message: `Freitags muss ${primary.toUpperCase()} die Hausführung übernehmen, da er verfügbar ist.`
+            });
+          }
+        } else {
+          const backup = rules.friday.backup;
+          const isBackupAbsent = isTeacherAbsent(backup, course.dayOfWeek, targetWeekCode, absences);
+          if (!isBackupAbsent) {
+            if (!teacherNameLower.includes(backup)) {
+              conflicts.push({
+                type: 'hard',
+                message: `Da ${primary.toUpperCase()} abwesend ist, muss ${backup.toUpperCase()} die Hausführung am Freitag übernehmen.`
+              });
+            }
+          }
+        }
+      } else if (course.dayOfWeek === 0) { // Sonntag
+        if (targetWeekCode) {
+          const weekNum = parseInt(targetWeekCode.split('-W')[1], 10);
+          const alts = rules.sunday.alternating;
+          
+          let availableAlts = [];
+          for (const alt of alts) {
+            if (!isTeacherAbsent(alt, course.dayOfWeek, targetWeekCode, absences)) {
+              availableAlts.push(alt);
+            }
+          }
+
+          if (availableAlts.length > 0) {
+            let turnIndex = weekNum % 2;
+            let primaryTurn = alts[turnIndex];
+            
+            let assignedPrimary = null;
+            if (availableAlts.includes(primaryTurn)) {
+              assignedPrimary = primaryTurn;
+            } else if (availableAlts.length > 0) {
+              assignedPrimary = availableAlts[0];
+            }
+
+            if (assignedPrimary && !teacherNameLower.includes(assignedPrimary)) {
+              conflicts.push({
+                type: 'hard',
+                message: `Sonntags muss abwechselnd ${alts.join(' oder ').toUpperCase()} eingeteilt werden. Für diese Woche ist ${assignedPrimary.toUpperCase()} an der Reihe (und verfügbar).`
+              });
+            }
+          }
+        } else {
+          const alts = rules.sunday.alternating;
+          const isAnyAlt = alts.some((a: string) => teacherNameLower.includes(a));
+          if (!isAnyAlt) {
+            conflicts.push({
+              type: 'hard',
+              message: `Sonntags muss ${alts.join(' oder ').toUpperCase()} eingeteilt werden, sofern sie können.`
+            });
+          }
+        }
       }
     }
   }
@@ -827,6 +921,37 @@ export function runAiPlanning(
             score += 5000 - idx * 2500;
             if (backups[idx] === 'ulrich') {
               score += 2000; // offset Ulrich's standard weekend penalty
+            }
+          }
+        }
+      }
+
+      // Hausführung Scoring
+      const isHausfuehrungCourse = course.name.toLowerCase().includes('hausführung') || course.name.toLowerCase().includes('hausfuehrung');
+      if (isHausfuehrungCourse) {
+        const rules = (wochenplanRules as any).hausfuehrung;
+        if (rules) {
+          if (course.dayOfWeek === 5) { // Freitag
+            if (teacherNameLower.includes(rules.friday.primary)) {
+              score += 10000;
+            } else if (teacherNameLower.includes(rules.friday.backup)) {
+              score += 5000;
+            }
+          } else if (course.dayOfWeek === 0) { // Sonntag
+            let weekNum = 0;
+            if (targetWeekCode) {
+              const match = targetWeekCode.match(/-W(\d+)/);
+              if (match) {
+                weekNum = parseInt(match[1], 10);
+              }
+            }
+            const alts = rules.sunday.alternating;
+            const turnIndex = weekNum % 2;
+            const primaryTurn = alts[turnIndex];
+            if (teacherNameLower.includes(primaryTurn)) {
+              score += 10000;
+            } else if (alts.some((a: string) => teacherNameLower.includes(a))) {
+              score += 5000; // The other alternating person
             }
           }
         }

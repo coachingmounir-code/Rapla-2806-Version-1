@@ -359,13 +359,29 @@ const standardCourses = standardCoursesDefs.map((c, index) => ({
   status: 'draft' as const
 }));
 
-// Run planning for weeks: W28 to W40
+// Helper to generate the next 8 weeks codes
+function getNext8WeekCodes(): string[] {
+  const weeks = [];
+  const now = new Date();
+  for (let i = 0; i < 8; i++) {
+    const targetDate = new Date(now.getTime() + (i + 1) * 7 * 24 * 60 * 60 * 1000);
+    const targetThursday = new Date(targetDate.getTime());
+    targetThursday.setDate(targetDate.getDate() - (targetDate.getDay() || 7) + 4);
+    const year = targetThursday.getFullYear();
+    const jan4 = new Date(year, 0, 4);
+    const jan4Thursday = new Date(jan4.getTime());
+    jan4Thursday.setDate(jan4.getDate() - (jan4.getDay() || 7) + 4);
+    const weekNum = Math.round(((targetThursday.getTime() - jan4Thursday.getTime()) / 86400000) / 7) + 1;
+    weeks.push(`${year}-W${weekNum.toString().padStart(2, '0')}`);
+  }
+  return weeks;
+}
+
+const weeksToPlan = getNext8WeekCodes();
+console.log(`[PREPLANNING] Planning for the next 8 weeks: ${weeksToPlan.join(', ')}`);
+
 const results: Record<string, any[]> = {};
-for (const week of [
-  '2026-W28', '2026-W29', '2026-W30', '2026-W31',
-  '2026-W32', '2026-W33', '2026-W34', '2026-W35',
-  '2026-W36', '2026-W37', '2026-W38', '2026-W39', '2026-W40'
-]) {
+for (const week of weeksToPlan) {
   results[week] = planWeekWithAbsences(week, standardCourses);
 }
 
@@ -411,14 +427,19 @@ const dbPath = './rapla-frontend/src/lib/db.ts';
 if (fs.existsSync(dbPath)) {
   let dbContent = fs.readFileSync(dbPath, 'utf-8');
 
-  // Find the target section to replace
-  const startIndex = dbContent.indexOf('    id: "plan-pre-2026-W28",');
-  const braceStartIndex = dbContent.lastIndexOf('{', startIndex);
-  const endPlanIndex = dbContent.indexOf('    id: "plan-pre-2026-W40",');
-  const createdAtIndex = dbContent.indexOf('    createdAt:', endPlanIndex);
-  const braceEndIndex = dbContent.indexOf('  }', createdAtIndex) + 3;
+  // Find the target section to replace dynamically
+  const firstPrePlanIndex = dbContent.indexOf('    id: "plan-pre-');
+  let braceStartIndex = -1;
+  let braceEndIndex = -1;
 
-  if (braceStartIndex !== -1 && braceEndIndex !== -1 && startIndex !== -1 && endPlanIndex !== -1) {
+  if (firstPrePlanIndex !== -1) {
+    braceStartIndex = dbContent.lastIndexOf('{', firstPrePlanIndex);
+    const lastPrePlanIndex = dbContent.lastIndexOf('    id: "plan-pre-');
+    const createdAtIndex = dbContent.indexOf('    createdAt:', lastPrePlanIndex);
+    braceEndIndex = dbContent.indexOf('  }', createdAtIndex) + 3;
+  }
+
+  if (braceStartIndex !== -1 && braceEndIndex !== -1 && firstPrePlanIndex !== -1) {
     const before = dbContent.substring(0, braceStartIndex);
     const after = dbContent.substring(braceEndIndex);
     
@@ -433,7 +454,7 @@ if (fs.existsSync(dbPath)) {
     );
     
     fs.writeFileSync(dbPath, updatedContent);
-    console.log(`[PREPLANNING] rapla-frontend/src/lib/db.ts wurde erfolgreich mit den neuen Wochenplänen ab W28 aktualisiert (CURRENT_DB_VERSION erhöht).`);
+    console.log(`[PREPLANNING] rapla-frontend/src/lib/db.ts wurde erfolgreich mit den neuen Wochenplänen aktualisiert (CURRENT_DB_VERSION erhöht).`);
   } else {
     console.error('[PREPLANNING] Fehler beim Finden des Ersetzungsbereichs in db.ts');
   }
