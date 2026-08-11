@@ -154,7 +154,8 @@ export function validateAssignment(
   const isMeditationForSevaka = (courseNameLower.includes('meditation') || courseNameLower.includes('medi.') || courseStyleLower.includes('meditation')) && !courseNameLower.includes('satsang');
   const isSatsangForSevaka = courseNameLower.includes('satsang');
   const isOnnForSevaka = courseNameLower.includes('om namo');
-  const isYogaClassForSevaka = !isMeditationForSevaka && !isSatsangForSevaka && !isOnnForSevaka;
+  const isEntspannungForSevaka = courseStyleLower.includes('entspannung') || courseNameLower.includes('entspannung');
+  const isYogaClassForSevaka = !isMeditationForSevaka && !isSatsangForSevaka && !isOnnForSevaka && !isEntspannungForSevaka;
 
   const otherSevakaAssignments = allCourses.filter(
     c => c.teacherId === teacher.id && c.id !== course.id
@@ -172,8 +173,9 @@ export function validateAssignment(
       const cIsMed = (cName.includes('meditation') || cName.includes('medi.') || cStyle.includes('meditation')) && !cName.includes('satsang');
       const cIsSat = cName.includes('satsang');
       const cIsOnn = cName.includes('om namo');
+      const cIsEntspannung = cStyle.includes('entspannung') || cName.includes('entspannung');
 
-      if (!cIsMed && !cIsSat && !cIsOnn) {
+      if (!cIsMed && !cIsSat && !cIsOnn && !cIsEntspannung) {
         yogaCount++;
       } else if (cIsMed) {
         meditationCount++;
