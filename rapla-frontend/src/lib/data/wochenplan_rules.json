@@ -8,7 +8,7 @@
         6
       ],
       "maxMeditationPerWeek": 1,
-      "maxSatsangsPerWeek": 1,
+      "maxSatsangsPerWeek": null,
       "maxMorningSatsangsPerWeek": 1,
       "maxYogaClassesPerWeek": null,
       "maxOnnPerWeek": null,
@@ -17,7 +17,7 @@
       "canLeadSatsang": true,
       "canLeadPranayama": true,
       "canLeadSatsangEinfuehrung": true,
-      "canLeadOnn": false,
+      "canLeadOnn": true,
       "noYogaOnWeekend": false,
       "noTwoYogaSameDay": false,
       "weekendAfternoonOnly": false,
@@ -38,7 +38,7 @@
       "freeDays": [
         1
       ],
-      "maxMeditationPerWeek": 1,
+      "maxMeditationPerWeek": null,
       "maxSatsangsPerWeek": 0,
       "maxMorningSatsangsPerWeek": 0,
       "maxYogaClassesPerWeek": 2,
@@ -48,7 +48,7 @@
       "canLeadSatsang": false,
       "canLeadPranayama": false,
       "canLeadSatsangEinfuehrung": false,
-      "canLeadOnn": false,
+      "canLeadOnn": true,
       "noYogaOnWeekend": false,
       "noTwoYogaSameDay": false,
       "weekendAfternoonOnly": false,
@@ -106,7 +106,7 @@
       "canLeadSatsang": true,
       "canLeadPranayama": true,
       "canLeadSatsangEinfuehrung": false,
-      "canLeadOnn": false,
+      "canLeadOnn": true,
       "noYogaOnWeekend": false,
       "noTwoYogaSameDay": false,
       "weekendAfternoonOnly": false,
@@ -115,7 +115,7 @@
       "customCourseNames": [
         {
           "originalName": "Anfänger",
-          "customName": "Yin Yoga Anfängerstunde"
+          "customName": "Yin Yoga"
         }
       ],
       "availabilityRestrictions": [],
@@ -129,7 +129,7 @@
       ],
       "maxMeditationPerWeek": 0,
       "maxSatsangsPerWeek": null,
-      "maxMorningSatsangsPerWeek": 2,
+      "maxMorningSatsangsPerWeek": null,
       "maxYogaClassesPerWeek": 3,
       "maxOnnPerWeek": null,
       "maxAnfaengerYogaPerWeek": null,
@@ -137,7 +137,7 @@
       "canLeadSatsang": true,
       "canLeadPranayama": false,
       "canLeadSatsangEinfuehrung": true,
-      "canLeadOnn": false,
+      "canLeadOnn": true,
       "noYogaOnWeekend": false,
       "noTwoYogaSameDay": false,
       "weekendAfternoonOnly": false,
@@ -190,11 +190,11 @@
       "freeDays": [
         2
       ],
-      "maxMeditationPerWeek": 1,
+      "maxMeditationPerWeek": null,
       "maxSatsangsPerWeek": 0,
       "maxMorningSatsangsPerWeek": 0,
       "maxYogaClassesPerWeek": 0,
-      "maxOnnPerWeek": null,
+      "maxOnnPerWeek": 0,
       "maxAnfaengerYogaPerWeek": 0,
       "isYogaTeacher": false,
       "canLeadSatsang": false,
@@ -227,11 +227,11 @@
       "freeDays": [
         1
       ],
-      "maxMeditationPerWeek": 1,
+      "maxMeditationPerWeek": null,
       "maxSatsangsPerWeek": 0,
       "maxMorningSatsangsPerWeek": 0,
       "maxYogaClassesPerWeek": 0,
-      "maxOnnPerWeek": null,
+      "maxOnnPerWeek": 0,
       "maxAnfaengerYogaPerWeek": 0,
       "isYogaTeacher": false,
       "canLeadSatsang": false,
@@ -264,7 +264,7 @@
       "canLeadSatsang": true,
       "canLeadPranayama": false,
       "canLeadSatsangEinfuehrung": true,
-      "canLeadOnn": false,
+      "canLeadOnn": true,
       "noYogaOnWeekend": true,
       "noTwoYogaSameDay": false,
       "weekendAfternoonOnly": false,
@@ -278,11 +278,12 @@
     "narayani": {
       "name": "Narayani",
       "freeDays": [
+        5,
         6
       ],
-      "maxMeditationPerWeek": 1,
+      "maxMeditationPerWeek": null,
       "maxSatsangsPerWeek": null,
-      "maxMorningSatsangsPerWeek": 1,
+      "maxMorningSatsangsPerWeek": null,
       "maxYogaClassesPerWeek": 3,
       "maxOnnPerWeek": 1,
       "maxAnfaengerYogaPerWeek": null,
@@ -299,12 +300,8 @@
       "customCourseNames": [],
       "availabilityRestrictions": [
         {
-          "day": 5,
-          "allowed": false
-        },
-        {
           "day": 0,
-          "timeAfter": "13:00",
+          "timeBefore": "13:00",
           "allowed": false
         }
       ],
@@ -327,7 +324,7 @@
       "canLeadSatsang": false,
       "canLeadPranayama": false,
       "canLeadSatsangEinfuehrung": true,
-      "canLeadOnn": false,
+      "canLeadOnn": true,
       "noYogaOnWeekend": false,
       "noTwoYogaSameDay": false,
       "weekendAfternoonOnly": false,
@@ -359,7 +356,7 @@
       "canLeadSatsang": true,
       "canLeadPranayama": false,
       "canLeadSatsangEinfuehrung": false,
-      "canLeadOnn": false,
+      "canLeadOnn": true,
       "noYogaOnWeekend": false,
       "noTwoYogaSameDay": false,
       "weekendAfternoonOnly": false,
@@ -401,9 +398,9 @@
       "freeDays": [
         3
       ],
-      "maxMeditationPerWeek": 1,
+      "maxMeditationPerWeek": null,
       "maxSatsangsPerWeek": null,
-      "maxMorningSatsangsPerWeek": 2,
+      "maxMorningSatsangsPerWeek": null,
       "maxYogaClassesPerWeek": 3,
       "maxOnnPerWeek": null,
       "maxAnfaengerYogaPerWeek": null,
@@ -411,7 +408,7 @@
       "canLeadSatsang": true,
       "canLeadPranayama": false,
       "canLeadSatsangEinfuehrung": false,
-      "canLeadOnn": false,
+      "canLeadOnn": true,
       "noYogaOnWeekend": false,
       "noTwoYogaSameDay": false,
       "weekendAfternoonOnly": false,
@@ -468,7 +465,7 @@
     "christopher": {
       "name": "Christopher",
       "freeDays": [],
-      "maxMeditationPerWeek": 1,
+      "maxMeditationPerWeek": null,
       "maxSatsangsPerWeek": null,
       "maxMorningSatsangsPerWeek": null,
       "maxYogaClassesPerWeek": null,
@@ -478,7 +475,7 @@
       "canLeadSatsang": true,
       "canLeadPranayama": false,
       "canLeadSatsangEinfuehrung": false,
-      "canLeadOnn": false,
+      "canLeadOnn": true,
       "noYogaOnWeekend": false,
       "noTwoYogaSameDay": false,
       "weekendAfternoonOnly": false,
@@ -609,5 +606,25 @@
       "narayani",
       "abha"
     ]
+  },
+  "entspannungsangebot": {
+    "montag": {
+      "primary": "pranava",
+      "name": "Klangreise"
+    },
+    "mittwoch": {
+      "primary": "hu",
+      "name": "Yogageschichten am Kamin"
+    },
+    "donnerstag": {
+      "alternating": [
+        "burnie",
+        "harishakti"
+      ],
+      "names": {
+        "burnie": "Peziebälle",
+        "harishakti": "Fantasiereise"
+      }
+    }
   }
 }

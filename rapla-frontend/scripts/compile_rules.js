@@ -158,6 +158,23 @@ ${filesText}
   },
   "pranayama": {
     "allowed": ["karuna", "burnie", "narayani", "abha"]
+  },
+  "entspannungsangebot": {
+    "montag": {
+      "primary": "pranava",
+      "name": "Klangreise"
+    },
+    "mittwoch": {
+      "primary": "hu",
+      "name": "Yogageschichten am Kamin"
+    },
+    "donnerstag": {
+      "alternating": ["burnie", "harishakti"],
+      "names": {
+        "burnie": "Peziebälle",
+        "harishakti": "Fantasiereise"
+      }
+    }
   }
 }
 

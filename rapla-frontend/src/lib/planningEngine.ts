@@ -887,6 +887,47 @@ export function runAiPlanning(
         }
       }
 
+      // Custom scoring rules for Entspannungsangebot from compiled rules
+      const isEntspannungsangebot = 
+        course.name.toLowerCase().includes('entspannung') ||
+        course.name.toLowerCase().includes('klangreise') ||
+        course.name.toLowerCase().includes('yogageschichten am kamin') ||
+        course.name.toLowerCase().includes('peziebälle') ||
+        course.name.toLowerCase().includes('fantasiereise');
+        
+      if (isEntspannungsangebot && wochenplanRules.entspannungsangebot) {
+        const erules = wochenplanRules.entspannungsangebot;
+        if (course.dayOfWeek === 1 && erules.montag?.primary) {
+          if (teacherNameLower.includes(erules.montag.primary.toLowerCase())) {
+            score += 10000;
+          }
+        } else if (course.dayOfWeek === 3 && erules.mittwoch?.primary) {
+          if (teacherNameLower.includes(erules.mittwoch.primary.toLowerCase())) {
+            score += 10000;
+          }
+        } else if (course.dayOfWeek === 4 && erules.donnerstag?.alternating) {
+          const allowed = erules.donnerstag.alternating;
+          const isAllowed = allowed.some((a: string) => teacherNameLower.includes(a.toLowerCase()));
+          if (isAllowed) {
+            score += 5000;
+            let weekNum = 0;
+            if (targetWeekCode) {
+              const match = targetWeekCode.match(/-W(\d+)/);
+              if (match) {
+                weekNum = parseInt(match[1], 10);
+              }
+            }
+            if (weekNum > 0) {
+              const preferredIndex = weekNum % allowed.length;
+              const preferredName = allowed[preferredIndex];
+              if (teacherNameLower.includes(preferredName.toLowerCase())) {
+                score += 5000;
+              }
+            }
+          }
+        }
+      }
+
       // --- GEFÜHRTE MEDITATION SCORING RULES ---
       const isMeditationCourse = course.name === 'Geführte Meditation' || course.style.toLowerCase() === 'meditation';
       if (isMeditationCourse) {

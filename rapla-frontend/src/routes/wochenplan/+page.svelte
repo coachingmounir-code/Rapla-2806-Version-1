@@ -128,6 +128,20 @@
       };
     }
 
+    const isEntspannung = 
+      nameLower.includes('entspannung') || 
+      nameLower.includes('klangreise') || 
+      nameLower.includes('yogageschichten am kamin') || 
+      nameLower.includes('peziebälle') || 
+      nameLower.includes('fantasiereise');
+      
+    if (isEntspannung) {
+      return {
+        bg: '#ffedd5', // light orange
+        border: '#ea580c' // orange
+      };
+    }
+
     const isYellow = 
       (nameLower.includes('meditation') || 
        nameLower.includes('satsang') || 
