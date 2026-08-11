@@ -118,6 +118,13 @@
       };
     }
 
+    if (nameLower.includes('entspannungsangebot') && [1, 3, 4].includes(course.dayOfWeek)) {
+      return {
+        bg: '#ffb347',
+        border: '#e69900'
+      };
+    }
+
     const isYellow = 
       (nameLower.includes('meditation') || 
        nameLower.includes('satsang') || 
