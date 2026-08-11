@@ -56,7 +56,7 @@
     { value: 4, label: 'Donnerstag' }
   ];
 
-  const YOGA_STYLES = ['Hatha', 'Vinyasa', 'Yin', 'Meditation', 'Power Yoga', 'Kundalini'];
+  const YOGA_STYLES = ['Hatha', 'Vinyasa', 'Yin', 'Meditation', 'Entspannung', 'Power Yoga', 'Kundalini'];
 
   onMount(() => {
     loadData();
