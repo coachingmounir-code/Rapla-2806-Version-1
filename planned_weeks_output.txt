@@ -8,8 +8,8 @@
         "startTime": "19:00",
         "endTime": "19:30",
         "roomId": "Rezeption",
-        "teacherId": null,
-        "isAiPlanned": false,
+        "teacherId": "teacher-gen-pranava-pauly",
+        "isAiPlanned": true,
         "status": "approved"
       },
       {
@@ -756,8 +756,8 @@
         "startTime": "19:00",
         "endTime": "19:30",
         "roomId": "Rezeption",
-        "teacherId": null,
-        "isAiPlanned": false,
+        "teacherId": "teacher-gen-pranava-pauly",
+        "isAiPlanned": true,
         "status": "approved"
       },
       {
@@ -876,8 +876,8 @@
         "startTime": "06:00",
         "endTime": "06:50",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-karuna-wapke",
-        "isAiPlanned": false,
+        "teacherId": "teacher-gen-abha-morkoetter",
+        "isAiPlanned": true,
         "status": "approved"
       },
       {
@@ -996,8 +996,8 @@
         "startTime": "06:00",
         "endTime": "06:50",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-burnie-narayani",
-        "isAiPlanned": false,
+        "teacherId": "teacher-gen-burnie-bansemer",
+        "isAiPlanned": true,
         "status": "approved"
       },
       {
@@ -1504,8 +1504,8 @@
         "startTime": "19:00",
         "endTime": "19:30",
         "roomId": "Rezeption",
-        "teacherId": null,
-        "isAiPlanned": false,
+        "teacherId": "teacher-gen-pranava-pauly",
+        "isAiPlanned": true,
         "status": "approved"
       },
       {
@@ -1624,8 +1624,8 @@
         "startTime": "06:00",
         "endTime": "06:50",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-karuna-wapke",
-        "isAiPlanned": false,
+        "teacherId": "teacher-gen-abha-morkoetter",
+        "isAiPlanned": true,
         "status": "approved"
       },
       {
@@ -1744,8 +1744,8 @@
         "startTime": "06:00",
         "endTime": "06:50",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-burnie-narayani",
-        "isAiPlanned": false,
+        "teacherId": "teacher-gen-burnie-bansemer",
+        "isAiPlanned": true,
         "status": "approved"
       },
       {
@@ -2252,8 +2252,8 @@
         "startTime": "19:00",
         "endTime": "19:30",
         "roomId": "Rezeption",
-        "teacherId": null,
-        "isAiPlanned": false,
+        "teacherId": "teacher-gen-pranava-pauly",
+        "isAiPlanned": true,
         "status": "approved"
       },
       {
@@ -2372,8 +2372,8 @@
         "startTime": "06:00",
         "endTime": "06:50",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-karuna-wapke",
-        "isAiPlanned": false,
+        "teacherId": "teacher-gen-abha-morkoetter",
+        "isAiPlanned": true,
         "status": "approved"
       },
       {
@@ -2492,8 +2492,8 @@
         "startTime": "06:00",
         "endTime": "06:50",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-burnie-narayani",
-        "isAiPlanned": false,
+        "teacherId": "teacher-gen-burnie-bansemer",
+        "isAiPlanned": true,
         "status": "approved"
       },
       {
@@ -3000,8 +3000,8 @@
         "startTime": "19:00",
         "endTime": "19:30",
         "roomId": "Rezeption",
-        "teacherId": null,
-        "isAiPlanned": false,
+        "teacherId": "teacher-gen-pranava-pauly",
+        "isAiPlanned": true,
         "status": "approved"
       },
       {
@@ -3120,8 +3120,8 @@
         "startTime": "06:00",
         "endTime": "06:50",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-karuna-wapke",
-        "isAiPlanned": false,
+        "teacherId": "teacher-gen-abha-morkoetter",
+        "isAiPlanned": true,
         "status": "approved"
       },
       {
@@ -3240,8 +3240,8 @@
         "startTime": "06:00",
         "endTime": "06:50",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-burnie-narayani",
-        "isAiPlanned": false,
+        "teacherId": "teacher-gen-burnie-bansemer",
+        "isAiPlanned": true,
         "status": "approved"
       },
       {
@@ -3748,8 +3748,8 @@
         "startTime": "19:00",
         "endTime": "19:30",
         "roomId": "Rezeption",
-        "teacherId": null,
-        "isAiPlanned": false,
+        "teacherId": "teacher-gen-pranava-pauly",
+        "isAiPlanned": true,
         "status": "approved"
       },
       {
@@ -3868,8 +3868,8 @@
         "startTime": "06:00",
         "endTime": "06:50",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-karuna-wapke",
-        "isAiPlanned": false,
+        "teacherId": "teacher-gen-abha-morkoetter",
+        "isAiPlanned": true,
         "status": "approved"
       },
       {
@@ -4496,8 +4496,8 @@
         "startTime": "19:00",
         "endTime": "19:30",
         "roomId": "Rezeption",
-        "teacherId": null,
-        "isAiPlanned": false,
+        "teacherId": "teacher-gen-pranava-pauly",
+        "isAiPlanned": true,
         "status": "approved"
       },
       {
@@ -4616,8 +4616,8 @@
         "startTime": "06:00",
         "endTime": "06:50",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-karuna-wapke",
-        "isAiPlanned": false,
+        "teacherId": "teacher-gen-abha-morkoetter",
+        "isAiPlanned": true,
         "status": "approved"
       },
       {
@@ -4736,8 +4736,8 @@
         "startTime": "06:00",
         "endTime": "06:50",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-burnie-narayani",
-        "isAiPlanned": false,
+        "teacherId": "teacher-gen-burnie-bansemer",
+        "isAiPlanned": true,
         "status": "approved"
       },
       {
@@ -5244,8 +5244,8 @@
         "startTime": "19:00",
         "endTime": "19:30",
         "roomId": "Rezeption",
-        "teacherId": null,
-        "isAiPlanned": false,
+        "teacherId": "teacher-gen-pranava-pauly",
+        "isAiPlanned": true,
         "status": "approved"
       },
       {
@@ -5364,8 +5364,8 @@
         "startTime": "06:00",
         "endTime": "06:50",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-karuna-wapke",
-        "isAiPlanned": false,
+        "teacherId": "teacher-gen-abha-morkoetter",
+        "isAiPlanned": true,
         "status": "approved"
       },
       {
@@ -5484,8 +5484,8 @@
         "startTime": "06:00",
         "endTime": "06:50",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-burnie-narayani",
-        "isAiPlanned": false,
+        "teacherId": "teacher-gen-burnie-bansemer",
+        "isAiPlanned": true,
         "status": "approved"
       },
       {
