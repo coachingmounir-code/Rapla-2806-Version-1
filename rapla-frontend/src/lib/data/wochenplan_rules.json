@@ -30,7 +30,7 @@
         }
       ],
       "availabilityRestrictions": [],
-      "preferredAvailability": [],
+      "preferredAvailability": []
     },
     "satyam": {
       "name": "Satyam",
@@ -60,7 +60,7 @@
         }
       ],
       "availabilityRestrictions": [],
-      "preferredAvailability": [],
+      "preferredAvailability": []
     },
     "teresa": {
       "name": "Teresa",
@@ -85,7 +85,7 @@
       "prefersMittelstufe": false,
       "customCourseNames": [],
       "availabilityRestrictions": [],
-      "preferredAvailability": [],
+      "preferredAvailability": []
     },
     "abha": {
       "name": "Abha",
@@ -116,7 +116,7 @@
         }
       ],
       "availabilityRestrictions": [],
-      "preferredAvailability": [],
+      "preferredAvailability": []
     },
     "anjali": {
       "name": "Anjali",
@@ -152,7 +152,7 @@
           "allowed": false
         }
       ],
-      "preferredAvailability": [],
+      "preferredAvailability": []
     },
     "karuna": {
       "name": "Karuna",
@@ -177,7 +177,7 @@
       "prefersMittelstufe": true,
       "customCourseNames": [],
       "availabilityRestrictions": [],
-      "preferredAvailability": [],
+      "preferredAvailability": []
     },
     "hu": {
       "name": "Hu",
@@ -213,7 +213,7 @@
           "allowed": false
         }
       ],
-      "preferredAvailability": [],
+      "preferredAvailability": []
     },
     "mounir": {
       "name": "Mounir",
@@ -238,7 +238,7 @@
       "prefersMittelstufe": false,
       "customCourseNames": [],
       "availabilityRestrictions": [],
-      "preferredAvailability": [],
+      "preferredAvailability": []
     },
     "nirmaya": {
       "name": "Nirmaya",
@@ -264,7 +264,7 @@
       "prefersMittelstufe": false,
       "customCourseNames": [],
       "availabilityRestrictions": [],
-      "preferredAvailability": [],
+      "preferredAvailability": []
     },
     "narayani": {
       "name": "Narayani",
@@ -299,7 +299,7 @@
           "allowed": false
         }
       ],
-      "preferredAvailability": [],
+      "preferredAvailability": []
     },
     "pranava": {
       "name": "Pranava",
@@ -325,7 +325,7 @@
       "prefersMittelstufe": false,
       "customCourseNames": [],
       "availabilityRestrictions": [],
-      "preferredAvailability": [],
+      "preferredAvailability": []
     },
     "alexander": {
       "name": "Alexander",
@@ -351,7 +351,7 @@
       "prefersMittelstufe": false,
       "customCourseNames": [],
       "availabilityRestrictions": [],
-      "preferredAvailability": [],
+      "preferredAvailability": []
     },
     "adam": {
       "name": "Adam",
@@ -376,7 +376,7 @@
       "prefersMittelstufe": false,
       "customCourseNames": [],
       "availabilityRestrictions": [],
-      "preferredAvailability": [],
+      "preferredAvailability": []
     },
     "harishakti": {
       "name": "Harishakti",
@@ -417,7 +417,7 @@
           "start": "08:00",
           "end": "12:00"
         }
-      ],
+      ]
     },
     "ulrich": {
       "name": "Ulrich",
@@ -443,7 +443,7 @@
       "prefersMittelstufe": false,
       "customCourseNames": [],
       "availabilityRestrictions": [],
-      "preferredAvailability": [],
+      "preferredAvailability": []
     }
   },
   "meditation": {

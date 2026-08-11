@@ -577,7 +577,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
     createdAt: new Date().toISOString()
   },
   // --- PREPLANNED WEEKS ---
-                                                  {
+                                                      {
     id: "plan-pre-2026-W34",
     name: "Vorplanung 2026-W34 (Automatisch)",
     status: "approved",
@@ -2217,7 +2217,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "06:00",
         "endTime": "06:50",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-abha-morkoetter",
+        "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -4476,7 +4476,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "06:00",
         "endTime": "06:50",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-abha-morkoetter",
+        "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -6625,7 +6625,7 @@ function setStored<T>(key: string, value: T): void {
   }
 }
 
-const CURRENT_DB_VERSION = 53;
+const CURRENT_DB_VERSION = 55;
 
 // Database Actions
 export const db = {
@@ -6695,8 +6695,7 @@ export const db = {
       // Migration for Karuna's rules
       if (t.name.toLowerCase().includes('karuna')) {
         const hasMondayAvail = t.rules.availability.some(a => a.day === 1);
-        const hasTuesdayAvail = t.rules.availability.some(a => a.day === 2);
-        
+        if (hasMondayAvail) {
           t.rules.availability = [
             { day: 2, start: '06:30', end: '22:00' }, // Tuesday
             { day: 3, start: '06:30', end: '22:00' }, // Wednesday

@@ -182,40 +182,15 @@
 							<span class="nav-icon">🏠</span>
 							<span class="nav-label">Kommende Seminare</span>
 						</a>
-						<!-- Wochenplan & KI-Vorplanung Dropdown Menu -->
-						<div class="nav-dropdown-container">
-							<button 
-								type="button" 
-								class="nav-item nav-dropdown-trigger" 
-								class:active={page.url.pathname.startsWith('/schedule') || page.url.pathname.startsWith('/ai-planning')}
-								onclick={() => showScheduleDropdown = !showScheduleDropdown}
-							>
-								<span class="nav-icon">📅</span>
-								<span class="nav-label">Wochenplan</span>
-								<span class="dropdown-arrow">{showScheduleDropdown ? '▼' : '▶'}</span>
-							</button>
-							
-							{#if showScheduleDropdown}
-								<div class="nav-dropdown-menu">
-									<a 
-										href="/schedule" 
-										class="nav-dropdown-item" 
-										class:active={page.url.pathname.startsWith('/schedule')}
-									>
-										<span class="nav-icon">📆</span>
-										<span class="nav-label">Wochenplan</span>
-									</a>
-									<a 
-										href="/ai-planning" 
-										class="nav-dropdown-item" 
-										class:active={page.url.pathname.startsWith('/ai-planning')}
-									>
-										<span class="nav-icon">⚡</span>
-										<span class="nav-label">KI-Vorplanung</span>
-									</a>
-								</div>
-							{/if}
-						</div>
+						<!-- Wochenplan -->
+						<a 
+							href="/schedule" 
+							class="nav-item" 
+							class:active={page.url.pathname.startsWith('/schedule')}
+						>
+							<span class="nav-icon">📅</span>
+							<span class="nav-label">Wochenplan</span>
+						</a>
 						
 						<!-- Sevafrei Kalender als eigener Hauptreiter -->
 						<a 
