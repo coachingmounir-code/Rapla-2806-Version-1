@@ -27,9 +27,6 @@
   let selectedTeacherIds = $state<string[]>([]);
   
   // Rule fields
-  let ruleMaxClasses = $state(2);
-  let ruleMaxHours = $state(10);
-  let ruleMinRest = $state(30);
   let rulePreferredRooms = $state<string[]>([]);
   let rulePreferredDays = $state<number[]>([]);
   let ruleCanLeadMeditation = $state(false);
@@ -98,9 +95,6 @@
     formIsYogaTeacher = true;
     formAvailabilityMode = roleType === 'sevaka' ? 'always' : 'seminar_only';
     formCustomWishes = '';
-    ruleMaxClasses = 2;
-    ruleMaxHours = 10;
-    ruleMinRest = 30;
     rulePreferredRooms = [];
     rulePreferredDays = [];
     ruleCanLeadMeditation = false;
@@ -142,10 +136,7 @@
     formIsYogaTeacher = teacher.isYogaTeacher !== false;
     formAvailabilityMode = teacher.availabilityMode || 'always';
     formCustomWishes = teacher.customWishes || '';
-    ruleMaxClasses = teacher.rules.maxClassesPerDay;
-    ruleMaxHours = teacher.rules.maxHoursPerWeek;
-    ruleMinRest = teacher.rules.minRestTime;
-    rulePreferredRooms = [...teacher.rules.preferredRooms];
+    rulePreferredRooms = [...(teacher.rules.preferredRooms || [])];
     rulePreferredDays = [...(teacher.rules.preferredDays || [])];
     ruleCanLeadMeditation = !!teacher.rules.canLeadMeditation;
     ruleCanLeadSatsang = !!teacher.rules.canLeadSatsang;
@@ -199,9 +190,6 @@
       roleType, // Assigns current page roleType ('sevaka' or 'external')
       customWishes: formCustomWishes,
       rules: {
-        maxClassesPerDay: ruleMaxClasses,
-        maxHoursPerWeek: ruleMaxHours,
-        minRestTime: ruleMinRest,
         preferredRooms: rulePreferredRooms,
         preferredDays: rulePreferredDays,
         canLeadMeditation: ruleCanLeadMeditation,
@@ -387,14 +375,6 @@
         <div class="rules-summary">
           <h4>📋 Aktive Grundregeln:</h4>
           <div class="rule-item">
-            <span>Max. Einheiten:</span>
-            <strong>{teacher.rules.maxClassesPerDay} / Tag | {teacher.rules.maxHoursPerWeek} Std. / Woche</strong>
-          </div>
-          <div class="rule-item">
-            <span>Mindestpause:</span>
-            <strong>{teacher.rules.minRestTime} Minuten</strong>
-          </div>
-          <div class="rule-item">
             <span>Verfügbarkeit:</span>
             <strong>{teacher.rules.availability.length} Schichten</strong>
           </div>
@@ -485,20 +465,7 @@
           <div class="divider"></div>
           <div class="section-title">⚙️ Planungsregeln für Sevaka</div>
 
-          <div class="grid-cols-3" style="gap: 1rem; margin-bottom: 1rem;">
-            <div class="form-group">
-              <label class="form-label" for="rule-max-classes-sevaka">Max. Klassen / Tag</label>
-              <input id="rule-max-classes-sevaka" type="number" min="1" max="10" class="form-input" bind:value={ruleMaxClasses} />
-            </div>
-            <div class="form-group">
-              <label class="form-label" for="rule-max-hours-sevaka">Max. Stunden / Woche</label>
-              <input id="rule-max-hours-sevaka" type="number" min="1" max="50" class="form-input" bind:value={ruleMaxHours} />
-            </div>
-            <div class="form-group">
-              <label class="form-label" for="rule-min-rest-sevaka">Mindestpause (Min.)</label>
-              <input id="rule-min-rest-sevaka" type="number" min="0" max="240" step="15" class="form-input" bind:value={ruleMinRest} />
-            </div>
-          </div>
+
 
           <div class="form-group">
             <label class="form-label">Spezifische Qualifikationen</label>
@@ -653,20 +620,7 @@
           <div class="divider"></div>
           <div class="section-title">⚙️ Planungsregeln für die KI</div>
 
-          <div class="grid-cols-3" style="gap: 1rem;">
-            <div class="form-group">
-              <label class="form-label" for="rule-max-classes">Max. Klassen / Tag</label>
-              <input id="rule-max-classes" type="number" min="1" max="10" class="form-input" bind:value={ruleMaxClasses} />
-            </div>
-            <div class="form-group">
-              <label class="form-label" for="rule-max-hours">Max. Stunden / Woche</label>
-              <input id="rule-max-hours" type="number" min="1" max="50" class="form-input" bind:value={ruleMaxHours} />
-            </div>
-            <div class="form-group">
-              <label class="form-label" for="rule-min-rest">Mindestpause (Min.)</label>
-              <input id="rule-min-rest" type="number" min="0" max="240" step="15" class="form-input" bind:value={ruleMinRest} />
-            </div>
-          </div>
+
 
           <!-- Preferred Rooms -->
           <div class="form-group">

@@ -7,10 +7,6 @@ export interface TimeSlot {
 }
 
 export interface TeacherRules {
-  maxClassesPerDay: number;
-  maxHoursPerWeek: number;
-  maxClassesPerWeek?: number;
-  minRestTime: number; // in minutes
   preferredRooms: string[];
   preferredDays?: number[]; // list of days (0-6) where this teacher is prioritized
   nonPreferredDays?: number[]; // list of days (0-6) where this teacher prefers not to teach
@@ -256,8 +252,6 @@ function getTeacherRules(name: string, isSevaka: boolean): Partial<TeacherRules>
 
   if (!isSevaka || !tRules) {
     return {
-      maxClassesPerDay: 2,
-      maxHoursPerWeek: 10,
       canLeadMeditation: false,
       canLeadSatsang: false,
       availability: getTeacherAvailability(name, isSevaka)
@@ -266,8 +260,6 @@ function getTeacherRules(name: string, isSevaka: boolean): Partial<TeacherRules>
 
   // Build the rules object from the JSON rules
   const rules: Partial<TeacherRules> = {
-    maxClassesPerDay: tRules.maxClassesPerDay || 2,
-    maxHoursPerWeek: tRules.maxHoursPerWeek || 10,
     maxClassesPerWeek: tRules.maxClassesPerWeek || undefined,
     maxYogaClassesPerWeek: tRules.maxYogaClassesPerWeek || undefined,
     maxMeditationPerWeek: tRules.maxMeditationPerWeek !== null ? tRules.maxMeditationPerWeek : undefined,
@@ -352,10 +344,7 @@ const GENERATED_TEACHERS: Teacher[] = NEW_TEACHER_NAMES.map((name, index) => {
     availabilityMode: isSevaka ? 'always' : 'seminar_only',
     roleType: isSevaka ? 'sevaka' : 'external',
     rules: {
-      maxClassesPerDay: tRules.maxClassesPerDay || 2,
-      maxHoursPerWeek: tRules.maxHoursPerWeek || 10,
       maxClassesPerWeek: tRules.maxClassesPerWeek,
-      minRestTime: 30,
       preferredRooms: [],
       preferredDays: [],
       ...tRules,
@@ -376,9 +365,6 @@ const DEFAULT_TEACHERS: Teacher[] = [
     availabilityMode: 'always',
     roleType: 'external',
     rules: {
-      maxClassesPerDay: 2,
-      maxHoursPerWeek: 12,
-      minRestTime: 30,
       preferredRooms: ['room-1', 'room-2'],
       preferredDays: [],
       availability: [
@@ -399,9 +385,6 @@ const DEFAULT_TEACHERS: Teacher[] = [
     availabilityMode: 'always',
     roleType: 'external',
     rules: {
-      maxClassesPerDay: 3,
-      maxHoursPerWeek: 15,
-      minRestTime: 45,
       preferredRooms: ['room-1', 'room-3'],
       preferredDays: [],
       availability: [
@@ -422,9 +405,6 @@ const DEFAULT_TEACHERS: Teacher[] = [
     availabilityMode: 'always',
     roleType: 'external',
     rules: {
-      maxClassesPerDay: 2,
-      maxHoursPerWeek: 8,
-      minRestTime: 30,
       preferredRooms: ['room-2', 'room-3'],
       preferredDays: [],
       availability: [
@@ -445,9 +425,6 @@ const DEFAULT_TEACHERS: Teacher[] = [
     availabilityMode: 'always',
     roleType: 'external',
     rules: {
-      maxClassesPerDay: 1,
-      maxHoursPerWeek: 6,
-      minRestTime: 60,
       preferredRooms: ['room-3'],
       preferredDays: [],
       availability: [
@@ -6720,9 +6697,6 @@ export const db = {
         const hasMondayAvail = t.rules.availability.some(a => a.day === 1);
         const hasTuesdayAvail = t.rules.availability.some(a => a.day === 2);
         
-        if (hasMondayAvail || !hasTuesdayAvail || t.rules.maxHoursPerWeek < 30 || t.rules.maxClassesPerDay < 3) {
-          t.rules.maxClassesPerDay = 3;
-          t.rules.maxHoursPerWeek = 30;
           t.rules.availability = [
             { day: 2, start: '06:30', end: '22:00' }, // Tuesday
             { day: 3, start: '06:30', end: '22:00' }, // Wednesday

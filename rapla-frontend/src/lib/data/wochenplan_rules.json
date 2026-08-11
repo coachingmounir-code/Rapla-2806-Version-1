@@ -31,7 +31,6 @@
       ],
       "availabilityRestrictions": [],
       "preferredAvailability": [],
-      "maxClassesPerDay": 2
     },
     "satyam": {
       "name": "Satyam",
@@ -62,7 +61,6 @@
       ],
       "availabilityRestrictions": [],
       "preferredAvailability": [],
-      "maxClassesPerDay": 2
     },
     "teresa": {
       "name": "Teresa",
@@ -88,7 +86,6 @@
       "customCourseNames": [],
       "availabilityRestrictions": [],
       "preferredAvailability": [],
-      "maxClassesPerDay": 2
     },
     "abha": {
       "name": "Abha",
@@ -120,7 +117,6 @@
       ],
       "availabilityRestrictions": [],
       "preferredAvailability": [],
-      "maxClassesPerDay": 2
     },
     "anjali": {
       "name": "Anjali",
@@ -157,7 +153,6 @@
         }
       ],
       "preferredAvailability": [],
-      "maxClassesPerDay": 2
     },
     "karuna": {
       "name": "Karuna",
@@ -183,7 +178,6 @@
       "customCourseNames": [],
       "availabilityRestrictions": [],
       "preferredAvailability": [],
-      "maxClassesPerDay": 3
     },
     "hu": {
       "name": "Hu",
@@ -220,7 +214,6 @@
         }
       ],
       "preferredAvailability": [],
-      "maxClassesPerDay": 2
     },
     "mounir": {
       "name": "Mounir",
@@ -246,7 +239,6 @@
       "customCourseNames": [],
       "availabilityRestrictions": [],
       "preferredAvailability": [],
-      "maxClassesPerDay": 2
     },
     "nirmaya": {
       "name": "Nirmaya",
@@ -273,7 +265,6 @@
       "customCourseNames": [],
       "availabilityRestrictions": [],
       "preferredAvailability": [],
-      "maxClassesPerDay": 2
     },
     "narayani": {
       "name": "Narayani",
@@ -309,7 +300,6 @@
         }
       ],
       "preferredAvailability": [],
-      "maxClassesPerDay": 2
     },
     "pranava": {
       "name": "Pranava",
@@ -336,7 +326,6 @@
       "customCourseNames": [],
       "availabilityRestrictions": [],
       "preferredAvailability": [],
-      "maxClassesPerDay": 2
     },
     "alexander": {
       "name": "Alexander",
@@ -363,7 +352,6 @@
       "customCourseNames": [],
       "availabilityRestrictions": [],
       "preferredAvailability": [],
-      "maxClassesPerDay": 2
     },
     "adam": {
       "name": "Adam",
@@ -389,7 +377,6 @@
       "customCourseNames": [],
       "availabilityRestrictions": [],
       "preferredAvailability": [],
-      "maxClassesPerDay": 2
     },
     "harishakti": {
       "name": "Harishakti",
@@ -431,7 +418,6 @@
           "end": "12:00"
         }
       ],
-      "maxClassesPerDay": 2
     },
     "ulrich": {
       "name": "Ulrich",
@@ -458,7 +444,6 @@
       "customCourseNames": [],
       "availabilityRestrictions": [],
       "preferredAvailability": [],
-      "maxClassesPerDay": 1
     }
   },
   "meditation": {
