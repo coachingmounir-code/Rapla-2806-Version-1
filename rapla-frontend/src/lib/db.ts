@@ -577,7 +577,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
     createdAt: new Date().toISOString()
   },
   // --- PREPLANNED WEEKS ---
-                                                      {
+                                                        {
     id: "plan-pre-2026-W34",
     name: "Vorplanung 2026-W34 (Automatisch)",
     status: "approved",
@@ -1144,7 +1144,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "endTime": "07:30",
         "roomId": "room-5",
         "teacherId": "teacher-gen-satyam",
-        "isAiPlanned": true,
+        "isAiPlanned": false,
         "status": "approved"
       },
       {
@@ -1897,7 +1897,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "endTime": "07:30",
         "roomId": "room-5",
         "teacherId": "teacher-gen-satyam",
-        "isAiPlanned": true,
+        "isAiPlanned": false,
         "status": "approved"
       },
       {
@@ -2650,7 +2650,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "endTime": "07:30",
         "roomId": "room-5",
         "teacherId": "teacher-gen-satyam",
-        "isAiPlanned": true,
+        "isAiPlanned": false,
         "status": "approved"
       },
       {
@@ -3403,7 +3403,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "endTime": "07:30",
         "roomId": "room-5",
         "teacherId": "teacher-gen-satyam",
-        "isAiPlanned": true,
+        "isAiPlanned": false,
         "status": "approved"
       },
       {
@@ -4156,7 +4156,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "endTime": "07:30",
         "roomId": "room-5",
         "teacherId": "teacher-gen-satyam",
-        "isAiPlanned": true,
+        "isAiPlanned": false,
         "status": "approved"
       },
       {
@@ -4909,7 +4909,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "endTime": "07:30",
         "roomId": "room-5",
         "teacherId": "teacher-gen-satyam",
-        "isAiPlanned": true,
+        "isAiPlanned": false,
         "status": "approved"
       },
       {
@@ -5662,7 +5662,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "endTime": "07:30",
         "roomId": "room-5",
         "teacherId": "teacher-gen-satyam",
-        "isAiPlanned": true,
+        "isAiPlanned": false,
         "status": "approved"
       },
       {
@@ -6415,7 +6415,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "endTime": "07:30",
         "roomId": "room-5",
         "teacherId": "teacher-gen-satyam",
-        "isAiPlanned": true,
+        "isAiPlanned": false,
         "status": "approved"
       },
       {
@@ -6625,7 +6625,7 @@ function setStored<T>(key: string, value: T): void {
   }
 }
 
-const CURRENT_DB_VERSION = 55;
+const CURRENT_DB_VERSION = 56;
 
 // Database Actions
 export const db = {

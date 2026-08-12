@@ -561,7 +561,7 @@
         "endTime": "07:30",
         "roomId": "room-5",
         "teacherId": "teacher-gen-satyam",
-        "isAiPlanned": true,
+        "isAiPlanned": false,
         "status": "approved"
       },
       {
@@ -1309,7 +1309,7 @@
         "endTime": "07:30",
         "roomId": "room-5",
         "teacherId": "teacher-gen-satyam",
-        "isAiPlanned": true,
+        "isAiPlanned": false,
         "status": "approved"
       },
       {
@@ -2057,7 +2057,7 @@
         "endTime": "07:30",
         "roomId": "room-5",
         "teacherId": "teacher-gen-satyam",
-        "isAiPlanned": true,
+        "isAiPlanned": false,
         "status": "approved"
       },
       {
@@ -2805,7 +2805,7 @@
         "endTime": "07:30",
         "roomId": "room-5",
         "teacherId": "teacher-gen-satyam",
-        "isAiPlanned": true,
+        "isAiPlanned": false,
         "status": "approved"
       },
       {
@@ -3553,7 +3553,7 @@
         "endTime": "07:30",
         "roomId": "room-5",
         "teacherId": "teacher-gen-satyam",
-        "isAiPlanned": true,
+        "isAiPlanned": false,
         "status": "approved"
       },
       {
@@ -4301,7 +4301,7 @@
         "endTime": "07:30",
         "roomId": "room-5",
         "teacherId": "teacher-gen-satyam",
-        "isAiPlanned": true,
+        "isAiPlanned": false,
         "status": "approved"
       },
       {
@@ -5049,7 +5049,7 @@
         "endTime": "07:30",
         "roomId": "room-5",
         "teacherId": "teacher-gen-satyam",
-        "isAiPlanned": true,
+        "isAiPlanned": false,
         "status": "approved"
       },
       {
@@ -5797,7 +5797,7 @@
         "endTime": "07:30",
         "roomId": "room-5",
         "teacherId": "teacher-gen-satyam",
-        "isAiPlanned": true,
+        "isAiPlanned": false,
         "status": "approved"
       },
       {

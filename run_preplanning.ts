@@ -233,6 +233,7 @@ const getTeacherIdByName = (shortName: string): string | null => {
   if (nameLower === 'narayani') return 'teacher-gen-narayani-kedenburg';
   if (nameLower === 'mouniir') return 'teacher-gen-mouniir-jaber';
   if (nameLower === 'christopher') return 'teacher-gen-christopher';
+  if (nameLower === 'satyam') return 'teacher-gen-satyam';
   if (nameLower === 'adam, anjali' || nameLower === 'adam,anjali') return 'teacher-gen-adam-anjali';
   if (nameLower === 'burnie, narayani' || nameLower === 'burnie,narayani') return 'teacher-gen-burnie-narayani';
   if (nameLower === 'mouniir, christopher' || nameLower === 'mouniir,christopher') return 'teacher-gen-mouniir-christopher';
