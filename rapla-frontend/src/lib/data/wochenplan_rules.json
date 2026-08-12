@@ -23,12 +23,7 @@
       "weekendAfternoonOnly": false,
       "weekendAsBackupOnly": false,
       "prefersMittelstufe": false,
-      "customCourseNames": [
-        {
-          "originalName": "Anfänger",
-          "customName": "Yoga Vidya meets Pavanmuktasana"
-        }
-      ],
+      "customCourseNames": [],
       "availabilityRestrictions": [],
       "preferredAvailability": [],
       "maxClassesPerDay": 2

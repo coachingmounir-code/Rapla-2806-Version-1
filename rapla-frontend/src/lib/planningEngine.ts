@@ -1254,9 +1254,9 @@ export function runAiPlanning(
 
         // Rule 5: Burnie beginner class rename
         if (tNameLower.includes('burnie') && isYoga && workingCourses[index].name.toLowerCase().includes('anfänger')) {
-          const hasPavan = workingCourses.some(wc => wc.teacherId === bestCandidate.teacher.id && (wc.name === 'Yoga Vidya meets Pavanmuktasana' || wc.name === 'Yoga Vidya Pavanmuktasana'));
+          const hasPavan = workingCourses.some(wc => wc.teacherId === bestCandidate.teacher.id && (wc.name === 'Pavanmukt Asana' || wc.name === 'Yoga Vidya meets Pavanmuktasana' || wc.name === 'Yoga Vidya Pavanmuktasana'));
           if (!hasPavan) {
-            workingCourses[index].name = 'Yoga Vidya meets Pavanmuktasana';
+            workingCourses[index].name = 'Pavanmukt Asana';
           }
         } else if (tNameLower.includes('satyam') && workingCourses[index].name === 'Mittelstufe') {
           workingCourses[index].name = 'Yoga Flow Mittelstufe';
@@ -1298,12 +1298,48 @@ export function runAiPlanning(
     const tRules = teacherKey ? (wochenplanRules.teachers as any)[teacherKey] : null;
     if (tRules && tRules.customCourseNames && tRules.customCourseNames.length > 0) {
       tRules.customCourseNames.forEach((item: any) => {
-        if (c.name.trim() === item.originalName.trim()) {
+        if (c.name.toLowerCase().includes(item.originalName.toLowerCase())) {
           c.name = item.customName;
         }
       });
     }
   });
+
+  // Post-process Burnie's Pavanmukt Asana rule across ALL courses (static and AI-planned)
+  const burnieClasses = workingCourses.filter(c => {
+    if (!c.teacherId) return false;
+    const teacher = teachers.find(t => t.id === c.teacherId);
+    return teacher && teacher.name.toLowerCase().includes('burnie');
+  });
+
+  // Sort them so we consistently pick the "first" one (e.g., by day and time)
+  burnieClasses.sort((a, b) => {
+    if (a.dayOfWeek !== b.dayOfWeek) return a.dayOfWeek - b.dayOfWeek;
+    return a.startTime.localeCompare(b.startTime);
+  });
+
+  let pavanCount = 0;
+  burnieClasses.forEach(c => {
+    if (c.name === 'Pavanmukt Asana' || c.name === 'Yoga Vidya meets Pavanmuktasana' || c.name === 'Yoga Vidya Pavanmuktasana') {
+      pavanCount++;
+      if (pavanCount > 1) {
+        c.name = 'Anfänger'; // Revert any extra ones back to Anfänger
+      } else {
+        c.name = 'Pavanmukt Asana'; // Ensure exact correct name
+      }
+    }
+  });
+
+  if (pavanCount === 0) {
+    // If he doesn't have one yet, rename his first Anfänger class
+    const firstAnfaenger = burnieClasses.find(c => {
+      const isYoga = !c.name.toLowerCase().includes('meditation') && !c.style.toLowerCase().includes('meditation') && !c.name.toLowerCase().includes('satsang') && !c.name.toLowerCase().includes('om namo');
+      return isYoga && c.name.toLowerCase().includes('anfänger');
+    });
+    if (firstAnfaenger) {
+      firstAnfaenger.name = 'Pavanmukt Asana';
+    }
+  }
 
   // Apply room rules to auto-adjust rooms based on final teacher assignments
   adjustRoomsForRules(workingCourses, teachers);

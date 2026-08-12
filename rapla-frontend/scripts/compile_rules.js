@@ -94,8 +94,8 @@ ${filesText}
       "weekendAsBackupOnly": true oder false (wenn am Wochenende nur verplant werden soll, wenn sonst niemand frei ist),
       "prefersMittelstufe": true oder false (wenn Mittelstufe bevorzugt wird),
       "customCourseNames": [
-        { "originalName": "Anfänger", "customName": "Yoga Vidya meets Pavanmuktasana" }
-      ] (Liste von spezifischen Umbenennungen für Yogastunden dieses Lehrers),
+        { "originalName": "Mittelstufe", "customName": "Yoga Flow Mittelstufe" }
+      ] (Liste von generellen Umbenennungen für alle Yogastunden dieses Lehrers. WICHTIG: Burnies Pavanmukt Asana Regel darf hier NICHT eingetragen werden, da diese nur einmal pro Woche gilt!),
       "availabilityRestrictions": [
         { "day": 2, "timeAfter": "12:00", "allowed": false },
         { "day": 4, "timeBefore": "11:00", "allowed": false }

@@ -577,7 +577,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
     createdAt: new Date().toISOString()
   },
   // --- PREPLANNED WEEKS ---
-                                                            {
+                                                                {
     id: "plan-pre-2026-W34",
     name: "Vorplanung 2026-W34 (Automatisch)",
     status: "approved",
@@ -657,7 +657,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W34-7",
-        "name": "Mittelstufe Ankommensstunde",
+        "name": "Yoga Flow",
         "style": "Hatha",
         "dayOfWeek": 5,
         "startTime": "16:30",
@@ -753,7 +753,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W34-15",
-        "name": "Yoga Flow Mittelstufe",
+        "name": "Yoga Flow",
         "style": "Hatha",
         "dayOfWeek": 6,
         "startTime": "09:15",
@@ -861,7 +861,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W34-24",
-        "name": "Yoga Vidya meets Pavanmuktasana",
+        "name": "Pavanmukt Asana",
         "style": "Hatha",
         "dayOfWeek": 0,
         "startTime": "09:15",
@@ -969,7 +969,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W34-33",
-        "name": "Yoga Vidya meets Pavanmuktasana",
+        "name": "Anfänger",
         "style": "Hatha",
         "dayOfWeek": 1,
         "startTime": "09:15",
@@ -1101,7 +1101,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W34-44",
-        "name": "Anfänger Yin Yoga",
+        "name": "Yin Yoga Anfängerstunde",
         "style": "Hatha",
         "dayOfWeek": 2,
         "startTime": "16:15",
@@ -1398,7 +1398,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W35-6",
-        "name": "Anfänger Ankommensstunde",
+        "name": "Yin Yoga Anfängerstunde",
         "style": "Hatha",
         "dayOfWeek": 5,
         "startTime": "16:30",
@@ -1614,7 +1614,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W35-24",
-        "name": "Yoga Vidya meets Pavanmuktasana",
+        "name": "Pavanmukt Asana",
         "style": "Hatha",
         "dayOfWeek": 0,
         "startTime": "09:15",
@@ -1722,7 +1722,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W35-33",
-        "name": "Yoga Vidya meets Pavanmuktasana",
+        "name": "Anfänger",
         "style": "Hatha",
         "dayOfWeek": 1,
         "startTime": "09:15",
@@ -1854,7 +1854,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W35-44",
-        "name": "Anfänger Yin Yoga",
+        "name": "Yin Yoga Anfängerstunde",
         "style": "Hatha",
         "dayOfWeek": 2,
         "startTime": "16:15",
@@ -2151,7 +2151,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W36-6",
-        "name": "Anfänger Ankommensstunde",
+        "name": "Yin Yoga Anfängerstunde",
         "style": "Hatha",
         "dayOfWeek": 5,
         "startTime": "16:30",
@@ -2163,7 +2163,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W36-7",
-        "name": "Mittelstufe Ankommensstunde",
+        "name": "Yoga Flow",
         "style": "Hatha",
         "dayOfWeek": 5,
         "startTime": "16:30",
@@ -2367,7 +2367,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W36-24",
-        "name": "Yoga Vidya meets Pavanmuktasana",
+        "name": "Pavanmukt Asana",
         "style": "Hatha",
         "dayOfWeek": 0,
         "startTime": "09:15",
@@ -2475,7 +2475,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W36-33",
-        "name": "Yoga Vidya meets Pavanmuktasana",
+        "name": "Anfänger",
         "style": "Hatha",
         "dayOfWeek": 1,
         "startTime": "09:15",
@@ -2607,7 +2607,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W36-44",
-        "name": "Anfänger Yin Yoga",
+        "name": "Yin Yoga Anfängerstunde",
         "style": "Hatha",
         "dayOfWeek": 2,
         "startTime": "16:15",
@@ -2904,7 +2904,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W37-6",
-        "name": "Anfänger Ankommensstunde",
+        "name": "Yin Yoga Anfängerstunde",
         "style": "Hatha",
         "dayOfWeek": 5,
         "startTime": "16:30",
@@ -3120,7 +3120,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W37-24",
-        "name": "Yoga Vidya meets Pavanmuktasana",
+        "name": "Pavanmukt Asana",
         "style": "Hatha",
         "dayOfWeek": 0,
         "startTime": "09:15",
@@ -3228,7 +3228,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W37-33",
-        "name": "Yoga Vidya meets Pavanmuktasana",
+        "name": "Anfänger",
         "style": "Hatha",
         "dayOfWeek": 1,
         "startTime": "09:15",
@@ -3360,7 +3360,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W37-44",
-        "name": "Anfänger Yin Yoga",
+        "name": "Yin Yoga Anfängerstunde",
         "style": "Hatha",
         "dayOfWeek": 2,
         "startTime": "16:15",
@@ -3657,7 +3657,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W38-6",
-        "name": "Anfänger Ankommensstunde",
+        "name": "Yin Yoga Anfängerstunde",
         "style": "Hatha",
         "dayOfWeek": 5,
         "startTime": "16:30",
@@ -3873,7 +3873,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W38-24",
-        "name": "Yoga Vidya meets Pavanmuktasana",
+        "name": "Pavanmukt Asana",
         "style": "Hatha",
         "dayOfWeek": 0,
         "startTime": "09:15",
@@ -3981,7 +3981,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W38-33",
-        "name": "Yoga Vidya meets Pavanmuktasana",
+        "name": "Anfänger",
         "style": "Hatha",
         "dayOfWeek": 1,
         "startTime": "09:15",
@@ -4113,7 +4113,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W38-44",
-        "name": "Anfänger Yin Yoga",
+        "name": "Yin Yoga Anfängerstunde",
         "style": "Hatha",
         "dayOfWeek": 2,
         "startTime": "16:15",
@@ -4410,7 +4410,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W39-6",
-        "name": "Anfänger Ankommensstunde",
+        "name": "Yin Yoga Anfängerstunde",
         "style": "Hatha",
         "dayOfWeek": 5,
         "startTime": "16:30",
@@ -4626,7 +4626,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W39-24",
-        "name": "Yoga Vidya meets Pavanmuktasana",
+        "name": "Pavanmukt Asana",
         "style": "Hatha",
         "dayOfWeek": 0,
         "startTime": "09:15",
@@ -4734,7 +4734,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W39-33",
-        "name": "Yoga Vidya meets Pavanmuktasana",
+        "name": "Anfänger",
         "style": "Hatha",
         "dayOfWeek": 1,
         "startTime": "09:15",
@@ -4866,7 +4866,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W39-44",
-        "name": "Anfänger Yin Yoga",
+        "name": "Yin Yoga Anfängerstunde",
         "style": "Hatha",
         "dayOfWeek": 2,
         "startTime": "16:15",
@@ -5163,7 +5163,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W40-6",
-        "name": "Anfänger Ankommensstunde",
+        "name": "Yin Yoga Anfängerstunde",
         "style": "Hatha",
         "dayOfWeek": 5,
         "startTime": "16:30",
@@ -5379,7 +5379,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W40-24",
-        "name": "Yoga Vidya meets Pavanmuktasana",
+        "name": "Pavanmukt Asana",
         "style": "Hatha",
         "dayOfWeek": 0,
         "startTime": "09:15",
@@ -5487,7 +5487,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W40-33",
-        "name": "Yoga Vidya meets Pavanmuktasana",
+        "name": "Anfänger",
         "style": "Hatha",
         "dayOfWeek": 1,
         "startTime": "09:15",
@@ -5619,7 +5619,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W40-44",
-        "name": "Anfänger Yin Yoga",
+        "name": "Yin Yoga Anfängerstunde",
         "style": "Hatha",
         "dayOfWeek": 2,
         "startTime": "16:15",
@@ -5916,7 +5916,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W41-6",
-        "name": "Anfänger Ankommensstunde",
+        "name": "Yin Yoga Anfängerstunde",
         "style": "Hatha",
         "dayOfWeek": 5,
         "startTime": "16:30",
@@ -6132,7 +6132,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W41-24",
-        "name": "Yoga Vidya meets Pavanmuktasana",
+        "name": "Pavanmukt Asana",
         "style": "Hatha",
         "dayOfWeek": 0,
         "startTime": "09:15",
@@ -6240,7 +6240,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W41-33",
-        "name": "Yoga Vidya meets Pavanmuktasana",
+        "name": "Anfänger",
         "style": "Hatha",
         "dayOfWeek": 1,
         "startTime": "09:15",
@@ -6372,7 +6372,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W41-44",
-        "name": "Anfänger Yin Yoga",
+        "name": "Yin Yoga Anfängerstunde",
         "style": "Hatha",
         "dayOfWeek": 2,
         "startTime": "16:15",
@@ -6625,7 +6625,7 @@ function setStored<T>(key: string, value: T): void {
   }
 }
 
-const CURRENT_DB_VERSION = 58;
+const CURRENT_DB_VERSION = 60;
 
 // Database Actions
 export const db = {
