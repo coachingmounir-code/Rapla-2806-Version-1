@@ -72,6 +72,7 @@ export interface WeekPlan {
   seminarLeaderIds?: string[];
   targetWeekCode?: string;
   createdAt: string;
+  isManualOnly?: boolean;
 }
 
 // Default Data
@@ -6827,8 +6828,10 @@ export const db = {
         updated = true;
       } else if (isOutdated) {
         // Always force update all default plans on DB version mismatch to prevent stale state
-        list[idx] = defPlan;
-        updated = true;
+        if (!list[idx].isManualOnly) {
+          list[idx] = defPlan;
+          updated = true;
+        }
       }
     }
     for (const p of list) {
@@ -6949,7 +6952,7 @@ export const db = {
   syncDatabase: (): void => {
     if (typeof window !== 'undefined') {
       localStorage.removeItem('rapla_teachers');
-      localStorage.removeItem('rapla_week_plans');
+      // Do not clear rapla_week_plans entirely to preserve isManualOnly flags
       localStorage.removeItem('rapla_db_version');
       window.location.reload();
     }

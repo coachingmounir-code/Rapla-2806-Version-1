@@ -411,6 +411,7 @@
           <button type="button" class="btn btn-secondary btn-small" onclick={() => navigateWeek(-1)}>◀ Letzte Woche</button>
           <span class="week-title-badge">
             KW {currentPlan ? getWeekNumber(getMondayOfCurrentWeek()) : '--'} ({currentPlan?.targetWeekCode || 'Kein Plan'})
+            {currentPlan?.isManualOnly ? '🔒' : ''}
           </span>
           <button type="button" class="btn btn-secondary btn-small" onclick={() => navigateWeek(1)}>Nächste Woche ▶</button>
         </div>
@@ -482,6 +483,7 @@
       <button type="button" class="btn btn-secondary btn-small" onclick={() => navigateWeek(-1)}>◀</button>
       <span class="week-title-badge-mobile">
         KW {currentPlan ? getWeekNumber(getMondayOfCurrentWeek()) : '--'} ({currentPlan?.targetWeekCode || 'Kein Plan'})
+        {currentPlan?.isManualOnly ? '🔒' : ''}
       </span>
       <button type="button" class="btn btn-secondary btn-small" onclick={() => navigateWeek(1)}>▶</button>
     </div>
