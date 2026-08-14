@@ -579,7 +579,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
     createdAt: new Date().toISOString()
   },
   // --- PREPLANNED WEEKS ---
-                                                                  {
+                                                                    {
     id: "plan-pre-2026-W34",
     name: "Vorplanung 2026-W34 (Automatisch)",
     status: "approved",
@@ -6650,7 +6650,7 @@ function setStored<T>(key: string, value: T): void {
   localStorage.setItem(key, JSON.stringify(value));
 }
 
-const CURRENT_DB_VERSION = 61;
+const CURRENT_DB_VERSION = 62;
 
 // Database Actions
 export const db = {
