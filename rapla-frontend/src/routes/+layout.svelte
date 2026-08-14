@@ -4,6 +4,7 @@
 	import nataraja from '$lib/assets/nataraja.jpg';
 	import { onMount } from 'svelte';
 	import { todoManager } from '$lib/todoStore.svelte';
+	import { db } from '$lib/db';
 
 	let { children } = $props();
 
@@ -132,7 +133,8 @@
 		}, 600);
 	}
 
-	onMount(() => {
+	onMount(async () => {
+		await db.initializeCloudSync();
 		syncData();
 		
 		todoManager.checkReminders();

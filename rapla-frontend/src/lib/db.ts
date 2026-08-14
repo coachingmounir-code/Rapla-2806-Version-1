@@ -1,4 +1,5 @@
 // LocalStorage Database helper for Yoga Studio Scheduler
+import { supabase } from './supabaseClient';
 import wochenplanRules from './data/wochenplan_rules.json' with { type: 'json' };
 export interface TimeSlot {
   day: number; // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
@@ -6605,9 +6606,22 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
 ];
 
 
-// Helper functions for browser local storage
+// Cloud-aware storage
+const inMemoryStore: Record<string, any> = {};
+let cloudInitialized = false;
+
+// Helper functions for storage
 function getStored<T>(key: string, defaultValue: T): T {
   if (typeof window === 'undefined') return defaultValue;
+  
+  if (supabase && cloudInitialized) {
+    if (inMemoryStore[key] !== undefined) {
+      return inMemoryStore[key] as T;
+    }
+    return defaultValue;
+  }
+
+  // Fallback to localStorage
   const stored = localStorage.getItem(key);
   if (!stored) {
     localStorage.setItem(key, JSON.stringify(defaultValue));
@@ -6621,15 +6635,51 @@ function getStored<T>(key: string, defaultValue: T): T {
 }
 
 function setStored<T>(key: string, value: T): void {
-  if (typeof window !== 'undefined') {
-    localStorage.setItem(key, JSON.stringify(value));
+  if (typeof window === 'undefined') return;
+  
+  if (supabase && cloudInitialized) {
+    inMemoryStore[key] = value;
+    // Asynchronously push to cloud
+    supabase.from('app_state').upsert({ key, value: JSON.stringify(value) })
+      .then(({ error }) => {
+        if (error) console.error('Failed to sync to cloud', error);
+      });
   }
+
+  // Always write to local storage as fallback and offline cache
+  localStorage.setItem(key, JSON.stringify(value));
 }
 
 const CURRENT_DB_VERSION = 61;
 
 // Database Actions
 export const db = {
+  initializeCloudSync: async (): Promise<void> => {
+    if (typeof window === 'undefined' || !supabase) return;
+    try {
+      const { data, error } = await supabase.from('app_state').select('*');
+      if (!error && data) {
+        let changed = false;
+        for (const row of data) {
+          try {
+            const currentStr = localStorage.getItem(row.key);
+            if (currentStr !== row.value) {
+              changed = true;
+              localStorage.setItem(row.key, row.value);
+            }
+            inMemoryStore[row.key] = JSON.parse(row.value);
+          } catch(e) {}
+        }
+        cloudInitialized = true;
+        if (changed) {
+          // If cloud data is different from local cache, reload to ensure UI updates
+          window.location.reload();
+        }
+      }
+    } catch (e) {
+      console.error('Failed to initialize cloud sync', e);
+    }
+  },
   getDefaultCourses: (): Course[] => DEFAULT_COURSES,
   getTeachers: (): Teacher[] => {
     const storedVersion = typeof window !== 'undefined' ? localStorage.getItem('rapla_db_version') : null;
