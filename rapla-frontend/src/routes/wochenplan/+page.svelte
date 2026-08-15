@@ -61,15 +61,8 @@
       }
     };
     
-    const handleSync = () => loadData();
-    window.addEventListener('rapla_cloud_synced', handleSync);
-    window.addEventListener('rapla_sync_completed', handleSync);
     window.addEventListener('keydown', handleKeydown);
-    return () => {
-      window.removeEventListener('keydown', handleKeydown);
-      window.removeEventListener('rapla_cloud_synced', handleSync);
-      window.removeEventListener('rapla_sync_completed', handleSync);
-    };
+    return () => window.removeEventListener('keydown', handleKeydown);
   });
 
   function getWeekCode(date: Date): string {

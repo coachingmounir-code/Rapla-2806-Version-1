@@ -219,35 +219,9 @@ async function fetchWithRetry(url, options, maxRetries = 3, delayMs = 2000) {
 }
 
 async function compile() {
-  const outDir = path.join(rootDir, 'rapla-frontend', 'src', 'lib', 'data');
-  const outPath = path.join(outDir, 'wochenplan_rules.json');
-
-  // Check if existing wochenplan_rules.json is already newer than all rule files
-  if (fs.existsSync(outPath)) {
-    try {
-      const outStat = fs.statSync(outPath);
-      let latestRuleMtime = 0;
-      function checkMtime(dir) {
-        for (const item of fs.readdirSync(dir)) {
-          const fullPath = path.join(dir, item);
-          const stat = fs.statSync(fullPath);
-          if (stat.isDirectory()) checkMtime(fullPath);
-          else if (item.endsWith('.txt')) {
-            if (stat.mtimeMs > latestRuleMtime) latestRuleMtime = stat.mtimeMs;
-          }
-        }
-      }
-      checkMtime(rulesDir);
-      if (outStat.mtimeMs > latestRuleMtime && outStat.size > 100) {
-        console.log(`[RULE COMPILER] Rules are up-to-date. Using cached ${outPath}`);
-        return;
-      }
-    } catch(e) {}
-  }
-
   try {
     console.log('[RULE COMPILER] Querying Gemini API to parse rules...');
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${apiKey}`;
     const options = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

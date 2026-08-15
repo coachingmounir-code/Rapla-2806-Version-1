@@ -60,15 +60,6 @@
 
   onMount(() => {
     loadData();
-
-    const handleSync = () => loadData();
-    window.addEventListener('rapla_cloud_synced', handleSync);
-    window.addEventListener('rapla_sync_completed', handleSync);
-
-    return () => {
-      window.removeEventListener('rapla_cloud_synced', handleSync);
-      window.removeEventListener('rapla_sync_completed', handleSync);
-    };
   });
 
   // Helper to find the Monday of the current week
