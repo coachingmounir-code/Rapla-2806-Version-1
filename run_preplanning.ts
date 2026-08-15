@@ -363,20 +363,13 @@ const standardCourses = standardCoursesDefs.map((c, index) => ({
   status: 'draft' as const
 }));
 
-// Helper to generate the next 8 weeks codes
+// Helper to generate 8 weeks starting from KW 35
 function getNext8WeekCodes(): string[] {
   const weeks = [];
-  const now = new Date();
+  const startWeek = 35;
   for (let i = 0; i < 8; i++) {
-    const targetDate = new Date(now.getTime() + (i + 1) * 7 * 24 * 60 * 60 * 1000);
-    const targetThursday = new Date(targetDate.getTime());
-    targetThursday.setDate(targetDate.getDate() - (targetDate.getDay() || 7) + 4);
-    const year = targetThursday.getFullYear();
-    const jan4 = new Date(year, 0, 4);
-    const jan4Thursday = new Date(jan4.getTime());
-    jan4Thursday.setDate(jan4.getDate() - (jan4.getDay() || 7) + 4);
-    const weekNum = Math.round(((targetThursday.getTime() - jan4Thursday.getTime()) / 86400000) / 7) + 1;
-    weeks.push(`${year}-W${weekNum.toString().padStart(2, '0')}`);
+    const weekNum = startWeek + i;
+    weeks.push(`2026-W${weekNum.toString().padStart(2, '0')}`);
   }
   return weeks;
 }
