@@ -256,8 +256,13 @@ async function compile() {
     fs.writeFileSync(outPath, JSON.stringify(parsed, null, 2), 'utf8');
     console.log(`[RULE COMPILER SUCCESS] Compiled rules written to: ${outPath}`);
   } catch (err) {
-    console.error('[RULE COMPILER ERROR] Failed compiling rules:', err);
-    process.exit(1);
+    const outPath = path.join(rootDir, 'rapla-frontend', 'src', 'lib', 'data', 'wochenplan_rules.json');
+    if (fs.existsSync(outPath)) {
+      console.warn(`[RULE COMPILER WARNING] API call failed (${err.message}). Using existing cached ${outPath}.`);
+    } else {
+      console.error('[RULE COMPILER ERROR] Failed compiling rules and no cache exists:', err);
+      process.exit(1);
+    }
   }
 }
 
