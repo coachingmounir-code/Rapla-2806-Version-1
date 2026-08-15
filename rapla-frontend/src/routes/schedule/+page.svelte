@@ -191,13 +191,13 @@
     } else {
       const monday = getMondayOfCurrentWeek();
       const weekCode = getWeekCode(monday);
-      const isAfterW42 = weekCode > '2026-W42';
+      const isAfterW40 = weekCode > '2026-W40';
       
       let foundPlan = weekPlans.find(p => p.targetWeekCode === weekCode && p.status === 'approved')
                    || weekPlans.find(p => p.targetWeekCode === weekCode);
                    
       if (!foundPlan) {
-        if (isAfterW42) {
+        if (isAfterW40) {
           const template = weekPlans.find(p => p.id === 'plan-template-1') || weekPlans[0];
           foundPlan = {
             ...template,

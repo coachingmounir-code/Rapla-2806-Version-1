@@ -8,11 +8,11 @@
         6
       ],
       "maxMeditationPerWeek": 1,
-      "maxSatsangsPerWeek": 2,
-      "maxMorningSatsangsPerWeek": 2,
+      "maxSatsangsPerWeek": 1,
+      "maxMorningSatsangsPerWeek": 1,
       "maxYogaClassesPerWeek": null,
       "maxOnnPerWeek": null,
-      "maxAnfaengerYogaPerWeek": null,
+      "maxAnfaengerYogaPerWeek": 1,
       "isYogaTeacher": true,
       "canLeadSatsang": true,
       "canLeadPranayama": true,
@@ -33,7 +33,7 @@
       "freeDays": [
         1
       ],
-      "maxMeditationPerWeek": 1,
+      "maxMeditationPerWeek": null,
       "maxSatsangsPerWeek": 0,
       "maxMorningSatsangsPerWeek": 0,
       "maxYogaClassesPerWeek": null,
@@ -52,7 +52,7 @@
       "customCourseNames": [
         {
           "originalName": "Mittelstufe",
-          "customName": "Yoga Flow Mittelstufe"
+          "customName": "Yoga Flow"
         }
       ],
       "availabilityRestrictions": [],
@@ -93,8 +93,8 @@
       ],
       "maxMeditationPerWeek": 0,
       "maxSatsangsPerWeek": null,
-      "maxMorningSatsangsPerWeek": 1,
-      "maxYogaClassesPerWeek": 1,
+      "maxMorningSatsangsPerWeek": null,
+      "maxYogaClassesPerWeek": null,
       "maxOnnPerWeek": null,
       "maxAnfaengerYogaPerWeek": 1,
       "isYogaTeacher": true,
@@ -107,7 +107,12 @@
       "weekendAfternoonOnly": false,
       "weekendAsBackupOnly": false,
       "prefersMittelstufe": false,
-      "customCourseNames": [],
+      "customCourseNames": [
+        {
+          "originalName": "Anfänger",
+          "customName": "Yin Yoga Anfängerstunde"
+        }
+      ],
       "availabilityRestrictions": [],
       "preferredAvailability": [],
       "maxClassesPerDay": 2
@@ -119,7 +124,7 @@
       ],
       "maxMeditationPerWeek": 0,
       "maxSatsangsPerWeek": null,
-      "maxMorningSatsangsPerWeek": 2,
+      "maxMorningSatsangsPerWeek": null,
       "maxYogaClassesPerWeek": null,
       "maxOnnPerWeek": null,
       "maxAnfaengerYogaPerWeek": null,
@@ -156,7 +161,7 @@
       ],
       "maxMeditationPerWeek": 0,
       "maxSatsangsPerWeek": null,
-      "maxMorningSatsangsPerWeek": 0,
+      "maxMorningSatsangsPerWeek": null,
       "maxYogaClassesPerWeek": null,
       "maxOnnPerWeek": 0,
       "maxAnfaengerYogaPerWeek": null,
@@ -180,7 +185,7 @@
       "freeDays": [
         2
       ],
-      "maxMeditationPerWeek": 1,
+      "maxMeditationPerWeek": null,
       "maxSatsangsPerWeek": 0,
       "maxMorningSatsangsPerWeek": 0,
       "maxYogaClassesPerWeek": 0,
@@ -245,11 +250,11 @@
         3
       ],
       "maxMeditationPerWeek": 1,
-      "maxSatsangsPerWeek": 1,
+      "maxSatsangsPerWeek": null,
       "maxMorningSatsangsPerWeek": 1,
       "maxYogaClassesPerWeek": null,
       "maxOnnPerWeek": null,
-      "maxAnfaengerYogaPerWeek": 1,
+      "maxAnfaengerYogaPerWeek": null,
       "isYogaTeacher": true,
       "canLeadSatsang": true,
       "canLeadPranayama": false,
@@ -268,13 +273,14 @@
     "narayani": {
       "name": "Narayani",
       "freeDays": [
+        5,
         6
       ],
-      "maxMeditationPerWeek": 1,
+      "maxMeditationPerWeek": null,
       "maxSatsangsPerWeek": null,
-      "maxMorningSatsangsPerWeek": 1,
+      "maxMorningSatsangsPerWeek": null,
       "maxYogaClassesPerWeek": null,
-      "maxOnnPerWeek": 1,
+      "maxOnnPerWeek": null,
       "maxAnfaengerYogaPerWeek": null,
       "isYogaTeacher": true,
       "canLeadSatsang": true,
@@ -289,12 +295,8 @@
       "customCourseNames": [],
       "availabilityRestrictions": [
         {
-          "day": 5,
-          "allowed": false
-        },
-        {
           "day": 0,
-          "timeAfter": "13:00",
+          "timeBefore": "13:00",
           "allowed": false
         }
       ],
@@ -323,7 +325,12 @@
       "weekendAfternoonOnly": false,
       "weekendAsBackupOnly": false,
       "prefersMittelstufe": false,
-      "customCourseNames": [],
+      "customCourseNames": [
+        {
+          "originalName": "Mittelstufe",
+          "customName": "Mittelstufe Klangyogastunde"
+        }
+      ],
       "availabilityRestrictions": [],
       "preferredAvailability": [],
       "maxClassesPerDay": 2
@@ -335,8 +342,8 @@
         1
       ],
       "maxMeditationPerWeek": 1,
-      "maxSatsangsPerWeek": 2,
-      "maxMorningSatsangsPerWeek": 2,
+      "maxSatsangsPerWeek": null,
+      "maxMorningSatsangsPerWeek": 1,
       "maxYogaClassesPerWeek": null,
       "maxOnnPerWeek": null,
       "maxAnfaengerYogaPerWeek": null,
@@ -352,7 +359,13 @@
       "prefersMittelstufe": false,
       "customCourseNames": [],
       "availabilityRestrictions": [],
-      "preferredAvailability": [],
+      "preferredAvailability": [
+        {
+          "day": 3,
+          "start": "07:00",
+          "end": "08:00"
+        }
+      ],
       "maxClassesPerDay": 2
     },
     "adam": {
@@ -386,9 +399,9 @@
       "freeDays": [
         3
       ],
-      "maxMeditationPerWeek": 1,
-      "maxSatsangsPerWeek": 2,
-      "maxMorningSatsangsPerWeek": 2,
+      "maxMeditationPerWeek": null,
+      "maxSatsangsPerWeek": null,
+      "maxMorningSatsangsPerWeek": null,
       "maxYogaClassesPerWeek": null,
       "maxOnnPerWeek": null,
       "maxAnfaengerYogaPerWeek": null,
@@ -407,17 +420,17 @@
       "preferredAvailability": [
         {
           "day": 1,
-          "start": "06:30",
-          "end": "22:00"
+          "start": "07:00",
+          "end": "12:00"
         },
         {
           "day": 2,
-          "start": "06:30",
+          "start": "07:00",
           "end": "12:00"
         },
         {
           "day": 5,
-          "start": "06:30",
+          "start": "07:00",
           "end": "12:00"
         }
       ],
@@ -448,31 +461,7 @@
       "customCourseNames": [],
       "availabilityRestrictions": [],
       "preferredAvailability": [],
-      "maxClassesPerDay": 2
-    },
-    "christopher": {
-      "name": "Christopher",
-      "freeDays": [],
-      "maxMeditationPerWeek": 1,
-      "maxSatsangsPerWeek": null,
-      "maxMorningSatsangsPerWeek": null,
-      "maxYogaClassesPerWeek": null,
-      "maxOnnPerWeek": null,
-      "maxAnfaengerYogaPerWeek": null,
-      "isYogaTeacher": true,
-      "canLeadSatsang": true,
-      "canLeadPranayama": false,
-      "canLeadSatsangEinfuehrung": false,
-      "canLeadOnn": false,
-      "noYogaOnWeekend": false,
-      "noTwoYogaSameDay": false,
-      "weekendAfternoonOnly": false,
-      "weekendAsBackupOnly": false,
-      "prefersMittelstufe": false,
-      "customCourseNames": [],
-      "availabilityRestrictions": [],
-      "preferredAvailability": [],
-      "maxClassesPerDay": 2
+      "maxClassesPerDay": 1
     }
   },
   "meditation": {
@@ -536,8 +525,8 @@
         "primary": "karuna",
         "backups": [
           "narayani",
-          "anjali",
-          "abha"
+          "abha",
+          "anjali"
         ]
       },
       "mon": {
@@ -623,8 +612,7 @@
       "burnie",
       "christopher",
       "hu",
-      "anjali",
-      "mounir"
+      "anjali"
     ],
     "friday": {
       "primary": "pranava",

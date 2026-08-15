@@ -5,20 +5,17 @@ import { execSync } from 'child_process';
 import path from 'path';
 import fs from 'fs';
 
-// Automatically compile rules once during Vite initialization (dev/build)
-if (!process.env.__RULES_COMPILED__) {
-	process.env.__RULES_COMPILED__ = 'true';
-	try {
-		console.log('[VITE] Triggering Wochenplan rules compilation...');
-		const scriptPath = path.resolve('scripts/compile_rules.js');
-		if (fs.existsSync(scriptPath)) {
-			execSync(`node "${scriptPath}"`, { stdio: 'inherit' });
-		} else {
-			console.warn('[VITE WARNING] Rules compiler script not found at:', scriptPath);
-		}
-	} catch (e) {
-		console.error('[VITE ERROR] Rules compilation failed:', e);
+// Automatically compile rules during Vite initialization (dev/build)
+try {
+	console.log('[VITE] Triggering Wochenplan rules compilation...');
+	const scriptPath = path.resolve('scripts/compile_rules.js');
+	if (fs.existsSync(scriptPath)) {
+		execSync(`node "${scriptPath}"`, { stdio: 'inherit' });
+	} else {
+		console.warn('[VITE WARNING] Rules compiler script not found at:', scriptPath);
 	}
+} catch (e) {
+	console.error('[VITE ERROR] Rules compilation failed:', e);
 }
 
 export default defineConfig({

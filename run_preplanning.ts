@@ -363,27 +363,33 @@ const standardCourses = standardCoursesDefs.map((c, index) => ({
   status: 'draft' as const
 }));
 
-// Set explicit weeks to plan: KW 34 (current) plus 8 weeks in advance starting from KW 35 (KW 35 to KW 42)
-const weeksToPlan = [
-  '2026-W34',
-  '2026-W35',
-  '2026-W36',
-  '2026-W37',
-  '2026-W38',
-  '2026-W39',
-  '2026-W40',
-  '2026-W41',
-  '2026-W42'
-];
+// Helper to generate the next 8 weeks codes
+function getNext8WeekCodes(): string[] {
+  const weeks = [];
+  const now = new Date();
+  for (let i = 0; i < 8; i++) {
+    const targetDate = new Date(now.getTime() + (i + 1) * 7 * 24 * 60 * 60 * 1000);
+    const targetThursday = new Date(targetDate.getTime());
+    targetThursday.setDate(targetDate.getDate() - (targetDate.getDay() || 7) + 4);
+    const year = targetThursday.getFullYear();
+    const jan4 = new Date(year, 0, 4);
+    const jan4Thursday = new Date(jan4.getTime());
+    jan4Thursday.setDate(jan4.getDate() - (jan4.getDay() || 7) + 4);
+    const weekNum = Math.round(((targetThursday.getTime() - jan4Thursday.getTime()) / 86400000) / 7) + 1;
+    weeks.push(`${year}-W${weekNum.toString().padStart(2, '0')}`);
+  }
+  return weeks;
+}
 
-console.log(`[PREPLANNING] Planning for weeks: ${weeksToPlan.join(', ')}`);
+const weeksToPlan = getNext8WeekCodes();
+console.log(`[PREPLANNING] Planning for the next 8 weeks: ${weeksToPlan.join(', ')}`);
 
 const results: Record<string, any[]> = {};
 for (const week of weeksToPlan) {
   results[week] = planWeekWithAbsences(week, standardCourses);
 }
 
-// Format plan courses code for db.ts
+// Let's print out the exact TS code structure to put into db.ts
 function formatPlanCoursesCode(courses: any[]): string {
   const lines = courses.map(c => {
     return `      {
@@ -459,56 +465,3 @@ if (fs.existsSync(dbPath)) {
 } else {
   console.error('[PREPLANNING] db.ts Pfad existiert nicht.');
 }
-
-// Sync directly to Supabase
-async function syncToSupabase() {
-  try {
-    const { createClient } = await import('./rapla-frontend/node_modules/@supabase/supabase-js/dist/index.mjs');
-    const supabase = createClient(
-      'https://aogwygeeapwsjgvppnpz.supabase.co',
-      'sb_publishable_zy3vmo9BttNohbAjzHprSQ_v2oRliyR'
-    );
-
-    // Build the full weekPlans array
-    const defaultTemplate = {
-      id: 'plan-template-1',
-      name: 'Blankowoche Sommer',
-      status: 'blanko',
-      courses: standardCourses.map(c => ({ ...c, isAiPlanned: false, status: 'draft' })),
-      createdAt: new Date().toISOString()
-    };
-    const defaultActive = {
-      id: 'plan-active-1',
-      name: 'Kursplan (Genehmigt & Aktiv)',
-      status: 'approved',
-      courses: standardCourses.map(c => ({ ...c, status: 'approved' })),
-      createdAt: new Date().toISOString()
-    };
-
-    const prePlans = Object.entries(results).map(([week, courses]) => ({
-      id: `plan-pre-${week}`,
-      name: `Vorplanung ${week} (Automatisch)`,
-      status: 'approved',
-      targetWeekCode: week,
-      courses,
-      createdAt: new Date().toISOString()
-    }));
-
-    const allPlans = [defaultTemplate, defaultActive, ...prePlans];
-
-    console.log(`[PREPLANNING] Syncing ${allPlans.length} plans to Supabase...`);
-    const { error } = await supabase
-      .from('app_state')
-      .upsert({ key: 'rapla_week_plans', value: JSON.stringify(allPlans) });
-
-    if (error) {
-      console.error('[PREPLANNING SUPABASE ERROR]', error);
-    } else {
-      console.log('[PREPLANNING SUPABASE SUCCESS] Successfully synced all plans to Supabase cloud!');
-    }
-  } catch (err) {
-    console.error('[PREPLANNING SUPABASE EXCEPTION]', err);
-  }
-}
-
-syncToSupabase();

@@ -133,10 +133,9 @@
 		}, 600);
 	}
 
-	onMount(() => {
-		db.initializeCloudSync().then(() => {
-			syncData();
-		});
+	onMount(async () => {
+		await db.initializeCloudSync();
+		syncData();
 		
 		todoManager.checkReminders();
 		const interval = setInterval(() => {
