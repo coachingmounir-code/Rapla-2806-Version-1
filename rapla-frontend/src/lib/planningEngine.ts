@@ -1523,33 +1523,31 @@ export function adjustNamesForRules(courses: Course[], teachers: Teacher[]): Cou
       }
 
       if (baseType !== 'Unknown') {
-        // Step 1: Revert all custom names to their standard template names based on time
-        if (course.name === 'Yoga Vidya meets Pavanmuktasana' || course.name === 'Yoga Vidya Pavanmuktasana' || course.name === 'Yoga Flow Mittelstufe' || course.name === 'Anfänger Yin Yoga' || course.name === 'Mittelstufe Klangyogastunde') {
-          if (course.dayOfWeek === 5 || course.dayOfWeek === 0) {
-            if (course.startTime === '16:30') {
-              course.name = baseType === 'Anfänger' ? 'Anfänger Ankommensstunde' : 'Mittelstufe Ankommensstunde';
-            } else {
-              course.name = baseType;
-            }
-          } else {
+        const isFridayOrSundayAfternoonAnkommen = (course.dayOfWeek === 5 || course.dayOfWeek === 0) && course.startTime === '16:30';
+
+        if (isFridayOrSundayAfternoonAnkommen) {
+          course.name = baseType === 'Anfänger' ? 'Anfänger Ankommensstunde' : 'Mittelstufe Ankommensstunde';
+        } else {
+          // Step 1: Revert all custom names to their standard template names based on time for non-Ankommensstunden
+          if (course.name === 'Yoga Vidya meets Pavanmuktasana' || course.name === 'Yoga Vidya Pavanmuktasana' || course.name === 'Yoga Flow Mittelstufe' || course.name === 'Anfänger Yin Yoga' || course.name === 'Mittelstufe Klangyogastunde') {
             course.name = baseType;
           }
-        }
 
-        // Step 2: Apply specific sevaka rules
-        if (tNameLower.includes('burnie') && baseType === 'Anfänger') {
-          const hasPavan = courses.some(wc => wc.teacherId === course.teacherId && (wc.name === 'Yoga Vidya meets Pavanmuktasana' || wc.name === 'Yoga Vidya Pavanmuktasana'));
-          if (!hasPavan) {
-            course.name = 'Yoga Vidya meets Pavanmuktasana';
+          // Step 2: Apply specific sevaka rules for other times
+          if (tNameLower.includes('burnie') && baseType === 'Anfänger') {
+            const hasPavan = courses.some(wc => wc.teacherId === course.teacherId && (wc.name === 'Yoga Vidya meets Pavanmuktasana' || wc.name === 'Yoga Vidya Pavanmuktasana'));
+            if (!hasPavan) {
+              course.name = 'Yoga Vidya meets Pavanmuktasana';
+            }
           }
-        }
-        else if (tNameLower.includes('satyam') && baseType === 'Mittelstufe') {
-          course.name = 'Yoga Flow Mittelstufe';
-        }
-        else if (tNameLower.includes('abha') && baseType === 'Anfänger') {
-          const hasYin = courses.some(wc => wc.teacherId === course.teacherId && wc.name === 'Anfänger Yin Yoga');
-          if (!hasYin) {
-            course.name = 'Anfänger Yin Yoga';
+          else if (tNameLower.includes('satyam') && baseType === 'Mittelstufe') {
+            course.name = 'Yoga Flow Mittelstufe';
+          }
+          else if (tNameLower.includes('abha') && baseType === 'Anfänger') {
+            const hasYin = courses.some(wc => wc.teacherId === course.teacherId && wc.name === 'Anfänger Yin Yoga');
+            if (!hasYin) {
+              course.name = 'Anfänger Yin Yoga';
+            }
           }
         }
       }

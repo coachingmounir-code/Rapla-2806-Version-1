@@ -128,7 +128,7 @@
         "startTime": "06:00",
         "endTime": "06:50",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-abha-morkoetter",
+        "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -864,7 +864,7 @@
         "startTime": "20:00",
         "endTime": "21:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-narayani-kedenburg",
+        "teacherId": "teacher-gen-abha-morkoetter",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -1624,7 +1624,7 @@
         "startTime": "06:00",
         "endTime": "06:50",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-abha-morkoetter",
+        "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -2372,7 +2372,7 @@
         "startTime": "06:00",
         "endTime": "06:50",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-abha-morkoetter",
+        "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -3868,7 +3868,7 @@
         "startTime": "06:00",
         "endTime": "06:50",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-abha-morkoetter",
+        "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -4616,7 +4616,7 @@
         "startTime": "06:00",
         "endTime": "06:50",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-abha-morkoetter",
+        "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": true,
         "status": "approved"
       },
