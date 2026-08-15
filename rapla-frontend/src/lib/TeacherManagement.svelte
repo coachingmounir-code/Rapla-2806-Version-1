@@ -78,6 +78,15 @@
   onMount(() => {
     userRole = localStorage.getItem('rapla_user_role') || '';
     loadData();
+
+    const handleSync = () => loadData();
+    window.addEventListener('rapla_cloud_synced', handleSync);
+    window.addEventListener('rapla_sync_completed', handleSync);
+
+    return () => {
+      window.removeEventListener('rapla_cloud_synced', handleSync);
+      window.removeEventListener('rapla_sync_completed', handleSync);
+    };
   });
 
   function loadData() {

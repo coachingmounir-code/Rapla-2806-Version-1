@@ -219,12 +219,9 @@
     return day === 0 ? 6 : day - 1;
   }
 
-  onMount(() => {
-    userRole = localStorage.getItem('rapla_user_role') || '';
-
-    // Load Sevakas
+  function loadData() {
     sevakas = db.getTeachers().filter(t => t.roleType === 'sevaka');
-    if (sevakas.length > 0) {
+    if (sevakas.length > 0 && !formTeacherId) {
       formTeacherId = sevakas[0].id;
     }
 
@@ -267,6 +264,11 @@
       // Seed Excel data automatically on first load!
       importExcelData(false);
     }
+  }
+
+  onMount(() => {
+    userRole = localStorage.getItem('rapla_user_role') || '';
+    loadData();
 
     // Listen to fullscreen changes to sync state (handles ESC key)
     const handleFullscreenChange = () => {
@@ -274,8 +276,14 @@
     };
     document.addEventListener('fullscreenchange', handleFullscreenChange);
     
+    const handleSync = () => loadData();
+    window.addEventListener('rapla_cloud_synced', handleSync);
+    window.addEventListener('rapla_sync_completed', handleSync);
+
     return () => {
       document.removeEventListener('fullscreenchange', handleFullscreenChange);
+      window.removeEventListener('rapla_cloud_synced', handleSync);
+      window.removeEventListener('rapla_sync_completed', handleSync);
     };
   });
 

@@ -65,6 +65,13 @@
 	async function syncData() {
 		if (isSyncing) return;
 		isSyncing = true;
+
+		try {
+			await db.initializeCloudSync();
+		} catch (e) {
+			console.error('Failed to initialize cloud sync:', e);
+		}
+
 		// Sync wishes from server JSON to localStorage
 		try {
 			const wishesRes = await fetch('/api/sevakas-wishes');
@@ -123,20 +130,18 @@
 			console.error('Failed to sync absences:', e);
 		}
 		
+		if (typeof window !== 'undefined') {
+			window.dispatchEvent(new CustomEvent('rapla_sync_completed'));
+		}
+		
 		// Small delay to make the sync animation visible
 		setTimeout(() => {
 			isSyncing = false;
-			// Reload page to reflect changes if manually triggered
-			if (typeof window !== 'undefined' && userRole) {
-				// Don't reload on mount, but reload when button is explicitly clicked
-			}
 		}, 600);
 	}
 
 	onMount(() => {
-		db.initializeCloudSync().then(() => {
-			syncData();
-		});
+		syncData();
 		
 		todoManager.checkReminders();
 		const interval = setInterval(() => {
@@ -158,146 +163,194 @@
 			{@render children()}
 		{:else}
 			<div class="layout-container">
-				{#if mobileMenuOpen}
-					<!-- svelte-ignore a11y_click_events_have_key_events -->
-					<!-- svelte-ignore a11y_no_static_element_interactions -->
-					<div class="sidebar-backdrop" onclick={() => mobileMenuOpen = false}></div>
-				{/if}
-				<!-- Sidebar Navigation - Inspired by Yoga Vidya Nordsee branding -->
-				<aside class="sidebar" class:open={mobileMenuOpen}>
-					<div class="logo-area">
-						<div class="logo-img-wrapper">
-							<img src={nataraja} alt="Yoga Vidya Logo" class="logo-img" />
+				<!-- Header Bar -->
+				<header class="top-header glass-card">
+					<div class="header-brand">
+						<div class="logo-wrapper">
+							<span class="om-symbol">ॐ</span>
 						</div>
-						<div class="logo-text">
-							<h2>YOGA VIDYA</h2>
-							<span>NORDSEE</span>
+						<div class="brand-text">
+							<h1>Yoga Vidya Rapla</h1>
+							<span class="subtitle">Seminar- & Kursplanungs-Cockpit</span>
 						</div>
 					</div>
 
-					<!-- Swami Teachings Quote -->
-					<div class="logo-teachings">
-						<p>"To serve, to love, to give, to purify, to meditate, to realize."</p>
-					</div>
+					<div class="header-actions">
+						<!-- User role tag / Profile -->
+						<div class="user-badge" class:badge-viewer={userRole === 'viewer'} class:badge-admin={userRole === 'admin'} class:badge-team={userRole === 'team'}>
+							<span class="user-dot"></span>
+							<span class="user-role-text">
+								{#if userRole === 'admin'}
+									Admin
+								{:else if userRole === 'viewer'}
+									Betrachter (Leserechte)
+								{:else if userRole === 'team'}
+									Team (Nur Wochenplan)
+								{:else}
+									Gast
+								{/if}
+							</span>
+						</div>
 
-					<nav class="nav-menu">
-						<a href="/" class="nav-item" class:active={page.url.pathname === '/'}>
-							<span class="nav-icon">🏠</span>
-							<span class="nav-label">Kommende Seminare</span>
-						</a>
-						<!-- Wochenplan -->
 						<a 
-							href="/schedule" 
-							class="nav-item" 
-							class:active={page.url.pathname.startsWith('/schedule')}
+							href="/wochenplan" 
+							class="public-link-btn" 
+							title="Öffentliche Großansicht für Rezeption / Sevakas öffnen"
 						>
-							<span class="nav-icon">📅</span>
-							<span class="nav-label">Wochenplan</span>
+							<span class="monitor-icon">🖥️</span>
+							<span>Wochenplan TV-Modus</span>
 						</a>
-						
-						<!-- Sevafrei Kalender als eigener Hauptreiter -->
-						<a 
-							href="/sevafrei" 
-							class="nav-item" 
-							class:active={page.url.pathname.startsWith('/sevafrei')}
-						>
-							<span class="nav-icon">🏖️</span>
-							<span class="nav-label">Sevafrei Kalender</span>
-						</a>
-						
-						<!-- Combined Teachers Dropdown Menu -->
-						<div class="nav-dropdown-container">
+					</div>
+				</header>
+
+				<!-- Main Application Frame -->
+				<div class="app-body">
+					<!-- Sidebar Navigation -->
+					<aside class="sidebar glass-card">
+						<nav class="sidebar-nav">
+							<div class="nav-section-label">HAUPTMENÜ</div>
+							
+							<a 
+								href="/" 
+								class="nav-item" 
+								class:active={page.url.pathname === '/'}
+							>
+								<span class="nav-icon">📊</span>
+								<span class="nav-label">Übersicht</span>
+							</a>
+
+							<a 
+								href="/schedule" 
+								class="nav-item" 
+								class:active={page.url.pathname === '/schedule'}
+							>
+								<span class="nav-icon">📅</span>
+								<span class="nav-label">Wochenplaner</span>
+							</a>
+
+							<a 
+								href="/wochenplan" 
+								class="nav-item" 
+								class:active={page.url.pathname === '/wochenplan'}
+							>
+								<span class="nav-icon">📋</span>
+								<span class="nav-label">Wochenplan-Ansicht</span>
+							</a>
+
+							<a 
+								href="/sevafrei" 
+								class="nav-item" 
+								class:active={page.url.pathname === '/sevafrei'}
+							>
+								<span class="nav-icon">🏖️</span>
+								<span class="nav-label">Sevafrei & Urlaub</span>
+							</a>
+
+							<div class="nav-divider"></div>
+							<div class="nav-section-label">TEAM & RÄUME</div>
+
+							<a 
+								href="/sevakas" 
+								class="nav-item" 
+								class:active={page.url.pathname === '/sevakas'}
+							>
+								<span class="nav-icon">👥</span>
+								<span class="nav-label">Sevakas (Kernteam)</span>
+							</a>
+
+							<a 
+								href="/teachers" 
+								class="nav-item" 
+								class:active={page.url.pathname === '/teachers'}
+							>
+								<span class="nav-icon">🧘‍♀️</span>
+								<span class="nav-label">Externe Yogalehrer</span>
+							</a>
+
+							<!-- To-Do Listen Button with dynamic badge count -->
+							<div class="todo-nav-wrapper">
+								<button 
+									type="button" 
+									class="nav-item todo-toggle-btn" 
+									class:active={todoManager.isPanelOpen}
+									onclick={() => todoManager.togglePanel()}
+									title="To-Do-Listen & Aufgaben öffnen"
+								>
+									<span class="nav-icon">📝</span>
+									<span class="nav-label">To-Do-Listen</span>
+									{#if todoManager.openCount > 0}
+										<span class="todo-sidebar-badge" class:has-overdue={todoManager.overdueCount > 0}>
+											{todoManager.openCount}
+										</span>
+									{/if}
+								</button>
+
+								<!-- Quick add button if panel closed -->
+								{#if userRole !== 'viewer'}
+									<button 
+										type="button" 
+										class="quick-todo-plus" 
+										onclick={() => todoManager.openPanel()}
+										title="Neue Aufgabe erfassen"
+									>
+										+
+									</button>
+								{/if}
+							</div>
+
+							<a 
+								href="/settings" 
+								class="nav-item" 
+								class:active={page.url.pathname === '/settings'}
+							>
+								<span class="nav-icon">⚙️</span>
+								<span class="nav-label">Einstellungen</span>
+							</a>
+
+							<!-- Snycronisations Button -->
 							<button 
 								type="button" 
-								class="nav-item nav-dropdown-trigger" 
-								class:active={page.url.pathname.startsWith('/sevakas') || page.url.pathname.startsWith('/teachers')}
-								onclick={() => showTeachersDropdown = !showTeachersDropdown}
+								class="nav-item sync-action-btn" 
+								class:syncing={isSyncing}
+								onclick={() => syncData()}
+								disabled={isSyncing}
+								title="Lade neueste Urlaube, Wünsche und Cloud-Pläne synchron"
 							>
-								<span class="nav-icon">🧘</span>
-								<span class="nav-label">Unterrichtende</span>
-								<span class="dropdown-arrow">{showTeachersDropdown ? '▼' : '▶'}</span>
+								<span class="nav-icon icon-spin" class:spinning={isSyncing}>🔄</span>
+								<span class="nav-label">{isSyncing ? 'Synchronisiere...' : 'Daten synchronisieren'}</span>
 							</button>
-							
-							{#if showTeachersDropdown}
-								<div class="nav-dropdown-menu">
-									<a 
-										href="/sevakas" 
-										class="nav-dropdown-item" 
-										class:active={page.url.pathname.startsWith('/sevakas')}
-									>
-										<span class="nav-icon">👥</span>
-										<span class="nav-label">Sevakas</span>
-									</a>
-									<a 
-										href="/teachers" 
-										class="nav-dropdown-item" 
-										class:active={page.url.pathname.startsWith('/teachers')}
-									>
-										<span class="nav-icon">👤</span>
-										<span class="nav-label">Externe Seminarleiter</span>
-									</a>
+						</nav>
+
+						<!-- Bottom Greeting Card & Brand Slogan -->
+						<div class="sidebar-footer">
+							<button 
+								type="button" 
+								class="logout-sidebar-btn" 
+								onclick={() => {
+									localStorage.removeItem('rapla_user_role');
+									goto('/login');
+								}}
+							>
+								🚪 Abmelden
+							</button>
+							<div class="namaste-card" style="margin-top: 0.75rem;">
+								<!-- Simple meditating outline or icon -->
+								<svg class="meditation-icon-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+									<circle cx="50" cy="30" r="8" fill="none" stroke="var(--text-secondary)" stroke-width="2" />
+									<path d="M50 38 L50 60 L38 52 M50 60 L62 52" stroke="var(--text-secondary)" stroke-width="2" stroke-linecap="round" fill="none" />
+									<path d="M30 75 C30 65 40 60 50 60 C60 60 70 65 70 75" stroke="var(--text-secondary)" stroke-width="2" stroke-linecap="round" fill="none" />
+									<path d="M25 80 C35 78 65 78 75 80" stroke="var(--text-secondary)" stroke-width="2" stroke-linecap="round" fill="none" />
+								</svg>
+								<div class="namaste-text">
+									<p class="teach-item">Be good</p>
+									<p class="teach-item">Do good</p>
+									<p class="teach-item">Be kind</p>
+									<p class="teach-item">Be pure</p>
+									<p class="teach-item">Be truthful</p>
 								</div>
-							{/if}
-						</div>
-
-						<a 
-							href="/settings" 
-							class="nav-item" 
-							class:active={page.url.pathname === '/settings'}
-						>
-							<span class="nav-icon">⚙️</span>
-							<span class="nav-label">Einstellungen</span>
-						</a>
-
-						<!-- Snycronisations Button -->
-						<button 
-							type="button" 
-							class="nav-item sync-action-btn" 
-							class:syncing={isSyncing}
-							onclick={() => {
-								syncData().then(() => {
-									// Optional: window.location.reload() to refresh the data on the current page immediately
-									window.location.reload();
-								});
-							}}
-							disabled={isSyncing}
-							title="Lade neueste Urlaube & Wünsche neu vom Server"
-						>
-							<span class="nav-icon icon-spin" class:spinning={isSyncing}>🔄</span>
-							<span class="nav-label">{isSyncing ? 'Synchronisiere...' : 'Daten synchronisieren'}</span>
-						</button>
-					</nav>
-
-					<!-- Bottom Greeting Card & Brand Slogan -->
-					<div class="sidebar-footer">
-						<button 
-							type="button" 
-							class="logout-sidebar-btn" 
-							onclick={() => {
-								localStorage.removeItem('rapla_user_role');
-								goto('/login');
-							}}
-						>
-							🚪 Abmelden
-						</button>
-						<div class="namaste-card" style="margin-top: 0.75rem;">
-							<!-- Simple meditating outline or icon -->
-							<svg class="meditation-icon-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-								<circle cx="50" cy="30" r="8" fill="none" stroke="var(--text-secondary)" stroke-width="2" />
-								<path d="M50 38 L50 60 L38 52 M50 60 L62 52" stroke="var(--text-secondary)" stroke-width="2" stroke-linecap="round" fill="none" />
-								<path d="M30 75 C30 65 40 60 50 60 C60 60 70 65 70 75" stroke="var(--text-secondary)" stroke-width="2" stroke-linecap="round" fill="none" />
-								<path d="M25 80 C35 78 65 78 75 80" stroke="var(--text-secondary)" stroke-width="2" stroke-linecap="round" fill="none" />
-							</svg>
-							<div class="namaste-text">
-								<p class="teach-item">Be good</p>
-								<p class="teach-item">Do good</p>
-								<p class="teach-item">Be kind</p>
-								<p class="teach-item">Be pure</p>
-								<p class="teach-item">Be truthful</p>
 							</div>
 						</div>
-					</div>
-				</aside>
+					</aside>
 
 				<!-- Main Content Area -->
 				<main class="main-content">
@@ -322,8 +375,9 @@
 					</div>
 				</main>
 			</div>
-		{/if}
+		</div>
 	{/if}
+{/if}
 
 	{#if todoManager.activeReminder}
 		<!-- svelte-ignore a11y_click_events_have_key_events -->

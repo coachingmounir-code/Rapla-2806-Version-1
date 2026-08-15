@@ -7425,9 +7425,8 @@ export const db = {
           } catch(e) {}
         }
         cloudInitialized = true;
-        if (changed) {
-          // If cloud data is different from local cache, reload to ensure UI updates
-          window.location.reload();
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new CustomEvent('rapla_cloud_synced'));
         }
       }
     } catch (e) {
