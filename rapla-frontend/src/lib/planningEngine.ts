@@ -151,9 +151,9 @@ export function validateAssignment(
   const isSevaka = teacher.roleType === 'sevaka';
   
   // Categorize course types
-  const isMeditationForSevaka = (courseNameLower.includes('meditation') || courseNameLower.includes('medi.') || courseStyleLower.includes('meditation')) && !courseNameLower.includes('satsang');
+  const isOnnForSevaka = courseNameLower.includes('om namo') || courseNameLower.includes('narayanaya');
+  const isMeditationForSevaka = (courseNameLower.includes('meditation') || courseNameLower.includes('medi.') || (courseStyleLower.includes('meditation') && !isOnnForSevaka)) && !courseNameLower.includes('satsang') && !isOnnForSevaka;
   const isSatsangForSevaka = courseNameLower.includes('satsang');
-  const isOnnForSevaka = courseNameLower.includes('om namo');
   const isEntspannungForSevaka = courseStyleLower.includes('entspannung') || courseNameLower.includes('entspannung');
   const isSonstigesForSevaka = courseStyleLower.includes('sonstiges') || courseNameLower.includes('hausführung') || courseNameLower.includes('hausfuehrung');
   const isYogaClassForSevaka = !isMeditationForSevaka && !isSatsangForSevaka && !isOnnForSevaka && !isEntspannungForSevaka && !isSonstigesForSevaka;
@@ -171,9 +171,9 @@ export function validateAssignment(
     otherSevakaAssignments.forEach(c => {
       const cName = c.name.toLowerCase();
       const cStyle = c.style.toLowerCase();
-      const cIsMed = (cName.includes('meditation') || cName.includes('medi.') || cStyle.includes('meditation')) && !cName.includes('satsang');
+      const cIsOnn = cName.includes('om namo') || cName.includes('narayanaya');
+      const cIsMed = (cName.includes('meditation') || cName.includes('medi.') || (cStyle.includes('meditation') && !cIsOnn)) && !cName.includes('satsang') && !cIsOnn;
       const cIsSat = cName.includes('satsang');
-      const cIsOnn = cName.includes('om namo');
       const cIsEntspannung = cStyle.includes('entspannung') || cName.includes('entspannung');
       const cIsSonstiges = cStyle.includes('sonstiges') || cName.includes('hausführung') || cName.includes('hausfuehrung');
 
@@ -211,7 +211,7 @@ export function validateAssignment(
   if (!fitsAvailability) {
     const isWalk = courseNameLower.includes('spaziergang');
     const isPranava = teacherNameLower.includes('pranava');
-    if (!(isWalk && isPranava)) {
+    if (!(isWalk && isPranava) && !isOnnForSevaka) {
       conflicts.push({
         type: 'hard',
         message: `${teacher.name} ist am ${getDayName(course.dayOfWeek)} zur Kurszeit (${course.startTime} - ${course.endTime}) laut Regeln/Freitagen nicht verfügbar.`
@@ -615,12 +615,7 @@ export function validateAssignment(
     }
   }
 
-  if (teacher.rules.maxOnnPerWeek !== undefined && isOnnForSevaka && counts.onnCount > teacher.rules.maxOnnPerWeek) {
-    conflicts.push({
-      type: 'hard',
-      message: `${teacher.name} leitet Om Namo Narayanaya maximal ${teacher.rules.maxOnnPerWeek} mal wöchentlich.`
-    });
-  }
+  // Om Namo Narayanaya is an independent category freed from rule limits; only the Sevafrei calendar applies.
 
   if (teacher.rules.noYogaOnWeekend && isYogaClassForSevaka && [5, 6, 0].includes(course.dayOfWeek)) {
     conflicts.push({
@@ -633,7 +628,7 @@ export function validateAssignment(
     const otherYogaOnDay = otherSevakaAssignments.some(c => {
       const cName = c.name.toLowerCase();
       const cStyle = c.style.toLowerCase();
-      const cIsYoga = !cName.includes('meditation') && !cName.includes('medi.') && !cStyle.includes('meditation') && !cName.includes('satsang') && !cName.includes('om namo');
+      const cIsYoga = !cName.includes('meditation') && !cName.includes('medi.') && !cStyle.includes('meditation') && !cName.includes('satsang') && !cName.includes('om namo') && !cName.includes('narayanaya');
       return cIsYoga && c.dayOfWeek === course.dayOfWeek;
     });
     if (otherYogaOnDay) {
@@ -671,7 +666,7 @@ export function validateAssignment(
     const anfaengerYogaCount = otherSevakaAssignments.filter(c => {
       const cName = c.name.toLowerCase();
       const cStyle = c.style.toLowerCase();
-      const cIsYoga = !cName.includes('meditation') && !cName.includes('medi.') && !cStyle.includes('meditation') && !cName.includes('satsang') && !cName.includes('om namo');
+      const cIsYoga = !cName.includes('meditation') && !cName.includes('medi.') && !cStyle.includes('meditation') && !cName.includes('satsang') && !cName.includes('om namo') && !cName.includes('narayanaya');
       return cIsYoga && cName.includes('anfänger');
     }).length + 1;
     if (anfaengerYogaCount > tRules.maxAnfaengerYogaPerWeek) {
@@ -883,7 +878,7 @@ export function runAiPlanning(
       }
 
       // Custom scoring rules from compiled rules: weekend as backup only
-      if (teacher.rules.weekendAsBackupOnly && [5, 6, 0].includes(course.dayOfWeek) && course.style.toLowerCase() !== 'meditation') {
+      if (teacher.rules.weekendAsBackupOnly && [5, 6, 0].includes(course.dayOfWeek) && course.style.toLowerCase() !== 'meditation' && !course.name.toLowerCase().includes('om namo') && !course.name.toLowerCase().includes('narayanaya')) {
         if (timeToMinutes(course.startTime) >= timeToMinutes('12:00')) {
           score -= 1000;
         }
@@ -1076,7 +1071,7 @@ export function runAiPlanning(
       }
 
       // --- GEFÜHRTE MEDITATION SCORING RULES ---
-      const isMeditationCourse = course.name === 'Geführte Meditation' || course.style.toLowerCase() === 'meditation';
+      const isMeditationCourse = (course.name === 'Geführte Meditation' || course.style.toLowerCase() === 'meditation') && !course.name.toLowerCase().includes('om namo') && !course.name.toLowerCase().includes('narayanaya');
       if (isMeditationCourse) {
         const allowed = wochenplanRules.meditation.allowed;
         const forbidden = wochenplanRules.meditation.forbidden;
@@ -1095,6 +1090,13 @@ export function runAiPlanning(
         } else if (teacher.roleType === 'sevaka') {
           score -= 10000;
         }
+      }
+
+      // --- OM NAMO NARAYANAYA SCORING RULES ---
+      const isOmNamoCourse = course.name.toLowerCase().includes('om namo') || course.name.toLowerCase().includes('narayanaya');
+      if (isOmNamoCourse) {
+        // ONN is its own category, freed from all restrictions except Sevafrei calendar.
+        score += 100;
       }
 
       // --- SATSANG SCORING RULES ---
@@ -1250,7 +1252,8 @@ export function runAiPlanning(
                        !workingCourses[index].name.toLowerCase().includes('medi.') &&
                        !workingCourses[index].style.toLowerCase().includes('meditation') &&
                        !workingCourses[index].name.toLowerCase().includes('satsang') &&
-                       !workingCourses[index].name.toLowerCase().includes('om namo');
+                       !workingCourses[index].name.toLowerCase().includes('om namo') &&
+                       !workingCourses[index].name.toLowerCase().includes('narayanaya');
 
         // Rule 5: Burnie beginner class rename
         if (tNameLower.includes('burnie') && isYoga && workingCourses[index].name.toLowerCase().includes('anfänger')) {
@@ -1333,7 +1336,7 @@ export function runAiPlanning(
   if (pavanCount === 0) {
     // If he doesn't have one yet, rename his first Anfänger class
     const firstAnfaenger = burnieClasses.find(c => {
-      const isYoga = !c.name.toLowerCase().includes('meditation') && !c.style.toLowerCase().includes('meditation') && !c.name.toLowerCase().includes('satsang') && !c.name.toLowerCase().includes('om namo');
+      const isYoga = !c.name.toLowerCase().includes('meditation') && !c.style.toLowerCase().includes('meditation') && !c.name.toLowerCase().includes('satsang') && !c.name.toLowerCase().includes('om namo') && !c.name.toLowerCase().includes('narayanaya');
       return isYoga && c.name.toLowerCase().includes('anfänger');
     });
     if (firstAnfaenger) {
@@ -1507,7 +1510,8 @@ export function adjustNamesForRules(courses: Course[], teachers: Teacher[]): Cou
                    !course.name.toLowerCase().includes('medi.') &&
                    !course.style.toLowerCase().includes('meditation') &&
                    !course.name.toLowerCase().includes('satsang') &&
-                   !course.name.toLowerCase().includes('om namo');
+                   !course.name.toLowerCase().includes('om namo') &&
+                   !course.name.toLowerCase().includes('narayanaya');
 
     if (isYoga) {
       // Identify base type

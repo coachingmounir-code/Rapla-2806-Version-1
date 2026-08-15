@@ -262,7 +262,6 @@ function getTeacherRules(name: string, isSevaka: boolean): Partial<TeacherRules>
 
   // Build the rules object from the JSON rules
   const rules: Partial<TeacherRules> = {
-    maxClassesPerWeek: tRules.maxClassesPerWeek || undefined,
     maxYogaClassesPerWeek: tRules.maxYogaClassesPerWeek || undefined,
     maxMeditationPerWeek: tRules.maxMeditationPerWeek !== null ? tRules.maxMeditationPerWeek : undefined,
     maxSatsangsPerWeek: tRules.maxSatsangsPerWeek !== null ? tRules.maxSatsangsPerWeek : undefined,
@@ -346,7 +345,6 @@ const GENERATED_TEACHERS: Teacher[] = NEW_TEACHER_NAMES.map((name, index) => {
     availabilityMode: isSevaka ? 'always' : 'seminar_only',
     roleType: isSevaka ? 'sevaka' : 'external',
     rules: {
-      maxClassesPerWeek: tRules.maxClassesPerWeek,
       preferredRooms: [],
       preferredDays: [],
       ...tRules,
@@ -579,7 +577,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
     createdAt: new Date().toISOString()
   },
   // --- PREPLANNED WEEKS ---
-                                                                        {
+                                                                            {
     id: "plan-pre-2026-W35",
     name: "Vorplanung 2026-W35 (Automatisch)",
     status: "approved",
@@ -647,7 +645,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W35-6",
-        "name": "Yin Yoga Anfängerstunde",
+        "name": "Anfänger Ankommensstunde",
         "style": "Hatha",
         "dayOfWeek": 5,
         "startTime": "16:30",
@@ -1103,7 +1101,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W35-44",
-        "name": "Yin Yoga Anfängerstunde",
+        "name": "Anfänger Yin Yoga",
         "style": "Hatha",
         "dayOfWeek": 2,
         "startTime": "16:15",
@@ -1193,7 +1191,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-satyam",
+        "teacherId": "teacher-gen-adam-zmuda",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -1400,7 +1398,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W36-6",
-        "name": "Yin Yoga Anfängerstunde",
+        "name": "Anfänger Ankommensstunde",
         "style": "Hatha",
         "dayOfWeek": 5,
         "startTime": "16:30",
@@ -1412,7 +1410,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W36-7",
-        "name": "Yoga Flow",
+        "name": "Yoga Flow Mittelstufe",
         "style": "Hatha",
         "dayOfWeek": 5,
         "startTime": "16:30",
@@ -1454,7 +1452,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "20:00",
         "endTime": "21:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-abha-morkoetter",
+        "teacherId": "teacher-gen-narayani-kedenburg",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -1856,7 +1854,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W36-44",
-        "name": "Yin Yoga Anfängerstunde",
+        "name": "Anfänger Yin Yoga",
         "style": "Hatha",
         "dayOfWeek": 2,
         "startTime": "16:15",
@@ -1946,7 +1944,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-satyam",
+        "teacherId": "teacher-gen-adam-zmuda",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -2153,7 +2151,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W37-6",
-        "name": "Yin Yoga Anfängerstunde",
+        "name": "Anfänger Ankommensstunde",
         "style": "Hatha",
         "dayOfWeek": 5,
         "startTime": "16:30",
@@ -2609,7 +2607,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W37-44",
-        "name": "Yin Yoga Anfängerstunde",
+        "name": "Anfänger Yin Yoga",
         "style": "Hatha",
         "dayOfWeek": 2,
         "startTime": "16:15",
@@ -2699,7 +2697,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-satyam",
+        "teacherId": "teacher-gen-adam-zmuda",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -2906,7 +2904,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W38-6",
-        "name": "Yin Yoga Anfängerstunde",
+        "name": "Anfänger Ankommensstunde",
         "style": "Hatha",
         "dayOfWeek": 5,
         "startTime": "16:30",
@@ -3362,7 +3360,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W38-44",
-        "name": "Yin Yoga Anfängerstunde",
+        "name": "Anfänger Yin Yoga",
         "style": "Hatha",
         "dayOfWeek": 2,
         "startTime": "16:15",
@@ -3452,7 +3450,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-satyam",
+        "teacherId": "teacher-gen-adam-zmuda",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -3659,7 +3657,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W39-6",
-        "name": "Yin Yoga Anfängerstunde",
+        "name": "Anfänger Ankommensstunde",
         "style": "Hatha",
         "dayOfWeek": 5,
         "startTime": "16:30",
@@ -3929,7 +3927,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-mouniir-jaber",
+        "teacherId": "teacher-gen-adam-zmuda",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -4115,7 +4113,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W39-44",
-        "name": "Yin Yoga Anfängerstunde",
+        "name": "Anfänger Yin Yoga",
         "style": "Hatha",
         "dayOfWeek": 2,
         "startTime": "16:15",
@@ -4205,7 +4203,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-satyam",
+        "teacherId": "teacher-gen-mouniir-jaber",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -4412,7 +4410,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W40-6",
-        "name": "Yin Yoga Anfängerstunde",
+        "name": "Anfänger Ankommensstunde",
         "style": "Hatha",
         "dayOfWeek": 5,
         "startTime": "16:30",
@@ -4868,7 +4866,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W40-44",
-        "name": "Yin Yoga Anfängerstunde",
+        "name": "Anfänger Yin Yoga",
         "style": "Hatha",
         "dayOfWeek": 2,
         "startTime": "16:15",
@@ -4958,7 +4956,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-satyam",
+        "teacherId": "teacher-gen-adam-zmuda",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -5165,7 +5163,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W41-6",
-        "name": "Yin Yoga Anfängerstunde",
+        "name": "Anfänger Ankommensstunde",
         "style": "Hatha",
         "dayOfWeek": 5,
         "startTime": "16:30",
@@ -5621,7 +5619,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W41-44",
-        "name": "Yin Yoga Anfängerstunde",
+        "name": "Anfänger Yin Yoga",
         "style": "Hatha",
         "dayOfWeek": 2,
         "startTime": "16:15",
@@ -5711,7 +5709,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-satyam",
+        "teacherId": "teacher-gen-adam-zmuda",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -6026,7 +6024,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W42-15",
-        "name": "Yoga Flow",
+        "name": "Yoga Flow Mittelstufe",
         "style": "Hatha",
         "dayOfWeek": 6,
         "startTime": "09:15",
@@ -6464,7 +6462,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-satyam",
+        "teacherId": "teacher-gen-adam-zmuda",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -6530,7 +6528,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W42-57",
-        "name": "Yoga Flow",
+        "name": "Yoga Flow Mittelstufe",
         "style": "Hatha",
         "dayOfWeek": 4,
         "startTime": "09:15",
@@ -6650,7 +6648,7 @@ function setStored<T>(key: string, value: T): void {
   localStorage.setItem(key, JSON.stringify(value));
 }
 
-const CURRENT_DB_VERSION = 64;
+const CURRENT_DB_VERSION = 66;
 
 // Database Actions
 export const db = {

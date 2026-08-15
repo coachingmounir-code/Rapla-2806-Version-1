@@ -7,12 +7,11 @@ import fs from 'fs';
 
 // Automatically compile rules during Vite initialization (dev/build)
 try {
-	console.log('[VITE] Triggering Wochenplan rules compilation...');
+	const rulesJsonPath = path.resolve('src/lib/data/wochenplan_rules.json');
 	const scriptPath = path.resolve('scripts/compile_rules.js');
-	if (fs.existsSync(scriptPath)) {
+	if (!fs.existsSync(rulesJsonPath) && fs.existsSync(scriptPath)) {
+		console.log('[VITE] Triggering Wochenplan rules compilation...');
 		execSync(`node "${scriptPath}"`, { stdio: 'inherit' });
-	} else {
-		console.warn('[VITE WARNING] Rules compiler script not found at:', scriptPath);
 	}
 } catch (e) {
 	console.error('[VITE ERROR] Rules compilation failed:', e);

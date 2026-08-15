@@ -62,7 +62,7 @@
       },
       {
         "id": "course-2026-W35-6",
-        "name": "Yin Yoga Anfängerstunde",
+        "name": "Anfänger Ankommensstunde",
         "style": "Hatha",
         "dayOfWeek": 5,
         "startTime": "16:30",
@@ -518,7 +518,7 @@
       },
       {
         "id": "course-2026-W35-44",
-        "name": "Yin Yoga Anfängerstunde",
+        "name": "Anfänger Yin Yoga",
         "style": "Hatha",
         "dayOfWeek": 2,
         "startTime": "16:15",
@@ -608,7 +608,7 @@
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-satyam",
+        "teacherId": "teacher-gen-adam-zmuda",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -810,7 +810,7 @@
       },
       {
         "id": "course-2026-W36-6",
-        "name": "Yin Yoga Anfängerstunde",
+        "name": "Anfänger Ankommensstunde",
         "style": "Hatha",
         "dayOfWeek": 5,
         "startTime": "16:30",
@@ -822,7 +822,7 @@
       },
       {
         "id": "course-2026-W36-7",
-        "name": "Yoga Flow",
+        "name": "Yoga Flow Mittelstufe",
         "style": "Hatha",
         "dayOfWeek": 5,
         "startTime": "16:30",
@@ -864,7 +864,7 @@
         "startTime": "20:00",
         "endTime": "21:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-abha-morkoetter",
+        "teacherId": "teacher-gen-narayani-kedenburg",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -1266,7 +1266,7 @@
       },
       {
         "id": "course-2026-W36-44",
-        "name": "Yin Yoga Anfängerstunde",
+        "name": "Anfänger Yin Yoga",
         "style": "Hatha",
         "dayOfWeek": 2,
         "startTime": "16:15",
@@ -1356,7 +1356,7 @@
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-satyam",
+        "teacherId": "teacher-gen-adam-zmuda",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -1558,7 +1558,7 @@
       },
       {
         "id": "course-2026-W37-6",
-        "name": "Yin Yoga Anfängerstunde",
+        "name": "Anfänger Ankommensstunde",
         "style": "Hatha",
         "dayOfWeek": 5,
         "startTime": "16:30",
@@ -2014,7 +2014,7 @@
       },
       {
         "id": "course-2026-W37-44",
-        "name": "Yin Yoga Anfängerstunde",
+        "name": "Anfänger Yin Yoga",
         "style": "Hatha",
         "dayOfWeek": 2,
         "startTime": "16:15",
@@ -2104,7 +2104,7 @@
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-satyam",
+        "teacherId": "teacher-gen-adam-zmuda",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -2306,7 +2306,7 @@
       },
       {
         "id": "course-2026-W38-6",
-        "name": "Yin Yoga Anfängerstunde",
+        "name": "Anfänger Ankommensstunde",
         "style": "Hatha",
         "dayOfWeek": 5,
         "startTime": "16:30",
@@ -2762,7 +2762,7 @@
       },
       {
         "id": "course-2026-W38-44",
-        "name": "Yin Yoga Anfängerstunde",
+        "name": "Anfänger Yin Yoga",
         "style": "Hatha",
         "dayOfWeek": 2,
         "startTime": "16:15",
@@ -2852,7 +2852,7 @@
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-satyam",
+        "teacherId": "teacher-gen-adam-zmuda",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -3054,7 +3054,7 @@
       },
       {
         "id": "course-2026-W39-6",
-        "name": "Yin Yoga Anfängerstunde",
+        "name": "Anfänger Ankommensstunde",
         "style": "Hatha",
         "dayOfWeek": 5,
         "startTime": "16:30",
@@ -3324,7 +3324,7 @@
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-mouniir-jaber",
+        "teacherId": "teacher-gen-adam-zmuda",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -3510,7 +3510,7 @@
       },
       {
         "id": "course-2026-W39-44",
-        "name": "Yin Yoga Anfängerstunde",
+        "name": "Anfänger Yin Yoga",
         "style": "Hatha",
         "dayOfWeek": 2,
         "startTime": "16:15",
@@ -3600,7 +3600,7 @@
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-satyam",
+        "teacherId": "teacher-gen-mouniir-jaber",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -3802,7 +3802,7 @@
       },
       {
         "id": "course-2026-W40-6",
-        "name": "Yin Yoga Anfängerstunde",
+        "name": "Anfänger Ankommensstunde",
         "style": "Hatha",
         "dayOfWeek": 5,
         "startTime": "16:30",
@@ -4258,7 +4258,7 @@
       },
       {
         "id": "course-2026-W40-44",
-        "name": "Yin Yoga Anfängerstunde",
+        "name": "Anfänger Yin Yoga",
         "style": "Hatha",
         "dayOfWeek": 2,
         "startTime": "16:15",
@@ -4348,7 +4348,7 @@
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-satyam",
+        "teacherId": "teacher-gen-adam-zmuda",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -4550,7 +4550,7 @@
       },
       {
         "id": "course-2026-W41-6",
-        "name": "Yin Yoga Anfängerstunde",
+        "name": "Anfänger Ankommensstunde",
         "style": "Hatha",
         "dayOfWeek": 5,
         "startTime": "16:30",
@@ -5006,7 +5006,7 @@
       },
       {
         "id": "course-2026-W41-44",
-        "name": "Yin Yoga Anfängerstunde",
+        "name": "Anfänger Yin Yoga",
         "style": "Hatha",
         "dayOfWeek": 2,
         "startTime": "16:15",
@@ -5096,7 +5096,7 @@
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-satyam",
+        "teacherId": "teacher-gen-adam-zmuda",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -5406,7 +5406,7 @@
       },
       {
         "id": "course-2026-W42-15",
-        "name": "Yoga Flow",
+        "name": "Yoga Flow Mittelstufe",
         "style": "Hatha",
         "dayOfWeek": 6,
         "startTime": "09:15",
@@ -5844,7 +5844,7 @@
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-satyam",
+        "teacherId": "teacher-gen-adam-zmuda",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -5910,7 +5910,7 @@
       },
       {
         "id": "course-2026-W42-57",
-        "name": "Yoga Flow",
+        "name": "Yoga Flow Mittelstufe",
         "style": "Hatha",
         "dayOfWeek": 4,
         "startTime": "09:15",
