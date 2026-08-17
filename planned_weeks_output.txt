@@ -548,7 +548,7 @@
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-mouniir-christopher",
+        "teacherId": "teacher-gen-christopher",
         "isAiPlanned": false,
         "status": "approved"
       },
@@ -1296,7 +1296,7 @@
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-mouniir-christopher",
+        "teacherId": "teacher-gen-christopher",
         "isAiPlanned": false,
         "status": "approved"
       },
@@ -2044,7 +2044,7 @@
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-mouniir-christopher",
+        "teacherId": "teacher-gen-christopher",
         "isAiPlanned": false,
         "status": "approved"
       },
@@ -2792,7 +2792,7 @@
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-mouniir-christopher",
+        "teacherId": "teacher-gen-christopher",
         "isAiPlanned": false,
         "status": "approved"
       },
@@ -3540,7 +3540,7 @@
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-mouniir-christopher",
+        "teacherId": "teacher-gen-christopher",
         "isAiPlanned": false,
         "status": "approved"
       },
@@ -4288,7 +4288,7 @@
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-mouniir-christopher",
+        "teacherId": "teacher-gen-christopher",
         "isAiPlanned": false,
         "status": "approved"
       },
@@ -5036,7 +5036,7 @@
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-mouniir-christopher",
+        "teacherId": "teacher-gen-christopher",
         "isAiPlanned": false,
         "status": "approved"
       },
@@ -5304,8 +5304,8 @@
         "startTime": "16:30",
         "endTime": "18:00",
         "roomId": "room-2",
-        "teacherId": null,
-        "isAiPlanned": false,
+        "teacherId": "teacher-gen-satyam",
+        "isAiPlanned": true,
         "status": "approved"
       },
       {
@@ -5760,8 +5760,8 @@
         "startTime": "16:15",
         "endTime": "18:00",
         "roomId": "room-2",
-        "teacherId": null,
-        "isAiPlanned": false,
+        "teacherId": "teacher-gen-satyam",
+        "isAiPlanned": true,
         "status": "approved"
       },
       {
@@ -5784,7 +5784,7 @@
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-mouniir-christopher",
+        "teacherId": "teacher-gen-christopher",
         "isAiPlanned": false,
         "status": "approved"
       },
@@ -5910,13 +5910,13 @@
       },
       {
         "id": "course-2026-W42-57",
-        "name": "Yoga Flow Mittelstufe",
+        "name": "Mittelstufe",
         "style": "Hatha",
         "dayOfWeek": 4,
         "startTime": "09:15",
         "endTime": "11:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-satyam",
+        "teacherId": "teacher-gen-narayani-kedenburg",
         "isAiPlanned": true,
         "status": "approved"
       },

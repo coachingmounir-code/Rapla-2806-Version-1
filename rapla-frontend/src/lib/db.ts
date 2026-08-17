@@ -577,7 +577,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
     createdAt: new Date().toISOString()
   },
   // --- PREPLANNED WEEKS ---
-                                                                              {
+                                                                                  {
     id: "plan-pre-2026-W35",
     name: "Vorplanung 2026-W35 (Automatisch)",
     status: "approved",
@@ -1131,7 +1131,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-mouniir-christopher",
+        "teacherId": "teacher-gen-christopher",
         "isAiPlanned": false,
         "status": "approved"
       },
@@ -1884,7 +1884,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-mouniir-christopher",
+        "teacherId": "teacher-gen-christopher",
         "isAiPlanned": false,
         "status": "approved"
       },
@@ -2637,7 +2637,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-mouniir-christopher",
+        "teacherId": "teacher-gen-christopher",
         "isAiPlanned": false,
         "status": "approved"
       },
@@ -3390,7 +3390,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-mouniir-christopher",
+        "teacherId": "teacher-gen-christopher",
         "isAiPlanned": false,
         "status": "approved"
       },
@@ -4143,7 +4143,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-mouniir-christopher",
+        "teacherId": "teacher-gen-christopher",
         "isAiPlanned": false,
         "status": "approved"
       },
@@ -4896,7 +4896,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-mouniir-christopher",
+        "teacherId": "teacher-gen-christopher",
         "isAiPlanned": false,
         "status": "approved"
       },
@@ -5649,7 +5649,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-mouniir-christopher",
+        "teacherId": "teacher-gen-christopher",
         "isAiPlanned": false,
         "status": "approved"
       },
@@ -5922,8 +5922,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "16:30",
         "endTime": "18:00",
         "roomId": "room-2",
-        "teacherId": null,
-        "isAiPlanned": false,
+        "teacherId": "teacher-gen-satyam",
+        "isAiPlanned": true,
         "status": "approved"
       },
       {
@@ -6378,8 +6378,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "16:15",
         "endTime": "18:00",
         "roomId": "room-2",
-        "teacherId": null,
-        "isAiPlanned": false,
+        "teacherId": "teacher-gen-satyam",
+        "isAiPlanned": true,
         "status": "approved"
       },
       {
@@ -6402,7 +6402,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-mouniir-christopher",
+        "teacherId": "teacher-gen-christopher",
         "isAiPlanned": false,
         "status": "approved"
       },
@@ -6528,13 +6528,13 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W42-57",
-        "name": "Yoga Flow Mittelstufe",
+        "name": "Mittelstufe",
         "style": "Hatha",
         "dayOfWeek": 4,
         "startTime": "09:15",
         "endTime": "11:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-satyam",
+        "teacherId": "teacher-gen-narayani-kedenburg",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -6648,7 +6648,7 @@ function setStored<T>(key: string, value: T): void {
   localStorage.setItem(key, JSON.stringify(value));
 }
 
-const CURRENT_DB_VERSION = 67;
+const CURRENT_DB_VERSION = 69;
 
 // Database Actions
 export const db = {
