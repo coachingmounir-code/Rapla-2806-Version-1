@@ -372,7 +372,7 @@
     <div id="view-calendar-container" class="calendar-grid-container animate-fade-in" class:fullscreen-mode={isFullscreen}>
       <div class="grid-controls-row">
         <div class="navigation-group">
-          <button type="button" class="btn btn-secondary btn-small" onclick={() => { currentWeekOffset = 0; loadData(); }}>Aktuelle Woche</button>
+          <button type="button" class="btn btn-current-week btn-small" onclick={() => { currentWeekOffset = 0; loadData(); }}>Aktuelle Woche</button>
           <button type="button" class="btn btn-secondary btn-small" onclick={() => navigateWeek(-1)}>◀ Letzte Woche</button>
           <span class="week-title-badge">
             KW {currentPlan ? getWeekNumber(getMondayOfCurrentWeek()) : '--'} ({currentPlan?.targetWeekCode || 'Kein Plan'})
@@ -444,7 +444,7 @@
   <div class="mobile-only-agenda">
     <!-- Navigation for Weeks on Mobile -->
     <div class="mobile-week-nav">
-      <button type="button" class="btn btn-secondary btn-small" onclick={() => { currentWeekOffset = 0; loadData(); }}>Aktuelle Woche</button>
+      <button type="button" class="btn btn-current-week btn-small" onclick={() => { currentWeekOffset = 0; loadData(); }}>Aktuelle Woche</button>
       <button type="button" class="btn btn-secondary btn-small" onclick={() => navigateWeek(-1)}>◀</button>
       <span class="week-title-badge-mobile">
         KW {currentPlan ? getWeekNumber(getMondayOfCurrentWeek()) : '--'} ({currentPlan?.targetWeekCode || 'Kein Plan'})
@@ -881,6 +881,18 @@
     border-color: #94a3b8;
   }
 
+  .btn-current-week {
+    background: #ea580c;
+    border-color: #c2410c;
+    color: #ffffff;
+    font-weight: 700;
+  }
+
+  .btn-current-week:hover {
+    background: #c2410c;
+    border-color: #9a3412;
+  }
+
   .btn-small {
     font-size: 0.75rem;
     padding: 0.25rem 0.6rem;
@@ -906,11 +918,19 @@
   }
 
   @media (max-width: 1100px) {
+    .view-page-container {
+      padding: 1rem 0.5rem;
+      overflow-x: hidden;
+      max-width: 100vw;
+    }
+
     .desktop-only-grid {
       display: none;
     }
     .mobile-only-agenda {
       display: block;
+      width: 100%;
+      overflow-x: hidden;
     }
 
     /* Stacking header elements on small devices */
@@ -1027,6 +1047,7 @@
     flex-direction: column;
     gap: 0.75rem;
     margin-bottom: 2rem;
+    touch-action: pan-y;
   }
 
   .mobile-agenda-card {
@@ -1038,6 +1059,9 @@
     gap: 0.5rem;
     text-align: left;
     transition: all 0.2s ease;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    hyphens: auto;
   }
 
   .agenda-time-room {
