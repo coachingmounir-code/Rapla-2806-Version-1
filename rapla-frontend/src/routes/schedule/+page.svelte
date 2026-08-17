@@ -191,25 +191,17 @@
     } else {
       const monday = getMondayOfCurrentWeek();
       const weekCode = getWeekCode(monday);
-      const isAfterW40 = weekCode > '2026-W40';
-      
       let foundPlan = weekPlans.find(p => p.targetWeekCode === weekCode && p.status === 'approved')
                    || weekPlans.find(p => p.targetWeekCode === weekCode);
                    
       if (!foundPlan) {
-        if (isAfterW40) {
-          const template = weekPlans.find(p => p.id === 'plan-template-1') || weekPlans[0];
-          foundPlan = {
-            ...template,
-            id: `plan-blank-${weekCode}`,
-            targetWeekCode: weekCode,
-            courses: template.courses.map(c => ({ ...c, teacherId: null, isAiPlanned: false, status: 'draft' }))
-          };
-        } else {
-          foundPlan = weekPlans.find(p => p.id === 'plan-template-1')
-                   || weekPlans[0]
-                   || null;
-        }
+        const template = weekPlans.find(p => p.id === 'plan-template-1') || weekPlans[0];
+        foundPlan = {
+          ...template,
+          id: `plan-blank-${weekCode}`,
+          targetWeekCode: weekCode,
+          courses: template ? template.courses.map(c => ({ ...c, teacherId: null, isAiPlanned: false, status: 'draft' })) : []
+        };
       }
       currentPlan = foundPlan;
     }

@@ -591,21 +591,21 @@ export function validateAssignment(
     });
   }
 
-  if (teacher.rules.maxYogaClassesPerWeek !== undefined && isYogaClassForSevaka && counts.yogaCount > teacher.rules.maxYogaClassesPerWeek) {
+  if (teacher.rules.maxYogaClassesPerWeek !== undefined && teacher.rules.maxYogaClassesPerWeek !== null && isYogaClassForSevaka && counts.yogaCount > teacher.rules.maxYogaClassesPerWeek) {
     conflicts.push({
       type: 'hard',
       message: `${teacher.name} darf für maximal ${teacher.rules.maxYogaClassesPerWeek} Yogastunden wöchentlich eingeteilt werden.`
     });
   }
 
-  if (teacher.rules.maxMeditationPerWeek !== undefined && isMeditationForSevaka && counts.meditationCount > teacher.rules.maxMeditationPerWeek) {
+  if (teacher.rules.maxMeditationPerWeek !== undefined && teacher.rules.maxMeditationPerWeek !== null && isMeditationForSevaka && counts.meditationCount > teacher.rules.maxMeditationPerWeek) {
     conflicts.push({
       type: 'hard',
       message: `${teacher.name} kann maximal ${teacher.rules.maxMeditationPerWeek} mal pro Woche für eine geführte Meditation eingeteilt werden.`
     });
   }
 
-  if (teacher.rules.maxMorningSatsangsPerWeek !== undefined && isSatsangForSevaka && course.startTime < '12:00') {
+  if (teacher.rules.maxMorningSatsangsPerWeek !== undefined && teacher.rules.maxMorningSatsangsPerWeek !== null && isSatsangForSevaka && course.startTime < '12:00') {
     const morningSatsangs = otherSevakaAssignments.filter(c => c.name.toLowerCase().includes('satsang') && c.startTime < '12:00').length + 1;
     if (morningSatsangs > teacher.rules.maxMorningSatsangsPerWeek) {
       conflicts.push({
@@ -649,7 +649,7 @@ export function validateAssignment(
     }
   }
 
-  if (tRules && tRules.maxYinYogaAnfaengerPerWeek !== undefined) {
+  if (tRules && tRules.maxYinYogaAnfaengerPerWeek !== undefined && tRules.maxYinYogaAnfaengerPerWeek !== null) {
     const isYinAnfaenger = courseNameLower.includes('anfänger') && courseStyleLower.includes('yin');
     if (isYinAnfaenger) {
       const otherYinAnfaenger = otherSevakaAssignments.filter(c => c.name.toLowerCase().includes('anfänger') && c.style.toLowerCase().includes('yin')).length + 1;
@@ -662,7 +662,7 @@ export function validateAssignment(
     }
   }
 
-  if (tRules && tRules.maxAnfaengerYogaPerWeek !== undefined && isYogaClassForSevaka && courseNameLower.includes('anfänger')) {
+  if (tRules && tRules.maxAnfaengerYogaPerWeek !== undefined && tRules.maxAnfaengerYogaPerWeek !== null && isYogaClassForSevaka && courseNameLower.includes('anfänger')) {
     const anfaengerYogaCount = otherSevakaAssignments.filter(c => {
       const cName = c.name.toLowerCase();
       const cStyle = c.style.toLowerCase();
