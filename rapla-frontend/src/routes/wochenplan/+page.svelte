@@ -298,15 +298,7 @@
     goto(`?${params.toString()}`);
   }
 
-  function toggleOnlyMySlots() {
-    const params = new URLSearchParams(page.url.searchParams);
-    if (onlyMySlotsParam) {
-      params.delete('onlyMySlots');
-    } else {
-      params.set('onlyMySlots', 'true');
-    }
-    goto(`?${params.toString()}`);
-  }
+
 </script>
 
 <div class="view-page-container">
@@ -348,9 +340,7 @@
         type="button" 
         class="btn sync-header-btn" 
         onclick={() => { 
-          if(confirm('Möchtest du den Browser-Speicher zurücksetzen und neu synchronisieren?')) { 
-            db.syncDatabase();
-          } 
+          db.syncDatabase();
         }}
       >
         🔄 Synchronisieren
@@ -367,24 +357,6 @@
         🚪 Abmelden
       </button>
 
-      {#if selectedTeacher}
-        <div class="user-badge" style="background: linear-gradient(135deg, #f97316, #ea580c); color: white;">
-          <span class="user-icon">🧘</span>
-          <div>
-            <div class="badge-title">{selectedTeacher.name}</div>
-            <div class="badge-subtitle">Sevaka Team</div>
-          </div>
-        </div>
-        
-        <button 
-          type="button" 
-          class="btn toggle-btn" 
-          class:active={onlyMySlotsParam}
-          onclick={toggleOnlyMySlots}
-        >
-          {onlyMySlotsParam ? '👁️ Kompletten Plan anzeigen' : '🔍 Nur meine Stunden anzeigen'}
-        </button>
-      {:else}
         <div class="user-badge" style="background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0;">
           <span class="user-icon">👥</span>
           <div>
@@ -392,7 +364,6 @@
             <div class="badge-subtitle">Gesamtübersicht</div>
           </div>
         </div>
-      {/if}
     </div>
   </header>
 
@@ -401,6 +372,7 @@
     <div id="view-calendar-container" class="calendar-grid-container animate-fade-in" class:fullscreen-mode={isFullscreen}>
       <div class="grid-controls-row">
         <div class="navigation-group">
+          <button type="button" class="btn btn-secondary btn-small" onclick={() => { currentWeekOffset = 0; loadData(); }}>Aktuelle Woche</button>
           <button type="button" class="btn btn-secondary btn-small" onclick={() => navigateWeek(-1)}>◀ Letzte Woche</button>
           <span class="week-title-badge">
             KW {currentPlan ? getWeekNumber(getMondayOfCurrentWeek()) : '--'} ({currentPlan?.targetWeekCode || 'Kein Plan'})
@@ -472,6 +444,7 @@
   <div class="mobile-only-agenda">
     <!-- Navigation for Weeks on Mobile -->
     <div class="mobile-week-nav">
+      <button type="button" class="btn btn-secondary btn-small" onclick={() => { currentWeekOffset = 0; loadData(); }}>Aktuelle Woche</button>
       <button type="button" class="btn btn-secondary btn-small" onclick={() => navigateWeek(-1)}>◀</button>
       <span class="week-title-badge-mobile">
         KW {currentPlan ? getWeekNumber(getMondayOfCurrentWeek()) : '--'} ({currentPlan?.targetWeekCode || 'Kein Plan'})
@@ -533,7 +506,7 @@
   <footer class="view-footer-info" style="margin-top: 2rem; text-align: center; font-size: 0.8rem; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 1rem; clear: both;">
     <span>Yoga Vidya Nordsee © 2026</span>
     <span style="margin: 0 10px;">•</span>
-    <button type="button" onclick={() => { if(confirm('Möchtest du den Browser-Speicher zurücksetzen? Deine lokalen Planungs-Änderungen gehen verloren.')) { db.syncDatabase(); } }} style="background: none; border: none; color: #3b82f6; cursor: pointer; text-decoration: underline; font-size: 0.8rem; padding: 0; font-family: inherit;">Planungsdaten zurücksetzen (Synchronisieren)</button>
+    <button type="button" onclick={() => { db.syncDatabase(); }} style="background: none; border: none; color: #3b82f6; cursor: pointer; text-decoration: underline; font-size: 0.8rem; padding: 0; font-family: inherit;">Planungsdaten zurücksetzen (Synchronisieren)</button>
   </footer>
 </div>
 
@@ -689,29 +662,6 @@
   .badge-subtitle {
     font-size: 0.7rem;
     opacity: 0.85;
-  }
-
-  .toggle-btn {
-    background: #f8fafc;
-    border: 1px solid #cbd5e1;
-    color: #475569;
-    font-weight: 600;
-    padding: 0.5rem 1.25rem;
-    border-radius: 30px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-  }
-
-  .toggle-btn:hover {
-    background: #f1f5f9;
-    border-color: #94a3b8;
-    color: #1e293b;
-  }
-
-  .toggle-btn.active {
-    background: #fff7ed;
-    border-color: #ffedd5;
-    color: #ea580c;
   }
 
   /* Roster Calendar Grid Styling */
