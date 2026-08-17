@@ -404,7 +404,6 @@
           <button type="button" class="btn btn-secondary btn-small" onclick={() => navigateWeek(-1)}>◀ Letzte Woche</button>
           <span class="week-title-badge">
             KW {currentPlan ? getWeekNumber(getMondayOfCurrentWeek()) : '--'} ({currentPlan?.targetWeekCode || 'Kein Plan'})
-            {currentPlan?.isManualOnly ? '🔒' : ''}
           </span>
           <button type="button" class="btn btn-secondary btn-small" onclick={() => navigateWeek(1)}>Nächste Woche ▶</button>
         </div>
@@ -476,7 +475,6 @@
       <button type="button" class="btn btn-secondary btn-small" onclick={() => navigateWeek(-1)}>◀</button>
       <span class="week-title-badge-mobile">
         KW {currentPlan ? getWeekNumber(getMondayOfCurrentWeek()) : '--'} ({currentPlan?.targetWeekCode || 'Kein Plan'})
-        {currentPlan?.isManualOnly ? '🔒' : ''}
       </span>
       <button type="button" class="btn btn-secondary btn-small" onclick={() => navigateWeek(1)}>▶</button>
     </div>
@@ -755,12 +753,12 @@
 
   .calendar-grid {
     display: grid;
-    grid-template-columns: 80px repeat(7, minmax(130px, 1fr));
-    grid-auto-rows: minmax(70px, auto);
+    grid-template-columns: 80px repeat(7, minmax(140px, 1fr));
+    grid-auto-rows: minmax(85px, auto);
     background-color: #cbd5e1;
     gap: 1px;
     width: 100%;
-    min-width: 960px;
+    min-width: 1060px;
     border-radius: 8px;
     overflow: hidden;
   }
@@ -822,7 +820,7 @@
     display: flex;
     flex-direction: column;
     gap: 4px;
-    min-height: 50px;
+    min-height: 70px;
   }
 
   .course-card-rapla {
@@ -832,15 +830,19 @@
     text-align: left;
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    gap: 4px;
     transition: all 0.2s ease;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    hyphens: auto;
   }
 
   .card-top-line {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    font-size: 0.65rem;
+    align-items: flex-start;
+    gap: 4px;
+    font-size: 0.7rem;
     font-weight: 700;
     color: #64748b;
   }
@@ -852,13 +854,14 @@
   .card-room {
     font-weight: 800;
     color: #ea580c;
+    text-align: right;
   }
 
   .card-title-line {
-    font-size: 0.8rem;
+    font-size: 0.85rem;
     font-weight: 700;
     color: #0f172a;
-    line-height: 1.2;
+    line-height: 1.3;
   }
 
   .card-teacher-line {
@@ -943,7 +946,7 @@
   }
 
   /* Responsive Breakpoints & Toggles */
-  @media (min-width: 768px) {
+  @media (min-width: 1101px) {
     .desktop-only-grid {
       display: block;
     }
@@ -952,7 +955,7 @@
     }
   }
 
-  @media (max-width: 767px) {
+  @media (max-width: 1100px) {
     .desktop-only-grid {
       display: none;
     }
