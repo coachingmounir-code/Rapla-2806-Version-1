@@ -113,8 +113,8 @@
     const isUnassigned = !course.teacherId || course.teacherId === 'teacher-gen-yl';
     if (isUnassigned) {
       return {
-        bg: '#fee2e2', // light red/rose
-        border: '#ef4444' // red
+        bg: '#fdf2f8', // light pink (lotus)
+        border: '#db2777' // deep pink
       };
     }
 
@@ -123,8 +123,8 @@
     
     if (nameLower.includes('hausführung')) {
       return {
-        bg: '#e0f2fe',
-        border: '#38bdf8'
+        bg: '#ecfeff', // cyan/teal (peacock/krishna vibe)
+        border: '#06b6d4'
       };
     }
 
@@ -137,8 +137,8 @@
       
     if (isEntspannung) {
       return {
-        bg: '#ffedd5', // light orange
-        border: '#ea580c' // orange
+        bg: '#ffedd5', // warm sand/light orange
+        border: '#f97316' // bright orange
       };
     }
 
@@ -152,13 +152,13 @@
     
     if (isYellow) {
       return {
-        bg: '#ffffcc',
-        border: '#dddd66'
+        bg: '#fef9c3', // golden yellow
+        border: '#eab308' // deep gold
       };
     } else {
       return {
-        bg: '#ffcce6',
-        border: '#ff99cc'
+        bg: '#fff7ed', // very light saffron
+        border: '#ea580c' // deep saffron / terracotta
       };
     }
   }
@@ -516,6 +516,8 @@
     max-width: 1400px;
     margin: 0 auto;
     font-family: 'Outfit', 'Inter', sans-serif;
+    background-color: #fffbf7; /* warm ivory background */
+    min-height: 100vh;
   }
 
   .view-header {
@@ -524,7 +526,7 @@
     align-items: center;
     margin-bottom: 2rem;
     padding-bottom: 1.25rem;
-    border-bottom: 1px solid #e2e8f0;
+    border-bottom: 2px solid #fed7aa; /* warm orange border */
   }
 
   .logo-area {
@@ -534,26 +536,29 @@
   }
 
   .logo-img {
-    height: 48px;
-    width: 48px;
+    height: 56px;
+    width: 56px;
     border-radius: 50%;
     object-fit: cover;
-    border: 2px solid #ea580c;
+    border: 3px solid #ea580c; /* Saffron border */
+    box-shadow: 0 4px 10px rgba(234, 88, 12, 0.2); /* Saffron glow */
   }
 
   .logo-area h2 {
-    font-size: 0.8rem;
+    font-size: 0.85rem;
     font-weight: 700;
-    color: #64748b;
-    letter-spacing: 0.1em;
+    color: #ea580c;
+    letter-spacing: 0.15em;
     margin: 0;
   }
 
   .logo-area h1 {
-    font-size: 1.5rem;
+    font-size: 1.6rem;
     font-weight: 800;
-    color: #1e293b;
+    color: #9a3412; /* Darker terracotta / deep orange */
     margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
   }
 
   .header-controls {
