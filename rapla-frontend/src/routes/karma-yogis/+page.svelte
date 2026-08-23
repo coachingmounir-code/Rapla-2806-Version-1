@@ -430,7 +430,7 @@
           <span class="status-indicator-dot dot-green"></span>
           <div>
             <h2 class="section-heading">🟢 Gerade im Haus & Unterrichtsberechtigt ({activeTeachers.length})</h2>
-            <p class="section-subtext">Diese Karma-Yogis und Gast-Seminarleiter sind aktuell vor Ort und können im Wochenplan direkt für Stunden eingeteilt werden.</p>
+            <p class="section-subtext">Diese Karma-Yogis und externen Seminarleiter sind aktuell vor Ort und können im Wochenplan direkt für Stunden eingeteilt werden.</p>
           </div>
         </div>
         <button class="btn btn-small btn-primary" onclick={() => openAddModal('karma_yogi')}>
@@ -443,6 +443,8 @@
           {#each activeTeachers as teacher}
             {@const daysRemaining = getDaysRemaining(teacher.stayEndDate)}
             
+            <!-- svelte-ignore a11y_click_events_have_key_events -->
+            <!-- svelte-ignore a11y_no_static_element_interactions -->
             <div 
               class="glass-card glass-card-interactive karma-card status-active"
               class:selected-card={selectedTeacherIds.includes(teacher.id)}
@@ -526,11 +528,14 @@
               {/if}
 
               <!-- Card Quick Action Footer -->
-              <div class="card-footer-actions" onclick={(e) => e.stopPropagation()}>
+              <div class="card-footer-actions">
                 <button 
                   type="button" 
                   class="btn-quick-action" 
-                  onclick={() => extendStay(teacher, 7)}
+                  onclick={(e) => {
+                    e.stopPropagation();
+                    extendStay(teacher, 7);
+                  }}
                   title="Zeitfenster um 7 Tage verlängern"
                 >
                   +7 Tage
@@ -538,7 +543,10 @@
                 <button 
                   type="button" 
                   class="btn-quick-action" 
-                  onclick={() => extendStay(teacher, 14)}
+                  onclick={(e) => {
+                    e.stopPropagation();
+                    extendStay(teacher, 14);
+                  }}
                   title="Zeitfenster um 14 Tage verlängern"
                 >
                   +14 Tage
@@ -546,7 +554,10 @@
                 <button 
                   type="button" 
                   class="btn-quick-edit" 
-                  onclick={() => openEditModal(teacher)}
+                  onclick={(e) => {
+                    e.stopPropagation();
+                    openEditModal(teacher);
+                  }}
                 >
                   ✏️ Bearbeiten
                 </button>
@@ -557,7 +568,7 @@
       {:else}
         <div class="glass-card empty-card-compact">
           <span class="empty-icon-sm">🟢</span>
-          <p>Aktuell sind keine Karma-Yogis oder Gastlehrer mit aktivem Zeitfenster für heute eingetragen.</p>
+          <p>Aktuell sind keine Karma-Yogis oder Seminarleiter mit aktivem Zeitfenster für heute eingetragen.</p>
           <button class="btn btn-small btn-primary" onclick={() => openAddModal('karma_yogi')}>
             ➕ Jetzt ersten Karma-Yogi einpflegen
           </button>
@@ -589,6 +600,8 @@
           {#each upcomingTeachers as teacher}
             {@const daysUntil = getDaysUntil(teacher.stayStartDate)}
             
+            <!-- svelte-ignore a11y_click_events_have_key_events -->
+            <!-- svelte-ignore a11y_no_static_element_interactions -->
             <div 
               class="glass-card glass-card-interactive karma-card status-upcoming" 
               class:selected-card={selectedTeacherIds.includes(teacher.id)}
@@ -670,12 +683,15 @@
               {/if}
 
               <!-- Card Quick Action Footer -->
-              <div class="card-footer-actions" onclick={(e) => e.stopPropagation()}>
+              <div class="card-footer-actions">
                 <button 
                   type="button" 
                   class="btn-quick-edit" 
                   style="width: 100%; text-align: center;"
-                  onclick={() => openEditModal(teacher)}
+                  onclick={(e) => {
+                    e.stopPropagation();
+                    openEditModal(teacher);
+                  }}
                 >
                   ✏️ Aufenthaltsdaten bearbeiten
                 </button>
@@ -697,7 +713,7 @@
   <!-- ========================================================================= -->
   {#if selectedFilterStatus === 'all' || selectedFilterStatus === 'expired'}
     <section class="section-container expired-section animate-fade-in">
-      <div class="section-header-banner banner-expired" onclick={() => isArchiveExpanded = !isArchiveExpanded} style="cursor: pointer;">
+      <div class="section-header-banner banner-expired">
         <div class="section-header-left">
           <span class="status-indicator-dot dot-red"></span>
           <div>
@@ -705,7 +721,11 @@
             <p class="section-subtext">Diese Zeitfenster sind abgelaufen. Mit 1-Klick können diese Personen für einen neuen Aufenthalt reaktiviert werden.</p>
           </div>
         </div>
-        <button class="btn-toggle-archive">
+        <button 
+          type="button" 
+          class="btn-toggle-archive" 
+          onclick={() => isArchiveExpanded = !isArchiveExpanded}
+        >
           {isArchiveExpanded ? '▲ Einklappen' : '▼ Ausklappen'}
         </button>
       </div>
@@ -714,6 +734,8 @@
         {#if expiredTeachers.length > 0}
           <div class="grid-cols-3">
             {#each expiredTeachers as teacher}
+              <!-- svelte-ignore a11y_click_events_have_key_events -->
+              <!-- svelte-ignore a11y_no_static_element_interactions -->
               <div 
                 class="glass-card glass-card-interactive karma-card status-expired"
                 class:selected-card={selectedTeacherIds.includes(teacher.id)}
@@ -757,12 +779,15 @@
                 </div>
 
                 <!-- Card Quick Re-Activate Action Footer -->
-                <div class="card-footer-actions" onclick={(e) => e.stopPropagation()}>
+                <div class="card-footer-actions">
                   <button 
                     type="button" 
                     class="btn btn-small btn-primary" 
                     style="width: 100%; justify-content: center;"
-                    onclick={() => reactivateStay(teacher, 14)}
+                    onclick={(e) => {
+                      e.stopPropagation();
+                      reactivateStay(teacher, 14);
+                    }}
                     title="Startet einen neuen 14-tägigen Aufenthalt ab heute"
                   >
                     🔄 Jetzt für 14 Tage reaktivieren
@@ -787,6 +812,8 @@
   <!-- svelte-ignore a11y_click_events_have_key_events -->
   <!-- svelte-ignore a11y_no_static_element_interactions -->
   <div class="modal-backdrop" onclick={() => isModalOpen = false}>
+    <!-- svelte-ignore a11y_click_events_have_key_events -->
+    <!-- svelte-ignore a11y_no_static_element_interactions -->
     <div class="modal-content glass-card modal-lg" onclick={(e) => e.stopPropagation()}>
       <div class="modal-header">
         <h2>{editingTeacher ? 'Profil & Zeitfenster bearbeiten' : 'Neuen Karma-Yogi / externen Seminarleiter einpflegen'}</h2>
@@ -998,8 +1025,8 @@
   }
 
   .card-kpi-expired {
-    background: linear-gradient(135deg, rgba(254, 242, 242, 0.8), rgba(255, 255, 255, 0.9));
-    border-color: #fecaca;
+    background: linear-gradient(135deg, rgba(244, 244, 245, 0.9), rgba(255, 255, 255, 0.9));
+    border-color: #e4e4e7;
   }
 
   .kpi-icon {
@@ -1147,8 +1174,8 @@
   }
 
   .banner-expired {
-    background: linear-gradient(90deg, #fef2f2 0%, #ffffff 100%);
-    border: 1.5px solid #ef4444;
+    background: linear-gradient(90deg, #f4f4f5 0%, #ffffff 100%);
+    border: 1.5px solid #a1a1aa;
   }
 
   .section-header-left {
@@ -1175,8 +1202,8 @@
   }
 
   .dot-red {
-    background: #ef4444;
-    box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.25);
+    background: #71717a;
+    box-shadow: 0 0 0 4px rgba(113, 113, 122, 0.25);
   }
 
   .section-heading {
@@ -1237,8 +1264,8 @@
   }
 
   .karma-card.status-expired {
-    border-left: 6px solid #ef4444; /* red */
-    background: #fffdfd;
+    border-left: 6px solid #71717a; /* neutral gray */
+    background: #fafafa;
     opacity: 0.9;
   }
 
@@ -1328,8 +1355,8 @@
   }
 
   .stay-banner.expired {
-    background: #fef2f2;
-    border: 1px solid #fecaca;
+    background: #f4f4f5;
+    border: 1px solid #e4e4e7;
   }
 
   .stay-banner-header {
@@ -1360,8 +1387,8 @@
   .badge-live-red {
     font-size: 0.75rem;
     font-weight: 800;
-    color: #b91c1c;
-    background: #fee2e2;
+    color: #52525b;
+    background: #e4e4e7;
     padding: 0.1rem 0.45rem;
     border-radius: 4px;
   }
@@ -1385,7 +1412,7 @@
   }
 
   .text-red-bold {
-    color: #991b1b;
+    color: #52525b;
   }
 
   /* Qualifications Box */

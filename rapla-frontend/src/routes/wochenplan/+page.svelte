@@ -4,6 +4,7 @@
   import { getLocalDateForDay } from '$lib/planningEngine';
   import { page } from '$app/state';
   import { goto } from '$app/navigation';
+  import YlaScheduleView from '$lib/components/YlaScheduleView.svelte';
 
   let courses = $state<Course[]>([]);
   let teachers = $state<Teacher[]>([]);
@@ -13,6 +14,19 @@
   let currentWeekOffset = $state(0);
   let isFullscreen = $state(false);
   let activeMobileDay = $state(5);
+
+  // Tab state: 'regular' | 'yla'
+  let tabParam = $derived(page.url.searchParams.get('tab'));
+  let ylaWeekParam = $derived(parseInt(page.url.searchParams.get('week') || '1', 10));
+  let activeTab = $state<'regular' | 'yla'>('regular');
+
+  $effect(() => {
+    if (tabParam === 'yla') {
+      activeTab = 'yla';
+    } else if (tabParam === 'regular') {
+      activeTab = 'regular';
+    }
+  });
 
   // Filter query parameters
   let teacherParam = $derived(page.url.searchParams.get('teacher') || '');
@@ -390,6 +404,52 @@
     </div>
   </header>
 
+  <!-- Sub-tab switcher: Regulärer Wochenplan vs. 4-wöchige YLA -->
+  <div class="wochenplan-tabs-bar">
+    <button 
+      type="button" 
+      class="wochenplan-tab-btn" 
+      class:active={activeTab === 'regular'}
+      onclick={() => {
+        activeTab = 'regular';
+        const params = new URLSearchParams(page.url.searchParams);
+        params.delete('tab');
+        params.delete('week');
+        goto(`?${params.toString()}`);
+      }}
+    >
+      <span class="tab-icon">📅</span>
+      <span class="tab-label">Regulärer Wochenplan</span>
+    </button>
+
+    <button 
+      type="button" 
+      class="wochenplan-tab-btn" 
+      class:active={activeTab === 'yla'}
+      onclick={() => {
+        activeTab = 'yla';
+        const params = new URLSearchParams(page.url.searchParams);
+        params.set('tab', 'yla');
+        goto(`?${params.toString()}`);
+      }}
+    >
+      <span class="tab-icon">🧘</span>
+      <span class="tab-label">4-wöchige YLA (Unterrichtsplan)</span>
+      <span class="tab-badge">4 Wochen</span>
+    </button>
+  </div>
+
+  {#if activeTab === 'yla'}
+    <YlaScheduleView 
+      initialWeek={ylaWeekParam || 1} 
+      onWeekChange={(w) => {
+        const params = new URLSearchParams(page.url.searchParams);
+        params.set('tab', 'yla');
+        params.set('week', w.toString());
+        goto(`?${params.toString()}`, { replaceState: true });
+      }}
+    />
+  {:else}
   <!-- Calendar Roster Grid (Desktop Only) -->
   <div class="desktop-only-grid">
     <div id="view-calendar-container" class="calendar-grid-container animate-fade-in" class:fullscreen-mode={isFullscreen}>
@@ -525,6 +585,7 @@
       {/if}
     </div>
   </div>
+  {/if}
   
   <footer class="view-footer-info" style="margin-top: 2rem; text-align: center; font-size: 0.8rem; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 1rem; clear: both;">
     <span>Yoga Vidya Nordsee © 2026</span>
@@ -534,6 +595,68 @@
 </div>
 
 <style>
+  /* Wochenplan Sub-Tabs Switcher */
+  .wochenplan-tabs-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+    background: #ffffff;
+    padding: 0.5rem;
+    border-radius: 14px;
+    border: 1px solid #fed7aa;
+    box-shadow: 0 2px 10px rgba(234, 88, 12, 0.05);
+    flex-wrap: wrap;
+  }
+
+  .wochenplan-tab-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.65rem 1.25rem;
+    border-radius: 10px;
+    border: 1px solid transparent;
+    background: transparent;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #475569;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .wochenplan-tab-btn:hover {
+    background: #fff7ed;
+    color: #ea580c;
+  }
+
+  .wochenplan-tab-btn.active {
+    background: #ea580c;
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(234, 88, 12, 0.25);
+  }
+
+  .tab-icon {
+    font-size: 1.1rem;
+  }
+
+  .tab-label {
+    font-weight: 700;
+  }
+
+  .tab-badge {
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 0.15rem 0.5rem;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.25);
+    color: #ffffff;
+  }
+
+  .wochenplan-tab-btn:not(.active) .tab-badge {
+    background: #ffedd5;
+    color: #ea580c;
+  }
+
   .view-page-container {
     padding: 1.5rem 2rem;
     max-width: 1400px;
