@@ -592,6 +592,7 @@
 {#if activeTab === 'yla'}
   <YlaScheduleView 
     initialWeek={ylaWeekParam || 1} 
+    readOnly={false}
     onWeekChange={(w) => {
       const params = new URLSearchParams(page.url.searchParams);
       params.set('tab', 'yla');

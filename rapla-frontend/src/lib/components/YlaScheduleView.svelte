@@ -18,12 +18,14 @@
   import { db, type Teacher } from '$lib/db';
 
   // Props
-  let { initialWeek = 1, onWeekChange }: { initialWeek?: number; onWeekChange?: (week: number) => void } = $props();
+  let { initialWeek = 1, readOnly = false, onWeekChange }: { initialWeek?: number; readOnly?: boolean; onWeekChange?: (week: number) => void } = $props();
 
   let assignmentsMap = $state<Record<string, string>>({});
   let selectedWeekNumber = $state(initialWeek || 1);
   let activeMobileDayIndex = $state(0);
   let isFullscreen = $state(false);
+  let searchQuery = $state('');
+  let showAbbreviations = $state(false);
   let userRole = $state('');
   let allTeachersList = $state<Teacher[]>([]);
 
@@ -43,7 +45,7 @@
     entry: YlaDayEntry;
   } | null>(null);
 
-  let isAdmin = $derived(userRole === 'admin');
+  let isAdmin = $derived(!readOnly && userRole === 'admin');
 
   // Load and subscribe to assignments
   function refreshAssignments() {
@@ -174,6 +176,7 @@
   }
 
   function assignTeacherToSlot(weekNumber: number, dayCol: string, rowNumber: number, teacherName: string | null) {
+    if (!isAdmin) return;
     setYlaAssignment(weekNumber, dayCol, rowNumber, teacherName);
     refreshAssignments();
     if (activeDetailModal && activeDetailModal.weekNumber === weekNumber && activeDetailModal.dayCol === dayCol && activeDetailModal.slotRowNumber === rowNumber) {
@@ -440,7 +443,7 @@
               class:is-clickable={hasContent}
               class:has-assigned-teacher={!!assignedTeacher}
               onclick={() => hasContent && openSlotDetail(day, slot, entry)}
-              title={hasContent ? (entry?.fullText ? `${entry.fullText}\n\n👉 Klicken für alle Details & Zuweisung` : 'Klicken für Details & Zuweisung') : ''}
+              title={hasContent ? (entry?.fullText ? `${entry.fullText}\n\n👉 Klicken für Details${isAdmin ? ' & Zuweisung' : ''}` : `Klicken für Details${isAdmin ? ' & Zuweisung' : ''}`) : ''}
             >
               {#if hasContent && entry}
                 <div class="compact-slot-box">
@@ -463,7 +466,7 @@
                     <div 
                       class="assigned-person-badge" 
                       style="color: {meta.color}; background: {meta.badgeBg}; border: 1px solid {meta.color}40;"
-                      title="Eingeteilt: {assignedTeacher} (Klicken zum Bearbeiten)"
+                      title="Eingeteilt: {assignedTeacher}{isAdmin ? ' (Klicken zum Bearbeiten)' : ''}"
                     >
                       <span class="person-avatar">{meta.avatar}</span>
                       <span class="person-name">{assignedTeacher}</span>
@@ -563,7 +566,7 @@
                 {/if}
 
                 <div class="m-click-note">
-                  <span>ℹ️ Tippen für alle Details & Zuweisung</span>
+                  <span>{isAdmin ? 'ℹ️ Tippen für alle Details & Zuweisung' : 'ℹ️ Tippen für alle Details'}</span>
                 </div>
               </div>
             {/if}
@@ -695,7 +698,7 @@
                 </div>
               {:else}
                 <div class="team-view-unassigned-note">
-                  <span>Noch keine Lehrkraft eingeteilt</span>
+                  <span>ℹ️ Für diese Einheit ist noch keine Lehrkraft eingeteilt.</span>
                 </div>
               {/if}
             {/if}
