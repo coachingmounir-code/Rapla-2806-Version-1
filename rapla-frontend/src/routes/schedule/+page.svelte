@@ -541,7 +541,7 @@
           <option value={t.id}>🧘 {t.name}</option>
         {/each}
       </optgroup>
-      <optgroup label="Karma-Yogis & Gäste">
+      <optgroup label="Karma-Yogis & externe Seminarleiter">
         {#each teachers.filter(t => t.roleType === 'karma_yogi' || t.roleType === 'guest_teacher' || t.stayStartDate || t.stayEndDate) as t}
           <option value={t.id}>✨ {t.name} ({t.roleType === 'guest_teacher' ? 'Gast-SL' : 'Karma-Yogi'})</option>
         {/each}
@@ -829,7 +829,7 @@
             </optgroup>
             {@const activeInHouse = teachers.filter(t => (t.roleType === 'karma_yogi' || t.roleType === 'guest_teacher' || t.stayStartDate || t.stayEndDate) && isTeacherInHouseForCourse(t))}
             {#if activeInHouse.length > 0}
-              <optgroup label="✨ Karma-Yogis & Gast-Lehrer (Aktuell im Haus)">
+              <optgroup label="✨ Karma-Yogis & externe Seminarleiter (Aktuell im Haus)">
                 {#each activeInHouse as t}
                   <option value={t.id}>
                     ✨ {t.name} ({t.roleType === 'guest_teacher' ? 'Gast-SL' : 'Karma-Yogi'} | {formatStayLabel(t)}{t.isYogaTeacher ? ' | Yoga ✓' : ''}{t.rules.canLeadMeditation ? ' | Medi ✓' : ''})
@@ -839,7 +839,7 @@
             {/if}
             {@const otherGuests = teachers.filter(t => (t.roleType === 'karma_yogi' || t.roleType === 'guest_teacher' || t.stayStartDate || t.stayEndDate) && !isTeacherInHouseForCourse(t))}
             {#if otherGuests.length > 0}
-              <optgroup label="⏳ Weitere Karma-Yogis & Gast-Lehrer (Anderes Zeitfenster)">
+              <optgroup label="⏳ Weitere Karma-Yogis & externe Seminarleiter (Anderes Zeitfenster)">
                 {#each otherGuests as t}
                   <option value={t.id}>
                     ⏳ {t.name} ({t.roleType === 'guest_teacher' ? 'Gast-SL' : 'Karma-Yogi'} | {formatStayLabel(t)})

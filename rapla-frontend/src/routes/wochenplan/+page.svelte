@@ -345,7 +345,7 @@
           </optgroup>
           {@const karmaList = teachers.filter(t => t.roleType === 'karma_yogi' || t.roleType === 'guest_teacher' || t.stayStartDate || t.stayEndDate)}
           {#if karmaList.length > 0}
-            <optgroup label="Karma-Yogis & Gäste">
+            <optgroup label="Karma-Yogis & externe Seminarleiter">
               {#each karmaList as t}
                 <option value={t.id}>✨ {t.name} ({t.roleType === 'guest_teacher' ? 'Gast-SL' : 'Karma-Yogi'})</option>
               {/each}

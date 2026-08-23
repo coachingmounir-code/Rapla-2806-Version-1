@@ -11,6 +11,7 @@
   let selectedRoleFilter = $state<'all' | 'karma_yogi' | 'guest_teacher'>('all');
   let searchQuery = $state('');
   let selectedTeacherIds = $state<string[]>([]);
+  let isArchiveExpanded = $state(true);
 
   // Modal states
   let isModalOpen = $state(false);
@@ -38,7 +39,7 @@
     { day: 0, start: '06:30', end: '22:00' }
   ]);
 
-  const SPECIALTY_OPTIONS = ['Hatha', 'Vinyasa', 'Yin', 'Meditation', 'Power Yoga', 'Kundalini', 'Klangyoga'];
+  const SPECIALTY_OPTIONS = ['Hatha', 'Vinyasa', 'Yin', 'Meditation', 'Power Yoga', 'Kundalini', 'Klangyoga', 'Rücken-Yoga'];
 
   const AVATAR_COLORS = [
     'from-emerald-400 to-teal-600',
@@ -92,16 +93,9 @@
     return dateStr;
   }
 
-  // Filtered teachers list based on active filters
+  // Filtered teachers list based on active search/role filters
   let filteredTeachers = $derived(
     karmaTeachers.filter(t => {
-      const status = getTeacherStayStatus(t, todayStr);
-      
-      // Filter by status
-      if (selectedFilterStatus === 'active' && status !== 'active' && status !== 'permanent') return false;
-      if (selectedFilterStatus === 'upcoming' && status !== 'upcoming') return false;
-      if (selectedFilterStatus === 'expired' && status !== 'expired') return false;
-
       // Filter by role
       if (selectedRoleFilter === 'karma_yogi' && t.roleType !== 'karma_yogi') return false;
       if (selectedRoleFilter === 'guest_teacher' && t.roleType !== 'guest_teacher' && t.roleType !== 'external') return false;
@@ -119,24 +113,29 @@
     })
   );
 
+  // Grouped lists for sectioned top-to-bottom layout
+  let activeTeachers = $derived(
+    filteredTeachers.filter(t => {
+      const st = getTeacherStayStatus(t, todayStr);
+      return st === 'active' || st === 'permanent';
+    })
+  );
+
+  let upcomingTeachers = $derived(
+    filteredTeachers.filter(t => getTeacherStayStatus(t, todayStr) === 'upcoming')
+  );
+
+  let expiredTeachers = $derived(
+    filteredTeachers.filter(t => getTeacherStayStatus(t, todayStr) === 'expired')
+  );
+
   // Statistics
-  let activeCount = $derived(karmaTeachers.filter(t => {
-    const st = getTeacherStayStatus(t, todayStr);
-    return st === 'active' || st === 'permanent';
-  }).length);
-
-  let yogaCount = $derived(karmaTeachers.filter(t => {
-    const st = getTeacherStayStatus(t, todayStr);
-    return (st === 'active' || st === 'permanent') && t.isYogaTeacher !== false;
-  }).length);
-
-  let meditationCount = $derived(karmaTeachers.filter(t => {
-    const st = getTeacherStayStatus(t, todayStr);
-    return (st === 'active' || st === 'permanent') && t.rules.canLeadMeditation;
-  }).length);
-
-  let upcomingCount = $derived(karmaTeachers.filter(t => getTeacherStayStatus(t, todayStr) === 'upcoming').length);
-  let expiredCount = $derived(karmaTeachers.filter(t => getTeacherStayStatus(t, todayStr) === 'expired').length);
+  let activeCount = $derived(activeTeachers.length);
+  let yogaCount = $derived(activeTeachers.filter(t => t.isYogaTeacher !== false).length);
+  let meditationCount = $derived(activeTeachers.filter(t => t.rules.canLeadMeditation).length);
+  let satsangCount = $derived(activeTeachers.filter(t => t.rules.canLeadSatsang).length);
+  let upcomingCount = $derived(upcomingTeachers.length);
+  let expiredCount = $derived(expiredTeachers.length);
 
   function openAddModal(role: 'karma_yogi' | 'guest_teacher' = 'karma_yogi') {
     editingTeacher = null;
@@ -260,6 +259,20 @@
     loadData();
   }
 
+  function reactivateStay(teacher: Teacher, daysToAdd: number = 14) {
+    const start = new Date(todayStr);
+    const end = new Date(todayStr);
+    end.setDate(start.getDate() + daysToAdd);
+
+    const updated = {
+      ...teacher,
+      stayStartDate: start.toISOString().split('T')[0],
+      stayEndDate: end.toISOString().split('T')[0]
+    };
+    db.updateTeacher(updated);
+    loadData();
+  }
+
   function toggleSpecialty(spec: string) {
     if (formSpecialties.includes(spec)) {
       formSpecialties = formSpecialties.filter(s => s !== spec);
@@ -291,10 +304,10 @@
     <div class="title-section">
       <div class="badge-row">
         <span class="badge badge-primary">Vor-Ort-Ressourcen</span>
-        <span class="badge badge-secondary">Zeitfenster-Verwaltung</span>
+        <span class="badge badge-secondary">Ampelsystem mit Zeitfenster</span>
       </div>
-      <h1>✨ Karma-Yogis & Gast-Unterrichtende</h1>
-      <p>Verwalten Sie anwesende Karma-Yogis und externe Gast-Seminarleiter mit individuellem Aufenthaltszeitraum (Zeitfenster) für manuelle Stunden- und Meditations-Zuweisungen.</p>
+      <h1>✨ Karma-Yogis & externe Seminarleiter</h1>
+      <p>Auf einen Blick alle anwesenden und zukünftigen Karma-Yogis und externen Seminarleiter, die für <strong>Yogastunden</strong>, <strong>geführte Meditationen</strong> und <strong>Satsangs</strong> zur Verfügung stehen.</p>
     </div>
     {#if userRole !== 'viewer'}
       <div class="header-actions">
@@ -308,9 +321,9 @@
     {/if}
   </div>
 
-  <!-- KPI Status Metric Cards -->
+  <!-- KPI Status Metric Cards (Ampelsystem Overview) -->
   <div class="kpi-grid animate-fade-in">
-    <div class="kpi-card glass-card">
+    <div class="kpi-card glass-card card-kpi-active">
       <div class="kpi-icon active-icon">🟢</div>
       <div class="kpi-info">
         <span class="kpi-value">{activeCount}</span>
@@ -331,14 +344,14 @@
         <span class="kpi-label">Leiten Meditation</span>
       </div>
     </div>
-    <div class="kpi-card glass-card">
+    <div class="kpi-card glass-card card-kpi-upcoming">
       <div class="kpi-icon upcoming-icon">⏳</div>
       <div class="kpi-info">
         <span class="kpi-value">{upcomingCount}</span>
-        <span class="kpi-label">Zukünftige Anreisen</span>
+        <span class="kpi-label">Zukünftig (Anreise)</span>
       </div>
     </div>
-    <div class="kpi-card glass-card">
+    <div class="kpi-card glass-card card-kpi-expired">
       <div class="kpi-icon expired-icon">🔴</div>
       <div class="kpi-info">
         <span class="kpi-value">{expiredCount}</span>
@@ -347,7 +360,7 @@
     </div>
   </div>
 
-  <!-- Filter & Search Toolbar -->
+  <!-- Search & Quick Navigation Toolbar -->
   <div class="filters-toolbar glass-card animate-fade-in">
     <div class="search-box">
       <span class="search-icon">🔍</span>
@@ -369,7 +382,7 @@
         class:active={selectedFilterStatus === 'all'} 
         onclick={() => selectedFilterStatus = 'all'}
       >
-        Alle ({karmaTeachers.length})
+        Alle Bereiche ({karmaTeachers.length})
       </button>
       <button 
         type="button"
@@ -377,7 +390,7 @@
         class:active={selectedFilterStatus === 'active'} 
         onclick={() => selectedFilterStatus = 'active'}
       >
-        🟢 Im Haus ({activeCount})
+        🟢 Nur Im Haus ({activeCount})
       </button>
       <button 
         type="button"
@@ -385,7 +398,7 @@
         class:active={selectedFilterStatus === 'upcoming'} 
         onclick={() => selectedFilterStatus = 'upcoming'}
       >
-        ⏳ Zukünftig ({upcomingCount})
+        ⏳ Nur Zukünftig ({upcomingCount})
       </button>
       <button 
         type="button"
@@ -393,7 +406,7 @@
         class:active={selectedFilterStatus === 'expired'} 
         onclick={() => selectedFilterStatus = 'expired'}
       >
-        🔴 Abgelaufen ({expiredCount})
+        🔴 Nur Abgelaufen ({expiredCount})
       </button>
     </div>
 
@@ -407,153 +420,366 @@
     </div>
   </div>
 
-  <!-- Profiles Grid -->
-  <div class="grid-cols-3 animate-fade-in" style="margin-top: 1.5rem;">
-    {#each filteredTeachers as teacher}
-      {@const status = getTeacherStayStatus(teacher, todayStr)}
-      {@const daysRemaining = getDaysRemaining(teacher.stayEndDate)}
-      {@const daysUntil = getDaysUntil(teacher.stayStartDate)}
-      
-      <div 
-        class="glass-card glass-card-interactive karma-card" 
-        class:status-active={status === 'active' || status === 'permanent'}
-        class:status-upcoming={status === 'upcoming'}
-        class:status-expired={status === 'expired'}
-        class:selected-card={selectedTeacherIds.includes(teacher.id)}
-        onclick={() => openEditModal(teacher)}
-      >
-        <!-- Card Top: Checkbox, Avatar, Name & Role Badge -->
-        <div class="card-header-flex">
-          <input 
-            type="checkbox" 
-            class="teacher-select-checkbox" 
-            checked={selectedTeacherIds.includes(teacher.id)}
-            onclick={(e) => {
-              e.stopPropagation();
-              toggleSelectTeacher(teacher.id);
-            }}
-          />
-          <div class="avatar bg-gradient-to-br {teacher.avatarColor}">
-            {teacher.name.split(' ').map(n => n[0]).join('')}
+  <!-- ========================================================================= -->
+  <!-- SEKTION 1: 🟢 AKTUELL IM HAUS & EINSATZBEREIT (Ganz oben im Sichtfeld!) -->
+  <!-- ========================================================================= -->
+  {#if selectedFilterStatus === 'all' || selectedFilterStatus === 'active'}
+    <section class="section-container active-section animate-fade-in">
+      <div class="section-header-banner banner-active">
+        <div class="section-header-left">
+          <span class="status-indicator-dot dot-green"></span>
+          <div>
+            <h2 class="section-heading">🟢 Gerade im Haus & Unterrichtsberechtigt ({activeTeachers.length})</h2>
+            <p class="section-subtext">Diese Karma-Yogis und Gast-Seminarleiter sind aktuell vor Ort und können im Wochenplan direkt für Stunden eingeteilt werden.</p>
           </div>
-          <div class="card-meta">
-            <h3 class="teacher-title">{teacher.name}</h3>
-            <div class="role-badges-row">
-              {#if teacher.roleType === 'guest_teacher' || teacher.roleType === 'external'}
-                <span class="badge-tag label-guest">⛺ Gast-Seminarleiter</span>
-              {:else}
-                <span class="badge-tag label-karma">🧡 Karma-Yogi</span>
+        </div>
+        <button class="btn btn-small btn-primary" onclick={() => openAddModal('karma_yogi')}>
+          ➕ Anwesende Person erfassen
+        </button>
+      </div>
+
+      {#if activeTeachers.length > 0}
+        <div class="grid-cols-3">
+          {#each activeTeachers as teacher}
+            {@const daysRemaining = getDaysRemaining(teacher.stayEndDate)}
+            
+            <div 
+              class="glass-card glass-card-interactive karma-card status-active"
+              class:selected-card={selectedTeacherIds.includes(teacher.id)}
+              onclick={() => openEditModal(teacher)}
+            >
+              <!-- Card Header -->
+              <div class="card-header-flex">
+                <input 
+                  type="checkbox" 
+                  class="teacher-select-checkbox" 
+                  checked={selectedTeacherIds.includes(teacher.id)}
+                  onclick={(e) => {
+                    e.stopPropagation();
+                    toggleSelectTeacher(teacher.id);
+                  }}
+                />
+                <div class="avatar bg-gradient-to-br {teacher.avatarColor}">
+                  {teacher.name.split(' ').map(n => n[0]).join('')}
+                </div>
+                <div class="card-meta">
+                  <h3 class="teacher-title">{teacher.name}</h3>
+                  <div class="role-badges-row">
+                    {#if teacher.roleType === 'guest_teacher' || teacher.roleType === 'external'}
+                      <span class="badge-tag label-guest">⛺ Gast-Seminarleiter</span>
+                    {:else}
+                      <span class="badge-tag label-karma">🧡 Karma-Yogi</span>
+                    {/if}
+                  </div>
+                </div>
+              </div>
+
+              <!-- Green Stay Banner with Countdown -->
+              <div class="stay-banner active">
+                <div class="stay-banner-header">
+                  <span class="badge-live-green">🟢 Vor Ort</span>
+                  <span class="stay-date-range">📅 {formatDateDe(teacher.stayStartDate)} – {formatDateDe(teacher.stayEndDate)}</span>
+                </div>
+                <div class="stay-countdown text-green-bold">
+                  {#if daysRemaining !== null}
+                    ⏱️ Noch <strong>{daysRemaining} Tage</strong> im Haus
+                  {:else}
+                    ♾️ Unbefristeter Aufenthalt
+                  {/if}
+                </div>
+              </div>
+
+              <!-- Qualifications Grid: Prominent Highlights -->
+              <div class="qualifications-box">
+                <div class="qual-item" class:qual-active={teacher.isYogaTeacher !== false}>
+                  <span class="qual-icon">🧘</span>
+                  <span class="qual-label">Yogastunden:</span>
+                  <strong class="qual-val">{teacher.isYogaTeacher !== false ? '✓ Ja' : '✗ Nein'}</strong>
+                </div>
+                <div class="qual-item" class:qual-active={teacher.rules.canLeadMeditation}>
+                  <span class="qual-icon">🪷</span>
+                  <span class="qual-label">Meditation:</span>
+                  <strong class="qual-val">{teacher.rules.canLeadMeditation ? '✓ Ja' : '✗ Nein'}</strong>
+                </div>
+                <div class="qual-item" class:qual-active={teacher.rules.canLeadSatsang}>
+                  <span class="qual-icon">🕉️</span>
+                  <span class="qual-label">Satsang:</span>
+                  <strong class="qual-val">{teacher.rules.canLeadSatsang ? '✓ Ja' : '✗ Nein'}</strong>
+                </div>
+              </div>
+
+              <!-- Specialties Tags -->
+              {#if teacher.specialties && teacher.specialties.length > 0}
+                <div class="specialties-pills">
+                  {#each teacher.specialties as spec}
+                    <span class="spec-pill">{spec}</span>
+                  {/each}
+                </div>
               {/if}
+
+              <!-- Notes / Aufgaben -->
+              {#if teacher.stayNotes || teacher.customWishes}
+                <div class="notes-box">
+                  <span class="notes-icon">💬</span>
+                  <p class="notes-text">{teacher.stayNotes || teacher.customWishes}</p>
+                </div>
+              {/if}
+
+              <!-- Card Quick Action Footer -->
+              <div class="card-footer-actions" onclick={(e) => e.stopPropagation()}>
+                <button 
+                  type="button" 
+                  class="btn-quick-action" 
+                  onclick={() => extendStay(teacher, 7)}
+                  title="Zeitfenster um 7 Tage verlängern"
+                >
+                  +7 Tage
+                </button>
+                <button 
+                  type="button" 
+                  class="btn-quick-action" 
+                  onclick={() => extendStay(teacher, 14)}
+                  title="Zeitfenster um 14 Tage verlängern"
+                >
+                  +14 Tage
+                </button>
+                <button 
+                  type="button" 
+                  class="btn-quick-edit" 
+                  onclick={() => openEditModal(teacher)}
+                >
+                  ✏️ Bearbeiten
+                </button>
+              </div>
             </div>
+          {/each}
+        </div>
+      {:else}
+        <div class="glass-card empty-card-compact">
+          <span class="empty-icon-sm">🟢</span>
+          <p>Aktuell sind keine Karma-Yogis oder Gastlehrer mit aktivem Zeitfenster für heute eingetragen.</p>
+          <button class="btn btn-small btn-primary" onclick={() => openAddModal('karma_yogi')}>
+            ➕ Jetzt ersten Karma-Yogi einpflegen
+          </button>
+        </div>
+      {/if}
+    </section>
+  {/if}
+
+  <!-- ========================================================================= -->
+  <!-- SEKTION 2: ⏳ ZUKÜNFTIGE ANREISEN (Direkt darunter) -->
+  <!-- ========================================================================= -->
+  {#if selectedFilterStatus === 'all' || selectedFilterStatus === 'upcoming'}
+    <section class="section-container upcoming-section animate-fade-in">
+      <div class="section-header-banner banner-upcoming">
+        <div class="section-header-left">
+          <span class="status-indicator-dot dot-blue"></span>
+          <div>
+            <h2 class="section-heading">⏳ Zukünftige Anreisen & Geplante Aufenthalte ({upcomingTeachers.length})</h2>
+            <p class="section-subtext">Diese Unterrichtenden reisen demnächst an und stehen ab ihrem Anreisedatum zur Verfügung.</p>
           </div>
         </div>
+        <button class="btn btn-small btn-secondary" onclick={() => openAddModal('guest_teacher')}>
+          <span>➕</span> Zukünftigen Gast erfassen
+        </button>
+      </div>
 
-        <!-- Stay Date Window Status Banner -->
-        <div class="stay-banner {status}">
-          <div class="stay-banner-header">
-            <span class="stay-status-dot"></span>
-            <strong class="stay-status-title">
-              {#if status === 'active'}
-                🟢 Gerade im Haus
-              {:else if status === 'upcoming'}
-                ⏳ Anreise bevorstehend
-              {:else if status === 'expired'}
-                🔴 Zeitfenster abgelaufen
-              {:else}
-                ♾️ Unbefristet
+      {#if upcomingTeachers.length > 0}
+        <div class="grid-cols-3">
+          {#each upcomingTeachers as teacher}
+            {@const daysUntil = getDaysUntil(teacher.stayStartDate)}
+            
+            <div 
+              class="glass-card glass-card-interactive karma-card status-upcoming" 
+              class:selected-card={selectedTeacherIds.includes(teacher.id)}
+              onclick={() => openEditModal(teacher)}
+            >
+              <!-- Card Header -->
+              <div class="card-header-flex">
+                <input 
+                  type="checkbox" 
+                  class="teacher-select-checkbox" 
+                  checked={selectedTeacherIds.includes(teacher.id)}
+                  onclick={(e) => {
+                    e.stopPropagation();
+                    toggleSelectTeacher(teacher.id);
+                  }}
+                />
+                <div class="avatar bg-gradient-to-br {teacher.avatarColor}">
+                  {teacher.name.split(' ').map(n => n[0]).join('')}
+                </div>
+                <div class="card-meta">
+                  <h3 class="teacher-title">{teacher.name}</h3>
+                  <div class="role-badges-row">
+                    {#if teacher.roleType === 'guest_teacher' || teacher.roleType === 'external'}
+                      <span class="badge-tag label-guest">⛺ Gast-Seminarleiter</span>
+                    {:else}
+                      <span class="badge-tag label-karma">🧡 Karma-Yogi</span>
+                    {/if}
+                  </div>
+                </div>
+              </div>
+
+              <!-- Blue Stay Banner with Arrival Countdown -->
+              <div class="stay-banner upcoming">
+                <div class="stay-banner-header">
+                  <span class="badge-live-blue">⏳ Anreise bevorstehend</span>
+                  <span class="stay-date-range">📅 {formatDateDe(teacher.stayStartDate)} – {formatDateDe(teacher.stayEndDate)}</span>
+                </div>
+                <div class="stay-countdown text-blue-bold">
+                  {#if daysUntil !== null}
+                    🚀 Ankunft in <strong>{daysUntil} Tagen</strong> vor Ort
+                  {/if}
+                </div>
+              </div>
+
+              <!-- Qualifications Grid -->
+              <div class="qualifications-box">
+                <div class="qual-item" class:qual-active={teacher.isYogaTeacher !== false}>
+                  <span class="qual-icon">🧘</span>
+                  <span class="qual-label">Yogastunden:</span>
+                  <strong class="qual-val">{teacher.isYogaTeacher !== false ? '✓ Ja' : '✗ Nein'}</strong>
+                </div>
+                <div class="qual-item" class:qual-active={teacher.rules.canLeadMeditation}>
+                  <span class="qual-icon">🪷</span>
+                  <span class="qual-label">Meditation:</span>
+                  <strong class="qual-val">{teacher.rules.canLeadMeditation ? '✓ Ja' : '✗ Nein'}</strong>
+                </div>
+                <div class="qual-item" class:qual-active={teacher.rules.canLeadSatsang}>
+                  <span class="qual-icon">🕉️</span>
+                  <span class="qual-label">Satsang:</span>
+                  <strong class="qual-val">{teacher.rules.canLeadSatsang ? '✓ Ja' : '✗ Nein'}</strong>
+                </div>
+              </div>
+
+              <!-- Specialties Tags -->
+              {#if teacher.specialties && teacher.specialties.length > 0}
+                <div class="specialties-pills">
+                  {#each teacher.specialties as spec}
+                    <span class="spec-pill">{spec}</span>
+                  {/each}
+                </div>
               {/if}
-            </strong>
-          </div>
-          <div class="stay-date-range">
-            📅 {formatDateDe(teacher.stayStartDate)} – {formatDateDe(teacher.stayEndDate)}
-          </div>
-          <div class="stay-countdown">
-            {#if status === 'active' && daysRemaining !== null}
-              <span>noch <strong>{daysRemaining} Tage</strong> im Haus</span>
-            {:else if status === 'upcoming' && daysUntil !== null}
-              <span>in <strong>{daysUntil} Tagen</strong> vor Ort</span>
-            {:else if status === 'expired'}
-              <span class="text-expired">Aufenthalt beendet</span>
-            {/if}
+
+              <!-- Notes / Aufgaben -->
+              {#if teacher.stayNotes || teacher.customWishes}
+                <div class="notes-box">
+                  <span class="notes-icon">💬</span>
+                  <p class="notes-text">{teacher.stayNotes || teacher.customWishes}</p>
+                </div>
+              {/if}
+
+              <!-- Card Quick Action Footer -->
+              <div class="card-footer-actions" onclick={(e) => e.stopPropagation()}>
+                <button 
+                  type="button" 
+                  class="btn-quick-edit" 
+                  style="width: 100%; text-align: center;"
+                  onclick={() => openEditModal(teacher)}
+                >
+                  ✏️ Aufenthaltsdaten bearbeiten
+                </button>
+              </div>
+            </div>
+          {/each}
+        </div>
+      {:else}
+        <div class="glass-card empty-card-compact">
+          <span class="empty-icon-sm">⏳</span>
+          <p>Keine zukünftigen Anreisen eingetragen.</p>
+        </div>
+      {/if}
+    </section>
+  {/if}
+
+  <!-- ========================================================================= -->
+  <!-- SEKTION 3: 🔴 ARCHIV / VERGANGENE AUFENTHALTE (Abgelaufen) -->
+  <!-- ========================================================================= -->
+  {#if selectedFilterStatus === 'all' || selectedFilterStatus === 'expired'}
+    <section class="section-container expired-section animate-fade-in">
+      <div class="section-header-banner banner-expired" onclick={() => isArchiveExpanded = !isArchiveExpanded} style="cursor: pointer;">
+        <div class="section-header-left">
+          <span class="status-indicator-dot dot-red"></span>
+          <div>
+            <h2 class="section-heading">🔴 Archiv / Vergangene Zeitfenster ({expiredTeachers.length})</h2>
+            <p class="section-subtext">Diese Zeitfenster sind abgelaufen. Mit 1-Klick können diese Personen für einen neuen Aufenthalt reaktiviert werden.</p>
           </div>
         </div>
+        <button class="btn-toggle-archive">
+          {isArchiveExpanded ? '▲ Einklappen' : '▼ Ausklappen'}
+        </button>
+      </div>
 
-        <!-- Qualifications Grid -->
-        <div class="qualifications-box">
-          <div class="qual-item" class:qual-active={teacher.isYogaTeacher !== false}>
-            <span class="qual-icon">🧘</span>
-            <span class="qual-label">Yogastunden:</span>
-            <strong class="qual-val">{teacher.isYogaTeacher !== false ? 'Ja' : 'Nein'}</strong>
-          </div>
-          <div class="qual-item" class:qual-active={teacher.rules.canLeadMeditation}>
-            <span class="qual-icon">🪷</span>
-            <span class="qual-label">Meditation:</span>
-            <strong class="qual-val">{teacher.rules.canLeadMeditation ? 'Ja' : 'Nein'}</strong>
-          </div>
-          <div class="qual-item" class:qual-active={teacher.rules.canLeadSatsang}>
-            <span class="qual-icon">🕉️</span>
-            <span class="qual-label">Satsang:</span>
-            <strong class="qual-val">{teacher.rules.canLeadSatsang ? 'Ja' : 'Nein'}</strong>
-          </div>
-        </div>
+      {#if isArchiveExpanded}
+        {#if expiredTeachers.length > 0}
+          <div class="grid-cols-3">
+            {#each expiredTeachers as teacher}
+              <div 
+                class="glass-card glass-card-interactive karma-card status-expired"
+                class:selected-card={selectedTeacherIds.includes(teacher.id)}
+                onclick={() => openEditModal(teacher)}
+              >
+                <!-- Card Header -->
+                <div class="card-header-flex">
+                  <input 
+                    type="checkbox" 
+                    class="teacher-select-checkbox" 
+                    checked={selectedTeacherIds.includes(teacher.id)}
+                    onclick={(e) => {
+                      e.stopPropagation();
+                      toggleSelectTeacher(teacher.id);
+                    }}
+                  />
+                  <div class="avatar bg-gradient-to-br {teacher.avatarColor}">
+                    {teacher.name.split(' ').map(n => n[0]).join('')}
+                  </div>
+                  <div class="card-meta">
+                    <h3 class="teacher-title">{teacher.name}</h3>
+                    <div class="role-badges-row">
+                      {#if teacher.roleType === 'guest_teacher' || teacher.roleType === 'external'}
+                        <span class="badge-tag label-guest">⛺ Gast-Seminarleiter</span>
+                      {:else}
+                        <span class="badge-tag label-karma">🧡 Karma-Yogi</span>
+                      {/if}
+                    </div>
+                  </div>
+                </div>
 
-        <!-- Specialties Tags -->
-        {#if teacher.specialties && teacher.specialties.length > 0}
-          <div class="specialties-pills">
-            {#each teacher.specialties as spec}
-              <span class="spec-pill">{spec}</span>
+                <!-- Expired Stay Banner -->
+                <div class="stay-banner expired">
+                  <div class="stay-banner-header">
+                    <span class="badge-live-red">🔴 Abgelaufen</span>
+                    <span class="stay-date-range">📅 {formatDateDe(teacher.stayStartDate)} – {formatDateDe(teacher.stayEndDate)}</span>
+                  </div>
+                  <div class="stay-countdown text-red-bold">
+                    Aufenthalt endete am {formatDateDe(teacher.stayEndDate)}
+                  </div>
+                </div>
+
+                <!-- Card Quick Re-Activate Action Footer -->
+                <div class="card-footer-actions" onclick={(e) => e.stopPropagation()}>
+                  <button 
+                    type="button" 
+                    class="btn btn-small btn-primary" 
+                    style="width: 100%; justify-content: center;"
+                    onclick={() => reactivateStay(teacher, 14)}
+                    title="Startet einen neuen 14-tägigen Aufenthalt ab heute"
+                  >
+                    🔄 Jetzt für 14 Tage reaktivieren
+                  </button>
+                </div>
+              </div>
             {/each}
           </div>
-        {/if}
-
-        <!-- Notes / Aufgaben -->
-        {#if teacher.stayNotes || teacher.customWishes}
-          <div class="notes-box">
-            <span class="notes-icon">💬</span>
-            <p class="notes-text">{teacher.stayNotes || teacher.customWishes}</p>
+        {:else}
+          <div class="glass-card empty-card-compact">
+            <span class="empty-icon-sm">🔴</span>
+            <p>Keine abgelaufenen Einträge im Archiv.</p>
           </div>
         {/if}
-
-        <!-- Card Quick Action Footer -->
-        <div class="card-footer-actions" onclick={(e) => e.stopPropagation()}>
-          <button 
-            type="button" 
-            class="btn-quick-action" 
-            onclick={() => extendStay(teacher, 7)}
-            title="Zeitfenster um 7 Tage verlängern"
-          >
-            +7 Tage
-          </button>
-          <button 
-            type="button" 
-            class="btn-quick-action" 
-            onclick={() => extendStay(teacher, 14)}
-            title="Zeitfenster um 14 Tage verlängern"
-          >
-            +14 Tage
-          </button>
-          <button 
-            type="button" 
-            class="btn-quick-edit" 
-            onclick={() => openEditModal(teacher)}
-          >
-            ✏️ Bearbeiten
-          </button>
-        </div>
-      </div>
-    {:else}
-      <div class="glass-card empty-card" style="grid-column: 1 / -1;">
-        <span class="empty-icon">🪷</span>
-        <h3>Keine Personen in dieser Ansicht gefunden</h3>
-        <p>Klicken Sie oben auf „Karma-Yogi einpflegen“ oder „Gast-Seminarleiter“, um neue vorübergehende Lehrkräfte mit Zeitfenster anzulegen.</p>
-        <div style="margin-top: 1rem;">
-          <button class="btn btn-primary" onclick={() => openAddModal('karma_yogi')}>
-            ➕ Jetzt Karma-Yogi einpflegen
-          </button>
-        </div>
-      </div>
-    {/each}
-  </div>
+      {/if}
+    </section>
+  {/if}
 </div>
 
 <!-- Add / Edit Modal -->
@@ -563,7 +789,7 @@
   <div class="modal-backdrop" onclick={() => isModalOpen = false}>
     <div class="modal-content glass-card modal-lg" onclick={(e) => e.stopPropagation()}>
       <div class="modal-header">
-        <h2>{editingTeacher ? 'Profil & Zeitfenster bearbeiten' : 'Neuen Karma-Yogi / Gast-Lehrer einpflegen'}</h2>
+        <h2>{editingTeacher ? 'Profil & Zeitfenster bearbeiten' : 'Neuen Karma-Yogi / externen Seminarleiter einpflegen'}</h2>
         <button class="close-btn" onclick={() => isModalOpen = false}>✕</button>
       </div>
 
@@ -702,7 +928,7 @@
   .page-container {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    gap: 2rem;
   }
 
   .page-header {
@@ -721,7 +947,7 @@
   }
 
   .title-section h1 {
-    font-size: 2rem;
+    font-size: 2.2rem;
     font-weight: 800;
     margin: 0 0 0.5rem;
     color: var(--text-primary);
@@ -729,7 +955,7 @@
 
   .title-section p {
     color: var(--text-secondary);
-    max-width: 800px;
+    max-width: 850px;
     margin: 0;
     line-height: 1.5;
   }
@@ -743,7 +969,7 @@
   /* KPI Grid */
   .kpi-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
     gap: 1rem;
   }
 
@@ -751,9 +977,29 @@
     display: flex;
     align-items: center;
     gap: 1rem;
-    padding: 1.25rem 1.5rem;
+    padding: 1.2rem 1.4rem;
     border-radius: 16px;
     border: 1px solid var(--border-color);
+    transition: transform 0.2s ease;
+  }
+
+  .kpi-card:hover {
+    transform: translateY(-2px);
+  }
+
+  .card-kpi-active {
+    background: linear-gradient(135deg, rgba(236, 253, 245, 0.9), rgba(255, 255, 255, 0.9));
+    border-color: #a7f3d0;
+  }
+
+  .card-kpi-upcoming {
+    background: linear-gradient(135deg, rgba(239, 246, 255, 0.9), rgba(255, 255, 255, 0.9));
+    border-color: #bfdbfe;
+  }
+
+  .card-kpi-expired {
+    background: linear-gradient(135deg, rgba(254, 242, 242, 0.8), rgba(255, 255, 255, 0.9));
+    border-color: #fecaca;
   }
 
   .kpi-icon {
@@ -764,7 +1010,8 @@
     width: 48px;
     height: 48px;
     border-radius: 12px;
-    background: rgba(255, 255, 255, 0.6);
+    background: rgba(255, 255, 255, 0.8);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
   }
 
   .kpi-info {
@@ -773,7 +1020,7 @@
   }
 
   .kpi-value {
-    font-size: 1.6rem;
+    font-size: 1.7rem;
     font-weight: 800;
     color: var(--text-primary);
     line-height: 1.1;
@@ -872,11 +1119,101 @@
     font-size: 0.85rem;
   }
 
-  /* Karma Card */
+  /* Section Containers */
+  .section-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .section-header-banner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    border-radius: 16px;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .banner-active {
+    background: linear-gradient(90deg, #ecfdf5 0%, #ffffff 100%);
+    border: 1.5px solid #10b981;
+  }
+
+  .banner-upcoming {
+    background: linear-gradient(90deg, #eff6ff 0%, #ffffff 100%);
+    border: 1.5px solid #3b82f6;
+  }
+
+  .banner-expired {
+    background: linear-gradient(90deg, #fef2f2 0%, #ffffff 100%);
+    border: 1.5px solid #ef4444;
+  }
+
+  .section-header-left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .status-indicator-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .dot-green {
+    background: #10b981;
+    box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.25);
+  }
+
+  .dot-blue {
+    background: #3b82f6;
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.25);
+  }
+
+  .dot-red {
+    background: #ef4444;
+    box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.25);
+  }
+
+  .section-heading {
+    font-size: 1.25rem;
+    font-weight: 800;
+    margin: 0;
+    color: var(--text-primary);
+  }
+
+  .section-subtext {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin: 0.15rem 0 0;
+  }
+
+  .btn-toggle-archive {
+    background: transparent;
+    border: 1px solid var(--border-color);
+    padding: 0.4rem 0.85rem;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    cursor: pointer;
+    color: var(--text-secondary);
+  }
+
+  /* Karma Cards */
+  .grid-cols-3 {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.25rem;
+  }
+
   .karma-card {
     display: flex;
     flex-direction: column;
-    padding: 1.5rem;
+    padding: 1.4rem;
     border-radius: 18px;
     border: 1px solid var(--border-color);
     cursor: pointer;
@@ -902,7 +1239,7 @@
   .karma-card.status-expired {
     border-left: 6px solid #ef4444; /* red */
     background: #fffdfd;
-    opacity: 0.85;
+    opacity: 0.9;
   }
 
   .card-header-flex {
@@ -954,12 +1291,20 @@
     background: #ffedd5;
     color: #c2410c;
     border: 1px solid #fed7aa;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.15rem 0.5rem;
+    border-radius: 6px;
   }
 
   .label-guest {
     background: #e0f2fe;
     color: #0369a1;
     border: 1px solid #bae6fd;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.15rem 0.5rem;
+    border-radius: 6px;
   }
 
   /* Stay Banner */
@@ -969,7 +1314,7 @@
     margin-bottom: 1rem;
     display: flex;
     flex-direction: column;
-    gap: 0.25rem;
+    gap: 0.35rem;
   }
 
   .stay-banner.active {
@@ -990,16 +1335,36 @@
   .stay-banner-header {
     display: flex;
     align-items: center;
-    gap: 0.4rem;
+    justify-content: space-between;
+    gap: 0.5rem;
   }
 
-  .stay-status-title {
-    font-size: 0.85rem;
+  .badge-live-green {
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: #047857;
+    background: #d1fae5;
+    padding: 0.1rem 0.45rem;
+    border-radius: 4px;
   }
 
-  .stay-banner.active .stay-status-title { color: #047857; }
-  .stay-banner.upcoming .stay-status-title { color: #1d4ed8; }
-  .stay-banner.expired .stay-status-title { color: #b91c1c; }
+  .badge-live-blue {
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: #1d4ed8;
+    background: #dbeafe;
+    padding: 0.1rem 0.45rem;
+    border-radius: 4px;
+  }
+
+  .badge-live-red {
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: #b91c1c;
+    background: #fee2e2;
+    padding: 0.1rem 0.45rem;
+    border-radius: 4px;
+  }
 
   .stay-date-range {
     font-size: 0.85rem;
@@ -1008,13 +1373,19 @@
   }
 
   .stay-countdown {
-    font-size: 0.78rem;
-    color: var(--text-secondary);
+    font-size: 0.8rem;
   }
 
-  .text-expired {
-    color: #ef4444;
-    font-weight: 600;
+  .text-green-bold {
+    color: #065f46;
+  }
+
+  .text-blue-bold {
+    color: #1e40af;
+  }
+
+  .text-red-bold {
+    color: #991b1b;
   }
 
   /* Qualifications Box */
@@ -1043,6 +1414,7 @@
 
   .qual-item.qual-active .qual-val {
     color: #059669;
+    font-weight: 800;
   }
 
   .qual-val {
@@ -1135,15 +1507,20 @@
   }
 
   /* Empty state */
-  .empty-card {
+  .empty-card-compact {
     text-align: center;
-    padding: 3.5rem 2rem;
+    padding: 1.5rem 1rem;
+    border-radius: 14px;
+    border: 1px dashed var(--border-color);
+    color: var(--text-secondary);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
   }
 
-  .empty-icon {
-    font-size: 3rem;
-    margin-bottom: 0.5rem;
-    display: block;
+  .empty-icon-sm {
+    font-size: 1.5rem;
   }
 
   /* Modal Details */

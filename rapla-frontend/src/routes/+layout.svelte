@@ -194,6 +194,16 @@
 							<span class="nav-icon">📅</span>
 							<span class="nav-label">Wochenplan</span>
 						</a>
+
+						<!-- Karma-Yogis & externe Seminarleiter als eigener Hauptreiter (1-Klick) -->
+						<a 
+							href="/karma-yogis" 
+							class="nav-item" 
+							class:active={page.url.pathname.startsWith('/karma-yogis')}
+						>
+							<span class="nav-icon">✨</span>
+							<span class="nav-label">Karma-Yogis & externe Seminarleiter</span>
+						</a>
 						
 						<!-- Sevafrei Kalender als eigener Hauptreiter -->
 						<a 
@@ -210,7 +220,7 @@
 							<button 
 								type="button" 
 								class="nav-item nav-dropdown-trigger" 
-								class:active={page.url.pathname.startsWith('/sevakas') || page.url.pathname.startsWith('/teachers') || page.url.pathname.startsWith('/karma-yogis')}
+								class:active={page.url.pathname.startsWith('/sevakas') || page.url.pathname.startsWith('/teachers')}
 								onclick={() => showTeachersDropdown = !showTeachersDropdown}
 							>
 								<span class="nav-icon">🧘</span>
@@ -227,14 +237,6 @@
 									>
 										<span class="nav-icon">👥</span>
 										<span class="nav-label">Sevakas</span>
-									</a>
-									<a 
-										href="/karma-yogis" 
-										class="nav-dropdown-item" 
-										class:active={page.url.pathname.startsWith('/karma-yogis')}
-									>
-										<span class="nav-icon">✨</span>
-										<span class="nav-label">Karma-Yogis & Gäste</span>
 									</a>
 									<a 
 										href="/teachers" 
