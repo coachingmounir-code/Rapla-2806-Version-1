@@ -382,6 +382,38 @@ const GENERATED_TEACHERS: Teacher[] = NEW_TEACHER_NAMES.map((name, index) => {
 
 const DEFAULT_TEACHERS: Teacher[] = [
   {
+    id: 'teacher-karma-marlene',
+    name: 'Marlene',
+    email: '',
+    phone: '',
+    avatarColor: 'from-amber-400 to-orange-500',
+    specialties: ['Hatha', 'Anfänger', 'Mittelstufe'],
+    isYogaTeacher: true,
+    availabilityMode: 'always',
+    roleType: 'karma_yogi',
+    stayStartDate: '2026-08-01',
+    stayEndDate: '2026-10-31',
+    stayNotes: 'Gibt Anfänger- und Mittelstufen-Yogastunden sowie Hausführungen.',
+    customWishes: 'Gibt Anfänger- und Mittelstufen-Yogastunden sowie Hausführungen.',
+    rules: {
+      preferredRooms: [],
+      preferredDays: [],
+      canLeadMeditation: true,
+      canLeadSatsang: false,
+      canLeadHausfuehrung: true,
+      prefersMittelstufe: true,
+      availability: [
+        { day: 1, start: '06:30', end: '22:00' },
+        { day: 2, start: '06:30', end: '22:00' },
+        { day: 3, start: '06:30', end: '22:00' },
+        { day: 4, start: '06:30', end: '22:00' },
+        { day: 5, start: '06:30', end: '22:00' },
+        { day: 6, start: '06:30', end: '22:00' },
+        { day: 0, start: '06:30', end: '22:00' }
+      ]
+    }
+  },
+  {
     id: 'teacher-1',
     name: 'Sarah Schmidt',
     email: 'sarah.schmidt@yoga.de',
@@ -6675,7 +6707,7 @@ function setStored<T>(key: string, value: T): void {
   localStorage.setItem(key, JSON.stringify(value));
 }
 
-const CURRENT_DB_VERSION = 69;
+const CURRENT_DB_VERSION = 70;
 
 // Database Actions
 export const db = {
@@ -6743,6 +6775,9 @@ export const db = {
         list[existingIdx].roleType = defT.roleType;
         list[existingIdx].availabilityMode = defT.availabilityMode;
         list[existingIdx].isYogaTeacher = defT.isYogaTeacher;
+        list[existingIdx].stayStartDate = defT.stayStartDate;
+        list[existingIdx].stayEndDate = defT.stayEndDate;
+        list[existingIdx].stayNotes = defT.stayNotes;
         updated = true;
       }
     }
