@@ -688,6 +688,27 @@
     color: #ea580c;
   }
 
+  @media (max-width: 640px) {
+    .wochenplan-tabs-bar {
+      gap: 0.4rem;
+      padding: 0.35rem;
+      margin-bottom: 1rem;
+    }
+
+    .wochenplan-tab-btn {
+      flex: 1 1 calc(50% - 0.4rem);
+      padding: 0.5rem 0.65rem;
+      font-size: 0.82rem;
+      justify-content: center;
+      text-align: center;
+      gap: 0.35rem;
+    }
+
+    .tab-icon {
+      font-size: 0.95rem;
+    }
+  }
+
   .view-page-container {
     padding: 1.5rem 2rem;
     max-width: 1400px;

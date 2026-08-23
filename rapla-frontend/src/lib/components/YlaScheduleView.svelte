@@ -7,27 +7,48 @@
     getYlaAssignments,
     getYlaTeacherMeta,
     getYlaCleanShortTitle,
+    getYlaCellRenderInfo,
+    searchYlaCurriculum,
     YLA_TEACHERS,
     YLA_TEACHERS_META,
     type YlaWeek, 
     type YlaDayEntry, 
     type YlaDay, 
     type YlaSlot,
-    type YlaTeacherName
+    type YlaTeacherName,
+    type YlaCellRenderInfo,
+    type YlaSearchResult
   } from '$lib/ylaData';
   import { db, type Teacher } from '$lib/db';
 
   // Props
-  let { initialWeek = 1, readOnly = false, onWeekChange }: { initialWeek?: number; readOnly?: boolean; onWeekChange?: (week: number) => void } = $props();
+  let { 
+    initialWeek = 1, 
+    readOnly = false, 
+    onWeekChange 
+  }: { 
+    initialWeek?: number; 
+    readOnly?: boolean; 
+    onWeekChange?: (week: number) => void 
+  } = $props();
 
   let assignmentsMap = $state<Record<string, string>>({});
   let selectedWeekNumber = $state(initialWeek || 1);
   let activeMobileDayIndex = $state(0);
   let isFullscreen = $state(false);
+  let viewMode = $state<'grid' | 'agenda'>('grid'); // 'grid' = Wochentabelle, 'agenda' = Tages-Detailansicht
   let searchQuery = $state('');
+  let isSearchOpen = $state(false);
   let showAbbreviations = $state(false);
   let userRole = $state('');
   let allTeachersList = $state<Teacher[]>([]);
+
+  // Sync with initialWeek prop
+  $effect(() => {
+    if (initialWeek && initialWeek !== selectedWeekNumber) {
+      selectedWeekNumber = initialWeek;
+    }
+  });
 
   // Modal State for Slot Detail
   let activeDetailModal = $state<{
@@ -42,6 +63,7 @@
     slotTime: string;
     slotBadge: string;
     slotType: string;
+    rowSpan?: number;
     entry: YlaDayEntry;
   } | null>(null);
 
@@ -60,6 +82,11 @@
       allTeachersList = [];
     }
 
+    // Default to agenda view on small screens for maximum readability
+    if (typeof window !== 'undefined' && window.innerWidth < 1024) {
+      viewMode = 'agenda';
+    }
+
     refreshAssignments();
     const handleStorage = () => refreshAssignments();
     window.addEventListener('storage', handleStorage);
@@ -73,7 +100,9 @@
 
     const handleKeydown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        if (activeDetailModal) {
+        if (showAbbreviations) {
+          showAbbreviations = false;
+        } else if (activeDetailModal) {
           closeSlotDetail();
         } else if (isFullscreen) {
           toggleFullscreen();
@@ -109,7 +138,10 @@
   });
 
   let specialDays = $derived(currentWeek.days.filter(d => d.specialFocus));
-  let activeDay = $derived(currentWeek.days[activeMobileDayIndex]);
+  let activeDay = $derived(currentWeek.days[activeMobileDayIndex] || currentWeek.days[0]);
+
+  // Live search results
+  let searchResults = $derived(searchQuery.trim().length >= 2 ? searchYlaCurriculum(searchQuery) : []);
 
   function selectWeek(num: number) {
     selectedWeekNumber = num;
@@ -124,6 +156,23 @@
     if (newWeek >= 1 && newWeek <= allWeeks.length) {
       selectWeek(newWeek);
     }
+  }
+
+  function navigateDay(delta: number) {
+    const newIdx = activeMobileDayIndex + delta;
+    if (newIdx >= 0 && newIdx < currentWeek.days.length) {
+      activeMobileDayIndex = newIdx;
+    }
+  }
+
+  function selectSearchResult(res: YlaSearchResult) {
+    selectWeek(res.weekNumber);
+    const dayIdx = currentWeek.days.findIndex(d => d.dateStr === res.dateStr || d.dayName === res.dayName);
+    if (dayIdx !== -1) {
+      activeMobileDayIndex = dayIdx;
+    }
+    searchQuery = '';
+    isSearchOpen = false;
   }
 
   function toggleFullscreen() {
@@ -156,8 +205,7 @@
     }
   }
 
-
-  function openSlotDetail(day: YlaDay, slot: YlaSlot, entry: YlaDayEntry) {
+  function openSlotDetail(day: YlaDay, slot: YlaSlot, entry: YlaDayEntry, displayTime?: string, rowSpan: number = 1) {
     if (!entry || (!entry.text && !entry.shortTitle)) return;
     const key = `${currentWeek.weekNumber}_${day.col}_${slot.rowNumber}`;
     const assigned = assignmentsMap[key] || entry.assignedTeacher || null;
@@ -171,9 +219,10 @@
       dateStr: day.dateStr,
       specialFocus: day.specialFocus,
       slotLabel: slot.label,
-      slotTime: slot.time,
+      slotTime: displayTime || slot.time,
       slotBadge: slot.badge,
       slotType: slot.type,
+      rowSpan,
       entry: { ...entry, assignedTeacher: assigned }
     };
   }
@@ -264,7 +313,7 @@
     <div class="fs-top-bar glass-card">
       <div class="fs-brand-section">
         <span class="fs-brand-badge">🧘 4-wöchige YLA</span>
-        <span class="fs-brand-sub" title={currentWeek.title}>Yogalehrerausbildung</span>
+        <span class="fs-brand-sub" title={currentWeek.title}>{currentWeek.weekSubtitle}</span>
       </div>
 
       <!-- Quick 1-Click Week Switcher Pills in Fullscreen -->
@@ -282,6 +331,28 @@
             <span class="fs-w-dates">{week.dateRange.replace('.2026', '').replace('/2026', '')}</span>
           </button>
         {/each}
+      </div>
+
+      <!-- View Switcher in Fullscreen -->
+      <div class="fs-view-toggles">
+        <button 
+          type="button" 
+          class="fs-mode-btn" 
+          class:active={viewMode === 'grid'}
+          onclick={() => viewMode = 'grid'}
+          title="Wochentabelle anzeigen"
+        >
+          📊 Tabelle
+        </button>
+        <button 
+          type="button" 
+          class="fs-mode-btn" 
+          class:active={viewMode === 'agenda'}
+          onclick={() => viewMode = 'agenda'}
+          title="Tages-Agenda anzeigen"
+        >
+          📋 Tagesansicht
+        </button>
       </div>
 
       <!-- Fullscreen Action Controls -->
@@ -318,16 +389,105 @@
   {:else}
 
     <!-- ========================================================================= -->
-    <!-- STANDARD TOP BAR (Clean view: Title & Fullscreen function only) -->
+    <!-- STANDARD TOP BAR (Title, View Switcher, Search, Abbreviations & Fullscreen) -->
     <!-- ========================================================================= -->
     <div class="yla-top-bar">
-      <h2 class="yla-main-title">{currentWeek.title}</h2>
+      <div class="yla-title-box">
+        <div class="yla-badge-row">
+          <span class="yla-tag-pill">🧘 Yogalehrerausbildung</span>
+          <span class="yla-tag-pill highlight-pill">4-Wochen-Intensivkurs</span>
+        </div>
+        <h2 class="yla-main-title">{currentWeek.title}</h2>
+      </div>
+
       <div class="yla-top-actions">
+        <!-- View Mode Switcher (Grid vs Agenda) -->
+        <div class="view-mode-segmented">
+          <button 
+            type="button" 
+            class="btn-segment" 
+            class:active={viewMode === 'grid'}
+            onclick={() => viewMode = 'grid'}
+            title="Kompakte Wochentabelle mit allen 7 Tagen"
+          >
+            <span class="seg-icon">📊</span>
+            <span class="seg-label">Wochentabelle</span>
+          </button>
+          <button 
+            type="button" 
+            class="btn-segment" 
+            class:active={viewMode === 'agenda'}
+            onclick={() => viewMode = 'agenda'}
+            title="Große, lesefreundliche Tages-Agenda mit allen Details"
+          >
+            <span class="seg-icon">📋</span>
+            <span class="seg-label">Tagesansicht</span>
+          </button>
+        </div>
+
+        <!-- Search Bar Trigger -->
+        <div class="search-input-wrapper">
+          <span class="search-icon">🔍</span>
+          <input 
+            type="text" 
+            class="search-input" 
+            placeholder="Thema, Gita, Lehrkraft suchen..." 
+            bind:value={searchQuery}
+            onfocus={() => isSearchOpen = true}
+          />
+          {#if searchQuery}
+            <button type="button" class="btn-clear-search" onclick={() => searchQuery = ''}>✕</button>
+          {/if}
+
+          <!-- Search Results Dropdown -->
+          {#if searchQuery.trim().length >= 2}
+            <div class="search-results-dropdown glass-card animate-scale-up">
+              <div class="search-results-header">
+                <span>Gefundene Einheiten ({searchResults.length}):</span>
+                <button type="button" class="btn-close-dropdown" onclick={() => searchQuery = ''}>✕</button>
+              </div>
+              <div class="search-results-list">
+                {#if searchResults.length === 0}
+                  <div class="search-empty-note">Keine passenden Einheiten gefunden.</div>
+                {:else}
+                  {#each searchResults as res}
+                    <!-- svelte-ignore a11y_click_events_have_key_events -->
+                    <!-- svelte-ignore a11y_no_static_element_interactions -->
+                    <div 
+                      class="search-result-item" 
+                      onclick={() => selectSearchResult(res)}
+                    >
+                      <div class="s-res-meta">
+                        <span class="s-res-week">W{res.weekNumber}</span>
+                        <span class="s-res-day">{res.dayName} ({res.dateStr})</span>
+                        <span class="s-res-time">{res.time}</span>
+                      </div>
+                      <div class="s-res-match">{res.matchText}</div>
+                      <div class="s-res-slot">{res.slotLabel}</div>
+                    </div>
+                  {/each}
+                {/if}
+              </div>
+            </div>
+          {/if}
+        </div>
+
+        <!-- Abbreviations Button -->
+        <button 
+          type="button" 
+          class="btn yla-btn-action" 
+          onclick={() => showAbbreviations = !showAbbreviations}
+          title="Erklärung von YLH, BhG, Ki, YVA"
+        >
+          📖 Abkürzungen
+        </button>
+
+        <!-- Fullscreen Button -->
         <button 
           type="button" 
           class="btn yla-btn-action btn-fullscreen-main" 
           onclick={toggleFullscreen}
-          title="Vollbildmodus aktivieren"
+          title="Vollbildmodus aktivieren (Taste Esc zum Beenden)"
         >
           🖥️ Vollbild
         </button>
@@ -358,7 +518,8 @@
                 onclick={() => selectWeek(week.weekNumber)}
                 title="{week.weekSubtitle}"
               >
-                Woche {week.weekNumber}
+                <span class="pill-week-title">Woche {week.weekNumber}</span>
+                <span class="pill-week-dates">{week.dateRange.replace('.2026', '').replace('/2026', '')}</span>
               </button>
             {/each}
           </div>
@@ -382,7 +543,7 @@
       <!-- Special Highlights of this week -->
       {#if specialDays.length > 0}
         <div class="special-highlights-row">
-          <span class="highlights-label">Besonderheiten:</span>
+          <span class="highlights-label">Besonderheiten dieser Woche:</span>
           <div class="highlights-chips">
             {#each specialDays as sd}
               <div class="highlight-chip">
@@ -398,197 +559,328 @@
   {/if}
 
   <!-- ========================================================================= -->
-  <!-- DESKTOP TIMETABLE GRID (Compact, Clean & Responsive for 1-Screen Overview) -->
+  <!-- 1. DESKTOP TIMETABLE GRID (Compact, Sticky Columns & High Readability)    -->
   <!-- ========================================================================= -->
-  <div class="yla-desktop-grid-container" class:fs-grid-container={isFullscreen}>
-    <div class="yla-grid-table" class:fs-grid-table={isFullscreen}>
+  <div 
+    class="yla-desktop-grid-container" 
+    class:fs-grid-container={isFullscreen}
+    class:hidden-grid={viewMode === 'agenda' && !isFullscreen}
+  >
+    <table class="yla-grid-table" class:fs-grid-table={isFullscreen}>
       
       <!-- Grid Header Row with Days -->
-      <div class="yla-grid-header-row">
-        <div class="yla-cell yla-header-cell time-col-header">
-          <div class="header-time-title">ZEIT / EINHEIT</div>
-        </div>
+      <thead>
+        <tr class="yla-grid-header-row">
+          <th class="yla-cell yla-header-cell time-col-header sticky-time-col">
+            <div class="header-time-title">ZEIT / EINHEIT</div>
+          </th>
 
-        {#each currentWeek.days as day}
-          <div class="yla-cell yla-header-cell day-col-header">
-            <div class="day-header-name">{day.dayName}</div>
-            <div class="day-header-date">{day.dateStr}</div>
-            {#if day.specialFocus}
-              <div class="day-header-focus" title={day.specialFocus}>
-                <span>{getSpecialFocusIcon(day.specialFocus)}</span>
-                <span class="focus-text-truncate">{day.specialFocus}</span>
-              </div>
-            {/if}
-          </div>
-        {/each}
-      </div>
+          {#each currentWeek.days as day}
+            <th class="yla-cell yla-header-cell day-col-header">
+              <div class="day-header-name">{day.dayName}</div>
+              <div class="day-header-date">{day.dateStr}</div>
+              {#if day.specialFocus}
+                <div class="day-header-focus-pill" title={day.specialFocus}>
+                  <span>{getSpecialFocusIcon(day.specialFocus)}</span>
+                  <span class="focus-pill-text">{day.specialFocus}</span>
+                </div>
+              {/if}
+            </th>
+          {/each}
+        </tr>
+      </thead>
 
       <!-- Grid Body Rows (Slots) -->
-      {#each currentWeek.slots as slot}
-        <div class="yla-grid-slot-row">
-          
-          <!-- Left Label Column -->
-          <div class="yla-cell yla-slot-label-cell {getSlotStyleClass(slot.type)}">
-            <div class="slot-badge-tag">
-              <span>{getSlotCategoryIcon(slot.type)}</span>
-              <span>{slot.badge}</span>
-            </div>
-            <div class="slot-main-label">{slot.label}</div>
-            {#if slot.time}
-              <div class="slot-time-sub">{slot.time}</div>
-            {/if}
-          </div>
-
-          <!-- Day Columns for this slot -->
-          {#each currentWeek.days as day}
-            {@const entry = slot.entries[day.col]}
-            {@const key = `${currentWeek.weekNumber}_${day.col}_${slot.rowNumber}`}
-            {@const assignedTeacher = assignmentsMap[key] || entry?.assignedTeacher}
-            {@const hasContent = !!(entry && (entry.text || entry.shortTitle))}
+      <tbody>
+        {#each currentWeek.slots as slot, slotIdx}
+          <tr class="yla-grid-slot-row">
             
-            <!-- svelte-ignore a11y_click_events_have_key_events -->
-            <!-- svelte-ignore a11y_no_static_element_interactions -->
-            <div 
-              class="yla-cell yla-slot-content-cell {getSlotStyleClass(slot.type)}" 
-              class:is-empty={!hasContent}
-              class:is-clickable={hasContent}
-              class:has-assigned-teacher={!!assignedTeacher}
-              onclick={() => hasContent && openSlotDetail(day, slot, entry)}
-              title={hasContent ? (entry?.fullText ? `${entry.fullText}\n\n👉 Klicken für Details${isAdmin ? ' & Zuweisung' : ''}` : `Klicken für Details${isAdmin ? ' & Zuweisung' : ''}`) : ''}
-            >
-              {#if hasContent && entry}
-                <div class="compact-slot-box">
-                  
-                  <!-- Optional sub-time pill -->
-                  {#if entry.time}
-                    <div class="slot-box-time-row">
-                      <span class="compact-slot-time-pill">{entry.time}</span>
-                    </div>
-                  {/if}
-
-                  <!-- PRIMARY CONCISE TITLE (No clutter, crisp & clear) -->
-                  <div class="compact-slot-title" title={entry.fullText || entry.text}>
-                    {getYlaCleanShortTitle(entry, slot.label)}
-                  </div>
-
-                  <!-- ASSIGNED PERSON BADGE (Prominent & Clean) -->
-                  {#if assignedTeacher}
-                    {@const meta = getYlaTeacherMeta(assignedTeacher)}
-                    <div 
-                      class="assigned-person-badge" 
-                      style="color: {meta.color}; background: {meta.badgeBg}; border: 1px solid {meta.color}40;"
-                      title="Eingeteilt: {assignedTeacher}{isAdmin ? ' (Klicken zum Bearbeiten)' : ''}"
-                    >
-                      <span class="person-avatar">{meta.avatar}</span>
-                      <span class="person-name">{assignedTeacher}</span>
-                    </div>
-                  {:else if isAdmin}
-                    <div class="admin-unassigned-pill" title="Klicken zum Zuweisen einer Lehrkraft">
-                      <span class="plus-icon">+</span>
-                      <span>Zuweisen</span>
-                    </div>
-                  {/if}
-
-                </div>
-              {:else}
-                <div class="empty-slot-placeholder">—</div>
+            <!-- Left Label Column (Sticky) -->
+            <td class="yla-cell yla-slot-label-cell {getSlotStyleClass(slot.type)} sticky-time-col">
+              <div class="slot-badge-tag">
+                <span>{getSlotCategoryIcon(slot.type)}</span>
+                <span>{slot.badge}</span>
+              </div>
+              <div class="slot-main-label">{slot.label}</div>
+              {#if slot.time}
+                <div class="slot-time-sub">⏰ {slot.time}</div>
               {/if}
-            </div>
-          {/each}
-        </div>
-      {/each}
+            </td>
 
-    </div>
+            <!-- Day Columns for this slot -->
+            {#each currentWeek.days as day}
+              {@const cellInfo = getYlaCellRenderInfo(currentWeek, day.col, slotIdx)}
+              {#if cellInfo.shouldRender}
+                {@const entry = cellInfo.entry}
+                {@const key = `${currentWeek.weekNumber}_${day.col}_${cellInfo.rootSlot.rowNumber}`}
+                {@const assignedTeacher = assignmentsMap[key] || entry?.assignedTeacher}
+                {@const hasContent = !!(entry && (entry.text || entry.shortTitle))}
+                
+                <!-- svelte-ignore a11y_click_events_have_key_events -->
+                <!-- svelte-ignore a11y_no_static_element_interactions -->
+                <td 
+                  rowspan={cellInfo.rowSpan}
+                  class="yla-cell yla-slot-content-cell {getSlotStyleClass(cellInfo.rootSlot.type)}" 
+                  class:is-spanned={cellInfo.rowSpan > 1}
+                  class:is-empty={!hasContent}
+                  class:is-clickable={hasContent}
+                  class:has-assigned-teacher={!!assignedTeacher}
+                  onclick={() => hasContent && entry && openSlotDetail(day, cellInfo.rootSlot, entry, cellInfo.displayTime, cellInfo.rowSpan)}
+                  title={hasContent ? (entry?.fullText ? `${entry.fullText}\n\n👉 Klicken für alle Details${isAdmin ? ' & Zuweisung' : ''}` : `Klicken für Details${isAdmin ? ' & Zuweisung' : ''}`) : ''}
+                >
+                  {#if hasContent && entry}
+                    <div class="compact-slot-box" class:spanned-box={cellInfo.rowSpan > 1}>
+                      
+                      <!-- Optional sub-time pill or spanned duration pill -->
+                      {#if cellInfo.displayTime || cellInfo.rowSpan > 1}
+                        <div class="slot-box-time-row">
+                          {#if cellInfo.displayTime}
+                            <span class="compact-slot-time-pill">⏰ {cellInfo.displayTime}</span>
+                          {/if}
+                          {#if cellInfo.rowSpan > 1}
+                            <span class="spanned-duration-pill" title="Umfasst {cellInfo.rowSpan} Zeilen">Block ({cellInfo.rowSpan} Einheiten)</span>
+                          {/if}
+                        </div>
+                      {/if}
+
+                      <!-- PRIMARY CONCISE TITLE -->
+                      <div class="compact-slot-title" class:spanned-title={cellInfo.rowSpan > 1} title={entry.fullText || entry.text}>
+                        {getYlaCleanShortTitle(entry, cellInfo.rootSlot.label)}
+                      </div>
+
+                      <!-- ASSIGNED PERSON BADGE -->
+                      {#if assignedTeacher}
+                        {@const meta = getYlaTeacherMeta(assignedTeacher)}
+                        <div 
+                          class="assigned-person-badge" 
+                          style="color: {meta.color}; background: {meta.badgeBg}; border: 1.5px solid {meta.color}40;"
+                          title="Eingeteilt: {assignedTeacher}{isAdmin ? ' (Klicken zum Bearbeiten)' : ''}"
+                        >
+                          <span class="person-avatar">{meta.avatar}</span>
+                          <span class="person-name">{assignedTeacher}</span>
+                        </div>
+                      {:else if isAdmin}
+                        <div class="admin-unassigned-pill" title="Klicken zum Zuweisen einer Lehrkraft">
+                          <span class="plus-icon">+</span>
+                          <span>Zuweisen</span>
+                        </div>
+                      {/if}
+
+                    </div>
+                  {:else}
+                    <div class="empty-slot-placeholder">—</div>
+                  {/if}
+                </td>
+              {/if}
+            {/each}
+          </tr>
+        {/each}
+      </tbody>
+
+    </table>
   </div>
 
   <!-- ========================================================================= -->
-  <!-- MOBILE / TABLET DAY ACCORDION & CARDS VIEW -->
+  <!-- 2. RICH RESPONSIVE DAY AGENDA (Optimal for Mobile, Tablet & Deep Reading)  -->
   <!-- ========================================================================= -->
-  <div class="yla-mobile-view">
-    <!-- Day Tabs Navigation for Mobile -->
-    <div class="mobile-day-tabs">
+  <div 
+    class="yla-agenda-view" 
+    class:hidden-agenda={viewMode === 'grid' && !isFullscreen}
+  >
+    <!-- Day Tabs Navigation for Mobile / Tablet -->
+    <div class="agenda-day-tabs">
       {#each currentWeek.days as day, idx}
+        {@const isActive = activeMobileDayIndex === idx}
         <button 
           type="button" 
-          class="mobile-day-tab-btn" 
-          class:active={activeMobileDayIndex === idx}
+          class="agenda-day-tab-btn" 
+          class:active={isActive}
           onclick={() => activeMobileDayIndex = idx}
         >
-          <span class="m-day-name">{day.dayName.slice(0, 2)}</span>
-          <span class="m-day-date">{day.dateStr}</span>
+          <span class="tab-day-name">{day.dayName.slice(0, 2)}</span>
+          <span class="tab-day-date">{day.dateStr}</span>
+          {#if day.specialFocus}
+            <span class="tab-special-dot" title={day.specialFocus}>
+              {getSpecialFocusIcon(day.specialFocus)}
+            </span>
+          {/if}
         </button>
       {/each}
     </div>
 
-    <!-- Active Day Schedule Feed on Mobile -->
+    <!-- Active Day Schedule Feed -->
     {#if activeDay}
-      <div class="mobile-day-feed animate-fade-in">
-        <div class="mobile-day-header-card glass-card">
-          <div class="m-card-title-row">
-            <h3>{activeDay.dayName}, {activeDay.dateStr}</h3>
-            <span class="m-week-tag">Woche {currentWeek.weekNumber}</span>
+      <div class="agenda-day-feed animate-fade-in">
+        
+        <!-- Day Banner Card -->
+        <div class="agenda-day-header-card glass-card">
+          <div class="day-header-left">
+            <h3 class="active-day-heading">
+              <span>📅 {activeDay.dayName}, {activeDay.dateStr}</span>
+            </h3>
+            <span class="active-week-badge">Woche {currentWeek.weekNumber}: {currentWeek.weekSubtitle}</span>
           </div>
+
           {#if activeDay.specialFocus}
-            <div class="mobile-special-focus-box">
+            <div class="agenda-special-focus-box">
               <span class="focus-icon">{getSpecialFocusIcon(activeDay.specialFocus)}</span>
-              <strong>{activeDay.specialFocus}</strong>
+              <div>
+                <strong>Besonderheit:</strong> {activeDay.specialFocus}
+              </div>
             </div>
           {/if}
         </div>
 
-        <div class="mobile-slots-list">
-          {#each currentWeek.slots as slot}
-            {@const entry = slot.entries[activeDay.col]}
-            {@const key = `${currentWeek.weekNumber}_${activeDay.col}_${slot.rowNumber}`}
-            {@const assignedTeacher = assignmentsMap[key] || entry?.assignedTeacher}
-            {#if entry && (entry.text || entry.shortTitle)}
+        <!-- Rich Card List for the Selected Day -->
+        <div class="agenda-slots-list">
+          {#each currentWeek.slots as slot, slotIdx}
+            {@const cellInfo = getYlaCellRenderInfo(currentWeek, activeDay.col, slotIdx)}
+            {#if cellInfo.shouldRender && cellInfo.entry && (cellInfo.entry.text || cellInfo.entry.shortTitle)}
+              {@const entry = cellInfo.entry}
+              {@const key = `${currentWeek.weekNumber}_${activeDay.col}_${cellInfo.rootSlot.rowNumber}`}
+              {@const assignedTeacher = assignmentsMap[key] || entry?.assignedTeacher}
+              
               <!-- svelte-ignore a11y_click_events_have_key_events -->
               <!-- svelte-ignore a11y_no_static_element_interactions -->
               <div 
-                class="mobile-slot-card glass-card {getSlotStyleClass(slot.type)} is-clickable"
-                onclick={() => openSlotDetail(activeDay, slot, entry)}
+                class="agenda-slot-card glass-card {getSlotStyleClass(cellInfo.rootSlot.type)} is-clickable"
+                class:is-spanned-card={cellInfo.rowSpan > 1}
+                onclick={() => openSlotDetail(activeDay, cellInfo.rootSlot, entry, cellInfo.displayTime, cellInfo.rowSpan)}
               >
-                <div class="m-slot-header">
-                  <div class="m-slot-badge">
-                    <span>{getSlotCategoryIcon(slot.type)}</span>
-                    <span>{slot.badge}</span>
+                <!-- Top Card Meta Row -->
+                <div class="agenda-card-top-row">
+                  <div class="card-category-pill">
+                    <span class="cat-icon">{getSlotCategoryIcon(cellInfo.rootSlot.type)}</span>
+                    <span class="cat-label">{cellInfo.rootSlot.badge}</span>
                   </div>
-                  {#if entry.time || slot.time}
-                    <span class="m-slot-time">{entry.time || slot.time}</span>
-                  {/if}
-                </div>
 
-                <!-- Title on Mobile -->
-                <div class="m-slot-title">{getYlaCleanShortTitle(entry, slot.label)}</div>
-
-                <!-- Mobile Teacher Badge -->
-                {#if assignedTeacher}
-                  {@const meta = getYlaTeacherMeta(assignedTeacher)}
-                  <div class="mobile-assigned-teacher-row">
-                    <span class="assigned-person-badge" style="color: {meta.color}; background: {meta.badgeBg}; border: 1px solid {meta.color}40;">
-                      <span>{meta.avatar}</span>
-                      <strong>{assignedTeacher}</strong>
+                  <div class="card-time-badges">
+                    {#if cellInfo.rowSpan > 1}
+                      <span class="spanned-block-badge">📦 Block ({cellInfo.rowSpan} Einheiten)</span>
+                    {/if}
+                    <span class="card-time-pill">
+                      ⏰ {cellInfo.displayTime || entry.time || cellInfo.rootSlot.time}
                     </span>
                   </div>
-                {:else if isAdmin}
-                  <div class="mobile-assigned-teacher-row">
-                    <span class="admin-unassigned-pill">+ Lehrkraft zuweisen</span>
+                </div>
+
+                <!-- Main Lesson Title -->
+                <h4 class="agenda-card-title">
+                  {getYlaCleanShortTitle(entry, cellInfo.rootSlot.label)}
+                </h4>
+
+                <!-- Lesson Context / Slot Label -->
+                <div class="agenda-slot-context-row">
+                  <span class="context-label">Einheit:</span>
+                  <span class="context-text">{cellInfo.rootSlot.label}</span>
+                </div>
+
+                <!-- Full Curriculum Description Text Snippet (High Readability!) -->
+                {#if entry.text || entry.fullText}
+                  <div class="agenda-card-desc-box">
+                    <p class="desc-text">{entry.fullText || entry.text}</p>
                   </div>
                 {/if}
 
-                <div class="m-click-note">
-                  <span>{isAdmin ? 'ℹ️ Tippen für alle Details & Zuweisung' : 'ℹ️ Tippen für alle Details'}</span>
+                <!-- Keywords Chips (if any) -->
+                {#if entry.keywords && entry.keywords.length > 0}
+                  <div class="agenda-keywords-row">
+                    {#each entry.keywords as kw}
+                      <span class="agenda-keyword-chip">🏷️ {kw}</span>
+                    {/each}
+                  </div>
+                {/if}
+
+                <!-- Bottom Footer with Assigned Teacher and Tap Hint -->
+                <div class="agenda-card-footer">
+                  <div class="teacher-badge-container">
+                    {#if assignedTeacher}
+                      {@const meta = getYlaTeacherMeta(assignedTeacher)}
+                      <div class="agenda-assigned-teacher-badge" style="color: {meta.color}; background: {meta.badgeBg}; border: 1.5px solid {meta.color}50;">
+                        <span class="t-avatar">{meta.avatar}</span>
+                        <span class="t-name">Leitung: <strong>{assignedTeacher}</strong></span>
+                      </div>
+                    {:else if isAdmin}
+                      <div class="agenda-admin-assign-btn">
+                        <span>➕ Lehrkraft einteilen</span>
+                      </div>
+                    {:else}
+                      <div class="agenda-unassigned-note">
+                        <span>ℹ️ Offen</span>
+                      </div>
+                    {/if}
+                  </div>
+
+                  <div class="card-tap-hint">
+                    <span>{isAdmin ? '👉 Tippen für Zuweisung & Details' : '👉 Tippen für Details'}</span>
+                  </div>
                 </div>
+
               </div>
             {/if}
           {/each}
         </div>
+
+        <!-- Quick Day Navigation Switcher at the bottom of the feed -->
+        <div class="agenda-bottom-day-nav glass-card">
+          <button 
+            type="button" 
+            class="btn btn-day-nav" 
+            disabled={activeMobileDayIndex <= 0}
+            onclick={() => navigateDay(-1)}
+          >
+            ◀ Vorheriger Tag
+          </button>
+
+          <span class="bottom-current-day-label">
+            {activeDay.dayName} ({activeDay.dateStr})
+          </span>
+
+          <button 
+            type="button" 
+            class="btn btn-day-nav" 
+            disabled={activeMobileDayIndex >= currentWeek.days.length - 1}
+            onclick={() => navigateDay(1)}
+          >
+            Nächster Tag ▶
+          </button>
+        </div>
+
       </div>
     {/if}
   </div>
 
   <!-- ========================================================================= -->
-  <!-- INTERACTIVE SLOT DETAIL MODAL (With full teacher assignment for Admin) -->
+  <!-- 3. ABBREVIATIONS POPUP / MODAL (YLH, BhG, Ki, YVA)                        -->
+  <!-- ========================================================================= -->
+  {#if showAbbreviations}
+    <!-- svelte-ignore a11y_click_events_have_key_events -->
+    <!-- svelte-ignore a11y_no_static_element_interactions -->
+    <div class="detail-modal-backdrop animate-fade-in" onclick={() => showAbbreviations = false}>
+      <div class="abbr-modal-card glass-card animate-scale-up" onclick={(e) => e.stopPropagation()}>
+        <div class="abbr-modal-header">
+          <h3>📖 Abkürzungen im YLA-Unterrichtsplan</h3>
+          <button type="button" class="btn-modal-close" onclick={() => showAbbreviations = false}>✕</button>
+        </div>
+        <div class="abbr-modal-body">
+          <div class="abbr-grid">
+            {#each currentWeek.abbreviations as abbr}
+              <div class="abbr-item">
+                <span class="abbr-badge">{abbr.abbr}</span>
+                <span class="abbr-meaning">{abbr.meaning}</span>
+              </div>
+            {/each}
+          </div>
+          <p class="abbr-note">
+            Diese Schriften und Handbücher begleiten die täglichen Vorträge, Asana-Stunden und Lektüre-Einheiten der 4-wöchigen Ausbildung.
+          </p>
+        </div>
+      </div>
+    </div>
+  {/if}
+
+  <!-- ========================================================================= -->
+  <!-- 4. INTERACTIVE SLOT DETAIL MODAL (With full teacher assignment for Admin) -->
   <!-- ========================================================================= -->
   {#if activeDetailModal}
     {@const modalKey = `${activeDetailModal.weekNumber}_${activeDetailModal.dayCol}_${activeDetailModal.slotRowNumber}`}
@@ -607,8 +899,11 @@
               <span>{getSlotCategoryIcon(activeDetailModal.slotType)}</span>
               <span>{activeDetailModal.slotBadge}</span>
             </span>
-            {#if activeDetailModal.entry.time || activeDetailModal.slotTime}
-              <span class="modal-time-pill">⏰ {activeDetailModal.entry.time || activeDetailModal.slotTime}</span>
+            {#if activeDetailModal.rowSpan && activeDetailModal.rowSpan > 1}
+              <span class="modal-span-pill">📦 Block ({activeDetailModal.rowSpan} Einheiten)</span>
+            {/if}
+            {#if activeDetailModal.slotTime || activeDetailModal.entry.time}
+              <span class="modal-time-pill">⏰ {activeDetailModal.slotTime || activeDetailModal.entry.time}</span>
             {/if}
           </div>
           <button type="button" class="btn-modal-close" onclick={closeSlotDetail} aria-label="Schließen">✕</button>
@@ -624,7 +919,7 @@
 
           <!-- Slot label context -->
           <div class="detail-slot-context">
-            <strong>Einheit:</strong> {activeDetailModal.slotLabel}
+            <strong>Einheit / Zeitfenster:</strong> {activeDetailModal.slotLabel}
           </div>
 
           <!-- TEACHER ASSIGNMENT SECTION (Interactive for Admin, clear for Team) -->
@@ -727,7 +1022,7 @@
 
           <!-- Full Content / Description Box -->
           <div class="detail-full-text-box">
-            <span class="section-label">Vollständige Beschreibung & Details:</span>
+            <span class="section-label">Vollständige Lehrplan-Inhalte & Details:</span>
             <div class="detail-text-content">
               {activeDetailModal.entry.fullText || activeDetailModal.entry.text}
             </div>
@@ -783,7 +1078,7 @@
     box-sizing: border-box;
   }
 
-  /* FULLSCREEN MODE: Fits 100% within monitor height without scrolling */
+  /* FULLSCREEN MODE: Fits monitor cleanly */
   .fullscreen-active,
   .yla-view-wrapper:fullscreen {
     position: fixed !important;
@@ -905,6 +1200,33 @@
     color: #785858;
   }
 
+  .fs-view-toggles {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 0.15rem;
+  }
+
+  .fs-mode-btn {
+    background: transparent;
+    border: none;
+    padding: 0.2rem 0.5rem;
+    border-radius: 6px;
+    font-size: 0.74rem;
+    font-weight: 600;
+    color: #475569;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .fs-mode-btn.active {
+    background: #960040;
+    color: #ffffff;
+  }
+
   .fs-actions {
     display: flex;
     align-items: center;
@@ -995,60 +1317,252 @@
     color: #960040;
   }
 
-  .fullscreen-active .yla-mobile-view {
-    display: none !important;
-  }
-
-  @media (max-width: 1100px) {
-    .fs-w-dates {
-      display: none;
-    }
-    .fs-brand-sub {
-      display: none;
-    }
-  }
-
-  @media (max-width: 768px) {
-    .fs-exit-label {
-      display: none;
-    }
-    .fs-esc-key {
-      display: none;
-    }
-    .btn-fs-exit {
-      padding: 0.3rem 0.5rem;
-    }
-  }
-
   /* ========================================================================= */
-  /* STANDARD TOP BAR (Title & Fullscreen only) */
+  /* STANDARD TOP BAR */
   /* ========================================================================= */
   .yla-top-bar {
     background: var(--bg-card, #ffffff);
     border: 1px solid var(--border-color, #ffe082);
     border-radius: 16px;
-    padding: 1.25rem 1.75rem;
+    padding: 1.1rem 1.5rem;
     box-shadow: 0 4px 18px rgba(150, 0, 64, 0.04);
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 1.5rem;
+    gap: 1.25rem;
     flex-wrap: wrap;
   }
 
+  .yla-title-box {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    flex: 1;
+    min-width: 260px;
+  }
+
+  .yla-badge-row {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+  }
+
+  .yla-tag-pill {
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.15rem 0.55rem;
+    border-radius: 12px;
+    background: #fff5cc;
+    color: #960040;
+    border: 1px solid #ffe082;
+  }
+
+  .yla-tag-pill.highlight-pill {
+    background: #960040;
+    color: #ffffff;
+    border-color: #960040;
+  }
+
   .yla-main-title {
-    font-size: 1.45rem;
+    font-size: 1.35rem;
     color: #2a1b1b;
     margin: 0;
     font-family: 'Playfair Display', serif;
-    flex: 1;
-    min-width: 260px;
+    line-height: 1.25;
   }
 
   .yla-top-actions {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+  }
+
+  /* Segmented View Mode Toggle */
+  .view-mode-segmented {
+    display: inline-flex;
+    background: #fff9e6;
+    border: 1.5px solid #ffe082;
+    border-radius: 10px;
+    padding: 0.2rem;
+    gap: 0.2rem;
+  }
+
+  .btn-segment {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    border: none;
+    background: transparent;
+    padding: 0.4rem 0.8rem;
+    border-radius: 7px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #475569;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-segment.active {
+    background: #960040;
+    color: #ffffff;
+    font-weight: 700;
+    box-shadow: 0 2px 6px rgba(150, 0, 64, 0.2);
+  }
+
+  .btn-segment:hover:not(.active) {
+    background: #ffe8a3;
+    color: #960040;
+  }
+
+  /* Search Bar */
+  .search-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .search-icon {
+    position: absolute;
+    left: 0.65rem;
+    font-size: 0.85rem;
+    pointer-events: none;
+    color: #94a3b8;
+  }
+
+  .search-input {
+    padding: 0.48rem 1.8rem 0.48rem 2rem;
+    border: 1px solid #ffe082;
+    background: #ffffff;
+    border-radius: 10px;
+    font-size: 0.82rem;
+    color: #2a1b1b;
+    outline: none;
+    width: 190px;
+    transition: all 0.2s;
+  }
+
+  .search-input:focus {
+    border-color: #960040;
+    box-shadow: 0 0 0 3px rgba(150, 0, 64, 0.1);
+    width: 240px;
+  }
+
+  .btn-clear-search {
+    position: absolute;
+    right: 0.45rem;
+    background: none;
+    border: none;
+    font-size: 0.75rem;
+    color: #94a3b8;
+    cursor: pointer;
+    padding: 0.2rem;
+  }
+
+  .search-results-dropdown {
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    width: 320px;
+    max-height: 380px;
+    background: #ffffff;
+    border: 1.5px solid #ffe082;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .search-results-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0.75rem;
+    background: #fff9e6;
+    border-bottom: 1px solid #ffe082;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #960040;
+  }
+
+  .btn-close-dropdown {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 0.8rem;
+    color: #64748b;
+  }
+
+  .search-results-list {
+    overflow-y: auto;
+    padding: 0.35rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .search-empty-note {
+    padding: 1rem;
+    text-align: center;
+    font-size: 0.82rem;
+    color: #94a3b8;
+  }
+
+  .search-result-item {
+    padding: 0.5rem 0.65rem;
+    border-radius: 8px;
+    background: #fffdf8;
+    border: 1px solid #f0e6d2;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    transition: all 0.15s;
+  }
+
+  .search-result-item:hover {
+    background: #fff5cc;
+    border-color: #960040;
+  }
+
+  .s-res-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.7rem;
+  }
+
+  .s-res-week {
+    background: #960040;
+    color: #ffffff;
+    font-weight: 700;
+    padding: 0.05rem 0.35rem;
+    border-radius: 4px;
+  }
+
+  .s-res-day {
+    font-weight: 700;
+    color: #2a1b1b;
+  }
+
+  .s-res-time {
+    color: #6b5151;
+    margin-left: auto;
+  }
+
+  .s-res-match {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #960040;
+    line-height: 1.25;
+  }
+
+  .s-res-slot {
+    font-size: 0.72rem;
+    color: #64748b;
   }
 
   .yla-btn-action {
@@ -1056,14 +1570,15 @@
     color: #2a1b1b;
     border: 1px solid #ffe082;
     border-radius: 10px;
-    padding: 0.5rem 0.9rem;
-    font-size: 0.85rem;
+    padding: 0.48rem 0.85rem;
+    font-size: 0.84rem;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.2s;
     display: inline-flex;
     align-items: center;
     gap: 0.4rem;
+    white-space: nowrap;
   }
 
   .yla-btn-action:hover {
@@ -1077,8 +1592,6 @@
     border: 1.5px solid #960040;
     color: #960040;
     font-weight: 700;
-    padding: 0.6rem 1.2rem;
-    font-size: 0.9rem;
   }
 
   .btn-fullscreen-main:hover {
@@ -1103,7 +1616,7 @@
   .week-nav-mini {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.4rem;
     flex-wrap: wrap;
   }
 
@@ -1111,18 +1624,30 @@
     display: flex;
     align-items: center;
     gap: 0.35rem;
+    flex-wrap: wrap;
   }
 
   .btn-week-pill {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
     background: #fffdf8;
     border: 1.5px solid #ffe082;
     color: #2a1b1b;
-    font-weight: 600;
-    font-size: 0.82rem;
-    padding: 0.3rem 0.75rem;
+    padding: 0.25rem 0.65rem;
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.2s;
+  }
+
+  .pill-week-title {
+    font-weight: 700;
+    font-size: 0.8rem;
+  }
+
+  .pill-week-dates {
+    font-size: 0.65rem;
+    color: #785858;
   }
 
   .btn-week-pill:hover {
@@ -1135,14 +1660,17 @@
     background: #960040;
     border-color: #960040;
     color: #ffffff;
-    font-weight: 700;
     box-shadow: 0 2px 6px rgba(150, 0, 64, 0.2);
+  }
+
+  .btn-week-pill.active .pill-week-dates {
+    color: #ffe082;
   }
 
   .btn-nav-mini {
     background: #fff5cc;
     border: 1px solid #ffe082;
-    padding: 0.35rem 0.75rem;
+    padding: 0.35rem 0.7rem;
     border-radius: 8px;
     font-size: 0.8rem;
     font-weight: 600;
@@ -1163,7 +1691,7 @@
 
   .current-week-pill {
     font-weight: 700;
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     color: #960040;
     padding: 0.3rem 0.75rem;
     background: #fffdf8;
@@ -1180,7 +1708,7 @@
 
   .highlights-label {
     font-weight: 700;
-    font-size: 0.82rem;
+    font-size: 0.8rem;
     color: #2a1b1b;
   }
 
@@ -1198,7 +1726,7 @@
     border: 1px solid #ffe082;
     border-radius: 16px;
     padding: 0.2rem 0.65rem;
-    font-size: 0.78rem;
+    font-size: 0.76rem;
     color: #2a1b1b;
   }
 
@@ -1207,7 +1735,7 @@
   }
 
   /* ========================================================================= */
-  /* DESKTOP TIMETABLE GRID (Compact & Fullscreen Fit) */
+  /* 1. DESKTOP TIMETABLE GRID (Compact & Fullscreen Fit) */
   /* ========================================================================= */
   .yla-desktop-grid-container {
     width: 100%;
@@ -1218,7 +1746,10 @@
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.02);
   }
 
-  /* Fullscreen grid container takes full remaining height */
+  .hidden-grid {
+    display: none !important;
+  }
+
   .fs-grid-container {
     flex: 1 !important;
     min-height: 0 !important;
@@ -1237,7 +1768,6 @@
     border-collapse: collapse;
   }
 
-  /* In fullscreen, table distributes rows equally to fit in 1 screen */
   .fs-grid-table {
     display: flex !important;
     flex-direction: column !important;
@@ -1323,6 +1853,16 @@
     text-align: left;
   }
 
+  .sticky-time-col {
+    position: sticky;
+    left: 0;
+    z-index: 5;
+  }
+
+  .time-col-header.sticky-time-col {
+    z-index: 15;
+  }
+
   .fs-grid-table .time-col-header {
     width: 140px !important;
     min-width: 140px !important;
@@ -1340,7 +1880,7 @@
   }
 
   .day-header-name {
-    font-size: 0.95rem;
+    font-size: 0.92rem;
     font-weight: 700;
     color: #2a1b1b;
   }
@@ -1350,7 +1890,7 @@
   }
 
   .day-header-date {
-    font-size: 0.78rem;
+    font-size: 0.76rem;
     color: #6b5151;
     font-weight: 600;
   }
@@ -1359,22 +1899,24 @@
     font-size: 0.72rem;
   }
 
-  .day-header-focus {
+  .day-header-focus-pill {
     margin-top: 0.2rem;
-    background: #ffe8a3;
-    border: 1px solid #ffe082;
-    border-radius: 10px;
-    padding: 0.1rem 0.4rem;
-    font-size: 0.68rem;
-    font-weight: 600;
-    color: #960040;
     display: inline-flex;
     align-items: center;
     gap: 0.2rem;
+    background: #fff0b3;
+    border: 1px solid #e6b800;
+    border-radius: 10px;
+    padding: 0.08rem 0.35rem;
+    font-size: 0.65rem;
+    color: #960040;
     max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
-  .focus-text-truncate {
+  .focus-pill-text {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -1419,17 +1961,19 @@
     line-height: 1.25;
     display: -webkit-box;
     -webkit-line-clamp: 2;
+    line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
 
   .fs-grid-table .slot-main-label {
-    font-size: 0.72rem;
+    font-size: 0.7rem;
     -webkit-line-clamp: 1;
+    line-clamp: 1;
   }
 
   .slot-time-sub {
-    font-size: 0.7rem;
+    font-size: 0.68rem;
     font-weight: 600;
     color: #8c7070;
     margin-top: 0.1rem;
@@ -1473,9 +2017,7 @@
     font-size: 0.8rem;
   }
 
-  /* ========================================================================= */
-  /* COMPACT SLOT BOX (ONLY SHORT TITLE + ASSIGNED PERSON) */
-  /* ========================================================================= */
+  /* Compact Slot Box */
   .compact-slot-box {
     display: flex;
     flex-direction: column;
@@ -1489,6 +2031,7 @@
     display: flex;
     align-items: center;
     gap: 0.25rem;
+    flex-wrap: wrap;
   }
 
   .compact-slot-time-pill {
@@ -1500,9 +2043,20 @@
     padding: 0.05rem 0.35rem;
     border-radius: 4px;
     line-height: 1.2;
+    white-space: nowrap;
   }
 
-  /* Concise Primary Title */
+  .spanned-duration-pill {
+    font-size: 0.62rem;
+    font-weight: 700;
+    color: #0369a1;
+    background: #e0f2fe;
+    border: 1px solid #bae6fd;
+    padding: 0.05rem 0.3rem;
+    border-radius: 4px;
+    white-space: nowrap;
+  }
+
   .compact-slot-title {
     font-size: 0.8rem;
     font-weight: 700;
@@ -1510,17 +2064,30 @@
     line-height: 1.25;
     display: -webkit-box;
     -webkit-line-clamp: 2;
+    line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
     word-break: break-word;
   }
 
+  .spanned-title {
+    line-height: 1.3;
+    -webkit-line-clamp: 4;
+    line-clamp: 4;
+  }
+
   .fs-grid-table .compact-slot-title {
     font-size: 0.74rem;
     -webkit-line-clamp: 2;
+    line-clamp: 2;
   }
 
-  /* Assigned Person Badge */
+  .fs-grid-table .spanned-title {
+    font-size: 0.78rem;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+  }
+
   .assigned-person-badge {
     display: inline-flex;
     align-items: center;
@@ -1596,7 +2163,427 @@
   .slot-default { background: #fffdf8; }
 
   /* ========================================================================= */
-  /* DETAIL MODAL STYLES */
+  /* 2. RICH RESPONSIVE DAY AGENDA (Mobile, Tablet & Detailed Mode) */
+  /* ========================================================================= */
+  .yla-agenda-view {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    width: 100%;
+  }
+
+  .hidden-agenda {
+    display: none !important;
+  }
+
+  /* Day Tabs */
+  .agenda-day-tabs {
+    display: flex;
+    overflow-x: auto;
+    gap: 0.5rem;
+    padding-bottom: 0.5rem;
+    scrollbar-width: thin;
+  }
+
+  .agenda-day-tab-btn {
+    flex: 1 0 68px;
+    padding: 0.6rem 0.4rem;
+    background: #ffffff;
+    border: 1.5px solid #ffe082;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+  }
+
+  .agenda-day-tab-btn:hover {
+    border-color: #960040;
+    background: #fff5cc;
+  }
+
+  .agenda-day-tab-btn.active {
+    background: #960040;
+    border-color: #960040;
+    color: #ffffff;
+    box-shadow: 0 4px 10px rgba(150, 0, 64, 0.2);
+  }
+
+  .tab-day-name {
+    font-weight: 800;
+    font-size: 0.95rem;
+  }
+
+  .tab-day-date {
+    font-size: 0.72rem;
+    color: #6b5151;
+    margin-top: 2px;
+  }
+
+  .agenda-day-tab-btn.active .tab-day-date {
+    color: #ffe082;
+  }
+
+  .tab-special-dot {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    font-size: 0.75rem;
+  }
+
+  /* Day Header Card */
+  .agenda-day-header-card {
+    padding: 1rem 1.25rem;
+    border: 1px solid #ffe082;
+    background: #ffffff;
+    border-radius: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    box-shadow: 0 2px 8px rgba(150, 0, 64, 0.04);
+  }
+
+  .day-header-left {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .active-day-heading {
+    margin: 0;
+    font-size: 1.2rem;
+    color: #2a1b1b;
+    font-family: 'Playfair Display', serif;
+  }
+
+  .active-week-badge {
+    background: #fff5cc;
+    color: #960040;
+    font-weight: 700;
+    font-size: 0.78rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 12px;
+    border: 1px solid #ffe082;
+  }
+
+  .agenda-special-focus-box {
+    background: #fff8e1;
+    border-left: 4px solid #960040;
+    padding: 0.6rem 0.85rem;
+    border-radius: 8px;
+    font-size: 0.84rem;
+    color: #2a1b1b;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .focus-icon {
+    font-size: 1.1rem;
+  }
+
+  /* Card List */
+  .agenda-slots-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+  }
+
+  .agenda-slot-card {
+    padding: 1.1rem 1.25rem;
+    border: 1.5px solid #ffe082;
+    border-radius: 16px;
+    background: #ffffff;
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+    position: relative;
+    cursor: pointer;
+  }
+
+  .agenda-slot-card:hover {
+    border-color: #960040;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(150, 0, 64, 0.1);
+  }
+
+  .agenda-card-top-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .card-category-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #960040;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+
+  .cat-icon {
+    font-size: 1rem;
+  }
+
+  .card-time-badges {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+  }
+
+  .spanned-block-badge {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: #0369a1;
+    background: #e0f2fe;
+    border: 1px solid #bae6fd;
+    padding: 0.15rem 0.5rem;
+    border-radius: 6px;
+  }
+
+  .card-time-pill {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #2a1b1b;
+    background: #fff5cc;
+    border: 1px solid #ffe082;
+    padding: 0.15rem 0.55rem;
+    border-radius: 6px;
+  }
+
+  .agenda-card-title {
+    margin: 0;
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: #960040;
+    line-height: 1.3;
+  }
+
+  .agenda-slot-context-row {
+    font-size: 0.8rem;
+    color: #64748b;
+    display: flex;
+    gap: 0.3rem;
+  }
+
+  .context-label {
+    font-weight: 700;
+  }
+
+  /* Description Box */
+  .agenda-card-desc-box {
+    background: #fffdf8;
+    border: 1px solid #f0e6d2;
+    border-radius: 10px;
+    padding: 0.65rem 0.85rem;
+  }
+
+  .desc-text {
+    margin: 0;
+    font-size: 0.88rem;
+    line-height: 1.45;
+    color: #2a1b1b;
+    white-space: pre-line;
+  }
+
+  .agenda-keywords-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+  }
+
+  .agenda-keyword-chip {
+    background: #fff8e1;
+    border: 1px solid #ffe082;
+    border-radius: 6px;
+    padding: 0.15rem 0.45rem;
+    font-size: 0.74rem;
+    font-weight: 600;
+    color: #6b5151;
+  }
+
+  .agenda-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding-top: 0.4rem;
+    border-top: 1px dashed #f0e6d2;
+  }
+
+  .agenda-assigned-teacher-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+  }
+
+  .t-avatar {
+    font-size: 1rem;
+  }
+
+  .agenda-admin-assign-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    background: #fff9e6;
+    border: 1px dashed #e0c885;
+    border-radius: 12px;
+    padding: 0.25rem 0.65rem;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #960040;
+  }
+
+  .agenda-unassigned-note {
+    font-size: 0.8rem;
+    color: #94a3b8;
+    font-style: italic;
+  }
+
+  .card-tap-hint {
+    font-size: 0.75rem;
+    color: #960040;
+    font-weight: 600;
+    margin-left: auto;
+  }
+
+  /* Bottom Day Switcher */
+  .agenda-bottom-day-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    background: #ffffff;
+    border: 1px solid #ffe082;
+    border-radius: 12px;
+    margin-top: 0.5rem;
+  }
+
+  .btn-day-nav {
+    background: #fff5cc;
+    border: 1px solid #ffe082;
+    border-radius: 8px;
+    padding: 0.4rem 0.85rem;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #2a1b1b;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-day-nav:hover:not(:disabled) {
+    background: #ffe8a3;
+    border-color: #960040;
+    color: #960040;
+  }
+
+  .btn-day-nav:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
+
+  .bottom-current-day-label {
+    font-weight: 800;
+    font-size: 0.95rem;
+    color: #960040;
+  }
+
+  /* ========================================================================= */
+  /* 3. ABBREVIATIONS MODAL */
+  /* ========================================================================= */
+  .abbr-modal-card {
+    background: #ffffff;
+    border: 2px solid #ffe082;
+    border-radius: 16px;
+    width: 100%;
+    max-width: 480px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.18);
+    overflow: hidden;
+  }
+
+  .abbr-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.25rem;
+    background: #fffbf0;
+    border-bottom: 1px solid #ffe082;
+  }
+
+  .abbr-modal-header h3 {
+    margin: 0;
+    font-size: 1.05rem;
+    color: #960040;
+  }
+
+  .abbr-modal-body {
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .abbr-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  .abbr-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem 0.75rem;
+    background: #fffdf8;
+    border: 1px solid #ffe082;
+    border-radius: 8px;
+  }
+
+  .abbr-badge {
+    background: #960040;
+    color: #ffffff;
+    font-weight: 800;
+    font-size: 0.82rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 6px;
+    min-width: 45px;
+    text-align: center;
+  }
+
+  .abbr-meaning {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #2a1b1b;
+  }
+
+  .abbr-note {
+    margin: 0;
+    font-size: 0.78rem;
+    color: #785858;
+    line-height: 1.4;
+  }
+
+  /* ========================================================================= */
+  /* 4. DETAIL MODAL STYLES */
   /* ========================================================================= */
   .detail-modal-backdrop {
     position: fixed;
@@ -1610,7 +2597,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 1.25rem;
+    padding: 1rem;
   }
 
   .detail-modal-card {
@@ -1618,7 +2605,7 @@
     border: 2px solid #ffe082;
     border-radius: 20px;
     width: 100%;
-    max-width: 680px;
+    max-width: min(680px, 95vw);
     max-height: 90vh;
     display: flex;
     flex-direction: column;
@@ -1669,6 +2656,16 @@
     color: #960040;
     background: #fff5cc;
     border: 1px solid #ffe082;
+    padding: 0.2rem 0.55rem;
+    border-radius: 12px;
+  }
+
+  .modal-span-pill {
+    font-size: 0.74rem;
+    font-weight: 700;
+    color: #0369a1;
+    background: #e0f2fe;
+    border: 1px solid #bae6fd;
     padding: 0.2rem 0.55rem;
     border-radius: 12px;
   }
@@ -1755,12 +2752,13 @@
     background: #ffffff;
     border: 1.5px solid #ffe082;
     border-radius: 20px;
-    padding: 0.35rem 0.75rem;
+    padding: 0.4rem 0.85rem;
     cursor: pointer;
-    font-size: 0.84rem;
+    font-size: 0.85rem;
     font-weight: 600;
     color: #2a1b1b;
     transition: all 0.2s;
+    min-height: 38px;
   }
 
   .teacher-select-btn:hover {
@@ -1774,7 +2772,7 @@
   }
 
   .t-btn-avatar {
-    font-size: 0.95rem;
+    font-size: 1rem;
   }
 
   .t-btn-name {
@@ -1803,8 +2801,8 @@
 
   .extended-teacher-dropdown {
     flex: 1;
-    min-width: 220px;
-    padding: 0.4rem 0.6rem;
+    min-width: 200px;
+    padding: 0.45rem 0.6rem;
     border: 1px solid #ffe082;
     border-radius: 8px;
     background: #ffffff;
@@ -1818,7 +2816,7 @@
     border: 1px solid #fca5a5;
     color: #991b1b;
     border-radius: 8px;
-    padding: 0.4rem 0.75rem;
+    padding: 0.45rem 0.75rem;
     font-size: 0.78rem;
     font-weight: 600;
     cursor: pointer;
@@ -1900,9 +2898,9 @@
   }
 
   .detail-text-content {
-    font-size: 0.9rem;
+    font-size: 0.92rem;
     color: #2a1b1b;
-    line-height: 1.5;
+    line-height: 1.55;
     white-space: pre-line;
     word-break: break-word;
   }
@@ -1953,187 +2951,6 @@
     background: #7d0034;
   }
 
-  /* ========================================================================= */
-  /* SEARCH & ABBREVIATIONS OVERLAYS */
-  /* ========================================================================= */
-
-  /* ========================================================================= */
-  /* MOBILE / TABLET VIEW */
-  /* ========================================================================= */
-  .yla-mobile-view {
-    display: none;
-  }
-
-  @media (max-width: 1024px) {
-    .yla-desktop-grid-container {
-      display: none;
-    }
-
-    .yla-mobile-view {
-      display: flex;
-      flex-direction: column;
-      gap: 0.85rem;
-    }
-
-    .mobile-day-tabs {
-      display: flex;
-      overflow-x: auto;
-      gap: 0.4rem;
-      padding-bottom: 0.4rem;
-      scrollbar-width: thin;
-    }
-
-    .mobile-day-tab-btn {
-      flex: 1;
-      min-width: 60px;
-      padding: 0.5rem 0.35rem;
-      background: #ffffff;
-      border: 1px solid #ffe082;
-      border-radius: 12px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .mobile-day-tab-btn.active {
-      background: #960040;
-      border-color: #960040;
-      color: #ffffff;
-    }
-
-    .m-day-name {
-      font-weight: 700;
-      font-size: 0.9rem;
-    }
-
-    .mobile-day-tab-btn.active .m-day-name {
-      color: #ffffff;
-    }
-
-    .m-day-date {
-      font-size: 0.7rem;
-      color: #6b5151;
-    }
-
-    .mobile-day-tab-btn.active .m-day-date {
-      color: #ffe082;
-    }
-
-    .mobile-day-feed {
-      display: flex;
-      flex-direction: column;
-      gap: 0.65rem;
-    }
-
-    .mobile-day-header-card {
-      padding: 0.85rem 1rem;
-      border: 1px solid #ffe082;
-      display: flex;
-      flex-direction: column;
-      gap: 0.4rem;
-    }
-
-    .m-card-title-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .m-card-title-row h3 {
-      margin: 0;
-      font-size: 1.1rem;
-      color: #2a1b1b;
-    }
-
-    .m-week-tag {
-      background: #fff5cc;
-      color: #960040;
-      font-weight: 700;
-      font-size: 0.75rem;
-      padding: 0.15rem 0.5rem;
-      border-radius: 10px;
-    }
-
-    .mobile-special-focus-box {
-      background: #fff5cc;
-      border-left: 3px solid #960040;
-      padding: 0.45rem 0.65rem;
-      border-radius: 8px;
-      font-size: 0.82rem;
-      color: #2a1b1b;
-      display: flex;
-      align-items: center;
-      gap: 0.35rem;
-    }
-
-    .mobile-slots-list {
-      display: flex;
-      flex-direction: column;
-      gap: 0.65rem;
-    }
-
-    .mobile-slot-card {
-      padding: 0.85rem;
-      border: 1px solid #ffe082;
-      border-radius: 12px;
-      display: flex;
-      flex-direction: column;
-      gap: 0.35rem;
-      transition: all 0.2s;
-    }
-
-    .mobile-slot-card.is-clickable:hover {
-      border-color: #960040;
-      transform: translateY(-1px);
-    }
-
-    .m-slot-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .m-slot-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.25rem;
-      font-size: 0.72rem;
-      font-weight: 700;
-      color: #960040;
-      text-transform: uppercase;
-    }
-
-    .m-slot-time {
-      font-size: 0.75rem;
-      font-weight: 600;
-      color: #6b5151;
-      background: #fff5cc;
-      padding: 0.1rem 0.4rem;
-      border-radius: 6px;
-    }
-
-    .m-slot-title {
-      font-weight: 700;
-      font-size: 0.9rem;
-      color: #2a1b1b;
-    }
-
-    .mobile-assigned-teacher-row {
-      display: flex;
-      align-items: center;
-      margin-top: 0.1rem;
-    }
-
-    .m-click-note {
-      font-size: 0.7rem;
-      color: #960040;
-      font-weight: 600;
-      margin-top: 0.2rem;
-    }
-  }
-
   /* Footer */
   .yla-view-footer {
     text-align: center;
@@ -2142,17 +2959,107 @@
     font-size: 0.8rem;
   }
 
+  /* ========================================================================= */
+  /* RESPONSIVE MEDIA QUERIES */
+  /* ========================================================================= */
+  @media (max-width: 1100px) {
+    .fs-w-dates {
+      display: none;
+    }
+    .fs-brand-sub {
+      display: none;
+    }
+    .search-input {
+      width: 150px;
+    }
+    .search-input:focus {
+      width: 190px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .yla-top-bar {
+      padding: 0.9rem 1rem;
+      gap: 0.85rem;
+    }
+
+    .yla-main-title {
+      font-size: 1.15rem;
+    }
+
+    .yla-top-actions {
+      width: 100%;
+      justify-content: space-between;
+    }
+
+    .search-input-wrapper {
+      flex: 1;
+      min-width: 140px;
+    }
+
+    .search-input {
+      width: 100%;
+    }
+
+    .search-input:focus {
+      width: 100%;
+    }
+
+    .search-results-dropdown {
+      width: calc(100vw - 2rem);
+      right: -50px;
+    }
+
+    .fs-exit-label {
+      display: none;
+    }
+
+    .fs-esc-key {
+      display: none;
+    }
+
+    .btn-fs-exit {
+      padding: 0.3rem 0.5rem;
+    }
+
+    .week-summary-banner {
+      padding: 0.65rem 0.85rem;
+    }
+
+    .current-week-pill {
+      display: none;
+    }
+
+    .detail-modal-card {
+      max-height: 94vh;
+      border-radius: 16px;
+    }
+
+    .detail-modal-header {
+      padding: 0.85rem 1rem;
+    }
+
+    .detail-modal-body {
+      padding: 1rem;
+    }
+
+    .detail-slot-main-title {
+      font-size: 1.15rem;
+    }
+  }
+
   /* Print Styles */
   @media print {
     :global(body) {
       background: #ffffff !important;
     }
 
-    .yla-controls-row,
+    .yla-top-bar,
     .fs-top-bar,
     .btn-nav-mini,
     .btn-clear-search,
-    .mobile-day-tabs,
+    .agenda-day-tabs,
+    .agenda-bottom-day-nav,
     .detail-modal-backdrop,
     :global(.sidebar),
     :global(.top-header),
@@ -2165,7 +3072,6 @@
       box-shadow: none;
     }
 
-    .yla-top-bar,
     .week-summary-banner,
     .yla-desktop-grid-container {
       box-shadow: none !important;
@@ -2183,4 +3089,3 @@
     }
   }
 </style>
-

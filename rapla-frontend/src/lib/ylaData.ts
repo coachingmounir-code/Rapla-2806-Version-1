@@ -301,7 +301,7 @@ export function getYlaConflictForTeacher(
   const assignments = getYlaAssignments();
   if (Object.keys(assignments).length === 0) return null;
 
-  const weeks = ylaCurriculumData as YlaWeek[];
+  const weeks = ylaCurriculumData as unknown as YlaWeek[];
 
   for (const week of weeks) {
     for (const slot of week.slots) {
@@ -348,6 +348,93 @@ export function getYlaConflictForTeacher(
 }
 
 /**
+ * Cell render info for HTML table rowspan layout and deduplication
+ */
+export interface YlaCellRenderInfo {
+  shouldRender: boolean;
+  rowSpan: number;
+  entry: YlaDayEntry | null;
+  rootSlot: YlaSlot;
+  displayTime: string;
+  isSpanned: boolean;
+}
+
+/**
+ * Calculates rowspan and render eligibility for a timetable cell in a week
+ */
+export function getYlaCellRenderInfo(week: YlaWeek, col: string, slotIdx: number): YlaCellRenderInfo {
+  const slots = week.slots;
+  const slot = slots[slotIdx];
+  const entry = slot?.entries[col] || null;
+
+  // If this entry is marked as merged, verify if it's covered by an earlier slot
+  if (entry && entry.isMerged) {
+    let p = slotIdx - 1;
+    while (p >= 0) {
+      const prevSlot = slots[p];
+      const prevEntry = prevSlot?.entries[col];
+      if (prevEntry && (
+        prevEntry.fullText === entry.fullText ||
+        prevEntry.text === entry.text ||
+        (entry.shortTitle && prevEntry.shortTitle === entry.shortTitle)
+      )) {
+        if (!prevEntry.isMerged) {
+          // Covered by root at index p
+          return {
+            shouldRender: false,
+            rowSpan: 1,
+            entry: null,
+            rootSlot: slot,
+            displayTime: '',
+            isSpanned: false
+          };
+        }
+        p--;
+      } else {
+        break;
+      }
+    }
+  }
+
+  // Calculate forward rowSpan for root entry
+  let rowSpan = 1;
+  if (entry && (entry.text || entry.shortTitle)) {
+    let k = slotIdx + 1;
+    while (k < slots.length) {
+      const nextSlot = slots[k];
+      const nextEntry = nextSlot?.entries[col];
+      if (nextEntry && nextEntry.isMerged && (
+        nextEntry.fullText === entry.fullText ||
+        nextEntry.text === entry.text ||
+        (entry.shortTitle && nextEntry.shortTitle === entry.shortTitle)
+      )) {
+        rowSpan++;
+        k++;
+      } else {
+        break;
+      }
+    }
+  }
+
+  let displayTime = entry?.time || slot?.time || '';
+  if (!displayTime && rowSpan > 1) {
+    const endSlot = slots[slotIdx + rowSpan - 1];
+    if (slot?.time && endSlot?.time) {
+      displayTime = `${slot.time.split('-')[0].trim()} – ${endSlot.time.split('-').pop()?.trim()}`;
+    }
+  }
+
+  return {
+    shouldRender: true,
+    rowSpan,
+    entry,
+    rootSlot: slot,
+    displayTime,
+    isSpanned: rowSpan > 1
+  };
+}
+
+/**
  * Performs a case-insensitive search across all 4 weeks of the YLA curriculum
  */
 export function searchYlaCurriculum(query: string): YlaSearchResult[] {
@@ -356,9 +443,13 @@ export function searchYlaCurriculum(query: string): YlaSearchResult[] {
   const results: YlaSearchResult[] = [];
 
   for (const week of getYlaWeeks()) {
-    for (const slot of week.slots) {
+    for (let sIdx = 0; sIdx < week.slots.length; sIdx++) {
+      const slot = week.slots[sIdx];
       for (const day of week.days) {
-        const entry = slot.entries[day.col];
+        const cellInfo = getYlaCellRenderInfo(week, day.col, sIdx);
+        if (!cellInfo.shouldRender) continue; // Skip duplicate merged rows
+
+        const entry = cellInfo.entry;
         if (entry && (
           (entry.text && entry.text.toLowerCase().includes(q)) ||
           (entry.shortTitle && entry.shortTitle.toLowerCase().includes(q)) ||
@@ -371,9 +462,9 @@ export function searchYlaCurriculum(query: string): YlaSearchResult[] {
             dateStr: day.dateStr,
             dayName: day.dayName,
             slotLabel: slot.label,
-            time: slot.time,
+            time: cellInfo.displayTime || slot.time,
             badge: slot.badge,
-            matchText: `${entry.assignedTeacher ? `[👤 ${entry.assignedTeacher}] ` : ''}${entry.shortTitle || entry.text}`
+            matchText: `${entry.assignedTeacher ? `[👤 ${entry.assignedTeacher}] ` : ''}${getYlaCleanShortTitle(entry, slot.label)}`
           });
         }
       }
@@ -447,7 +538,12 @@ export function getYlaTeacherMeta(teacherName?: string | null): { name: string; 
 export function getYlaCleanShortTitle(entry?: YlaDayEntry | null, slotLabel?: string): string {
   if (!entry) return slotLabel || '—';
   if (entry.shortTitle && entry.shortTitle.trim().length > 0) {
-    return entry.shortTitle.trim();
+    const st = entry.shortTitle.trim();
+    if (st.toLowerCase() === 'komb') return 'Komb. Mantra-Meditation';
+    if (st === '11-12') return 'Mittagessen (11:00–12:30)';
+    if (st === 'Korr') return 'Bewegungslehre: Flexion, Extension & Asanas';
+    if (st.toLowerCase().startsWith('8.30 bis ca. 11.00h')) return 'Abschlussfeier & Diplomverleihung';
+    return st;
   }
   if (entry.text && entry.text.trim().length > 0) {
     const clean = entry.text.split(/[\n\r\.;]/)[0].trim();

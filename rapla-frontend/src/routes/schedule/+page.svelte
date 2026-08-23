@@ -1085,6 +1085,27 @@
     color: #960040;
   }
 
+  @media (max-width: 640px) {
+    .schedule-tabs-bar {
+      gap: 0.4rem;
+      padding: 0.35rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .schedule-tab-btn {
+      flex: 1 1 calc(50% - 0.4rem);
+      padding: 0.5rem 0.65rem;
+      font-size: 0.82rem;
+      justify-content: center;
+      text-align: center;
+      gap: 0.35rem;
+    }
+
+    .tab-icon {
+      font-size: 0.95rem;
+    }
+  }
+
   .page-header {
     display: flex;
     justify-content: space-between;
