@@ -834,6 +834,8 @@
   <!-- svelte-ignore a11y_click_events_have_key_events -->
   <!-- svelte-ignore a11y_no_static_element_interactions -->
   <div class="modal-backdrop" onclick={() => isModalOpen = false}>
+    <!-- svelte-ignore a11y_click_events_have_key_events -->
+    <!-- svelte-ignore a11y_no_static_element_interactions -->
     <div class="modal-content glass-card" onclick={(e) => e.stopPropagation()}>
       <div class="modal-header">
         <h2>{editingCourse ? 'Kurs bearbeiten' : 'Neuen Kurs erstellen'}</h2>
