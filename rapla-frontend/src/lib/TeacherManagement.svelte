@@ -187,7 +187,10 @@
       specialties: formSpecialties,
       isYogaTeacher: formIsYogaTeacher,
       availabilityMode: formAvailabilityMode,
-      roleType, // Assigns current page roleType ('sevaka' or 'external')
+      roleType: editingTeacher?.roleType || roleType, // Preserves roleType if karma_yogi/guest_teacher
+      stayStartDate: editingTeacher?.stayStartDate,
+      stayEndDate: editingTeacher?.stayEndDate,
+      stayNotes: editingTeacher?.stayNotes,
       customWishes: formCustomWishes,
       rules: {
         preferredRooms: rulePreferredRooms,

@@ -41,9 +41,36 @@ export interface Teacher {
   specialties: string[]; // e.g. ["Hatha", "Vinyasa", "Yin", "Meditation"]
   isYogaTeacher?: boolean;
   availabilityMode?: 'always' | 'seminar_only';
-  roleType?: 'sevaka' | 'external'; // 'sevaka' (core team) or 'external'
+  roleType?: 'sevaka' | 'external' | 'karma_yogi' | 'guest_teacher'; // 'sevaka' (core team), 'external', 'karma_yogi', or 'guest_teacher'
   rules: TeacherRules;
   customWishes?: string; // free text for comments/wishes
+  stayStartDate?: string; // YYYY-MM-DD (e.g. "2026-08-20")
+  stayEndDate?: string;   // YYYY-MM-DD (e.g. "2026-09-10")
+  stayNotes?: string;     // Notes on stay/responsibilities
+}
+
+export function isTeacherInHouseOnDate(teacher: Teacher, dateStr: string): boolean {
+  if (teacher.roleType === 'sevaka') return true;
+  if (!teacher.stayStartDate && !teacher.stayEndDate) {
+    return teacher.roleType !== 'karma_yogi' && teacher.roleType !== 'guest_teacher';
+  }
+  if (teacher.stayStartDate && dateStr < teacher.stayStartDate) return false;
+  if (teacher.stayEndDate && dateStr > teacher.stayEndDate) return false;
+  return true;
+}
+
+export function getTeacherStayStatus(teacher: Teacher, referenceDateStr?: string): 'active' | 'upcoming' | 'expired' | 'permanent' {
+  if (teacher.roleType === 'sevaka') return 'permanent';
+  if (!teacher.stayStartDate && !teacher.stayEndDate) return 'permanent';
+  
+  const todayStr = referenceDateStr || new Date().toISOString().split('T')[0];
+  if (teacher.stayStartDate && teacher.stayStartDate > todayStr) {
+    return 'upcoming';
+  }
+  if (teacher.stayEndDate && teacher.stayEndDate < todayStr) {
+    return 'expired';
+  }
+  return 'active';
 }
 
 export interface Room {
@@ -6757,19 +6784,26 @@ export const db = {
         }
       }
 
-      const correctRole = SEVAKA_NAMES.includes(t.name) ? 'sevaka' : 'external';
+      let correctRole = t.roleType || 'external';
+      if (SEVAKA_NAMES.includes(t.name)) {
+        correctRole = 'sevaka';
+      } else if (t.roleType !== 'karma_yogi' && t.roleType !== 'guest_teacher') {
+        correctRole = 'external';
+      }
       const nameLower = t.name.toLowerCase();
-      const correctYogaTeacher = correctRole === 'sevaka' ? !['teresa', 'hu', 'mounir', 'adam'].some(n => nameLower.includes(n)) : true;
+      const correctYogaTeacher = correctRole === 'sevaka' 
+        ? !['teresa', 'hu', 'mounir', 'adam'].some(n => nameLower.includes(n)) 
+        : (t.isYogaTeacher !== undefined ? t.isYogaTeacher : true);
       if (t.isYogaTeacher !== correctYogaTeacher) {
         t.isYogaTeacher = correctYogaTeacher;
-        t.specialties = correctYogaTeacher ? ['Hatha', 'Vinyasa', 'Yin', 'Meditation', 'Power Yoga', 'Kundalini'] : ['Meditation'];
+        t.specialties = correctYogaTeacher ? (t.specialties.length > 0 ? t.specialties : ['Hatha', 'Vinyasa', 'Yin', 'Meditation', 'Power Yoga', 'Kundalini']) : ['Meditation'];
         updated = true;
       }
       if (t.availabilityMode === undefined) {
         t.availabilityMode = 'always';
         updated = true;
       }
-      // Migration to set specific teachers as Sevakas and all others as external
+      // Migration to set specific teachers as Sevakas and preserve others
       if (t.roleType !== correctRole) {
         t.roleType = correctRole;
         updated = true;

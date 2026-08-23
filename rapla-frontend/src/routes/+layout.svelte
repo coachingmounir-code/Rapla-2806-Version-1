@@ -34,7 +34,7 @@
 
 		const path = page.url.pathname;
 		mobileMenuOpen = false; // close mobile menu on page navigation
-		if (path.startsWith('/sevakas') || path.startsWith('/teachers')) {
+		if (path.startsWith('/sevakas') || path.startsWith('/teachers') || path.startsWith('/karma-yogis')) {
 			showTeachersDropdown = true;
 		}
 		if (path.startsWith('/schedule') || path.startsWith('/ai-planning')) {
@@ -210,7 +210,7 @@
 							<button 
 								type="button" 
 								class="nav-item nav-dropdown-trigger" 
-								class:active={page.url.pathname.startsWith('/sevakas') || page.url.pathname.startsWith('/teachers')}
+								class:active={page.url.pathname.startsWith('/sevakas') || page.url.pathname.startsWith('/teachers') || page.url.pathname.startsWith('/karma-yogis')}
 								onclick={() => showTeachersDropdown = !showTeachersDropdown}
 							>
 								<span class="nav-icon">🧘</span>
@@ -227,6 +227,14 @@
 									>
 										<span class="nav-icon">👥</span>
 										<span class="nav-label">Sevakas</span>
+									</a>
+									<a 
+										href="/karma-yogis" 
+										class="nav-dropdown-item" 
+										class:active={page.url.pathname.startsWith('/karma-yogis')}
+									>
+										<span class="nav-icon">✨</span>
+										<span class="nav-label">Karma-Yogis & Gäste</span>
 									</a>
 									<a 
 										href="/teachers" 

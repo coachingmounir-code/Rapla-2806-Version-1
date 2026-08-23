@@ -343,8 +343,16 @@
               <option value={t.id}>🧘 {t.name}</option>
             {/each}
           </optgroup>
+          {@const karmaList = teachers.filter(t => t.roleType === 'karma_yogi' || t.roleType === 'guest_teacher' || t.stayStartDate || t.stayEndDate)}
+          {#if karmaList.length > 0}
+            <optgroup label="Karma-Yogis & Gäste">
+              {#each karmaList as t}
+                <option value={t.id}>✨ {t.name} ({t.roleType === 'guest_teacher' ? 'Gast-SL' : 'Karma-Yogi'})</option>
+              {/each}
+            </optgroup>
+          {/if}
           <optgroup label="Externe Lehrer">
-            {#each teachers.filter(t => t.roleType !== 'sevaka') as t}
+            {#each teachers.filter(t => t.roleType !== 'sevaka' && t.roleType !== 'karma_yogi' && t.roleType !== 'guest_teacher' && !t.stayStartDate && !t.stayEndDate) as t}
               <option value={t.id}>👤 {t.name}</option>
             {/each}
           </optgroup>

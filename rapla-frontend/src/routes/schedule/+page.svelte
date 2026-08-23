@@ -454,6 +454,33 @@
       .filter(c => selectedTeacherFilter === 'all' || c.teacherId === selectedTeacherFilter)
       .sort((a, b) => a.startTime.localeCompare(b.startTime));
   }
+  function getCourseDateForForm(): string {
+    const weekCode = currentPlan?.targetWeekCode || getWeekCode(getMondayOfCurrentWeek());
+    return getLocalDateForDay(weekCode, Number(formDayOfWeek));
+  }
+
+  function formatStayLabel(t: Teacher): string {
+    if (!t.stayStartDate && !t.stayEndDate) return 'Im Haus';
+    if (t.stayStartDate && t.stayEndDate) {
+      const s = t.stayStartDate.split('-');
+      const e = t.stayEndDate.split('-');
+      return `${s[2]}.${s[1]}. - ${e[2]}.${e[1]}.`;
+    }
+    if (t.stayEndDate) {
+      const e = t.stayEndDate.split('-');
+      return `bis ${e[2]}.${e[1]}.`;
+    }
+    return '';
+  }
+
+  function isTeacherInHouseForCourse(t: Teacher): boolean {
+    if (t.roleType === 'sevaka') return true;
+    const courseDate = getCourseDateForForm();
+    if (t.stayStartDate && courseDate < t.stayStartDate) return false;
+    if (t.stayEndDate && courseDate > t.stayEndDate) return false;
+    return true;
+  }
+
   function handleSync() {
     if (confirm('Möchtest du den Wochenplan mit dem Server synchronisieren? Eigene ungespeicherte Änderungen am Plan werden zurückgesetzt.')) {
       db.syncDatabase();
@@ -508,10 +535,22 @@
   <div class="filter-group">
     <label class="form-label" for="filter-teacher">Lehrer filtern:</label>
     <select id="filter-teacher" class="form-select filter-select" bind:value={selectedTeacherFilter}>
-      <option value="all">Alle Yogalehrer</option>
-      {#each teachers as t}
-        <option value={t.id}>{t.name}</option>
-      {/each}
+      <option value="all">Alle Unterrichtenden</option>
+      <optgroup label="Sevakas (Kernteam)">
+        {#each teachers.filter(t => t.roleType === 'sevaka') as t}
+          <option value={t.id}>🧘 {t.name}</option>
+        {/each}
+      </optgroup>
+      <optgroup label="Karma-Yogis & Gäste">
+        {#each teachers.filter(t => t.roleType === 'karma_yogi' || t.roleType === 'guest_teacher' || t.stayStartDate || t.stayEndDate) as t}
+          <option value={t.id}>✨ {t.name} ({t.roleType === 'guest_teacher' ? 'Gast-SL' : 'Karma-Yogi'})</option>
+        {/each}
+      </optgroup>
+      <optgroup label="Externe Seminarleiter">
+        {#each teachers.filter(t => t.roleType !== 'sevaka' && t.roleType !== 'karma_yogi' && t.roleType !== 'guest_teacher' && !t.stayStartDate && !t.stayEndDate) as t}
+          <option value={t.id}>👤 {t.name}</option>
+        {/each}
+      </optgroup>
     </select>
   </div>
 
@@ -785,12 +824,32 @@
             <option value={null}>-- Unbesetzt (Später per KI einteilen) --</option>
             <optgroup label="Sevakas (Kernteam)">
               {#each teachers.filter(t => t.roleType === 'sevaka') as t}
-                <option value={t.id}>{t.name}</option>
+                <option value={t.id}>🧘 {t.name}</option>
               {/each}
             </optgroup>
+            {@const activeInHouse = teachers.filter(t => (t.roleType === 'karma_yogi' || t.roleType === 'guest_teacher' || t.stayStartDate || t.stayEndDate) && isTeacherInHouseForCourse(t))}
+            {#if activeInHouse.length > 0}
+              <optgroup label="✨ Karma-Yogis & Gast-Lehrer (Aktuell im Haus)">
+                {#each activeInHouse as t}
+                  <option value={t.id}>
+                    ✨ {t.name} ({t.roleType === 'guest_teacher' ? 'Gast-SL' : 'Karma-Yogi'} | {formatStayLabel(t)}{t.isYogaTeacher ? ' | Yoga ✓' : ''}{t.rules.canLeadMeditation ? ' | Medi ✓' : ''})
+                  </option>
+                {/each}
+              </optgroup>
+            {/if}
+            {@const otherGuests = teachers.filter(t => (t.roleType === 'karma_yogi' || t.roleType === 'guest_teacher' || t.stayStartDate || t.stayEndDate) && !isTeacherInHouseForCourse(t))}
+            {#if otherGuests.length > 0}
+              <optgroup label="⏳ Weitere Karma-Yogis & Gast-Lehrer (Anderes Zeitfenster)">
+                {#each otherGuests as t}
+                  <option value={t.id}>
+                    ⏳ {t.name} ({t.roleType === 'guest_teacher' ? 'Gast-SL' : 'Karma-Yogi'} | {formatStayLabel(t)})
+                  </option>
+                {/each}
+              </optgroup>
+            {/if}
             <optgroup label="Externe Yogalehrer / Seminarleiter">
-              {#each teachers.filter(t => t.roleType !== 'sevaka') as t}
-                <option value={t.id}>{t.name}</option>
+              {#each teachers.filter(t => t.roleType !== 'sevaka' && t.roleType !== 'karma_yogi' && t.roleType !== 'guest_teacher' && !t.stayStartDate && !t.stayEndDate) as t}
+                <option value={t.id}>👤 {t.name}</option>
               {/each}
             </optgroup>
           </select>

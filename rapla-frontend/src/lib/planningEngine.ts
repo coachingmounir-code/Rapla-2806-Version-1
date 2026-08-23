@@ -147,6 +147,22 @@ export function validateAssignment(
   const courseNameLower = course.name.toLowerCase();
   const courseStyleLower = course.style.toLowerCase();
 
+  // 0b. Check stay window for Karma-Yogis and Guest Teachers (Hard)
+  if (targetWeekCode && (teacher.stayStartDate || teacher.stayEndDate)) {
+    const courseDate = getLocalDateForDay(targetWeekCode, course.dayOfWeek);
+    if (teacher.stayStartDate && courseDate < teacher.stayStartDate) {
+      conflicts.push({
+        type: 'hard',
+        message: `${teacher.name} ist am ${courseDate} noch nicht im Haus (Aufenthaltszeitraum: ${teacher.stayStartDate} bis ${teacher.stayEndDate || 'offen'}).`
+      });
+    } else if (teacher.stayEndDate && courseDate > teacher.stayEndDate) {
+      conflicts.push({
+        type: 'hard',
+        message: `${teacher.name} ist am ${courseDate} nicht mehr im Haus (Aufenthaltszeitraum endete am ${teacher.stayEndDate}).`
+      });
+    }
+  }
+
   // --- SEVAKA RULES FROM JSON ---
   const isSevaka = teacher.roleType === 'sevaka';
   
@@ -157,6 +173,28 @@ export function validateAssignment(
   const isEntspannungForSevaka = courseStyleLower.includes('entspannung') || courseNameLower.includes('entspannung');
   const isSonstigesForSevaka = courseStyleLower.includes('sonstiges') || courseNameLower.includes('hausführung') || courseNameLower.includes('hausfuehrung');
   const isYogaClassForSevaka = !isMeditationForSevaka && !isSatsangForSevaka && !isOnnForSevaka && !isEntspannungForSevaka && !isSonstigesForSevaka;
+
+  // Qualifications for Karma-Yogis and Guest Teachers
+  if (teacher.roleType === 'karma_yogi' || teacher.roleType === 'guest_teacher') {
+    if (isYogaClassForSevaka && teacher.isYogaTeacher === false) {
+      conflicts.push({
+        type: 'hard',
+        message: `${teacher.name} ist nicht für das Unterrichten von Yogastunden eingeteilt.`
+      });
+    }
+    if (isMeditationForSevaka && teacher.rules.canLeadMeditation === false) {
+      conflicts.push({
+        type: 'hard',
+        message: `${teacher.name} ist nicht für das Anleiten von geführten Meditationen eingetragen.`
+      });
+    }
+    if (isSatsangForSevaka && teacher.rules.canLeadSatsang === false) {
+      conflicts.push({
+        type: 'hard',
+        message: `${teacher.name} ist nicht für das Leiten von Satsangs eingetragen.`
+      });
+    }
+  }
 
   const otherSevakaAssignments = allCourses.filter(
     c => c.teacherId === teacher.id && c.id !== course.id
