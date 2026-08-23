@@ -14,6 +14,8 @@
 
   let currentWeek = $derived(getYlaWeek(selectedWeekNumber) || allWeeks[0]);
   let searchResults = $derived(searchYlaCurriculum(searchQuery));
+  let specialDays = $derived(currentWeek.days.filter(d => d.specialFocus));
+  let activeDay = $derived(currentWeek.days[activeMobileDayIndex]);
 
   function selectWeek(num: number) {
     selectedWeekNumber = num;
@@ -275,7 +277,6 @@
     </div>
 
     <!-- Special Highlights of this week -->
-    {@const specialDays = currentWeek.days.filter(d => d.specialFocus)}
     {#if specialDays.length > 0}
       <div class="special-highlights-row">
         <span class="highlights-label">Besonderheiten:</span>
@@ -375,7 +376,6 @@
     </div>
 
     <!-- Active Day Schedule Feed on Mobile -->
-    {@const activeDay = currentWeek.days[activeMobileDayIndex]}
     {#if activeDay}
       <div class="mobile-day-feed animate-fade-in">
         <div class="mobile-day-header-card glass-card">
