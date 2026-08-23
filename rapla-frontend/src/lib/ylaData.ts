@@ -396,6 +396,9 @@ export function searchYlaCurriculum(query: string): YlaSearchResult[] {
     }
   }
 
+  return results;
+}
+
 /**
  * Returns metadata and styling for a teacher (core team or custom)
  */

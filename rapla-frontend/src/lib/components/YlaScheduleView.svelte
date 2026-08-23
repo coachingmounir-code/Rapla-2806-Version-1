@@ -3,18 +3,19 @@
   import { 
     getYlaWeeks, 
     getYlaWeek, 
-    searchYlaCurriculum, 
     setYlaAssignment,
     getYlaAssignments,
+    getYlaTeacherMeta,
+    getYlaCleanShortTitle,
     YLA_TEACHERS,
     YLA_TEACHERS_META,
     type YlaWeek, 
-    type YlaSearchResult, 
     type YlaDayEntry, 
     type YlaDay, 
     type YlaSlot,
     type YlaTeacherName
   } from '$lib/ylaData';
+  import { db, type Teacher } from '$lib/db';
 
   // Props
   let { initialWeek = 1, onWeekChange }: { initialWeek?: number; onWeekChange?: (week: number) => void } = $props();
@@ -23,8 +24,8 @@
   let selectedWeekNumber = $state(initialWeek || 1);
   let activeMobileDayIndex = $state(0);
   let isFullscreen = $state(false);
-  let searchQuery = $state('');
-  let showAbbreviations = $state(false);
+  let userRole = $state('');
+  let allTeachersList = $state<Teacher[]>([]);
 
   // Modal State for Slot Detail
   let activeDetailModal = $state<{
@@ -42,23 +43,38 @@
     entry: YlaDayEntry;
   } | null>(null);
 
+  let isAdmin = $derived(userRole === 'admin');
+
   // Load and subscribe to assignments
   function refreshAssignments() {
     assignmentsMap = getYlaAssignments();
   }
 
   onMount(() => {
+    userRole = localStorage.getItem('rapla_user_role') || '';
+    try {
+      allTeachersList = db.getTeachers();
+    } catch (e) {
+      allTeachersList = [];
+    }
+
     refreshAssignments();
     const handleStorage = () => refreshAssignments();
     window.addEventListener('storage', handleStorage);
     window.addEventListener('yla-assignment-changed', handleStorage);
 
+    // Fullscreen change listener
+    const handleFullscreenChange = () => {
+      isFullscreen = !!document.fullscreenElement;
+    };
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+
     const handleKeydown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         if (activeDetailModal) {
           closeSlotDetail();
-        } else if (searchQuery) {
-          searchQuery = '';
+        } else if (isFullscreen) {
+          toggleFullscreen();
         }
       }
     };
@@ -67,6 +83,7 @@
     return () => {
       window.removeEventListener('storage', handleStorage);
       window.removeEventListener('yla-assignment-changed', handleStorage);
+      document.removeEventListener('fullscreenchange', handleFullscreenChange);
       window.removeEventListener('keydown', handleKeydown);
     };
   });
@@ -89,7 +106,6 @@
     return w;
   });
 
-  let searchResults = $derived(searchYlaCurriculum(searchQuery));
   let specialDays = $derived(currentWeek.days.filter(d => d.specialFocus));
   let activeDay = $derived(currentWeek.days[activeMobileDayIndex]);
 
@@ -112,22 +128,25 @@
     const container = document.getElementById('yla-schedule-container');
     if (!container) return;
 
-    if (!isFullscreen) {
+    if (!document.fullscreenElement && !isFullscreen) {
       if (container.requestFullscreen) {
-        container.requestFullscreen();
+        container.requestFullscreen().catch(() => {
+          isFullscreen = true;
+        });
+      } else {
+        isFullscreen = true;
       }
-      isFullscreen = true;
     } else {
-      if (document.exitFullscreen) {
-        document.exitFullscreen();
+      if (document.exitFullscreen && document.fullscreenElement) {
+        document.exitFullscreen().catch(() => {
+          isFullscreen = false;
+        });
+      } else {
+        isFullscreen = false;
       }
-      isFullscreen = false;
     }
   }
 
-  function handlePrint() {
-    window.print();
-  }
 
   function openSlotDetail(day: YlaDay, slot: YlaSlot, entry: YlaDayEntry) {
     if (!entry || (!entry.text && !entry.shortTitle)) return;
@@ -224,203 +243,152 @@
     if (textLower.includes('karma')) return '☸️';
     return '✨';
   }
-
-  function getTeacherBadgeStyle(name: string) {
-    const meta = YLA_TEACHERS_META[name as YlaTeacherName];
-    if (meta) {
-      return {
-        color: meta.color,
-        bg: meta.badgeBg,
-        avatar: meta.avatar
-      };
-    }
-    return {
-      color: '#960040',
-      bg: '#fff5cc',
-      avatar: '👤'
-    };
-  }
 </script>
 
 <div id="yla-schedule-container" class="yla-view-wrapper" class:fullscreen-active={isFullscreen}>
-  <!-- Top Navigation & Week Selector Buttons -->
-  <div class="yla-top-bar">
-    <div class="yla-title-section">
-      <div class="yla-heading-row">
-        <span class="yla-badge">🧘 4-wöchige Yogalehrerausbildung (YLA)</span>
-        <span class="yla-sub-badge">Start: 30.08.2026 • Intensivkurs</span>
-      </div>
-      <h2 class="yla-main-title">{currentWeek.title}</h2>
-    </div>
-
-    <div class="yla-controls-row">
-      <!-- Search Input -->
-      <div class="search-input-wrapper">
-        <span class="search-icon">🔍</span>
-        <input 
-          type="text" 
-          bind:value={searchQuery}
-          placeholder="Im 4-Wochen-Plan suchen (z.B. Anjali, Gita, Bernie, Anatomie, Prüfung)..." 
-          class="yla-search-input"
-        />
-        {#if searchQuery}
-          <button type="button" class="btn-clear-search" onclick={() => searchQuery = ''} title="Suche leeren">✕</button>
-        {/if}
+  
+  <!-- ========================================================================= -->
+  <!-- FULLSCREEN TOP BAR (Ultra-compact single row for seamless monitor fitting) -->
+  <!-- ========================================================================= -->
+  {#if isFullscreen}
+    <div class="fs-top-bar glass-card">
+      <div class="fs-brand-section">
+        <h2 class="fs-main-title">{currentWeek.title}</h2>
       </div>
 
-      <!-- Action buttons -->
-      <div class="yla-action-buttons">
-        <button 
-          type="button" 
-          class="btn yla-btn-action" 
-          onclick={() => showAbbreviations = !showAbbreviations}
-          title="Abkürzungen anzeigen / verbergen"
-        >
-          📖 {showAbbreviations ? 'Abkürzungen verbergen' : 'Abkürzungen'}
-        </button>
+      <!-- Quick 1-Click Week Switcher Pills in Fullscreen -->
+      <div class="fs-week-switcher">
+        {#each allWeeks as week}
+          {@const isActive = week.weekNumber === selectedWeekNumber}
+          <button 
+            type="button" 
+            class="fs-week-btn" 
+            class:active={isActive}
+            onclick={() => selectWeek(week.weekNumber)}
+          >
+            <span class="fs-w-title">Woche {week.weekNumber}</span>
+            <span class="fs-w-dates">{week.dateRange}</span>
+          </button>
+        {/each}
+      </div>
 
+      <!-- Fullscreen Action Controls -->
+      <div class="fs-actions">
         <button 
           type="button" 
-          class="btn yla-btn-action" 
-          onclick={handlePrint}
-          title="Unterrichtsplan drucken"
-        >
-          🖨️ Drucken
-        </button>
-
-        <button 
-          type="button" 
-          class="btn yla-btn-action" 
+          class="btn-fs-exit" 
           onclick={toggleFullscreen}
-          title={isFullscreen ? 'Vollbild beenden' : 'Vollbild'}
+          title="Vollbild beenden (Esc)"
         >
-          {isFullscreen ? '🗗 Beenden' : '🖥️ Vollbild'}
+          🗗 Vollbild beenden
         </button>
       </div>
     </div>
 
-    <!-- 4-Week Selector Tabs / Buttons (Single click per week) -->
-    <div class="week-selector-tabs">
-      {#each allWeeks as week}
-        {@const isActive = week.weekNumber === selectedWeekNumber}
+    <!-- Special Days Slim Ribbon in Fullscreen (if any) -->
+    {#if specialDays.length > 0}
+      <div class="fs-special-ribbon">
+        <span class="fs-ribbon-label">Besonderheiten:</span>
+        <div class="fs-ribbon-chips">
+          {#each specialDays as sd}
+            <span class="fs-ribbon-chip">
+              <span>{getSpecialFocusIcon(sd.specialFocus)}</span>
+              <strong>{sd.dayName} ({sd.dateStr}):</strong>
+              <span>{sd.specialFocus}</span>
+            </span>
+          {/each}
+        </div>
+      </div>
+    {/if}
+
+  {:else}
+
+    <!-- ========================================================================= -->
+    <!-- STANDARD TOP BAR (Clean view: Title & Fullscreen function only) -->
+    <!-- ========================================================================= -->
+    <div class="yla-top-bar">
+      <h2 class="yla-main-title">{currentWeek.title}</h2>
+      <div class="yla-top-actions">
         <button 
           type="button" 
-          class="week-tab-btn" 
-          class:active={isActive}
-          onclick={() => selectWeek(week.weekNumber)}
+          class="btn yla-btn-action btn-fullscreen-main" 
+          onclick={toggleFullscreen}
+          title="Vollbildmodus aktivieren"
         >
-          <div class="week-tab-num">Woche {week.weekNumber}</div>
-          <div class="week-tab-dates">{week.dateRange}</div>
-          <div class="week-tab-days-badge">{week.days.length} Tage</div>
+          🖥️ Vollbild
         </button>
-      {/each}
-    </div>
-  </div>
-
-  <!-- Search Results Overlay if active -->
-  {#if searchQuery.trim().length >= 2}
-    <div class="search-results-panel glass-card animate-fade-in">
-      <div class="search-results-header">
-        <h3>Suchergebnisse für "{searchQuery}" ({searchResults.length} Treffer)</h3>
-        <button type="button" class="btn-close-results" onclick={() => searchQuery = ''}>Schließen ✕</button>
       </div>
-      {#if searchResults.length === 0}
-        <p class="no-results-msg">Keine passenden Einheiten in den 4 Wochen gefunden.</p>
-      {:else}
-        <div class="search-results-grid">
-          {#each searchResults as res}
-            <!-- svelte-ignore a11y_click_events_have_key_events -->
-            <!-- svelte-ignore a11y_no_static_element_interactions -->
-            <div 
-              class="search-result-card"
-              onclick={() => {
-                selectWeek(res.weekNumber);
-                searchQuery = '';
-              }}
-            >
-              <div class="res-card-top">
-                <span class="res-week-badge">Woche {res.weekNumber}</span>
-                <span class="res-day-badge">{res.dateStr} {res.dayName}</span>
-                <span class="res-time-badge">{res.time || 'Ganztägig'}</span>
+    </div>
+
+    <!-- Active Week Summary Banner in Standard View -->
+    <div class="week-summary-banner glass-card">
+      <div class="summary-left">
+        <div class="week-nav-mini">
+          <button 
+            type="button" 
+            class="btn-nav-mini" 
+            disabled={selectedWeekNumber <= 1}
+            onclick={() => navigateWeek(-1)}
+            title="Vorherige Woche"
+          >
+            ◀
+          </button>
+
+          <div class="week-nav-pills">
+            {#each allWeeks as week}
+              {@const isActive = week.weekNumber === selectedWeekNumber}
+              <button 
+                type="button" 
+                class="btn-week-pill" 
+                class:active={isActive}
+                onclick={() => selectWeek(week.weekNumber)}
+                title="{week.weekSubtitle}"
+              >
+                Woche {week.weekNumber}
+              </button>
+            {/each}
+          </div>
+
+          <button 
+            type="button" 
+            class="btn-nav-mini" 
+            disabled={selectedWeekNumber >= allWeeks.length}
+            onclick={() => navigateWeek(1)}
+            title="Nächste Woche"
+          >
+            ▶
+          </button>
+
+          <span class="current-week-pill">
+            {currentWeek.weekSubtitle}
+          </span>
+        </div>
+      </div>
+
+      <!-- Special Highlights of this week -->
+      {#if specialDays.length > 0}
+        <div class="special-highlights-row">
+          <span class="highlights-label">Besonderheiten:</span>
+          <div class="highlights-chips">
+            {#each specialDays as sd}
+              <div class="highlight-chip">
+                <span class="chip-icon">{getSpecialFocusIcon(sd.specialFocus)}</span>
+                <strong>{sd.dayName} ({sd.dateStr}):</strong>
+                <span>{sd.specialFocus}</span>
               </div>
-              <div class="res-slot-name">{res.slotLabel}</div>
-              <p class="res-match-text">{res.matchText}</p>
-            </div>
-          {/each}
+            {/each}
+          </div>
         </div>
       {/if}
     </div>
   {/if}
 
-  <!-- Collapsible Abbreviations Box -->
-  {#if showAbbreviations}
-    <div class="abbreviations-box glass-card animate-fade-in">
-      <div class="abbr-header">
-        <h4>Verwendete Abkürzungen & Literatur</h4>
-        <button type="button" class="btn-icon-close" onclick={() => showAbbreviations = false}>✕</button>
-      </div>
-      <div class="abbr-grid">
-        {#each currentWeek.abbreviations as item}
-          <div class="abbr-item">
-            <span class="abbr-code">{item.abbr}</span>
-            <span class="abbr-meaning">{item.meaning}</span>
-          </div>
-        {/each}
-      </div>
-      <div class="abbr-footer-note">
-        {currentWeek.contactInfo}
-      </div>
-    </div>
-  {/if}
-
-  <!-- Active Week Summary Banner -->
-  <div class="week-summary-banner glass-card">
-    <div class="summary-left">
-      <div class="week-nav-mini">
-        <button 
-          type="button" 
-          class="btn-nav-mini" 
-          disabled={selectedWeekNumber <= 1}
-          onclick={() => navigateWeek(-1)}
-          title="Vorherige Woche"
-        >
-          ◀ Woche {selectedWeekNumber - 1}
-        </button>
-        <span class="current-week-pill">
-          {currentWeek.weekSubtitle}
-        </span>
-        <button 
-          type="button" 
-          class="btn-nav-mini" 
-          disabled={selectedWeekNumber >= allWeeks.length}
-          onclick={() => navigateWeek(1)}
-          title="Nächste Woche"
-        >
-          Woche {selectedWeekNumber + 1} ▶
-        </button>
-      </div>
-    </div>
-
-    <!-- Special Highlights of this week -->
-    {#if specialDays.length > 0}
-      <div class="special-highlights-row">
-        <span class="highlights-label">Besonderheiten:</span>
-        <div class="highlights-chips">
-          {#each specialDays as sd}
-            <div class="highlight-chip">
-              <span class="chip-icon">{getSpecialFocusIcon(sd.specialFocus)}</span>
-              <strong>{sd.dayName} ({sd.dateStr}):</strong>
-              <span>{sd.specialFocus}</span>
-            </div>
-          {/each}
-        </div>
-      </div>
-    {/if}
-  </div>
-
-  <!-- DESKTOP TIMETABLE GRID (Compact & Clickable) -->
-  <div class="yla-desktop-grid-container">
-    <div class="yla-grid-table">
+  <!-- ========================================================================= -->
+  <!-- DESKTOP TIMETABLE GRID (Compact, Clean & Responsive for 1-Screen Overview) -->
+  <!-- ========================================================================= -->
+  <div class="yla-desktop-grid-container" class:fs-grid-container={isFullscreen}>
+    <div class="yla-grid-table" class:fs-grid-table={isFullscreen}>
+      
       <!-- Grid Header Row with Days -->
       <div class="yla-grid-header-row">
         <div class="yla-cell yla-header-cell time-col-header">
@@ -441,9 +409,10 @@
         {/each}
       </div>
 
-      <!-- Grid Body Rows -->
+      <!-- Grid Body Rows (Slots) -->
       {#each currentWeek.slots as slot}
         <div class="yla-grid-slot-row">
+          
           <!-- Left Label Column -->
           <div class="yla-cell yla-slot-label-cell {getSlotStyleClass(slot.type)}">
             <div class="slot-badge-tag">
@@ -461,84 +430,51 @@
             {@const entry = slot.entries[day.col]}
             {@const key = `${currentWeek.weekNumber}_${day.col}_${slot.rowNumber}`}
             {@const assignedTeacher = assignmentsMap[key] || entry?.assignedTeacher}
+            {@const hasContent = !!(entry && (entry.text || entry.shortTitle))}
+            
             <!-- svelte-ignore a11y_click_events_have_key_events -->
             <!-- svelte-ignore a11y_no_static_element_interactions -->
             <div 
               class="yla-cell yla-slot-content-cell {getSlotStyleClass(slot.type)}" 
-              class:is-empty={!entry || (!entry.text && !entry.shortTitle)}
-              class:is-clickable={entry && (entry.text || entry.shortTitle)}
+              class:is-empty={!hasContent}
+              class:is-clickable={hasContent}
               class:has-assigned-teacher={!!assignedTeacher}
-              onclick={() => entry && (entry.text || entry.shortTitle) && openSlotDetail(day, slot, entry)}
-              title={entry && entry.fullText ? 'Klicken für alle Details & Lehrerauswahl' : ''}
+              onclick={() => hasContent && openSlotDetail(day, slot, entry)}
+              title={hasContent ? (entry?.fullText ? `${entry.fullText}\n\n👉 Klicken für alle Details & Zuweisung` : 'Klicken für Details & Zuweisung') : ''}
             >
-              {#if entry && (entry.text || entry.shortTitle)}
+              {#if hasContent && entry}
                 <div class="compact-slot-box">
-                  <!-- Top Row: Time Pill and Inline Teacher Selector / Badge -->
-                  <div class="compact-slot-top-row">
-                    {#if entry.time}
+                  
+                  <!-- Optional sub-time pill -->
+                  {#if entry.time}
+                    <div class="slot-box-time-row">
                       <span class="compact-slot-time-pill">{entry.time}</span>
-                    {/if}
-
-                    <!-- Teacher Badge or Quick Select Dropdown -->
-                    <div class="slot-teacher-assign-wrapper" onclick={(e) => e.stopPropagation()}>
-                      {#if assignedTeacher}
-                        {@const meta = getTeacherBadgeStyle(assignedTeacher)}
-                        <div 
-                          class="assigned-teacher-badge" 
-                          style="color: {meta.color}; background: {meta.bg}; border-color: {meta.color};"
-                          title="Eingeteilt: {assignedTeacher} (Klicken zum Ändern)"
-                        >
-                          <span class="t-avatar">{meta.avatar}</span>
-                          <span class="t-name">{assignedTeacher}</span>
-                          <button 
-                            type="button" 
-                            class="btn-clear-teacher"
-                            onclick={(e) => {
-                              e.stopPropagation();
-                              assignTeacherToSlot(currentWeek.weekNumber, day.col, slot.rowNumber, null);
-                            }}
-                            title="Zuweisung entfernen"
-                          >✕</button>
-                        </div>
-                      {:else}
-                        <!-- Inline Quick Dropdown -->
-                        <select 
-                          class="inline-teacher-select"
-                          value=""
-                          onchange={(e) => {
-                            const val = (e.target as HTMLSelectElement).value;
-                            assignTeacherToSlot(currentWeek.weekNumber, day.col, slot.rowNumber, val || null);
-                          }}
-                          title="Lehrkraft für diese Einheit einteilen"
-                        >
-                          <option value="">+ Person</option>
-                          {#each YLA_TEACHERS as tName}
-                            <option value={tName}>{YLA_TEACHERS_META[tName].avatar} {tName}</option>
-                          {/each}
-                        </select>
-                      {/if}
-                    </div>
-                  </div>
-
-                  <!-- Primary Concise Title (3-5 keywords) -->
-                  <div class="compact-slot-title">
-                    {entry.shortTitle || entry.text}
-                  </div>
-
-                  <!-- Keyword Tags Chips (Max 3) -->
-                  {#if entry.keywords && entry.keywords.length > 0}
-                    <div class="compact-keywords-list">
-                      {#each entry.keywords.slice(0, 3) as kw}
-                        <span class="compact-keyword-tag">{kw}</span>
-                      {/each}
                     </div>
                   {/if}
 
-                  <!-- Click info hint -->
-                  <div class="slot-click-hint">
-                    <span class="hint-icon">🔍</span>
-                    <span class="hint-text">Details & Zuweisung</span>
+                  <!-- PRIMARY CONCISE TITLE (No clutter, crisp & clear) -->
+                  <div class="compact-slot-title" title={entry.fullText || entry.text}>
+                    {getYlaCleanShortTitle(entry, slot.label)}
                   </div>
+
+                  <!-- ASSIGNED PERSON BADGE (Prominent & Clean) -->
+                  {#if assignedTeacher}
+                    {@const meta = getYlaTeacherMeta(assignedTeacher)}
+                    <div 
+                      class="assigned-person-badge" 
+                      style="color: {meta.color}; background: {meta.badgeBg}; border: 1px solid {meta.color}40;"
+                      title="Eingeteilt: {assignedTeacher} (Klicken zum Bearbeiten)"
+                    >
+                      <span class="person-avatar">{meta.avatar}</span>
+                      <span class="person-name">{assignedTeacher}</span>
+                    </div>
+                  {:else if isAdmin}
+                    <div class="admin-unassigned-pill" title="Klicken zum Zuweisen einer Lehrkraft">
+                      <span class="plus-icon">+</span>
+                      <span>Zuweisen</span>
+                    </div>
+                  {/if}
+
                 </div>
               {:else}
                 <div class="empty-slot-placeholder">—</div>
@@ -547,10 +483,13 @@
           {/each}
         </div>
       {/each}
+
     </div>
   </div>
 
+  <!-- ========================================================================= -->
   <!-- MOBILE / TABLET DAY ACCORDION & CARDS VIEW -->
+  <!-- ========================================================================= -->
   <div class="yla-mobile-view">
     <!-- Day Tabs Navigation for Mobile -->
     <div class="mobile-day-tabs">
@@ -605,29 +544,26 @@
                   {/if}
                 </div>
 
+                <!-- Title on Mobile -->
+                <div class="m-slot-title">{getYlaCleanShortTitle(entry, slot.label)}</div>
+
                 <!-- Mobile Teacher Badge -->
                 {#if assignedTeacher}
-                  {@const meta = getTeacherBadgeStyle(assignedTeacher)}
+                  {@const meta = getYlaTeacherMeta(assignedTeacher)}
                   <div class="mobile-assigned-teacher-row">
-                    <span class="assigned-teacher-badge" style="color: {meta.color}; background: {meta.bg}; border-color: {meta.color};">
+                    <span class="assigned-person-badge" style="color: {meta.color}; background: {meta.badgeBg}; border: 1px solid {meta.color}40;">
                       <span>{meta.avatar}</span>
                       <strong>{assignedTeacher}</strong>
                     </span>
                   </div>
-                {/if}
-
-                <div class="m-slot-title">{entry.shortTitle || slot.label}</div>
-
-                {#if entry.keywords && entry.keywords.length > 0}
-                  <div class="m-keywords-row">
-                    {#each entry.keywords as kw}
-                      <span class="compact-keyword-tag">{kw}</span>
-                    {/each}
+                {:else if isAdmin}
+                  <div class="mobile-assigned-teacher-row">
+                    <span class="admin-unassigned-pill">+ Lehrkraft zuweisen</span>
                   </div>
                 {/if}
 
                 <div class="m-click-note">
-                  <span>ℹ️ Klicken für vollständige Beschreibung & Lehrerauswahl</span>
+                  <span>ℹ️ Tippen für alle Details & Zuweisung</span>
                 </div>
               </div>
             {/if}
@@ -637,7 +573,9 @@
     {/if}
   </div>
 
-  <!-- INTERACTIVE SLOT DETAIL MODAL WITH TEACHER SELECTION -->
+  <!-- ========================================================================= -->
+  <!-- INTERACTIVE SLOT DETAIL MODAL (With full teacher assignment for Admin) -->
+  <!-- ========================================================================= -->
   {#if activeDetailModal}
     {@const modalKey = `${activeDetailModal.weekNumber}_${activeDetailModal.dayCol}_${activeDetailModal.slotRowNumber}`}
     {@const currentAssigned = assignmentsMap[modalKey] || activeDetailModal.entry.assignedTeacher}
@@ -645,6 +583,7 @@
     <!-- svelte-ignore a11y_no_static_element_interactions -->
     <div class="detail-modal-backdrop animate-fade-in" onclick={closeSlotDetail}>
       <div class="detail-modal-card glass-card animate-scale-up" onclick={(e) => e.stopPropagation()}>
+        
         <!-- Modal Header -->
         <div class="detail-modal-header">
           <div class="modal-meta-row">
@@ -663,9 +602,10 @@
 
         <!-- Modal Body -->
         <div class="detail-modal-body">
+          
           <!-- Main Title -->
           <h2 class="detail-slot-main-title">
-            {activeDetailModal.entry.shortTitle || activeDetailModal.slotLabel}
+            {getYlaCleanShortTitle(activeDetailModal.entry, activeDetailModal.slotLabel)}
           </h2>
 
           <!-- Slot label context -->
@@ -673,46 +613,91 @@
             <strong>Einheit:</strong> {activeDetailModal.slotLabel}
           </div>
 
-          <!-- TEACHER SELECTION SECTION -->
-          <div class="detail-teacher-selection-section">
+          <!-- TEACHER ASSIGNMENT SECTION (Interactive for Admin, clear for Team) -->
+          <div class="detail-teacher-selection-section glass-card">
             <div class="section-label-with-icon">
               <span>👤</span>
-              <span>Lehrkraft für diese YLA-Einheit einteilen:</span>
-            </div>
-            <div class="teacher-chips-picker">
-              {#each YLA_TEACHERS as tName}
-                {@const meta = YLA_TEACHERS_META[tName]}
-                {@const isSelected = currentAssigned === tName}
-                <button 
-                  type="button" 
-                  class="teacher-select-btn"
-                  class:selected={isSelected}
-                  style={isSelected ? `background: ${meta.color}; border-color: ${meta.color}; color: #ffffff;` : ''}
-                  onclick={() => assignTeacherToSlot(activeDetailModal!.weekNumber, activeDetailModal!.dayCol, activeDetailModal!.slotRowNumber, isSelected ? null : tName)}
-                >
-                  <span class="t-btn-avatar">{meta.avatar}</span>
-                  <span class="t-btn-name">{tName}</span>
-                  {#if isSelected}
-                    <span class="t-btn-check">✓</span>
-                  {/if}
-                </button>
-              {/each}
-              {#if currentAssigned}
-                <button 
-                  type="button" 
-                  class="teacher-select-btn btn-clear-assignment"
-                  onclick={() => assignTeacherToSlot(activeDetailModal!.weekNumber, activeDetailModal!.dayCol, activeDetailModal!.slotRowNumber, null)}
-                  title="Zuweisung aufheben"
-                >
-                  <span>✕ Keine Person</span>
-                </button>
-              {/if}
+              <strong>{isAdmin ? 'Lehrkraft für diese YLA-Einheit einteilen:' : 'Eingeteilte Lehrkraft:'}</strong>
             </div>
 
-            {#if currentAssigned}
-              <div class="assignment-notice-box">
-                <span>✓ <strong>{currentAssigned}</strong> ist fest für diese Einheit eingeteilt und wird in der regulären Wochenplanung für diesen Zeitraum automatisch geblockt.</span>
+            {#if isAdmin}
+              <!-- Admin Interactive Selector -->
+              <div class="admin-assignment-controls">
+                <div class="teacher-chips-picker">
+                  {#each YLA_TEACHERS as tName}
+                    {@const meta = YLA_TEACHERS_META[tName]}
+                    {@const isSelected = currentAssigned === tName}
+                    <button 
+                      type="button" 
+                      class="teacher-select-btn"
+                      class:selected={isSelected}
+                      style={isSelected ? `background: ${meta.color}; border-color: ${meta.color}; color: #ffffff;` : ''}
+                      onclick={() => assignTeacherToSlot(activeDetailModal!.weekNumber, activeDetailModal!.dayCol, activeDetailModal!.slotRowNumber, isSelected ? null : tName)}
+                    >
+                      <span class="t-btn-avatar">{meta.avatar}</span>
+                      <span class="t-btn-name">{tName}</span>
+                      {#if isSelected}
+                        <span class="t-btn-check">✓</span>
+                      {/if}
+                    </button>
+                  {/each}
+                </div>
+
+                <!-- Extended Selector for other Sevakas / Teachers -->
+                <div class="extended-teacher-select-row">
+                  <span class="extended-select-label">Weitere Lehrkraft:</span>
+                  <select 
+                    class="extended-teacher-dropdown"
+                    value={YLA_TEACHERS.includes(currentAssigned as any) ? '' : (currentAssigned || '')}
+                    onchange={(e) => {
+                      const val = (e.target as HTMLSelectElement).value;
+                      if (val) {
+                        assignTeacherToSlot(activeDetailModal!.weekNumber, activeDetailModal!.dayCol, activeDetailModal!.slotRowNumber, val);
+                      }
+                    }}
+                  >
+                    <option value="">-- Weiteren Sevaka / Lehrer auswählen --</option>
+                    {#each allTeachersList.filter(t => !YLA_TEACHERS.includes(t.name as any)) as t}
+                      <option value={t.name}>{t.name} ({t.roleType === 'sevaka' ? 'Kernteam' : 'Lehrer'})</option>
+                    {/each}
+                  </select>
+
+                  {#if currentAssigned}
+                    <button 
+                      type="button" 
+                      class="btn-clear-assignment"
+                      onclick={() => assignTeacherToSlot(activeDetailModal!.weekNumber, activeDetailModal!.dayCol, activeDetailModal!.slotRowNumber, null)}
+                      title="Zuweisung aufheben"
+                    >
+                      ✕ Zuweisung aufheben
+                    </button>
+                  {/if}
+                </div>
               </div>
+
+              {#if currentAssigned}
+                <div class="assignment-notice-box success-notice">
+                  <span>✓ <strong>{currentAssigned}</strong> ist fest für diese Einheit eingeteilt und im Wochenplan geblockt.</span>
+                </div>
+              {:else}
+                <div class="assignment-notice-box neutral-notice">
+                  <span>ℹ️ Für diese Einheit ist noch keine Lehrkraft ausgewählt.</span>
+                </div>
+              {/if}
+
+            {:else}
+              <!-- Team / Viewer Read-Only Display -->
+              {#if currentAssigned}
+                {@const meta = getYlaTeacherMeta(currentAssigned)}
+                <div class="team-view-assigned-badge" style="color: {meta.color}; background: {meta.badgeBg}; border: 1.5px solid {meta.color}50;">
+                  <span class="badge-avatar">{meta.avatar}</span>
+                  <span class="badge-text">Unterrichtet von: <strong>{currentAssigned}</strong></span>
+                </div>
+              {:else}
+                <div class="team-view-unassigned-note">
+                  <span>Noch keine Lehrkraft eingeteilt</span>
+                </div>
+              {/if}
             {/if}
           </div>
 
@@ -726,6 +711,14 @@
             </div>
           {/if}
 
+          <!-- Full Content / Description Box -->
+          <div class="detail-full-text-box">
+            <span class="section-label">Vollständige Beschreibung & Details:</span>
+            <div class="detail-text-content">
+              {activeDetailModal.entry.fullText || activeDetailModal.entry.text}
+            </div>
+          </div>
+
           <!-- Keywords List -->
           {#if activeDetailModal.entry.keywords && activeDetailModal.entry.keywords.length > 0}
             <div class="detail-keywords-section">
@@ -738,162 +731,236 @@
             </div>
           {/if}
 
-          <!-- Full Content / Description Box -->
-          <div class="detail-full-text-box">
-            <span class="section-label">Vollständige Beschreibung & Details:</span>
-            <div class="detail-text-content">
-              {activeDetailModal.entry.fullText || activeDetailModal.entry.text}
-            </div>
-          </div>
         </div>
 
         <!-- Modal Footer -->
         <div class="detail-modal-footer">
           <button type="button" class="btn btn-secondary btn-modal-done" onclick={closeSlotDetail}>
-            Schließen & Speichern
+            Schließen
           </button>
         </div>
       </div>
     </div>
   {/if}
 
-  <!-- Bottom Footer Note -->
-  <footer class="yla-view-footer">
-    <div class="footer-links">
-      <span>{currentWeek.contactInfo}</span>
-    </div>
-  </footer>
+  <!-- Bottom Footer Note (Only in regular view) -->
+  {#if !isFullscreen}
+    <footer class="yla-view-footer">
+      <div class="footer-links">
+        <span>{currentWeek.contactInfo}</span>
+      </div>
+    </footer>
+  {/if}
+
 </div>
 
 <style>
+  /* ========================================================================= */
+  /* WRAPPER & CONTAINER */
+  /* ========================================================================= */
   .yla-view-wrapper {
     display: flex;
     flex-direction: column;
-    gap: 1.25rem;
+    gap: 1rem;
     width: 100%;
     max-width: 100%;
     margin: 0 auto;
-    padding-bottom: 2.5rem;
+    padding-bottom: 2rem;
+    box-sizing: border-box;
   }
 
+  /* FULLSCREEN MODE: Fits 100% within monitor height without scrolling */
   .fullscreen-active {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 9999;
-    background: #fffdf8;
-    padding: 1.5rem;
-    overflow-y: auto;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    z-index: 99999 !important;
+    background: #fbf9f4 !important;
+    padding: 0.5rem 0.75rem !important;
+    overflow: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0.4rem !important;
+    box-sizing: border-box !important;
   }
 
-  /* Top Bar */
+  /* ========================================================================= */
+  /* FULLSCREEN TOP BAR */
+  /* ========================================================================= */
+  .fs-top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.4rem 0.8rem;
+    background: #ffffff;
+    border: 1px solid #ffe082;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(150, 0, 64, 0.05);
+    flex-shrink: 0;
+    min-height: 44px;
+  }
+
+  .fs-brand-section {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-shrink: 0;
+  }
+
+  .fs-brand-badge {
+    background: #fff5cc;
+    color: #960040;
+    font-weight: 800;
+    font-size: 0.82rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 14px;
+    border: 1px solid #ffe082;
+  }
+
+  .fs-week-pill {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #2a1b1b;
+  }
+
+  .fs-week-switcher {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    flex: 1;
+    justify-content: center;
+  }
+
+  .fs-week-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    background: #fffdf8;
+    border: 1.5px solid #ffe082;
+    border-radius: 8px;
+    padding: 0.25rem 0.65rem;
+    cursor: pointer;
+    font-size: 0.78rem;
+    transition: all 0.2s;
+  }
+
+  .fs-week-btn:hover {
+    border-color: #960040;
+    background: #fff5cc;
+  }
+
+  .fs-week-btn.active {
+    background: #960040;
+    border-color: #960040;
+    color: #ffffff;
+    font-weight: 700;
+    box-shadow: 0 2px 6px rgba(150, 0, 64, 0.2);
+  }
+
+  .fs-week-btn.active .fs-w-dates {
+    color: #ffe082;
+  }
+
+  .fs-w-title {
+    font-weight: 700;
+  }
+
+  .fs-w-dates {
+    font-size: 0.7rem;
+    color: #785858;
+  }
+
+  .fs-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    flex-shrink: 0;
+  }
+
+  .btn-fs-exit {
+    background: #960040;
+    color: #ffffff;
+    border: 1px solid #7d0034;
+    border-radius: 8px;
+    padding: 0.35rem 0.85rem;
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .btn-fs-exit:hover {
+    background: #7d0034;
+  }
+
+  .fs-special-ribbon {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: #fff8e1;
+    border: 1px solid #ffe082;
+    border-radius: 8px;
+    padding: 0.2rem 0.6rem;
+    font-size: 0.74rem;
+    flex-shrink: 0;
+  }
+
+  .fs-ribbon-label {
+    font-weight: 700;
+    color: #960040;
+  }
+
+  .fs-ribbon-chips {
+    display: flex;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+  }
+
+  .fs-ribbon-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    color: #2a1b1b;
+  }
+
+  .fs-ribbon-chip strong {
+    color: #960040;
+  }
+
+  /* ========================================================================= */
+  /* STANDARD TOP BAR (Title & Fullscreen only) */
+  /* ========================================================================= */
   .yla-top-bar {
     background: var(--bg-card, #ffffff);
     border: 1px solid var(--border-color, #ffe082);
     border-radius: 16px;
-    padding: 1.5rem;
+    padding: 1.25rem 1.75rem;
     box-shadow: 0 4px 18px rgba(150, 0, 64, 0.04);
-    display: flex;
-    flex-direction: column;
-    gap: 1.25rem;
-  }
-
-  .yla-title-section {
-    display: flex;
-    flex-direction: column;
-    gap: 0.35rem;
-  }
-
-  .yla-heading-row {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    flex-wrap: wrap;
-  }
-
-  .yla-badge {
-    background: #fff5cc;
-    color: #960040;
-    font-weight: 700;
-    font-size: 0.85rem;
-    padding: 0.3rem 0.8rem;
-    border-radius: 20px;
-    border: 1px solid #ffe082;
-  }
-
-  .yla-sub-badge {
-    font-size: 0.85rem;
-    color: #6b5151;
-    font-weight: 600;
-  }
-
-  .yla-main-title {
-    font-size: 1.5rem;
-    color: #2a1b1b;
-    margin: 0;
-    font-family: 'Playfair Display', serif;
-  }
-
-  /* Controls Row */
-  .yla-controls-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 1rem;
+    gap: 1.5rem;
     flex-wrap: wrap;
   }
 
-  .search-input-wrapper {
-    position: relative;
-    flex: 1;
-    min-width: 280px;
-    display: flex;
-    align-items: center;
-  }
-
-  .search-icon {
-    position: absolute;
-    left: 0.9rem;
-    font-size: 0.95rem;
-    color: #9e8585;
-    pointer-events: none;
-  }
-
-  .yla-search-input {
-    width: 100%;
-    padding: 0.65rem 2.2rem 0.65rem 2.4rem;
-    border-radius: 12px;
-    border: 1px solid var(--border-color, #ffe082);
-    background: #fffdf8;
-    font-size: 0.9rem;
+  .yla-main-title {
+    font-size: 1.45rem;
     color: #2a1b1b;
-    outline: none;
-    transition: all 0.2s;
+    margin: 0;
+    font-family: 'Playfair Display', serif;
+    flex: 1;
+    min-width: 260px;
   }
 
-  .yla-search-input:focus {
-    border-color: #960040;
-    box-shadow: 0 0 0 3px rgba(150, 0, 64, 0.1);
-  }
-
-  .btn-clear-search {
-    position: absolute;
-    right: 0.75rem;
-    background: none;
-    border: none;
-    color: #9e8585;
-    font-size: 0.9rem;
-    cursor: pointer;
-    padding: 0.2rem;
-  }
-
-  .yla-action-buttons {
+  .yla-top-actions {
     display: flex;
     align-items: center;
-    gap: 0.6rem;
-    flex-wrap: wrap;
+    gap: 0.5rem;
   }
 
   .yla-btn-action {
@@ -901,7 +968,7 @@
     color: #2a1b1b;
     border: 1px solid #ffe082;
     border-radius: 10px;
-    padding: 0.55rem 0.95rem;
+    padding: 0.5rem 0.9rem;
     font-size: 0.85rem;
     font-weight: 600;
     cursor: pointer;
@@ -917,73 +984,19 @@
     color: #960040;
   }
 
-  /* 4-Week Selector Tabs */
-  .week-selector-tabs {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 0.75rem;
-    margin-top: 0.25rem;
-  }
-
-  @media (max-width: 768px) {
-    .week-selector-tabs {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-
-  .week-tab-btn {
-    background: #ffffff;
-    border: 2px solid #ffe082;
-    border-radius: 14px;
-    padding: 0.85rem 1rem;
-    cursor: pointer;
-    text-align: left;
-    display: flex;
-    flex-direction: column;
-    gap: 0.2rem;
-    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
-  }
-
-  .week-tab-btn:hover {
-    border-color: #960040;
-    background: #fff9e6;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 12px rgba(150, 0, 64, 0.08);
-  }
-
-  .week-tab-btn.active {
+  .btn-fullscreen-main {
     background: linear-gradient(135deg, #fff5cc 0%, #ffeaa3 100%);
-    border-color: #960040;
-    box-shadow: 0 6px 16px rgba(150, 0, 64, 0.15);
-  }
-
-  .week-tab-num {
-    font-weight: 700;
-    font-size: 1.05rem;
-    color: #2a1b1b;
-  }
-
-  .week-tab-btn.active .week-tab-num {
+    border: 1.5px solid #960040;
     color: #960040;
-  }
-
-  .week-tab-dates {
-    font-size: 0.85rem;
-    color: #6b5151;
-    font-weight: 500;
-  }
-
-  .week-tab-days-badge {
-    align-self: flex-start;
-    margin-top: 0.3rem;
-    font-size: 0.72rem;
     font-weight: 700;
-    background: rgba(150, 0, 64, 0.08);
-    color: #960040;
-    padding: 0.15rem 0.5rem;
-    border-radius: 10px;
+    padding: 0.6rem 1.2rem;
+    font-size: 0.9rem;
+  }
+
+  .btn-fullscreen-main:hover {
+    background: #ffeaa3;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(150, 0, 64, 0.15);
   }
 
   /* Summary Banner */
@@ -992,29 +1005,61 @@
     justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;
-    gap: 1rem;
-    padding: 1rem 1.5rem;
+    gap: 0.75rem;
+    padding: 0.75rem 1.25rem;
     background: #ffffff;
     border: 1px solid var(--border-color, #ffe082);
-    border-radius: 14px;
+    border-radius: 12px;
   }
 
   .week-nav-mini {
     display: flex;
     align-items: center;
-    gap: 0.6rem;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .week-nav-pills {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+
+  .btn-week-pill {
+    background: #fffdf8;
+    border: 1.5px solid #ffe082;
+    color: #2a1b1b;
+    font-weight: 600;
+    font-size: 0.82rem;
+    padding: 0.3rem 0.75rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-week-pill:hover {
+    border-color: #960040;
+    background: #fff5cc;
+    color: #960040;
+  }
+
+  .btn-week-pill.active {
+    background: #960040;
+    border-color: #960040;
+    color: #ffffff;
+    font-weight: 700;
+    box-shadow: 0 2px 6px rgba(150, 0, 64, 0.2);
   }
 
   .btn-nav-mini {
     background: #fff5cc;
     border: 1px solid #ffe082;
-    padding: 0.4rem 0.8rem;
+    padding: 0.35rem 0.75rem;
     border-radius: 8px;
-    font-size: 0.82rem;
+    font-size: 0.8rem;
     font-weight: 600;
     color: #2a1b1b;
     cursor: pointer;
-    transition: all 0.2s;
   }
 
   .btn-nav-mini:hover:not(:disabled) {
@@ -1030,42 +1075,42 @@
 
   .current-week-pill {
     font-weight: 700;
-    font-size: 1rem;
+    font-size: 0.95rem;
     color: #960040;
-    padding: 0.35rem 0.85rem;
+    padding: 0.3rem 0.75rem;
     background: #fffdf8;
-    border-radius: 10px;
+    border-radius: 8px;
     border: 1px solid #ffe082;
   }
 
   .special-highlights-row {
     display: flex;
     align-items: center;
-    gap: 0.6rem;
+    gap: 0.5rem;
     flex-wrap: wrap;
   }
 
   .highlights-label {
     font-weight: 700;
-    font-size: 0.85rem;
+    font-size: 0.82rem;
     color: #2a1b1b;
   }
 
   .highlights-chips {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.5rem;
+    gap: 0.4rem;
   }
 
   .highlight-chip {
     display: inline-flex;
     align-items: center;
-    gap: 0.35rem;
+    gap: 0.3rem;
     background: #fff5cc;
     border: 1px solid #ffe082;
-    border-radius: 20px;
-    padding: 0.25rem 0.75rem;
-    font-size: 0.82rem;
+    border-radius: 16px;
+    padding: 0.2rem 0.65rem;
+    font-size: 0.78rem;
     color: #2a1b1b;
   }
 
@@ -1073,194 +1118,44 @@
     color: #960040;
   }
 
-  /* Abbreviations Box */
-  .abbreviations-box {
-    background: #ffffff;
-    border: 1px solid #ffe082;
-    border-radius: 14px;
-    padding: 1.25rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.85rem;
-  }
-
-  .abbr-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .abbr-header h4 {
-    margin: 0;
-    color: #960040;
-    font-size: 1.05rem;
-  }
-
-  .btn-icon-close {
-    background: none;
-    border: none;
-    font-size: 1rem;
-    cursor: pointer;
-    color: #9e8585;
-  }
-
-  .abbr-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 0.6rem;
-  }
-
-  .abbr-item {
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
-    background: #fffdf8;
-    padding: 0.5rem 0.75rem;
-    border-radius: 8px;
-    border: 1px solid #ffe082;
-  }
-
-  .abbr-code {
-    background: #960040;
-    color: #ffffff;
-    font-weight: 700;
-    font-size: 0.78rem;
-    padding: 0.15rem 0.45rem;
-    border-radius: 4px;
-  }
-
-  .abbr-meaning {
-    font-size: 0.85rem;
-    color: #2a1b1b;
-    font-weight: 500;
-  }
-
-  .abbr-footer-note {
-    font-size: 0.8rem;
-    color: #9e8585;
-    border-top: 1px solid #ffe082;
-    padding-top: 0.5rem;
-  }
-
-  /* Search Results */
-  .search-results-panel {
-    background: #ffffff;
-    border: 2px solid #960040;
-    border-radius: 14px;
-    padding: 1.25rem;
-    box-shadow: 0 10px 30px rgba(150, 0, 64, 0.12);
-  }
-
-  .search-results-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1rem;
-  }
-
-  .search-results-header h3 {
-    margin: 0;
-    color: #960040;
-    font-size: 1.1rem;
-  }
-
-  .btn-close-results {
-    background: #fff5cc;
-    border: 1px solid #ffe082;
-    border-radius: 8px;
-    padding: 0.35rem 0.75rem;
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: #960040;
-    cursor: pointer;
-  }
-
-  .search-results-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 0.85rem;
-    max-height: 420px;
-    overflow-y: auto;
-  }
-
-  .search-result-card {
-    background: #fffdf8;
-    border: 1px solid #ffe082;
-    border-left: 4px solid #960040;
-    border-radius: 10px;
-    padding: 0.85rem;
-    cursor: pointer;
-    transition: all 0.2s;
-    display: flex;
-    flex-direction: column;
-    gap: 0.4rem;
-  }
-
-  .search-result-card:hover {
-    background: #fff5cc;
-    border-color: #960040;
-    transform: translateY(-2px);
-  }
-
-  .res-card-top {
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    flex-wrap: wrap;
-  }
-
-  .res-week-badge {
-    background: #960040;
-    color: #ffffff;
-    font-size: 0.72rem;
-    font-weight: 700;
-    padding: 0.15rem 0.45rem;
-    border-radius: 6px;
-  }
-
-  .res-day-badge {
-    background: #ffe8a3;
-    color: #2a1b1b;
-    font-size: 0.72rem;
-    font-weight: 600;
-    padding: 0.15rem 0.45rem;
-    border-radius: 6px;
-  }
-
-  .res-time-badge {
-    font-size: 0.72rem;
-    color: #6b5151;
-    font-weight: 500;
-  }
-
-  .res-slot-name {
-    font-size: 0.82rem;
-    font-weight: 700;
-    color: #2a1b1b;
-  }
-
-  .res-match-text {
-    font-size: 0.85rem;
-    color: #4a3838;
-    line-height: 1.35;
-    margin: 0;
-  }
-
-  /* Desktop Timetable Grid */
+  /* ========================================================================= */
+  /* DESKTOP TIMETABLE GRID (Compact & Fullscreen Fit) */
+  /* ========================================================================= */
   .yla-desktop-grid-container {
     width: 100%;
     overflow-x: auto;
     background: #ffffff;
     border: 1px solid var(--border-color, #ffe082);
-    border-radius: 16px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+    border-radius: 14px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.02);
+  }
+
+  /* Fullscreen grid container takes full remaining height */
+  .fs-grid-container {
+    flex: 1 !important;
+    min-height: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow-x: auto !important;
+    overflow-y: auto !important;
+    box-shadow: none !important;
+    border-radius: 10px !important;
   }
 
   .yla-grid-table {
     display: table;
     width: 100%;
-    min-width: 1100px;
+    min-width: 1000px;
     border-collapse: collapse;
+  }
+
+  /* In fullscreen, table distributes rows equally to fit in 1 screen */
+  .fs-grid-table {
+    display: flex !important;
+    flex-direction: column !important;
+    height: 100% !important;
+    min-height: 100% !important;
+    min-width: 100% !important;
   }
 
   .yla-grid-header-row {
@@ -1271,9 +1166,22 @@
     z-index: 10;
   }
 
+  .fs-grid-table .yla-grid-header-row {
+    display: flex !important;
+    flex-shrink: 0 !important;
+    min-height: 34px !important;
+  }
+
   .yla-grid-slot-row {
     display: table-row;
     border-bottom: 1px solid #f0e6d2;
+  }
+
+  .fs-grid-table .yla-grid-slot-row {
+    display: flex !important;
+    flex: 1 !important;
+    min-height: 0 !important;
+    border-bottom: 1px solid #f0e6d2 !important;
   }
 
   .yla-grid-slot-row:hover {
@@ -1282,10 +1190,20 @@
 
   .yla-cell {
     display: table-cell;
-    padding: 0.65rem 0.6rem;
+    padding: 0.4rem 0.5rem;
     vertical-align: top;
     border-right: 1px solid #f0e6d2;
     border-bottom: 1px solid #f0e6d2;
+    box-sizing: border-box;
+  }
+
+  .fs-grid-table .yla-cell {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    padding: 0.2rem 0.35rem !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
   }
 
   .yla-cell:last-child {
@@ -1294,52 +1212,77 @@
 
   /* Header Cells */
   .yla-header-cell {
-    padding: 0.85rem 0.6rem;
+    padding: 0.6rem 0.5rem;
     border-bottom: 2px solid #ffe082;
     text-align: center;
   }
 
+  .fs-grid-table .yla-header-cell {
+    padding: 0.3rem 0.4rem !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
   .time-col-header {
-    width: 190px;
-    min-width: 190px;
-    max-width: 210px;
+    width: 155px;
+    min-width: 155px;
+    max-width: 170px;
     background: #fff0b3;
     font-weight: 800;
-    font-size: 0.82rem;
+    font-size: 0.78rem;
     color: #960040;
     letter-spacing: 0.5px;
     text-align: left;
+  }
+
+  .fs-grid-table .time-col-header {
+    width: 140px !important;
+    min-width: 140px !important;
+    max-width: 140px !important;
+    flex-shrink: 0 !important;
   }
 
   .day-col-header {
     background: #fff5cc;
   }
 
+  .fs-grid-table .day-col-header {
+    flex: 1 !important;
+    min-width: 0 !important;
+  }
+
   .day-header-name {
-    font-size: 1rem;
+    font-size: 0.95rem;
     font-weight: 700;
     color: #2a1b1b;
   }
 
+  .fs-grid-table .day-header-name {
+    font-size: 0.85rem;
+  }
+
   .day-header-date {
-    font-size: 0.82rem;
+    font-size: 0.78rem;
     color: #6b5151;
     font-weight: 600;
-    margin-top: 0.1rem;
+  }
+
+  .fs-grid-table .day-header-date {
+    font-size: 0.72rem;
   }
 
   .day-header-focus {
-    margin-top: 0.35rem;
+    margin-top: 0.2rem;
     background: #ffe8a3;
     border: 1px solid #ffe082;
-    border-radius: 12px;
-    padding: 0.15rem 0.45rem;
-    font-size: 0.7rem;
+    border-radius: 10px;
+    padding: 0.1rem 0.4rem;
+    font-size: 0.68rem;
     font-weight: 600;
     color: #960040;
     display: inline-flex;
     align-items: center;
-    gap: 0.25rem;
+    gap: 0.2rem;
     max-width: 100%;
   }
 
@@ -1351,47 +1294,71 @@
 
   /* Slot Label Column */
   .yla-slot-label-cell {
-    width: 190px;
-    min-width: 190px;
-    max-width: 210px;
+    width: 155px;
+    min-width: 155px;
+    max-width: 170px;
     background: #fffdf8;
     border-right: 2px solid #ffe082;
-    padding: 0.75rem 0.65rem;
+    padding: 0.45rem 0.5rem;
+  }
+
+  .fs-grid-table .yla-slot-label-cell {
+    width: 140px !important;
+    min-width: 140px !important;
+    max-width: 140px !important;
+    flex-shrink: 0 !important;
+    padding: 0.2rem 0.4rem !important;
   }
 
   .slot-badge-tag {
     display: inline-flex;
     align-items: center;
-    gap: 0.3rem;
-    font-size: 0.7rem;
+    gap: 0.25rem;
+    font-size: 0.65rem;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.3px;
-    margin-bottom: 0.25rem;
+    letter-spacing: 0.2px;
     color: #960040;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .slot-main-label {
-    font-size: 0.82rem;
+    font-size: 0.76rem;
     font-weight: 700;
     color: #2a1b1b;
-    line-height: 1.3;
+    line-height: 1.25;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .fs-grid-table .slot-main-label {
+    font-size: 0.72rem;
+    -webkit-line-clamp: 1;
   }
 
   .slot-time-sub {
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     font-weight: 600;
-    color: #9e8585;
-    margin-top: 0.25rem;
+    color: #8c7070;
+    margin-top: 0.1rem;
   }
 
-  /* Slot Content Cell (Clean & Clickable) */
+  /* Slot Content Cell (Clean, Concise & Clickable) */
   .yla-slot-content-cell {
-    font-size: 0.84rem;
+    font-size: 0.8rem;
     color: #2a1b1b;
-    line-height: 1.35;
+    line-height: 1.25;
     position: relative;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.15s ease-in-out;
+  }
+
+  .fs-grid-table .yla-slot-content-cell {
+    flex: 1 !important;
+    min-width: 0 !important;
   }
 
   .yla-slot-content-cell.is-clickable {
@@ -1399,12 +1366,12 @@
   }
 
   .yla-slot-content-cell.is-clickable:hover {
-    background-color: #fff4d6 !important;
+    background-color: #fff2cc !important;
     box-shadow: inset 0 0 0 2px #960040;
   }
 
   .yla-slot-content-cell.has-assigned-teacher {
-    box-shadow: inset 0 3px 0 #960040;
+    border-left: 3px solid #960040;
   }
 
   .yla-slot-content-cell.is-empty {
@@ -1414,140 +1381,114 @@
   }
 
   .empty-slot-placeholder {
-    color: #ccc0b0;
-    font-size: 0.85rem;
+    color: #d6ccbe;
+    font-size: 0.8rem;
   }
 
-  /* Compact Slot Box */
+  /* ========================================================================= */
+  /* COMPACT SLOT BOX (ONLY SHORT TITLE + ASSIGNED PERSON) */
+  /* ========================================================================= */
   .compact-slot-box {
     display: flex;
     flex-direction: column;
-    gap: 0.3rem;
+    gap: 0.2rem;
     height: 100%;
-    justify-content: flex-start;
+    justify-content: center;
+    overflow: hidden;
   }
 
-  .compact-slot-top-row {
+  .slot-box-time-row {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 0.3rem;
-    flex-wrap: wrap;
+    gap: 0.25rem;
   }
 
   .compact-slot-time-pill {
-    font-size: 0.68rem;
+    font-size: 0.65rem;
     font-weight: 700;
     color: #960040;
     background: #fff5cc;
     border: 1px solid #ffe082;
-    padding: 0.1rem 0.4rem;
-    border-radius: 6px;
+    padding: 0.05rem 0.35rem;
+    border-radius: 4px;
+    line-height: 1.2;
   }
 
-  /* Inline Teacher Badge / Select */
-  .slot-teacher-assign-wrapper {
-    display: inline-flex;
-    align-items: center;
+  /* Concise Primary Title */
+  .compact-slot-title {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #2a1b1b;
+    line-height: 1.25;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    word-break: break-word;
   }
 
-  .assigned-teacher-badge {
+  .fs-grid-table .compact-slot-title {
+    font-size: 0.74rem;
+    -webkit-line-clamp: 2;
+  }
+
+  /* Assigned Person Badge */
+  .assigned-person-badge {
     display: inline-flex;
     align-items: center;
     gap: 0.25rem;
-    padding: 0.15rem 0.45rem;
+    padding: 0.12rem 0.45rem;
     border-radius: 12px;
     font-size: 0.72rem;
     font-weight: 700;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    width: fit-content;
+    max-width: 100%;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
-  .assigned-teacher-badge .t-avatar {
-    font-size: 0.8rem;
+  .fs-grid-table .assigned-person-badge {
+    font-size: 0.68rem;
+    padding: 0.08rem 0.35rem;
   }
 
-  .assigned-teacher-badge .t-name {
-    font-weight: 700;
-  }
-
-  .btn-clear-teacher {
-    background: none;
-    border: none;
+  .person-avatar {
     font-size: 0.75rem;
-    line-height: 1;
-    color: inherit;
-    cursor: pointer;
-    padding: 0 0 0 0.2rem;
-    opacity: 0.7;
   }
 
-  .btn-clear-teacher:hover {
-    opacity: 1;
+  .person-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
-  .inline-teacher-select {
-    padding: 0.12rem 0.35rem;
+  .admin-unassigned-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.2rem;
     font-size: 0.68rem;
     font-weight: 600;
-    color: #7a5c5c;
+    color: #8c7070;
     background: #fff9e6;
     border: 1px dashed #e0c885;
-    border-radius: 6px;
-    cursor: pointer;
-    outline: none;
+    border-radius: 10px;
+    padding: 0.08rem 0.35rem;
+    width: fit-content;
+    line-height: 1.2;
     transition: all 0.2s;
   }
 
-  .inline-teacher-select:hover {
+  .admin-unassigned-pill:hover {
     background: #fff0b3;
     border-color: #960040;
     color: #960040;
   }
 
-  .compact-slot-title {
-    font-size: 0.84rem;
-    font-weight: 700;
-    color: #2a1b1b;
-    line-height: 1.3;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-
-  .compact-keywords-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.25rem;
-    margin-top: 0.1rem;
-  }
-
-  .compact-keyword-tag {
-    font-size: 0.68rem;
-    font-weight: 600;
-    color: #5c3838;
-    background: rgba(150, 0, 64, 0.06);
-    border: 1px solid rgba(150, 0, 64, 0.12);
-    padding: 0.08rem 0.35rem;
-    border-radius: 4px;
-    white-space: nowrap;
-  }
-
-  .slot-click-hint {
-    margin-top: auto;
-    padding-top: 0.25rem;
-    display: flex;
-    align-items: center;
-    gap: 0.25rem;
-    font-size: 0.68rem;
-    font-weight: 600;
-    color: #960040;
-    opacity: 0;
-    transition: opacity 0.2s;
-  }
-
-  .yla-slot-content-cell:hover .slot-click-hint {
-    opacity: 1;
+  .plus-icon {
+    font-weight: 800;
   }
 
   /* Category Themes & Colors */
@@ -1564,21 +1505,24 @@
   .slot-satsang { background: #fffbe8; }
   .slot-ceremony { background: #fff5eb; }
   .slot-exam { background: #fff2f2; }
+  .slot-default { background: #fffdf8; }
 
+  /* ========================================================================= */
   /* DETAIL MODAL STYLES */
+  /* ========================================================================= */
   .detail-modal-backdrop {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(42, 27, 27, 0.6);
-    backdrop-filter: blur(5px);
-    z-index: 10000;
+    background: rgba(42, 27, 27, 0.65);
+    backdrop-filter: blur(4px);
+    z-index: 100000;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 1.5rem;
+    padding: 1.25rem;
   }
 
   .detail-modal-card {
@@ -1598,7 +1542,7 @@
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    padding: 1.25rem 1.5rem;
+    padding: 1.1rem 1.4rem;
     border-bottom: 1px solid #ffe082;
     background: #fffbf0;
   }
@@ -1606,7 +1550,7 @@
   .modal-meta-row {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.4rem;
     flex-wrap: wrap;
   }
 
@@ -1614,8 +1558,8 @@
     background: #960040;
     color: #ffffff;
     font-weight: 700;
-    font-size: 0.78rem;
-    padding: 0.2rem 0.6rem;
+    font-size: 0.76rem;
+    padding: 0.2rem 0.55rem;
     border-radius: 12px;
   }
 
@@ -1623,8 +1567,8 @@
     background: #ffe8a3;
     color: #2a1b1b;
     font-weight: 700;
-    font-size: 0.8rem;
-    padding: 0.2rem 0.6rem;
+    font-size: 0.78rem;
+    padding: 0.2rem 0.55rem;
     border-radius: 12px;
   }
 
@@ -1632,21 +1576,21 @@
     display: inline-flex;
     align-items: center;
     gap: 0.3rem;
-    font-size: 0.78rem;
+    font-size: 0.76rem;
     font-weight: 700;
     color: #960040;
     background: #fff5cc;
     border: 1px solid #ffe082;
-    padding: 0.2rem 0.6rem;
+    padding: 0.2rem 0.55rem;
     border-radius: 12px;
   }
 
   .modal-time-pill {
-    font-size: 0.78rem;
+    font-size: 0.76rem;
     font-weight: 600;
     color: #6b5151;
     background: #f1f5f9;
-    padding: 0.2rem 0.55rem;
+    padding: 0.2rem 0.5rem;
     border-radius: 8px;
   }
 
@@ -1665,15 +1609,15 @@
   }
 
   .detail-modal-body {
-    padding: 1.5rem;
+    padding: 1.25rem 1.5rem;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
-    gap: 1.15rem;
+    gap: 1rem;
   }
 
   .detail-slot-main-title {
-    font-size: 1.4rem;
+    font-size: 1.35rem;
     color: #960040;
     font-family: 'Playfair Display', serif;
     margin: 0;
@@ -1681,11 +1625,11 @@
   }
 
   .detail-slot-context {
-    font-size: 0.88rem;
+    font-size: 0.85rem;
     color: #6b5151;
   }
 
-  /* Teacher Selection Section */
+  /* Teacher Selection Card */
   .detail-teacher-selection-section {
     background: #fffdf8;
     border: 1.5px solid #ffe082;
@@ -1700,44 +1644,49 @@
     display: flex;
     align-items: center;
     gap: 0.4rem;
-    font-size: 0.88rem;
-    font-weight: 700;
+    font-size: 0.9rem;
     color: #960040;
+  }
+
+  .admin-assignment-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
   }
 
   .teacher-chips-picker {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.5rem;
+    gap: 0.4rem;
   }
 
   .teacher-select-btn {
     display: inline-flex;
     align-items: center;
-    gap: 0.4rem;
-    padding: 0.5rem 0.9rem;
-    border-radius: 10px;
-    border: 1.5px solid #e0c885;
+    gap: 0.35rem;
     background: #ffffff;
-    font-size: 0.88rem;
-    font-weight: 700;
-    color: #2a1b1b;
+    border: 1.5px solid #ffe082;
+    border-radius: 20px;
+    padding: 0.35rem 0.75rem;
     cursor: pointer;
+    font-size: 0.84rem;
+    font-weight: 600;
+    color: #2a1b1b;
     transition: all 0.2s;
   }
 
   .teacher-select-btn:hover {
-    background: #fff5cc;
     border-color: #960040;
+    background: #fff5cc;
     transform: translateY(-1px);
   }
 
   .teacher-select-btn.selected {
-    box-shadow: 0 4px 12px rgba(150, 0, 64, 0.25);
+    box-shadow: 0 4px 10px rgba(150, 0, 64, 0.2);
   }
 
   .t-btn-avatar {
-    font-size: 1.1rem;
+    font-size: 0.95rem;
   }
 
   .t-btn-name {
@@ -1746,96 +1695,154 @@
 
   .t-btn-check {
     font-weight: 800;
-    font-size: 0.9rem;
+    margin-left: 0.2rem;
+  }
+
+  .extended-teacher-select-row {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+    padding-top: 0.4rem;
+    border-top: 1px dashed #f0e6d2;
+  }
+
+  .extended-select-label {
+    font-size: 0.8rem;
+    color: #6b5151;
+    font-weight: 600;
+  }
+
+  .extended-teacher-dropdown {
+    flex: 1;
+    min-width: 220px;
+    padding: 0.4rem 0.6rem;
+    border: 1px solid #ffe082;
+    border-radius: 8px;
+    background: #ffffff;
+    font-size: 0.82rem;
+    color: #2a1b1b;
+    outline: none;
   }
 
   .btn-clear-assignment {
-    background: #fdf2f2;
-    border-color: #ffcdd2;
-    color: #c62828;
+    background: #fee2e2;
+    border: 1px solid #fca5a5;
+    color: #991b1b;
+    border-radius: 8px;
+    padding: 0.4rem 0.75rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
   }
 
   .btn-clear-assignment:hover {
-    background: #ffebee;
-    border-color: #c62828;
+    background: #fecaca;
   }
 
   .assignment-notice-box {
-    background: #f1f8e9;
-    border: 1px solid #c5e1a5;
+    padding: 0.5rem 0.75rem;
     border-radius: 8px;
-    padding: 0.55rem 0.85rem;
     font-size: 0.82rem;
-    color: #33691e;
-    line-height: 1.4;
+    line-height: 1.35;
+  }
+
+  .success-notice {
+    background: #ecfdf5;
+    border-left: 4px solid #10b981;
+    color: #065f46;
+  }
+
+  .neutral-notice {
+    background: #f8fafc;
+    border-left: 4px solid #94a3b8;
+    color: #475569;
+  }
+
+  /* Team View Teacher Card */
+  .team-view-assigned-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1rem;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  }
+
+  .badge-avatar {
+    font-size: 1.2rem;
+  }
+
+  .team-view-unassigned-note {
+    font-size: 0.85rem;
+    color: #94a3b8;
+    font-style: italic;
   }
 
   .detail-special-banner {
     background: #fff5cc;
     border-left: 4px solid #960040;
     border-radius: 8px;
-    padding: 0.75rem 1rem;
+    padding: 0.65rem 0.85rem;
     display: flex;
     align-items: center;
-    gap: 0.6rem;
-    font-size: 0.88rem;
-    color: #2a1b1b;
-  }
-
-  .detail-special-banner .banner-icon {
-    font-size: 1.3rem;
-  }
-
-  .detail-keywords-section {
-    display: flex;
-    flex-direction: column;
-    gap: 0.4rem;
-  }
-
-  .section-label {
-    font-size: 0.78rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    color: #960040;
-  }
-
-  .detail-keywords-chips {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.4rem;
-  }
-
-  .detail-keyword-chip {
-    background: #fffdf8;
-    border: 1px solid #ffe082;
-    border-radius: 8px;
-    padding: 0.3rem 0.65rem;
-    font-size: 0.82rem;
-    font-weight: 600;
+    gap: 0.5rem;
+    font-size: 0.85rem;
     color: #2a1b1b;
   }
 
   .detail-full-text-box {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 0.4rem;
     background: #fffdf8;
     border: 1px solid #f0e6d2;
     border-radius: 12px;
-    padding: 1.1rem;
+    padding: 0.9rem;
+  }
+
+  .section-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #960040;
   }
 
   .detail-text-content {
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     color: #2a1b1b;
-    line-height: 1.55;
+    line-height: 1.5;
     white-space: pre-line;
     word-break: break-word;
   }
 
+  .detail-keywords-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .detail-keywords-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+  }
+
+  .detail-keyword-chip {
+    background: #fffdf8;
+    border: 1px solid #ffe082;
+    border-radius: 8px;
+    padding: 0.25rem 0.55rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #2a1b1b;
+  }
+
   .detail-modal-footer {
-    padding: 1rem 1.5rem;
+    padding: 0.85rem 1.4rem;
     border-top: 1px solid #ffe082;
     display: flex;
     justify-content: flex-end;
@@ -1847,9 +1854,9 @@
     color: #ffffff;
     border: none;
     border-radius: 10px;
-    padding: 0.55rem 1.5rem;
+    padding: 0.5rem 1.4rem;
     font-weight: 700;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     cursor: pointer;
     transition: background 0.2s;
   }
@@ -1858,7 +1865,13 @@
     background: #7d0034;
   }
 
-  /* Mobile View */
+  /* ========================================================================= */
+  /* SEARCH & ABBREVIATIONS OVERLAYS */
+  /* ========================================================================= */
+
+  /* ========================================================================= */
+  /* MOBILE / TABLET VIEW */
+  /* ========================================================================= */
   .yla-mobile-view {
     display: none;
   }
@@ -1871,21 +1884,21 @@
     .yla-mobile-view {
       display: flex;
       flex-direction: column;
-      gap: 1rem;
+      gap: 0.85rem;
     }
 
     .mobile-day-tabs {
       display: flex;
       overflow-x: auto;
-      gap: 0.5rem;
-      padding-bottom: 0.5rem;
+      gap: 0.4rem;
+      padding-bottom: 0.4rem;
       scrollbar-width: thin;
     }
 
     .mobile-day-tab-btn {
       flex: 1;
-      min-width: 65px;
-      padding: 0.6rem 0.4rem;
+      min-width: 60px;
+      padding: 0.5rem 0.35rem;
       background: #ffffff;
       border: 1px solid #ffe082;
       border-radius: 12px;
@@ -1904,7 +1917,7 @@
 
     .m-day-name {
       font-weight: 700;
-      font-size: 0.95rem;
+      font-size: 0.9rem;
     }
 
     .mobile-day-tab-btn.active .m-day-name {
@@ -1912,7 +1925,7 @@
     }
 
     .m-day-date {
-      font-size: 0.72rem;
+      font-size: 0.7rem;
       color: #6b5151;
     }
 
@@ -1923,15 +1936,15 @@
     .mobile-day-feed {
       display: flex;
       flex-direction: column;
-      gap: 0.75rem;
+      gap: 0.65rem;
     }
 
     .mobile-day-header-card {
-      padding: 1rem 1.25rem;
+      padding: 0.85rem 1rem;
       border: 1px solid #ffe082;
       display: flex;
       flex-direction: column;
-      gap: 0.5rem;
+      gap: 0.4rem;
     }
 
     .m-card-title-row {
@@ -1942,7 +1955,7 @@
 
     .m-card-title-row h3 {
       margin: 0;
-      font-size: 1.2rem;
+      font-size: 1.1rem;
       color: #2a1b1b;
     }
 
@@ -1950,43 +1963,42 @@
       background: #fff5cc;
       color: #960040;
       font-weight: 700;
-      font-size: 0.78rem;
-      padding: 0.2rem 0.6rem;
+      font-size: 0.75rem;
+      padding: 0.15rem 0.5rem;
       border-radius: 10px;
     }
 
     .mobile-special-focus-box {
       background: #fff5cc;
       border-left: 3px solid #960040;
-      padding: 0.5rem 0.75rem;
+      padding: 0.45rem 0.65rem;
       border-radius: 8px;
-      font-size: 0.85rem;
+      font-size: 0.82rem;
       color: #2a1b1b;
       display: flex;
       align-items: center;
-      gap: 0.4rem;
+      gap: 0.35rem;
     }
 
     .mobile-slots-list {
       display: flex;
       flex-direction: column;
-      gap: 0.75rem;
+      gap: 0.65rem;
     }
 
     .mobile-slot-card {
-      padding: 1rem;
+      padding: 0.85rem;
       border: 1px solid #ffe082;
       border-radius: 12px;
       display: flex;
       flex-direction: column;
-      gap: 0.4rem;
+      gap: 0.35rem;
       transition: all 0.2s;
     }
 
     .mobile-slot-card.is-clickable:hover {
       border-color: #960040;
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(150, 0, 64, 0.1);
+      transform: translateY(-1px);
     }
 
     .m-slot-header {
@@ -1998,53 +2010,48 @@
     .m-slot-badge {
       display: inline-flex;
       align-items: center;
-      gap: 0.3rem;
-      font-size: 0.75rem;
+      gap: 0.25rem;
+      font-size: 0.72rem;
       font-weight: 700;
       color: #960040;
       text-transform: uppercase;
     }
 
     .m-slot-time {
-      font-size: 0.78rem;
+      font-size: 0.75rem;
       font-weight: 600;
       color: #6b5151;
       background: #fff5cc;
-      padding: 0.15rem 0.45rem;
+      padding: 0.1rem 0.4rem;
       border-radius: 6px;
-    }
-
-    .mobile-assigned-teacher-row {
-      margin-top: 0.2rem;
     }
 
     .m-slot-title {
       font-weight: 700;
-      font-size: 0.95rem;
+      font-size: 0.9rem;
       color: #2a1b1b;
     }
 
-    .m-keywords-row {
+    .mobile-assigned-teacher-row {
       display: flex;
-      flex-wrap: wrap;
-      gap: 0.3rem;
-      margin-top: 0.2rem;
+      align-items: center;
+      margin-top: 0.1rem;
     }
 
     .m-click-note {
-      font-size: 0.72rem;
+      font-size: 0.7rem;
       color: #960040;
       font-weight: 600;
-      margin-top: 0.3rem;
+      margin-top: 0.2rem;
     }
   }
 
   /* Footer */
   .yla-view-footer {
     text-align: center;
-    padding: 1rem 0;
+    padding: 0.75rem 0;
     color: #9e8585;
-    font-size: 0.82rem;
+    font-size: 0.8rem;
   }
 
   /* Print Styles */
@@ -2054,11 +2061,11 @@
     }
 
     .yla-controls-row,
+    .fs-top-bar,
     .btn-nav-mini,
     .btn-clear-search,
     .mobile-day-tabs,
     .detail-modal-backdrop,
-    .slot-teacher-assign-wrapper,
     :global(.sidebar),
     :global(.top-header),
     :global(.view-header) {
@@ -2084,7 +2091,8 @@
 
     .yla-grid-table {
       min-width: 100% !important;
-      font-size: 9pt !important;
+      font-size: 8.5pt !important;
     }
   }
 </style>
+
