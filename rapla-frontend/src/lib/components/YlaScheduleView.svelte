@@ -8,7 +8,6 @@
     getYlaTeacherMeta,
     getYlaCleanShortTitle,
     getYlaCellRenderInfo,
-    searchYlaCurriculum,
     YLA_TEACHERS,
     YLA_TEACHERS_META,
     type YlaWeek, 
@@ -16,8 +15,7 @@
     type YlaDay, 
     type YlaSlot,
     type YlaTeacherName,
-    type YlaCellRenderInfo,
-    type YlaSearchResult
+    type YlaCellRenderInfo
   } from '$lib/ylaData';
   import { db, type Teacher } from '$lib/db';
 
@@ -37,9 +35,6 @@
   let activeMobileDayIndex = $state(0);
   let isFullscreen = $state(false);
   let viewMode = $state<'grid' | 'agenda'>('grid'); // 'grid' = Wochentabelle, 'agenda' = Tages-Detailansicht
-  let searchQuery = $state('');
-  let isSearchOpen = $state(false);
-  let showAbbreviations = $state(false);
   let userRole = $state('');
   let allTeachersList = $state<Teacher[]>([]);
 
@@ -100,9 +95,7 @@
 
     const handleKeydown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        if (showAbbreviations) {
-          showAbbreviations = false;
-        } else if (activeDetailModal) {
+        if (activeDetailModal) {
           closeSlotDetail();
         } else if (isFullscreen) {
           toggleFullscreen();
@@ -140,9 +133,6 @@
   let specialDays = $derived(currentWeek.days.filter(d => d.specialFocus));
   let activeDay = $derived(currentWeek.days[activeMobileDayIndex] || currentWeek.days[0]);
 
-  // Live search results
-  let searchResults = $derived(searchQuery.trim().length >= 2 ? searchYlaCurriculum(searchQuery) : []);
-
   function selectWeek(num: number) {
     selectedWeekNumber = num;
     activeMobileDayIndex = 0;
@@ -163,16 +153,6 @@
     if (newIdx >= 0 && newIdx < currentWeek.days.length) {
       activeMobileDayIndex = newIdx;
     }
-  }
-
-  function selectSearchResult(res: YlaSearchResult) {
-    selectWeek(res.weekNumber);
-    const dayIdx = currentWeek.days.findIndex(d => d.dateStr === res.dateStr || d.dayName === res.dayName);
-    if (dayIdx !== -1) {
-      activeMobileDayIndex = dayIdx;
-    }
-    searchQuery = '';
-    isSearchOpen = false;
   }
 
   function toggleFullscreen() {
@@ -424,63 +404,6 @@
             <span class="seg-label">Tagesansicht</span>
           </button>
         </div>
-
-        <!-- Search Bar Trigger -->
-        <div class="search-input-wrapper">
-          <span class="search-icon">🔍</span>
-          <input 
-            type="text" 
-            class="search-input" 
-            placeholder="Thema, Gita, Lehrkraft suchen..." 
-            bind:value={searchQuery}
-            onfocus={() => isSearchOpen = true}
-          />
-          {#if searchQuery}
-            <button type="button" class="btn-clear-search" onclick={() => searchQuery = ''}>✕</button>
-          {/if}
-
-          <!-- Search Results Dropdown -->
-          {#if searchQuery.trim().length >= 2}
-            <div class="search-results-dropdown glass-card animate-scale-up">
-              <div class="search-results-header">
-                <span>Gefundene Einheiten ({searchResults.length}):</span>
-                <button type="button" class="btn-close-dropdown" onclick={() => searchQuery = ''}>✕</button>
-              </div>
-              <div class="search-results-list">
-                {#if searchResults.length === 0}
-                  <div class="search-empty-note">Keine passenden Einheiten gefunden.</div>
-                {:else}
-                  {#each searchResults as res}
-                    <!-- svelte-ignore a11y_click_events_have_key_events -->
-                    <!-- svelte-ignore a11y_no_static_element_interactions -->
-                    <div 
-                      class="search-result-item" 
-                      onclick={() => selectSearchResult(res)}
-                    >
-                      <div class="s-res-meta">
-                        <span class="s-res-week">W{res.weekNumber}</span>
-                        <span class="s-res-day">{res.dayName} ({res.dateStr})</span>
-                        <span class="s-res-time">{res.time}</span>
-                      </div>
-                      <div class="s-res-match">{res.matchText}</div>
-                      <div class="s-res-slot">{res.slotLabel}</div>
-                    </div>
-                  {/each}
-                {/if}
-              </div>
-            </div>
-          {/if}
-        </div>
-
-        <!-- Abbreviations Button -->
-        <button 
-          type="button" 
-          class="btn yla-btn-action" 
-          onclick={() => showAbbreviations = !showAbbreviations}
-          title="Erklärung von YLH, BhG, Ki, YVA"
-        >
-          📖 Abkürzungen
-        </button>
 
         <!-- Fullscreen Button -->
         <button 
@@ -850,34 +773,7 @@
     {/if}
   </div>
 
-  <!-- ========================================================================= -->
-  <!-- 3. ABBREVIATIONS POPUP / MODAL (YLH, BhG, Ki, YVA)                        -->
-  <!-- ========================================================================= -->
-  {#if showAbbreviations}
-    <!-- svelte-ignore a11y_click_events_have_key_events -->
-    <!-- svelte-ignore a11y_no_static_element_interactions -->
-    <div class="detail-modal-backdrop animate-fade-in" onclick={() => showAbbreviations = false}>
-      <div class="abbr-modal-card glass-card animate-scale-up" onclick={(e) => e.stopPropagation()}>
-        <div class="abbr-modal-header">
-          <h3>📖 Abkürzungen im YLA-Unterrichtsplan</h3>
-          <button type="button" class="btn-modal-close" onclick={() => showAbbreviations = false}>✕</button>
-        </div>
-        <div class="abbr-modal-body">
-          <div class="abbr-grid">
-            {#each currentWeek.abbreviations as abbr}
-              <div class="abbr-item">
-                <span class="abbr-badge">{abbr.abbr}</span>
-                <span class="abbr-meaning">{abbr.meaning}</span>
-              </div>
-            {/each}
-          </div>
-          <p class="abbr-note">
-            Diese Schriften und Handbücher begleiten die täglichen Vorträge, Asana-Stunden und Lektüre-Einheiten der 4-wöchigen Ausbildung.
-          </p>
-        </div>
-      </div>
-    </div>
-  {/if}
+
 
   <!-- ========================================================================= -->
   <!-- 4. INTERACTIVE SLOT DETAIL MODAL (With full teacher assignment for Admin) -->
@@ -1416,154 +1312,7 @@
     color: #960040;
   }
 
-  /* Search Bar */
-  .search-input-wrapper {
-    position: relative;
-    display: flex;
-    align-items: center;
-  }
 
-  .search-icon {
-    position: absolute;
-    left: 0.65rem;
-    font-size: 0.85rem;
-    pointer-events: none;
-    color: #94a3b8;
-  }
-
-  .search-input {
-    padding: 0.48rem 1.8rem 0.48rem 2rem;
-    border: 1px solid #ffe082;
-    background: #ffffff;
-    border-radius: 10px;
-    font-size: 0.82rem;
-    color: #2a1b1b;
-    outline: none;
-    width: 190px;
-    transition: all 0.2s;
-  }
-
-  .search-input:focus {
-    border-color: #960040;
-    box-shadow: 0 0 0 3px rgba(150, 0, 64, 0.1);
-    width: 240px;
-  }
-
-  .btn-clear-search {
-    position: absolute;
-    right: 0.45rem;
-    background: none;
-    border: none;
-    font-size: 0.75rem;
-    color: #94a3b8;
-    cursor: pointer;
-    padding: 0.2rem;
-  }
-
-  .search-results-dropdown {
-    position: absolute;
-    top: calc(100% + 6px);
-    right: 0;
-    width: 320px;
-    max-height: 380px;
-    background: #ffffff;
-    border: 1.5px solid #ffe082;
-    border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-    z-index: 1000;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-  }
-
-  .search-results-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.5rem 0.75rem;
-    background: #fff9e6;
-    border-bottom: 1px solid #ffe082;
-    font-size: 0.78rem;
-    font-weight: 700;
-    color: #960040;
-  }
-
-  .btn-close-dropdown {
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 0.8rem;
-    color: #64748b;
-  }
-
-  .search-results-list {
-    overflow-y: auto;
-    padding: 0.35rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.35rem;
-  }
-
-  .search-empty-note {
-    padding: 1rem;
-    text-align: center;
-    font-size: 0.82rem;
-    color: #94a3b8;
-  }
-
-  .search-result-item {
-    padding: 0.5rem 0.65rem;
-    border-radius: 8px;
-    background: #fffdf8;
-    border: 1px solid #f0e6d2;
-    cursor: pointer;
-    display: flex;
-    flex-direction: column;
-    gap: 0.2rem;
-    transition: all 0.15s;
-  }
-
-  .search-result-item:hover {
-    background: #fff5cc;
-    border-color: #960040;
-  }
-
-  .s-res-meta {
-    display: flex;
-    align-items: center;
-    gap: 0.35rem;
-    font-size: 0.7rem;
-  }
-
-  .s-res-week {
-    background: #960040;
-    color: #ffffff;
-    font-weight: 700;
-    padding: 0.05rem 0.35rem;
-    border-radius: 4px;
-  }
-
-  .s-res-day {
-    font-weight: 700;
-    color: #2a1b1b;
-  }
-
-  .s-res-time {
-    color: #6b5151;
-    margin-left: auto;
-  }
-
-  .s-res-match {
-    font-size: 0.82rem;
-    font-weight: 700;
-    color: #960040;
-    line-height: 1.25;
-  }
-
-  .s-res-slot {
-    font-size: 0.72rem;
-    color: #64748b;
-  }
 
   .yla-btn-action {
     background: #fff5cc;
@@ -2507,80 +2256,7 @@
     color: #960040;
   }
 
-  /* ========================================================================= */
-  /* 3. ABBREVIATIONS MODAL */
-  /* ========================================================================= */
-  .abbr-modal-card {
-    background: #ffffff;
-    border: 2px solid #ffe082;
-    border-radius: 16px;
-    width: 100%;
-    max-width: 480px;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.18);
-    overflow: hidden;
-  }
 
-  .abbr-modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem 1.25rem;
-    background: #fffbf0;
-    border-bottom: 1px solid #ffe082;
-  }
-
-  .abbr-modal-header h3 {
-    margin: 0;
-    font-size: 1.05rem;
-    color: #960040;
-  }
-
-  .abbr-modal-body {
-    padding: 1.25rem;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  }
-
-  .abbr-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 0.6rem;
-  }
-
-  .abbr-item {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0.5rem 0.75rem;
-    background: #fffdf8;
-    border: 1px solid #ffe082;
-    border-radius: 8px;
-  }
-
-  .abbr-badge {
-    background: #960040;
-    color: #ffffff;
-    font-weight: 800;
-    font-size: 0.82rem;
-    padding: 0.2rem 0.5rem;
-    border-radius: 6px;
-    min-width: 45px;
-    text-align: center;
-  }
-
-  .abbr-meaning {
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: #2a1b1b;
-  }
-
-  .abbr-note {
-    margin: 0;
-    font-size: 0.78rem;
-    color: #785858;
-    line-height: 1.4;
-  }
 
   /* ========================================================================= */
   /* 4. DETAIL MODAL STYLES */
@@ -2969,12 +2645,6 @@
     .fs-brand-sub {
       display: none;
     }
-    .search-input {
-      width: 150px;
-    }
-    .search-input:focus {
-      width: 190px;
-    }
   }
 
   @media (max-width: 768px) {
@@ -2989,25 +2659,7 @@
 
     .yla-top-actions {
       width: 100%;
-      justify-content: space-between;
-    }
-
-    .search-input-wrapper {
-      flex: 1;
-      min-width: 140px;
-    }
-
-    .search-input {
-      width: 100%;
-    }
-
-    .search-input:focus {
-      width: 100%;
-    }
-
-    .search-results-dropdown {
-      width: calc(100vw - 2rem);
-      right: -50px;
+      justify-content: flex-end;
     }
 
     .fs-exit-label {
@@ -3057,7 +2709,6 @@
     .yla-top-bar,
     .fs-top-bar,
     .btn-nav-mini,
-    .btn-clear-search,
     .agenda-day-tabs,
     .agenda-bottom-day-nav,
     .detail-modal-backdrop,
