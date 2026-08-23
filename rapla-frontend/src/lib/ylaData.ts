@@ -10,6 +10,11 @@ export interface YlaDay {
 }
 
 export interface YlaDayEntry {
+  shortTitle?: string;
+  keywords?: string[];
+  fullText?: string;
+  hasMore?: boolean;
+  time?: string;
   text: string;
   isMerged: boolean;
   rawText: string;

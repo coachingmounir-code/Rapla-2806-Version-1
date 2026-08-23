@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { getYlaWeeks, getYlaWeek, searchYlaCurriculum, type YlaWeek, type YlaSearchResult } from '$lib/ylaData';
+  import { getYlaWeeks, getYlaWeek, searchYlaCurriculum, type YlaWeek, type YlaSearchResult, type YlaDayEntry, type YlaDay, type YlaSlot } from '$lib/ylaData';
 
   // Props
   let { initialWeek = 1, onWeekChange }: { initialWeek?: number; onWeekChange?: (week: number) => void } = $props();
@@ -12,10 +12,22 @@
   let searchQuery = $state('');
   let showAbbreviations = $state(false);
 
+  // Modal State for Slot Detail
+  let activeDetailModal = $state<{
+    weekSubtitle: string;
+    weekNumber: number;
+    dayName: string;
+    dateStr: string;
+    specialFocus?: string;
+    slotLabel: string;
+    slotTime: string;
+    slotBadge: string;
+    slotType: string;
+    entry: YlaDayEntry;
+  } | null>(null);
+
   let currentWeek = $derived(getYlaWeek(selectedWeekNumber) || allWeeks[0]);
   let searchResults = $derived(searchYlaCurriculum(searchQuery));
-  let specialDays = $derived(currentWeek.days.filter(d => d.specialFocus));
-  let activeDay = $derived(currentWeek.days[activeMobileDayIndex]);
 
   function selectWeek(num: number) {
     selectedWeekNumber = num;
@@ -52,6 +64,41 @@
   function handlePrint() {
     window.print();
   }
+
+  function openSlotDetail(day: YlaDay, slot: YlaSlot, entry: YlaDayEntry) {
+    if (!entry || (!entry.text && !entry.shortTitle)) return;
+    activeDetailModal = {
+      weekSubtitle: currentWeek.weekSubtitle,
+      weekNumber: currentWeek.weekNumber,
+      dayName: day.dayName,
+      dateStr: day.dateStr,
+      specialFocus: day.specialFocus,
+      slotLabel: slot.label,
+      slotTime: slot.time,
+      slotBadge: slot.badge,
+      slotType: slot.type,
+      entry: entry
+    };
+  }
+
+  function closeSlotDetail() {
+    activeDetailModal = null;
+  }
+
+  // Handle ESC key for closing modal
+  onMount(() => {
+    const handleKeydown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        if (activeDetailModal) {
+          closeSlotDetail();
+        } else if (searchQuery) {
+          searchQuery = '';
+        }
+      }
+    };
+    window.addEventListener('keydown', handleKeydown);
+    return () => window.removeEventListener('keydown', handleKeydown);
+  });
 
   function getSlotCategoryIcon(type: string): string {
     switch (type) {
@@ -123,7 +170,7 @@
     <div class="yla-title-section">
       <div class="yla-heading-row">
         <span class="yla-badge">🧘 4-wöchige Yogalehrerausbildung (YLA)</span>
-        <span class="yla-sub-badge">Intensivkurs Unterrichtsplan</span>
+        <span class="yla-sub-badge">Start: 30.08.2026 • Intensivkurs</span>
       </div>
       <h2 class="yla-main-title">{currentWeek.title}</h2>
     </div>
@@ -277,6 +324,7 @@
     </div>
 
     <!-- Special Highlights of this week -->
+    {@const specialDays = currentWeek.days.filter(d => d.specialFocus)}
     {#if specialDays.length > 0}
       <div class="special-highlights-row">
         <span class="highlights-label">Besonderheiten:</span>
@@ -293,7 +341,7 @@
     {/if}
   </div>
 
-  <!-- DESKTOP TIMETABLE GRID -->
+  <!-- DESKTOP TIMETABLE GRID (Compact & Clickable) -->
   <div class="yla-desktop-grid-container">
     <div class="yla-grid-table">
       <!-- Grid Header Row with Days -->
@@ -334,19 +382,41 @@
           <!-- Day Columns for this slot -->
           {#each currentWeek.days as day}
             {@const entry = slot.entries[day.col]}
-            <div class="yla-cell yla-slot-content-cell {getSlotStyleClass(slot.type)}" class:is-empty={!entry || !entry.text}>
-              {#if entry && entry.text}
-                <div class="slot-entry-content">
-                  {#if slot.type === 'reading_basic' || slot.type === 'reading_advanced' || slot.type === 'mantras'}
-                    <div class="study-assignment-card">
-                      <span class="study-type-pill">{slot.badge}</span>
-                      <p class="study-text">{entry.text}</p>
-                    </div>
-                  {:else}
-                    <div class="regular-slot-text">
-                      {entry.text}
+            <!-- svelte-ignore a11y_click_events_have_key_events -->
+            <!-- svelte-ignore a11y_no_static_element_interactions -->
+            <div 
+              class="yla-cell yla-slot-content-cell {getSlotStyleClass(slot.type)}" 
+              class:is-empty={!entry || (!entry.text && !entry.shortTitle)}
+              class:is-clickable={entry && (entry.text || entry.shortTitle)}
+              onclick={() => entry && (entry.text || entry.shortTitle) && openSlotDetail(day, slot, entry)}
+              title={entry && entry.fullText ? 'Klicken für alle Details' : ''}
+            >
+              {#if entry && (entry.text || entry.shortTitle)}
+                <div class="compact-slot-box">
+                  <!-- Time pill if specific sub-time exists -->
+                  {#if entry.time}
+                    <span class="compact-slot-time-pill">{entry.time}</span>
+                  {/if}
+
+                  <!-- Primary Concise Title (3-5 keywords) -->
+                  <div class="compact-slot-title">
+                    {entry.shortTitle || entry.text}
+                  </div>
+
+                  <!-- Keyword Tags Chips (Max 3) -->
+                  {#if entry.keywords && entry.keywords.length > 0}
+                    <div class="compact-keywords-list">
+                      {#each entry.keywords.slice(0, 3) as kw}
+                        <span class="compact-keyword-tag">{kw}</span>
+                      {/each}
                     </div>
                   {/if}
+
+                  <!-- Click info hint -->
+                  <div class="slot-click-hint">
+                    <span class="hint-icon">🔍</span>
+                    <span class="hint-text">Details anzeigen</span>
+                  </div>
                 </div>
               {:else}
                 <div class="empty-slot-placeholder">—</div>
@@ -376,6 +446,7 @@
     </div>
 
     <!-- Active Day Schedule Feed on Mobile -->
+    {@const activeDay = currentWeek.days[activeMobileDayIndex]}
     {#if activeDay}
       <div class="mobile-day-feed animate-fade-in">
         <div class="mobile-day-header-card glass-card">
@@ -394,20 +465,35 @@
         <div class="mobile-slots-list">
           {#each currentWeek.slots as slot}
             {@const entry = slot.entries[activeDay.col]}
-            {#if entry && entry.text}
-              <div class="mobile-slot-card glass-card {getSlotStyleClass(slot.type)}">
+            {#if entry && (entry.text || entry.shortTitle)}
+              <!-- svelte-ignore a11y_click_events_have_key_events -->
+              <!-- svelte-ignore a11y_no_static_element_interactions -->
+              <div 
+                class="mobile-slot-card glass-card {getSlotStyleClass(slot.type)} is-clickable"
+                onclick={() => openSlotDetail(activeDay, slot, entry)}
+              >
                 <div class="m-slot-header">
                   <div class="m-slot-badge">
                     <span>{getSlotCategoryIcon(slot.type)}</span>
                     <span>{slot.badge}</span>
                   </div>
-                  {#if slot.time}
-                    <span class="m-slot-time">{slot.time}</span>
+                  {#if entry.time || slot.time}
+                    <span class="m-slot-time">{entry.time || slot.time}</span>
                   {/if}
                 </div>
-                <div class="m-slot-title">{slot.label}</div>
-                <div class="m-slot-body">
-                  <p>{entry.text}</p>
+
+                <div class="m-slot-title">{entry.shortTitle || slot.label}</div>
+
+                {#if entry.keywords && entry.keywords.length > 0}
+                  <div class="m-keywords-row">
+                    {#each entry.keywords as kw}
+                      <span class="compact-keyword-tag">{kw}</span>
+                    {/each}
+                  </div>
+                {/if}
+
+                <div class="m-click-note">
+                  <span>ℹ️ Klicken für vollständige Beschreibung & Details</span>
                 </div>
               </div>
             {/if}
@@ -416,6 +502,81 @@
       </div>
     {/if}
   </div>
+
+  <!-- INTERACTIVE SLOT DETAIL MODAL -->
+  {#if activeDetailModal}
+    <!-- svelte-ignore a11y_click_events_have_key_events -->
+    <!-- svelte-ignore a11y_no_static_element_interactions -->
+    <div class="detail-modal-backdrop animate-fade-in" onclick={closeSlotDetail}>
+      <div class="detail-modal-card glass-card animate-scale-up" onclick={(e) => e.stopPropagation()}>
+        <!-- Modal Header -->
+        <div class="detail-modal-header">
+          <div class="modal-meta-row">
+            <span class="modal-week-pill">Woche {activeDetailModal.weekNumber}</span>
+            <span class="modal-day-pill">{activeDetailModal.dayName}, {activeDetailModal.dateStr}</span>
+            <span class="modal-category-pill {getSlotStyleClass(activeDetailModal.slotType)}">
+              <span>{getSlotCategoryIcon(activeDetailModal.slotType)}</span>
+              <span>{activeDetailModal.slotBadge}</span>
+            </span>
+            {#if activeDetailModal.entry.time || activeDetailModal.slotTime}
+              <span class="modal-time-pill">⏰ {activeDetailModal.entry.time || activeDetailModal.slotTime}</span>
+            {/if}
+          </div>
+          <button type="button" class="btn-modal-close" onclick={closeSlotDetail} aria-label="Schließen">✕</button>
+        </div>
+
+        <!-- Modal Body -->
+        <div class="detail-modal-body">
+          <!-- Main Title -->
+          <h2 class="detail-slot-main-title">
+            {activeDetailModal.entry.shortTitle || activeDetailModal.slotLabel}
+          </h2>
+
+          <!-- Slot label context -->
+          <div class="detail-slot-context">
+            <strong>Einheit:</strong> {activeDetailModal.slotLabel}
+          </div>
+
+          <!-- Special Focus if any -->
+          {#if activeDetailModal.specialFocus}
+            <div class="detail-special-banner">
+              <span class="banner-icon">{getSpecialFocusIcon(activeDetailModal.specialFocus)}</span>
+              <div>
+                <strong>Tages-Besonderheit:</strong> {activeDetailModal.specialFocus}
+              </div>
+            </div>
+          {/if}
+
+          <!-- Keywords List -->
+          {#if activeDetailModal.entry.keywords && activeDetailModal.entry.keywords.length > 0}
+            <div class="detail-keywords-section">
+              <span class="section-label">Schlagwörter & Themen:</span>
+              <div class="detail-keywords-chips">
+                {#each activeDetailModal.entry.keywords as kw}
+                  <span class="detail-keyword-chip">🏷️ {kw}</span>
+                {/each}
+              </div>
+            </div>
+          {/if}
+
+          <!-- Full Content / Description Box -->
+          <div class="detail-full-text-box">
+            <span class="section-label">Vollständige Beschreibung & Details:</span>
+            <div class="detail-text-content">
+              {activeDetailModal.entry.fullText || activeDetailModal.entry.text}
+            </div>
+          </div>
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="detail-modal-footer">
+          <button type="button" class="btn btn-secondary btn-modal-done" onclick={closeSlotDetail}>
+            Schließen
+          </button>
+        </div>
+      </div>
+    </div>
+  {/if}
 
   <!-- Bottom Footer Note -->
   <footer class="yla-view-footer">
@@ -486,7 +647,7 @@
   .yla-sub-badge {
     font-size: 0.85rem;
     color: #6b5151;
-    font-weight: 500;
+    font-weight: 600;
   }
 
   .yla-main-title {
@@ -942,7 +1103,7 @@
 
   .yla-cell {
     display: table-cell;
-    padding: 0.85rem 0.75rem;
+    padding: 0.65rem 0.6rem;
     vertical-align: top;
     border-right: 1px solid #f0e6d2;
     border-bottom: 1px solid #f0e6d2;
@@ -954,7 +1115,7 @@
 
   /* Header Cells */
   .yla-header-cell {
-    padding: 1rem 0.75rem;
+    padding: 0.85rem 0.6rem;
     border-bottom: 2px solid #ffe082;
     text-align: center;
   }
@@ -976,25 +1137,25 @@
   }
 
   .day-header-name {
-    font-size: 1.05rem;
+    font-size: 1rem;
     font-weight: 700;
     color: #2a1b1b;
   }
 
   .day-header-date {
-    font-size: 0.85rem;
+    font-size: 0.82rem;
     color: #6b5151;
     font-weight: 600;
     margin-top: 0.1rem;
   }
 
   .day-header-focus {
-    margin-top: 0.4rem;
+    margin-top: 0.35rem;
     background: #ffe8a3;
     border: 1px solid #ffe082;
     border-radius: 12px;
-    padding: 0.2rem 0.5rem;
-    font-size: 0.72rem;
+    padding: 0.15rem 0.45rem;
+    font-size: 0.7rem;
     font-weight: 600;
     color: #960040;
     display: inline-flex;
@@ -1016,41 +1177,51 @@
     max-width: 210px;
     background: #fffdf8;
     border-right: 2px solid #ffe082;
-    padding: 0.85rem 0.75rem;
+    padding: 0.75rem 0.65rem;
   }
 
   .slot-badge-tag {
     display: inline-flex;
     align-items: center;
     gap: 0.3rem;
-    font-size: 0.72rem;
+    font-size: 0.7rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.3px;
-    margin-bottom: 0.3rem;
+    margin-bottom: 0.25rem;
     color: #960040;
   }
 
   .slot-main-label {
-    font-size: 0.85rem;
+    font-size: 0.82rem;
     font-weight: 700;
     color: #2a1b1b;
     line-height: 1.3;
   }
 
   .slot-time-sub {
-    font-size: 0.78rem;
+    font-size: 0.75rem;
     font-weight: 600;
     color: #9e8585;
-    margin-top: 0.3rem;
+    margin-top: 0.25rem;
   }
 
-  /* Slot Content Cell */
+  /* Slot Content Cell (Clean & Clickable) */
   .yla-slot-content-cell {
-    font-size: 0.86rem;
+    font-size: 0.84rem;
     color: #2a1b1b;
-    line-height: 1.4;
-    transition: background-color 0.15s;
+    line-height: 1.35;
+    position: relative;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .yla-slot-content-cell.is-clickable {
+    cursor: pointer;
+  }
+
+  .yla-slot-content-cell.is-clickable:hover {
+    background-color: #fff4d6 !important;
+    box-shadow: inset 0 0 0 2px #960040;
   }
 
   .yla-slot-content-cell.is-empty {
@@ -1061,47 +1232,73 @@
 
   .empty-slot-placeholder {
     color: #ccc0b0;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
   }
 
-  .slot-entry-content {
+  /* Compact Slot Box */
+  .compact-slot-box {
     display: flex;
     flex-direction: column;
-    gap: 0.4rem;
+    gap: 0.3rem;
+    height: 100%;
+    justify-content: flex-start;
   }
 
-  .regular-slot-text {
-    white-space: pre-line;
-    word-break: break-word;
-  }
-
-  /* Study Assignment styling */
-  .study-assignment-card {
-    background: #fffdf8;
-    border: 1px solid #ffe082;
-    border-radius: 8px;
-    padding: 0.5rem 0.65rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-  }
-
-  .study-type-pill {
+  .compact-slot-time-pill {
+    align-self: flex-start;
     font-size: 0.68rem;
     font-weight: 700;
-    text-transform: uppercase;
     color: #960040;
     background: #fff5cc;
+    border: 1px solid #ffe082;
     padding: 0.1rem 0.4rem;
-    border-radius: 4px;
-    align-self: flex-start;
+    border-radius: 6px;
   }
 
-  .study-text {
+  .compact-slot-title {
     font-size: 0.84rem;
-    font-weight: 600;
+    font-weight: 700;
     color: #2a1b1b;
-    margin: 0;
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .compact-keywords-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    margin-top: 0.1rem;
+  }
+
+  .compact-keyword-tag {
+    font-size: 0.68rem;
+    font-weight: 600;
+    color: #5c3838;
+    background: rgba(150, 0, 64, 0.06);
+    border: 1px solid rgba(150, 0, 64, 0.12);
+    padding: 0.08rem 0.35rem;
+    border-radius: 4px;
+    white-space: nowrap;
+  }
+
+  .slot-click-hint {
+    margin-top: auto;
+    padding-top: 0.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.68rem;
+    font-weight: 600;
+    color: #960040;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .yla-slot-content-cell:hover .slot-click-hint {
+    opacity: 1;
   }
 
   /* Category Themes & Colors */
@@ -1143,6 +1340,214 @@
   }
   .slot-exam {
     background: #fff2f2;
+  }
+
+  /* DETAIL MODAL STYLES */
+  .detail-modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(42, 27, 27, 0.6);
+    backdrop-filter: blur(5px);
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+  }
+
+  .detail-modal-card {
+    background: #ffffff;
+    border: 2px solid #ffe082;
+    border-radius: 20px;
+    width: 100%;
+    max-width: 650px;
+    max-height: 88vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 20px 50px rgba(150, 0, 64, 0.25);
+    overflow: hidden;
+  }
+
+  .detail-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid #ffe082;
+    background: #fffbf0;
+  }
+
+  .modal-meta-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .modal-week-pill {
+    background: #960040;
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 0.78rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 12px;
+  }
+
+  .modal-day-pill {
+    background: #ffe8a3;
+    color: #2a1b1b;
+    font-weight: 700;
+    font-size: 0.8rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 12px;
+  }
+
+  .modal-category-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #960040;
+    background: #fff5cc;
+    border: 1px solid #ffe082;
+    padding: 0.2rem 0.6rem;
+    border-radius: 12px;
+  }
+
+  .modal-time-pill {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #6b5151;
+    background: #f1f5f9;
+    padding: 0.2rem 0.55rem;
+    border-radius: 8px;
+  }
+
+  .btn-modal-close {
+    background: none;
+    border: none;
+    font-size: 1.3rem;
+    color: #9e8585;
+    cursor: pointer;
+    padding: 0.2rem 0.5rem;
+    transition: color 0.2s;
+  }
+
+  .btn-modal-close:hover {
+    color: #960040;
+  }
+
+  .detail-modal-body {
+    padding: 1.5rem;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1.15rem;
+  }
+
+  .detail-slot-main-title {
+    font-size: 1.4rem;
+    color: #960040;
+    font-family: 'Playfair Display', serif;
+    margin: 0;
+    line-height: 1.3;
+  }
+
+  .detail-slot-context {
+    font-size: 0.88rem;
+    color: #6b5151;
+  }
+
+  .detail-special-banner {
+    background: #fff5cc;
+    border-left: 4px solid #960040;
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 0.88rem;
+    color: #2a1b1b;
+  }
+
+  .detail-special-banner .banner-icon {
+    font-size: 1.3rem;
+  }
+
+  .detail-keywords-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .section-label {
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #960040;
+  }
+
+  .detail-keywords-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  .detail-keyword-chip {
+    background: #fffdf8;
+    border: 1px solid #ffe082;
+    border-radius: 8px;
+    padding: 0.3rem 0.65rem;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #2a1b1b;
+  }
+
+  .detail-full-text-box {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    background: #fffdf8;
+    border: 1px solid #f0e6d2;
+    border-radius: 12px;
+    padding: 1.1rem;
+  }
+
+  .detail-text-content {
+    font-size: 0.95rem;
+    color: #2a1b1b;
+    line-height: 1.55;
+    white-space: pre-line;
+    word-break: break-word;
+  }
+
+  .detail-modal-footer {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid #ffe082;
+    display: flex;
+    justify-content: flex-end;
+    background: #fffbf0;
+  }
+
+  .btn-modal-done {
+    background: #960040;
+    color: #ffffff;
+    border: none;
+    border-radius: 10px;
+    padding: 0.55rem 1.5rem;
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .btn-modal-done:hover {
+    background: #7d0034;
   }
 
   /* Mobile View */
@@ -1267,6 +1672,13 @@
       display: flex;
       flex-direction: column;
       gap: 0.4rem;
+      transition: all 0.2s;
+    }
+
+    .mobile-slot-card.is-clickable:hover {
+      border-color: #960040;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(150, 0, 64, 0.1);
     }
 
     .m-slot-header {
@@ -1300,11 +1712,18 @@
       color: #2a1b1b;
     }
 
-    .m-slot-body {
-      font-size: 0.88rem;
-      color: #3b2828;
-      line-height: 1.4;
-      white-space: pre-line;
+    .m-keywords-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.3rem;
+      margin-top: 0.2rem;
+    }
+
+    .m-click-note {
+      font-size: 0.72rem;
+      color: #960040;
+      font-weight: 600;
+      margin-top: 0.3rem;
     }
   }
 
@@ -1326,6 +1745,7 @@
     .btn-nav-mini,
     .btn-clear-search,
     .mobile-day-tabs,
+    .detail-modal-backdrop,
     :global(.sidebar),
     :global(.top-header),
     :global(.view-header) {
