@@ -41,6 +41,16 @@
     ) || null;
   });
 
+  let karmaTeachersList = $derived(
+    teachers.filter(t => t.roleType === 'karma_yogi' || t.roleType === 'guest_teacher' || t.stayStartDate || t.stayEndDate)
+  );
+  let externalTeachersList = $derived(
+    teachers.filter(t => t.roleType !== 'sevaka' && t.roleType !== 'karma_yogi' && t.roleType !== 'guest_teacher' && !t.stayStartDate && !t.stayEndDate)
+  );
+  let sevakaTeachersList = $derived(
+    teachers.filter(t => t.roleType === 'sevaka')
+  );
+
   // Derived filtered courses for the mobile agenda view
   let filteredMobileCourses = $derived(
     courses
@@ -353,20 +363,19 @@
         >
           <option value="">👥 Gesamtübersicht</option>
           <optgroup label="Sevakas (Team)">
-            {#each teachers.filter(t => t.roleType === 'sevaka') as t}
+            {#each sevakaTeachersList as t}
               <option value={t.id}>🧘 {t.name}</option>
             {/each}
           </optgroup>
-          {@const karmaList = teachers.filter(t => t.roleType === 'karma_yogi' || t.roleType === 'guest_teacher' || t.stayStartDate || t.stayEndDate)}
-          {#if karmaList.length > 0}
+          {#if karmaTeachersList.length > 0}
             <optgroup label="Karma-Yogis & externe Seminarleiter">
-              {#each karmaList as t}
+              {#each karmaTeachersList as t}
                 <option value={t.id}>✨ {t.name} ({t.roleType === 'guest_teacher' ? 'Gast-SL' : 'Karma-Yogi'})</option>
               {/each}
             </optgroup>
           {/if}
           <optgroup label="Externe Lehrer">
-            {#each teachers.filter(t => t.roleType !== 'sevaka' && t.roleType !== 'karma_yogi' && t.roleType !== 'guest_teacher' && !t.stayStartDate && !t.stayEndDate) as t}
+            {#each externalTeachersList as t}
               <option value={t.id}>👤 {t.name}</option>
             {/each}
           </optgroup>

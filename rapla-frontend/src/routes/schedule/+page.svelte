@@ -495,6 +495,14 @@
     return true;
   }
 
+  function getActiveKarmaInHouseForCourse(): Teacher[] {
+    return teachers.filter(t => (t.roleType === 'karma_yogi' || t.roleType === 'guest_teacher' || t.stayStartDate || t.stayEndDate) && isTeacherInHouseForCourse(t));
+  }
+
+  function getOtherKarmaGuestsForCourse(): Teacher[] {
+    return teachers.filter(t => (t.roleType === 'karma_yogi' || t.roleType === 'guest_teacher' || t.stayStartDate || t.stayEndDate) && !isTeacherInHouseForCourse(t));
+  }
+
   function handleSync() {
     if (confirm('Möchtest du den Wochenplan mit dem Server synchronisieren? Eigene ungespeicherte Änderungen am Plan werden zurückgesetzt.')) {
       db.syncDatabase();
@@ -534,6 +542,52 @@
   </div>
 </div>
 
+<!-- Sub-tab switcher: Regulärer Wochenplan vs. 4-wöchige YLA -->
+<div class="schedule-tabs-bar">
+  <button 
+    type="button" 
+    class="schedule-tab-btn" 
+    class:active={activeTab === 'regular'}
+    onclick={() => {
+      activeTab = 'regular';
+      const params = new URLSearchParams(page.url.searchParams);
+      params.delete('tab');
+      params.delete('week');
+      goto(`?${params.toString()}`);
+    }}
+  >
+    <span class="tab-icon">📅</span>
+    <span class="tab-label">Regulärer Wochenplan</span>
+  </button>
+
+  <button 
+    type="button" 
+    class="schedule-tab-btn" 
+    class:active={activeTab === 'yla'}
+    onclick={() => {
+      activeTab = 'yla';
+      const params = new URLSearchParams(page.url.searchParams);
+      params.set('tab', 'yla');
+      goto(`?${params.toString()}`);
+    }}
+  >
+    <span class="tab-icon">🧘</span>
+    <span class="tab-label">4-wöchige YLA (Unterrichtsplan)</span>
+    <span class="tab-badge">4 Wochen</span>
+  </button>
+</div>
+
+{#if activeTab === 'yla'}
+  <YlaScheduleView 
+    initialWeek={ylaWeekParam || 1} 
+    onWeekChange={(w) => {
+      const params = new URLSearchParams(page.url.searchParams);
+      params.set('tab', 'yla');
+      params.set('week', w.toString());
+      goto(`?${params.toString()}`, { replaceState: true });
+    }}
+  />
+{:else}
 <!-- Filters Toolbar on top of Calendar -->
 <div class="filters-bar glass-card">
   <div class="filter-group">
@@ -773,6 +827,7 @@
     </div>
   </div>
 </div>
+{/if}
 
 <!-- Add/Edit Course Modal -->
 {#if isModalOpen}
@@ -841,20 +896,18 @@
                 <option value={t.id}>🧘 {t.name}</option>
               {/each}
             </optgroup>
-            {@const activeInHouse = teachers.filter(t => (t.roleType === 'karma_yogi' || t.roleType === 'guest_teacher' || t.stayStartDate || t.stayEndDate) && isTeacherInHouseForCourse(t))}
-            {#if activeInHouse.length > 0}
+            {#if getActiveKarmaInHouseForCourse().length > 0}
               <optgroup label="✨ Karma-Yogis & externe Seminarleiter (Aktuell im Haus)">
-                {#each activeInHouse as t}
+                {#each getActiveKarmaInHouseForCourse() as t}
                   <option value={t.id}>
                     ✨ {t.name} ({t.roleType === 'guest_teacher' ? 'Gast-SL' : 'Karma-Yogi'} | {formatStayLabel(t)}{t.isYogaTeacher ? ' | Yoga ✓' : ''}{t.rules.canLeadMeditation ? ' | Medi ✓' : ''})
                   </option>
                 {/each}
               </optgroup>
             {/if}
-            {@const otherGuests = teachers.filter(t => (t.roleType === 'karma_yogi' || t.roleType === 'guest_teacher' || t.stayStartDate || t.stayEndDate) && !isTeacherInHouseForCourse(t))}
-            {#if otherGuests.length > 0}
+            {#if getOtherKarmaGuestsForCourse().length > 0}
               <optgroup label="⏳ Weitere Karma-Yogis & externe Seminarleiter (Anderes Zeitfenster)">
-                {#each otherGuests as t}
+                {#each getOtherKarmaGuestsForCourse() as t}
                   <option value={t.id}>
                     ⏳ {t.name} ({t.roleType === 'guest_teacher' ? 'Gast-SL' : 'Karma-Yogi'} | {formatStayLabel(t)})
                   </option>
@@ -905,6 +958,68 @@
 {/if}
 
 <style>
+  /* Schedule Sub-Tabs Switcher */
+  .schedule-tabs-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 2rem;
+    background: var(--bg-card, #ffffff);
+    padding: 0.5rem;
+    border-radius: 14px;
+    border: 1px solid var(--border-color, #ffe082);
+    box-shadow: 0 2px 10px rgba(150, 0, 64, 0.04);
+    flex-wrap: wrap;
+  }
+
+  .schedule-tab-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.65rem 1.25rem;
+    border-radius: 10px;
+    border: 1px solid transparent;
+    background: transparent;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-secondary, #6b5151);
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .schedule-tab-btn:hover {
+    background: #fff9e6;
+    color: #960040;
+  }
+
+  .schedule-tab-btn.active {
+    background: #960040;
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(150, 0, 64, 0.25);
+  }
+
+  .tab-icon {
+    font-size: 1.1rem;
+  }
+
+  .tab-label {
+    font-weight: 700;
+  }
+
+  .tab-badge {
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 0.15rem 0.5rem;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.25);
+    color: #ffffff;
+  }
+
+  .schedule-tab-btn:not(.active) .tab-badge {
+    background: #fff5cc;
+    color: #960040;
+  }
+
   .page-header {
     display: flex;
     justify-content: space-between;

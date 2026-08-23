@@ -1,0 +1,3093 @@
+[
+  {
+    "weekNumber": 1,
+    "title": "Unterrichtsplan Yoga Vidya Lehrerausbildung Intensivkurs 30.8.2026 - 4.9.2026 (1. Woche)",
+    "weekSubtitle": "1. Woche (30.08. – 04.09.2026)",
+    "dateRange": "30.08. – 04.09.2026",
+    "contactInfo": "Haus Yoga Vidya e.V. Nordsee | Wiarder Altendeich 10, 26334 Wangerland | nordsee@yoga-vidya.de",
+    "abbreviations": [
+      {
+        "abbr": "YLH",
+        "meaning": "Yogalehrer Handbuch"
+      },
+      {
+        "abbr": "Ki",
+        "meaning": "Kirtanheft"
+      },
+      {
+        "abbr": "BhG",
+        "meaning": "Bhagavad Gita"
+      },
+      {
+        "abbr": "YVA",
+        "meaning": "Yoga Vidya Asana Buch"
+      }
+    ],
+    "days": [
+      {
+        "col": "D",
+        "headerRaw": "30.8. Sonntag",
+        "dateStr": "30.8.",
+        "dayName": "Sonntag",
+        "specialFocus": ""
+      },
+      {
+        "col": "E",
+        "headerRaw": "31.8. Montag",
+        "dateStr": "31.8.",
+        "dayName": "Montag",
+        "specialFocus": ""
+      },
+      {
+        "col": "F",
+        "headerRaw": "1.9. Dienstag",
+        "dateStr": "1.9.",
+        "dayName": "Dienstag",
+        "specialFocus": ""
+      },
+      {
+        "col": "G",
+        "headerRaw": "2.9. Mittwoch",
+        "dateStr": "2.9.",
+        "dayName": "Mittwoch",
+        "specialFocus": "Gemäßigtes Schweigen                                (Kein Sprechen außerhalb  des Unterrichts bis 12 Uhr)"
+      },
+      {
+        "col": "H",
+        "headerRaw": "3.9. Donnerstag",
+        "dateStr": "3.9.",
+        "dayName": "Donnerstag",
+        "specialFocus": ""
+      },
+      {
+        "col": "I",
+        "headerRaw": "4.9. Freitag",
+        "dateStr": "4.9.",
+        "dayName": "Freitag",
+        "specialFocus": "Freier Tag 10.15-20h"
+      }
+    ],
+    "slots": [
+      {
+        "rowNumber": 10,
+        "type": "morning_lecture",
+        "label": "06:00 – 08:35 Uhr: Vortrag Teil 1, Satsang, Vortrag Teil 2",
+        "time": "06:00 - 08:35",
+        "badge": "Morgenpraxis & Philosophie",
+        "entries": {
+          "D": {
+            "text": "",
+            "isMerged": false,
+            "rawText": ""
+          },
+          "E": {
+            "text": "Was ist Meditation? Einführung in Meditation und  Mantra-Singen",
+            "isMerged": false,
+            "rawText": "Was ist Meditation? Einführung in Meditation und  Mantra-Singen"
+          },
+          "F": {
+            "text": "Konzentration und Meditation. Ratschläge für die Meditation. Hindu Mythologie: Brahma, Vishnu, Shiva, … Erläuterung von Jaya Ganesha, OM Tryambakam, Arati",
+            "isMerged": false,
+            "rawText": "Konzentration und Meditation. Ratschläge für die Meditation. Hindu Mythologie: Brahma, Vishnu, Shiva, … Erläuterung von Jaya Ganesha, OM Tryambakam, Arati"
+          },
+          "G": {
+            "text": "Stimmschulung mit Mantra-Singen: 3-Chakra-Methode; Erläuterung zum Schweigen Hindernisse und Erfahrungen in der Meditation",
+            "isMerged": false,
+            "rawText": "Stimmschulung mit Mantra-Singen: 3-Chakra-Methode; Erläuterung zum Schweigen Hindernisse und Erfahrungen in der Meditation"
+          },
+          "H": {
+            "text": "Vedanta Philosophie: 3 Körper. 5 Hüllen. 3 Gunas.",
+            "isMerged": false,
+            "rawText": "Vedanta Philosophie: 3 Körper. 5 Hüllen. 3 Gunas."
+          },
+          "I": {
+            "text": "Geschichte des Mahabharata. Einführung in die Bhagavad Gita. Hinweise zur Aussprache von Sanskrit.",
+            "isMerged": false,
+            "rawText": "Geschichte des Mahabharata. Einführung in die Bhagavad Gita. Hinweise zur Aussprache von Sanskrit."
+          }
+        }
+      },
+      {
+        "rowNumber": 11,
+        "type": "morning_practice",
+        "label": "08:45 – 11:00 Uhr: Asanas, Pranayama (Yoga Vidya Stil) & F&A Hatha Yoga",
+        "time": "08:45 - 11:00",
+        "badge": "Hatha Yoga Praxis",
+        "entries": {
+          "D": {
+            "text": "",
+            "isMerged": false,
+            "rawText": ""
+          },
+          "E": {
+            "text": "Kapalabhati, Wechselatmung Einfache Asana-Reihe. Bes.: Augenübungen, Krokodilsübungen, Nackenentspannung, Sonnengebet. Klassische Tiefenentspannung",
+            "isMerged": false,
+            "rawText": "Kapalabhati, Wechselatmung Einfache Asana-Reihe. Bes.: Augenübungen, Krokodilsübungen, Nackenentspannung, Sonnengebet. Klassische Tiefenentspannung"
+          },
+          "F": {
+            "text": "Kapalabhati, Wechselatmung Augenübungen. Schmetterling, etc.: Hilfe für Stellung mit gekreuzten Beinen. Meditations-Stellungen. Einfache Asana-Reihe. Klassische Tiefenentspannung",
+            "isMerged": false,
+            "rawText": "Kapalabhati, Wechselatmung Augenübungen. Schmetterling, etc.: Hilfe für Stellung mit gekreuzten Beinen. Meditations-Stellungen. Einfache Asana-Reihe. Klassische Tiefenentspannung"
+          },
+          "G": {
+            "text": "Kapalabhati, Wechselatmung. Yoga Vidya Stil Grundreihe. Besonders genau und exakt: Kopfstand. Klassische Tiefenentspannung",
+            "isMerged": false,
+            "rawText": "Kapalabhati, Wechselatmung. Yoga Vidya Stil Grundreihe. Besonders genau und exakt: Kopfstand. Klassische Tiefenentspannung"
+          },
+          "H": {
+            "text": "Kapalabhati, Wechselatmung. Besonders exakt und genau: Schulterstand, Pflug, Fisch, Vorwärtsbeuge, Tiefenentspannung: Autogenes Training",
+            "isMerged": false,
+            "rawText": "Kapalabhati, Wechselatmung. Besonders exakt und genau: Schulterstand, Pflug, Fisch, Vorwärtsbeuge, Tiefenentspannung: Autogenes Training"
+          },
+          "I": {
+            "text": "Bitte auch heute die Karma Yogas machen. Ansonsten frei \n10.15-20h. Für 1-Woche Teilnehmer Abreise ab ca. 11h  (nach Feedback-runde und Karma Yoga).",
+            "isMerged": false,
+            "rawText": "Bitte auch heute die Karma Yogas machen. Ansonsten frei \n10.15-20h. Für 1-Woche Teilnehmer Abreise ab ca. 11h  (nach Feedback-runde und Karma Yoga)."
+          }
+        }
+      },
+      {
+        "rowNumber": 12,
+        "type": "afternoon_lecture",
+        "label": "14:00 Uhr: Vortrag: Anatomie, Physiologie, Gesundheit & Philosophie",
+        "time": "14:00 - 15:30",
+        "badge": "Anatomie & Philosophie",
+        "entries": {
+          "D": {
+            "text": "",
+            "isMerged": false,
+            "rawText": ""
+          },
+          "E": {
+            "text": "14.30h 6 Yoga Wege: Hatha Yoga, Kundalini Yoga, Raja Yoga, Jnana Yoga, Bhakti Yoga, Karma Yoga",
+            "isMerged": false,
+            "rawText": "14.30h 6 Yoga Wege: Hatha Yoga, Kundalini Yoga, Raja Yoga, Jnana Yoga, Bhakti Yoga, Karma Yoga"
+          },
+          "F": {
+            "text": "14.00h Gajananam. Brahmarpanam. Vedanta Philosophie: Brahman, Maya, Ishwara, 3 Gunas. Sat Chid Ananda.",
+            "isMerged": false,
+            "rawText": "14.00h Gajananam. Brahmarpanam. Vedanta Philosophie: Brahman, Maya, Ishwara, 3 Gunas. Sat Chid Ananda."
+          },
+          "G": {
+            "text": "Kleine Trainingslehre. Allgemeines Anpassungsprinzip. Yogische Hausrezepte",
+            "isMerged": false,
+            "rawText": "Kleine Trainingslehre. Allgemeines Anpassungsprinzip. Yogische Hausrezepte"
+          },
+          "H": {
+            "text": "Gajananam. Übersetzung, Erläuterung, genaue Aussprache 1. Strophe. Vedanta Philosophie: Ursachen v. Krankheit anhand Modell 3 Körper/ 5 Hüllen. Fragen zu Gesundheit/Krankheit.",
+            "isMerged": false,
+            "rawText": "Gajananam. Übersetzung, Erläuterung, genaue Aussprache 1. Strophe. Vedanta Philosophie: Ursachen v. Krankheit anhand Modell 3 Körper/ 5 Hüllen. Fragen zu Gesundheit/Krankheit."
+          },
+          "I": {
+            "text": "Freizeit",
+            "isMerged": false,
+            "rawText": "Freizeit"
+          }
+        }
+      },
+      {
+        "rowNumber": 13,
+        "type": "mantras",
+        "label": "Mantras zu lernen",
+        "time": "Selbststudium",
+        "badge": "Mantras",
+        "entries": {
+          "D": {
+            "text": "",
+            "isMerged": false,
+            "rawText": ""
+          },
+          "E": {
+            "text": "14.30h 6 Yoga Wege: Hatha Yoga, Kundalini Yoga, Raja Yoga, Jnana Yoga, Bhakti Yoga, Karma Yoga",
+            "isMerged": true,
+            "rawText": ""
+          },
+          "F": {
+            "text": "Brahmarpanam 651, 2. Stophe",
+            "isMerged": false,
+            "rawText": "Brahmarpanam 651, 2. Stophe"
+          },
+          "G": {
+            "text": "Kleine Trainingslehre. Allgemeines Anpassungsprinzip. Yogische Hausrezepte",
+            "isMerged": true,
+            "rawText": ""
+          },
+          "H": {
+            "text": "Gajananam, 603, 1. Strophe",
+            "isMerged": false,
+            "rawText": "Gajananam, 603, 1. Strophe"
+          },
+          "I": {
+            "text": "Freizeit",
+            "isMerged": true,
+            "rawText": ""
+          }
+        }
+      },
+      {
+        "rowNumber": 14,
+        "type": "reading_basic",
+        "label": "Lesen: Grundwissen (YLH)",
+        "time": "Selbststudium",
+        "badge": "Grundwissen",
+        "entries": {
+          "D": {
+            "text": "",
+            "isMerged": false,
+            "rawText": ""
+          },
+          "E": {
+            "text": "YLH 1.1.-1.3 ; YLH 11.1.",
+            "isMerged": false,
+            "rawText": "YLH 1.1.-1.3 ; YLH 11.1."
+          },
+          "F": {
+            "text": "YLH 2.1.-2.3; YLH 11.2.2. und 11.5.;",
+            "isMerged": false,
+            "rawText": "YLH 2.1.-2.3; YLH 11.2.2. und 11.5.;"
+          },
+          "G": {
+            "text": "YLH 1.4.und YLH 9.3.5; 9.5; 9.8.1",
+            "isMerged": false,
+            "rawText": "YLH 1.4.und YLH 9.3.5; 9.5; 9.8.1"
+          },
+          "H": {
+            "text": "YLH 9.1 und YLH 2.4-2.8",
+            "isMerged": false,
+            "rawText": "YLH 9.1 und YLH 2.4-2.8"
+          },
+          "I": {
+            "text": "Freizeit",
+            "isMerged": true,
+            "rawText": ""
+          }
+        }
+      },
+      {
+        "rowNumber": 15,
+        "type": "reading_advanced",
+        "label": "Lesen: Aufbauwissen (YVA / Ki)",
+        "time": "Selbststudium",
+        "badge": "Aufbauwissen",
+        "entries": {
+          "D": {
+            "text": "",
+            "isMerged": false,
+            "rawText": ""
+          },
+          "E": {
+            "text": "YLH 4.1.-4.3.; YVA 8-9; YVA 28-30; Ki Nr. 1+2",
+            "isMerged": false,
+            "rawText": "YLH 4.1.-4.3.; YVA 8-9; YVA 28-30; Ki Nr. 1+2"
+          },
+          "F": {
+            "text": "YLH 4.5 -4.6.; YVA 20-22; 54-55; YVA 204-205; Ki 800-805",
+            "isMerged": false,
+            "rawText": "YLH 4.5 -4.6.; YVA 20-22; 54-55; YVA 204-205; Ki 800-805"
+          },
+          "G": {
+            "text": "YVA 75-82",
+            "isMerged": false,
+            "rawText": "YVA 75-82"
+          },
+          "H": {
+            "text": "YLH 7.1. und YLH 11.8. YVA 83-105",
+            "isMerged": false,
+            "rawText": "YLH 7.1. und YLH 11.8. YVA 83-105"
+          },
+          "I": {
+            "text": "Freizeit",
+            "isMerged": true,
+            "rawText": ""
+          }
+        }
+      },
+      {
+        "rowNumber": 16,
+        "type": "teaching_practice",
+        "label": "16:00 Uhr: Asanas/Pranayama: Unterrichtstechniken im Yoga Vidya Stil",
+        "time": "16:00 - 18:30",
+        "badge": "Unterrichtstechniken",
+        "entries": {
+          "D": {
+            "text": "Ankommensstunde",
+            "isMerged": false,
+            "rawText": "Ankommensstunde"
+          },
+          "E": {
+            "text": "Yogastunde. Korrigieren/ Hilfestellungen: Sitzhaltung; Entspannung, Krokodilsübungen Klassische Tiefenentspannung  Theorie: Hauptprinzipien des Yogaunterrichts im Yoga Vidya Stil",
+            "isMerged": false,
+            "rawText": "Yogastunde. Korrigieren/ Hilfestellungen: Sitzhaltung; Entspannung, Krokodilsübungen Klassische Tiefenentspannung  Theorie: Hauptprinzipien des Yogaunterrichts im Yoga Vidya Stil"
+          },
+          "F": {
+            "text": "Yogastunde. Korrigieren/ Hilfestellungen: Sitzhaltung, Kapalabhati, Sonnengebet. Klassische Tiefenentspannung Theorie: Yoga Vidya Reihe: Nutzen der Asanas.",
+            "isMerged": false,
+            "rawText": "Yogastunde. Korrigieren/ Hilfestellungen: Sitzhaltung, Kapalabhati, Sonnengebet. Klassische Tiefenentspannung Theorie: Yoga Vidya Reihe: Nutzen der Asanas."
+          },
+          "G": {
+            "text": "Yogastunde. Korrigieren/ Hilfestellungen: Wechselatmung Kopfstand, Rückwärtsbeugen.Klassische Tiefenentspannung",
+            "isMerged": false,
+            "rawText": "Yogastunde. Korrigieren/ Hilfestellungen: Wechselatmung Kopfstand, Rückwärtsbeugen.Klassische Tiefenentspannung"
+          },
+          "H": {
+            "text": "Yogastunde. Korrigieren/ Hilfestellungen: Schulterstand, Pflug, Fisch, Vorwärtsbeuge.Klassische Tiefenentspannung",
+            "isMerged": false,
+            "rawText": "Yogastunde. Korrigieren/ Hilfestellungen: Schulterstand, Pflug, Fisch, Vorwärtsbeuge.Klassische Tiefenentspannung"
+          },
+          "I": {
+            "text": "Freizeit",
+            "isMerged": true,
+            "rawText": ""
+          }
+        }
+      },
+      {
+        "rowNumber": 17,
+        "type": "evening_lecture",
+        "label": "19:00 – 19:50 Uhr: Vortrag",
+        "time": "19:00 - 19:50",
+        "badge": "Abendvortrag",
+        "entries": {
+          "D": {
+            "text": "",
+            "isMerged": false,
+            "rawText": ""
+          },
+          "E": {
+            "text": "Swami Sivananda",
+            "isMerged": false,
+            "rawText": "Swami Sivananda"
+          },
+          "F": {
+            "text": "",
+            "isMerged": false,
+            "rawText": ""
+          },
+          "G": {
+            "text": "Der Geist des Aspiranten",
+            "isMerged": false,
+            "rawText": "Der Geist des Aspiranten"
+          },
+          "H": {
+            "text": "Wer bin ich? Unsterblichkeit und Freiheit. Geschichte: Chudulai und Shikidwaja",
+            "isMerged": false,
+            "rawText": "Wer bin ich? Unsterblichkeit und Freiheit. Geschichte: Chudulai und Shikidwaja"
+          },
+          "I": {
+            "text": "",
+            "isMerged": false,
+            "rawText": ""
+          }
+        }
+      },
+      {
+        "rowNumber": 18,
+        "type": "satsang",
+        "label": "20:00 Uhr: Satsang & Abendprogramm",
+        "time": "20:00 - 22:00",
+        "badge": "Satsang",
+        "entries": {
+          "D": {
+            "text": "19.00 Uhr Vorstellung der Seminarteilnehmer, Einführungsgespräch, Einweihungszeremonie, Karmayogaeinteilung",
+            "isMerged": false,
+            "rawText": "19.00 Uhr Vorstellung der Seminarteilnehmer, Einführungsgespräch, Einweihungszeremonie, Karmayogaeinteilung"
+          },
+          "E": {
+            "text": "Einfache Mantra-Meditation",
+            "isMerged": false,
+            "rawText": "Einfache Mantra-Meditation"
+          },
+          "F": {
+            "text": "Freizeit oder Teilnahme am meditativen Spaziergang",
+            "isMerged": false,
+            "rawText": "Freizeit oder Teilnahme am meditativen Spaziergang"
+          },
+          "G": {
+            "text": "Komb. Mantra-Meditation",
+            "isMerged": false,
+            "rawText": "Komb. Mantra-Meditation"
+          },
+          "H": {
+            "text": "Ausdehnungsmeditation",
+            "isMerged": false,
+            "rawText": "Ausdehnungsmeditation"
+          },
+          "I": {
+            "text": "",
+            "isMerged": false,
+            "rawText": ""
+          }
+        }
+      },
+      {
+        "rowNumber": 19,
+        "type": "special_evening",
+        "label": "Zusatz / Begrüßung / Karmayoga-Einteilung",
+        "time": "21:45",
+        "badge": "Karmayoga",
+        "entries": {
+          "D": {
+            "text": "19.00 Uhr Vorstellung der Seminarteilnehmer, Einführungsgespräch, Einweihungszeremonie, Karmayogaeinteilung",
+            "isMerged": true,
+            "rawText": ""
+          },
+          "E": {
+            "text": "",
+            "isMerged": false,
+            "rawText": ""
+          },
+          "F": {
+            "text": "Freizeit oder Teilnahme am meditativen Spaziergang",
+            "isMerged": true,
+            "rawText": ""
+          },
+          "G": {
+            "text": "",
+            "isMerged": false,
+            "rawText": ""
+          },
+          "H": {
+            "text": "",
+            "isMerged": false,
+            "rawText": ""
+          },
+          "I": {
+            "text": "Begrüßung neuer TeilnehmerInnen. Vortrag: Einführung ins Karmayoga - selbstloses Dienen \n+ Karmayoga-Einteilung",
+            "isMerged": false,
+            "rawText": "Begrüßung neuer TeilnehmerInnen. Vortrag: Einführung ins Karmayoga - selbstloses Dienen \n+ Karmayoga-Einteilung"
+          }
+        }
+      }
+    ],
+    "merges": [
+      "L5:L7",
+      "M5:M7",
+      "E12:E13",
+      "G12:G13",
+      "I12:I16",
+      "D18:D19",
+      "F18:F19"
+    ],
+    "rawCells": {
+      "B2": "Druckversion für die AB-Teilnehmer",
+      "C5": "Unterrichtsplan Yoga Vidya Lehrerausbildung Intensivkurs 31.5.2026 - 5.6.2026 (1. Woche)",
+      "C6": "Berufsverband der Yoga Vidya Lehrer/-innen (BYV)e.V., Haus Yoga Vidya Bad Meinberg, Yogaweg 7, 32805 Horn-Bad Meinberg, www.Yoga-Vidya.de, Email info@yoga-vidya.de, Tel.05234-87-0, Fax–1875, Gäste:-2981; -2982",
+      "C7": "Abkürzungen: YLH=Yogalehrer Handbuch; Ki=Kirtanheft; BhG=Bhagavad Gita, YVA=Yoga Vidya Asana Buch",
+      "G8": "Gemäßigtes Schweigen                                (Kein Sprechen außerhalb  des Unterrichts bis 12 Uhr)",
+      "I8": "Freier Tag 10.15-20h",
+      "C9": "Tagesteil",
+      "D9": "31.5. Sonntag",
+      "E9": "1.6. Montag",
+      "F9": "2.6. Dienstag",
+      "G9": "3.6. Mitwoch",
+      "H9": "4.6. Donnerstag",
+      "I9": "5.6. Freitag",
+      "C10": "6 - 6:50 Uhr Vortrag Teil 1 \n7 - 8 Uhr Satsang \n8:10 - 8:35 Vortrag, Teil 2",
+      "E10": "Was ist Meditation? Einführung in Meditation und  Mantra-Singen",
+      "F10": "Konzentration und Meditation. Ratschläge für die Meditation. Hindu Mythologie: Brahma, Vishnu, Shiva, … Erläuterung von Jaya Ganesha, OM Tryambakam, Arati",
+      "G10": "Stimmschulung mit Mantra-Singen: 3-Chakra-Methode; Erläuterung zum Schweigen Hindernisse und Erfahrungen in der Meditation",
+      "H10": "Vedanta Philosophie: 3 Körper. 5 Hüllen. 3 Gunas.",
+      "I10": "Geschichte des Mahabharata. Einführung in die Bhagavad Gita. Hinweise zur Aussprache von Sanskrit.",
+      "C11": "8.45 Uhr Asanas, Pranayama: Yoga Stunden im Yoga Vidya Stil. \n10.45 Uhr Frage und Antwort  Hatha Yoga",
+      "E11": "Kapalabhati, Wechselatmung Einfache Asana-Reihe. Bes.: Augenübungen, Krokodilsübungen, Nackenentspannung, Sonnengebet. Klassische Tiefenentspannung",
+      "F11": "Kapalabhati, Wechselatmung Augenübungen. Schmetterling, etc.: Hilfe für Stellung mit gekreuzten Beinen. Meditations-Stellungen. Einfache Asana-Reihe. Klassische Tiefenentspannung",
+      "G11": "Kapalabhati, Wechselatmung. Yoga Vidya Stil Grundreihe. Besonders genau und exakt: Kopfstand. Klassische Tiefenentspannung",
+      "H11": "Kapalabhati, Wechselatmung. Besonders exakt und genau: Schulterstand, Pflug, Fisch, Vorwärtsbeuge, Tiefenentspannung: Autogenes Training",
+      "I11": "Bitte auch heute die Karma Yogas machen. Ansonsten frei \n10.15-20h. Für 1-Woche Teilnehmer Abreise ab ca. 11h  (nach Feedback-runde und Karma Yoga).",
+      "C12": "14.00 Uhr Vortrag: Anatomie, Physiologie, Gesundheit",
+      "E12": "14.30h 6 Yoga Wege: Hatha Yoga, Kundalini Yoga, Raja Yoga, Jnana Yoga, Bhakti Yoga, Karma Yoga",
+      "F12": "14.00h Gajananam. Brahmarpanam. Vedanta Philosophie: Brahman, Maya, Ishwara, 3 Gunas. Sat Chid Ananda.",
+      "G12": "Kleine Trainingslehre. Allgemeines Anpassungsprinzip. Yogische Hausrezepte",
+      "H12": "Gajananam. Übersetzung, Erläuterung, genaue Aussprache 1. Strophe. Vedanta Philosophie: Ursachen v. Krankheit anhand Modell 3 Körper/ 5 Hüllen. Fragen zu Gesundheit/Krankheit.",
+      "I12": "Freizeit",
+      "K12": "z",
+      "C13": "Mantras zu lernen",
+      "F13": "Brahmarpanam 651, 2. Stophe",
+      "H13": "Gajananam, 603, 1. Strophe",
+      "C14": "Lesen: Grundwissen",
+      "E14": "YLH 1.1.-1.3 ; YLH 11.1.",
+      "F14": "YLH 2.1.-2.3; YLH 11.2.2. und 11.5.;",
+      "G14": "YLH 1.4.und YLH 9.3.5; 9.5; 9.8.1",
+      "H14": "YLH 9.1 und YLH 2.4-2.8",
+      "C15": "Lesen: Aufbauwissen",
+      "E15": "YLH 4.1.-4.3.; YVA 8-9; YVA 28-30; Ki Nr. 1+2",
+      "F15": "YLH 4.5 -4.6.; YVA 20-22; 54-55; YVA 204-205; Ki 800-805",
+      "G15": "YVA 75-82",
+      "H15": "YLH 7.1. und YLH 11.8. YVA 83-105",
+      "C16": "16.00 Uhr Asanas/Pranayama: Unterrichtstechniken im Yoga Vidya Stil",
+      "D16": "Ankommensstunde",
+      "E16": "Yogastunde. Korrigieren/ Hilfestellungen: Sitzhaltung; Entspannung, Krokodilsübungen Klassische Tiefenentspannung  Theorie: Hauptprinzipien des Yogaunterrichts im Yoga Vidya Stil",
+      "F16": "Yogastunde. Korrigieren/ Hilfestellungen: Sitzhaltung, Kapalabhati, Sonnengebet. Klassische Tiefenentspannung Theorie: Yoga Vidya Reihe: Nutzen der Asanas.",
+      "G16": "Yogastunde. Korrigieren/ Hilfestellungen: Wechselatmung Kopfstand, Rückwärtsbeugen.Klassische Tiefenentspannung",
+      "H16": "Yogastunde. Korrigieren/ Hilfestellungen: Schulterstand, Pflug, Fisch, Vorwärtsbeuge.Klassische Tiefenentspannung",
+      "C17": "19:00 - 19:50 Uhr Vortrag",
+      "E17": "Swami Sivananda",
+      "G17": "Der Geist des Aspiranten",
+      "H17": "Wer bin ich? Unsterblichkeit und Freiheit. Geschichte: Chudulai und Shikidwaja",
+      "C18": "20.00 Uhr Satsang",
+      "D18": "19.00 Uhr Vorstellung der Seminarteilnehmer, Einführungsgespräch, Einweihungszeremonie, Karmayogaeinteilung",
+      "E18": "Einfache Mantra-Meditation",
+      "F18": "Freizeit oder Teilnahme am meditativen Spaziergang",
+      "G18": "Komb. Mantra-Meditation",
+      "H18": "Ausdehnungsmeditation",
+      "I19": "Begrüßung neuer TeilnehmerInnen. Vortrag: Einführung ins Karmayoga - selbstloses Dienen \n+ Karmayoga-Einteilung",
+      "C21": "Seite 1 von 4  Unterrichtsplan Yoga – Lehrer Ausbildung Intensiv",
+      "G21": "ã Haus Yoga Vidya e.V. Nordsee, Wiarder Altendeich 10, 26334 Wangerland",
+      "G22": "nordsee@yoga-vidya.de, www.yoga-vidya.de/nordsee"
+    }
+  },
+  {
+    "weekNumber": 2,
+    "title": "Unterrichtsplan Yoga Vidya Lehrerausbildung Intensivkurs 5.9.2026 - 11.9.2026 (2. Woche)",
+    "weekSubtitle": "2. Woche (05.09. – 11.09.2026)",
+    "dateRange": "05.09. – 11.09.2026",
+    "contactInfo": "Haus Yoga Vidya e.V. Nordsee | Wiarder Altendeich 10, 26334 Wangerland | nordsee@yoga-vidya.de",
+    "abbreviations": [
+      {
+        "abbr": "YLH",
+        "meaning": "Yogalehrer Handbuch"
+      },
+      {
+        "abbr": "Ki",
+        "meaning": "Kirtanheft"
+      },
+      {
+        "abbr": "BhG",
+        "meaning": "Bhagavad Gita"
+      },
+      {
+        "abbr": "YVA",
+        "meaning": "Yoga Vidya Asana Buch"
+      }
+    ],
+    "days": [
+      {
+        "col": "D",
+        "headerRaw": "5.9. Samstag",
+        "dateStr": "5.9.",
+        "dayName": "Samstag",
+        "specialFocus": "Karma und Reinkarnation"
+      },
+      {
+        "col": "E",
+        "headerRaw": "6.9. Sonntag",
+        "dateStr": "6.9.",
+        "dayName": "Sonntag",
+        "specialFocus": "Karma und Reinkarnation"
+      },
+      {
+        "col": "F",
+        "headerRaw": "7.9. Montag",
+        "dateStr": "7.9.",
+        "dayName": "Montag",
+        "specialFocus": ""
+      },
+      {
+        "col": "G",
+        "headerRaw": "8.9. Dienstag",
+        "dateStr": "8.9.",
+        "dayName": "Dienstag",
+        "specialFocus": ""
+      },
+      {
+        "col": "H",
+        "headerRaw": "9.9. Mittwoch",
+        "dateStr": "9.9.",
+        "dayName": "Mittwoch",
+        "specialFocus": "Gemäßigtes Schweigen               (kein  Sprechen außerhalb des Unterrichts bis 18 Uhr)"
+      },
+      {
+        "col": "I",
+        "headerRaw": "10.9. Donnerstag",
+        "dateStr": "10.9.",
+        "dayName": "Donnerstag",
+        "specialFocus": "Fastentag (Wer will); Kriya-Tag; Mantra Einweihung"
+      },
+      {
+        "col": "J",
+        "headerRaw": "11.9. Freitag",
+        "dateStr": "11.9.",
+        "dayName": "Freitag",
+        "specialFocus": "Freier Tag"
+      }
+    ],
+    "slots": [
+      {
+        "rowNumber": 11,
+        "type": "morning_lecture",
+        "label": "06:00 – 08:35 Uhr: Vortrag Teil 1, Satsang, Vortrag Teil 2",
+        "time": "06:00 - 08:35",
+        "badge": "Morgenpraxis & Philosophie",
+        "entries": {
+          "D": {
+            "text": "Karma-Modell",
+            "isMerged": false,
+            "rawText": "Karma-Modell"
+          },
+          "E": {
+            "text": "Leben nach dem Tod, Geister und Astralwesen",
+            "isMerged": false,
+            "rawText": "Leben nach dem Tod, Geister und Astralwesen"
+          },
+          "F": {
+            "text": "4 Wünsche und Ashramas",
+            "isMerged": false,
+            "rawText": "4 Wünsche und Ashramas"
+          },
+          "G": {
+            "text": "Richtige Ernährung, Vegetarismus, 3 Gunas, Hauptnahrungsgruppen, Fasten",
+            "isMerged": false,
+            "rawText": "Richtige Ernährung, Vegetarismus, 3 Gunas, Hauptnahrungsgruppen, Fasten"
+          },
+          "H": {
+            "text": "Mantras für die Meditation, Mantras Teil 1",
+            "isMerged": false,
+            "rawText": "Mantras für die Meditation, Mantras Teil 1"
+          },
+          "I": {
+            "text": "Die 6 Kriyas",
+            "isMerged": false,
+            "rawText": "Die 6 Kriyas"
+          },
+          "J": {
+            "text": "Frage & Antwort",
+            "isMerged": false,
+            "rawText": "Frage & Antwort"
+          }
+        }
+      },
+      {
+        "rowNumber": 12,
+        "type": "morning_practice",
+        "label": "08:45 – 11:00 Uhr: Asanas, Pranayama (Yoga Vidya Stil) & F&A Hatha Yoga",
+        "time": "08:45 - 11:00",
+        "badge": "Hatha Yoga Praxis",
+        "entries": {
+          "D": {
+            "text": "Grundstunde, besonders exakt und genau: Skorpion, Drehsitz, Krähe, Pfau, Stehende Vorwärtsbeuge, Dreieck. Klassische Tiefenentspannung",
+            "isMerged": false,
+            "rawText": "Grundstunde, besonders exakt und genau: Skorpion, Drehsitz, Krähe, Pfau, Stehende Vorwärtsbeuge, Dreieck. Klassische Tiefenentspannung"
+          },
+          "E": {
+            "text": "Grundstunde. Besonders exakt und genau: Rückbeugen: Kobra, Heuschrecke, Bogen.Tiefenentspannung: Traumreise",
+            "isMerged": false,
+            "rawText": "Grundstunde. Besonders exakt und genau: Rückbeugen: Kobra, Heuschrecke, Bogen.Tiefenentspannung: Traumreise"
+          },
+          "F": {
+            "text": "Variationen:  Fordernde Asanas im Stehen (Vira Bhadrasana), Umkehrstellungen (Handstand, Skorpion, Kopfstand-Variationen). Tiefenentspannung: Traumreise",
+            "isMerged": false,
+            "rawText": "Variationen:  Fordernde Asanas im Stehen (Vira Bhadrasana), Umkehrstellungen (Handstand, Skorpion, Kopfstand-Variationen). Tiefenentspannung: Traumreise"
+          },
+          "G": {
+            "text": "Yoga für den Rücken. Tiefenentspannung über das Fühlen: Schwere,  Energie, Ausdehnung (Shavasana Nr. 3, YLH S. 111)",
+            "isMerged": false,
+            "rawText": "Yoga für den Rücken. Tiefenentspannung über das Fühlen: Schwere,  Energie, Ausdehnung (Shavasana Nr. 3, YLH S. 111)"
+          },
+          "H": {
+            "text": "Yoga für den Rücken. Insbesondere auch  isometrische Halsübungen, Tiefenentspannung über das Fühlen: Schwere,  Energie, Ausdehnung (Shavasana Nr. 3, YLH S. 111)",
+            "isMerged": false,
+            "rawText": "Yoga für den Rücken. Insbesondere auch  isometrische Halsübungen, Tiefenentspannung über das Fühlen: Schwere,  Energie, Ausdehnung (Shavasana Nr. 3, YLH S. 111)"
+          },
+          "I": {
+            "text": "Kriyas                        \n                              \n\n\n11:45 Uhr Mantra-Einweihung möglich",
+            "isMerged": false,
+            "rawText": "Kriyas                        \n                              \n\n\n11:45 Uhr Mantra-Einweihung möglich"
+          },
+          "J": {
+            "text": "Für heute Abreisende Abreise ab ca. 11h (nach Feedbackrunde und Karma Yoga).",
+            "isMerged": false,
+            "rawText": "Für heute Abreisende Abreise ab ca. 11h (nach Feedbackrunde und Karma Yoga)."
+          }
+        }
+      },
+      {
+        "rowNumber": 14,
+        "type": "gita",
+        "label": "14:00 Uhr: Bhagavad Gita",
+        "time": "14:00 - 14:35",
+        "badge": "Bhagavad Gita",
+        "entries": {
+          "D": {
+            "text": "Übersetzung/Erklärung: Shadananam... ; Bhagavad Gita: II 11-20",
+            "isMerged": false,
+            "rawText": "Übersetzung/Erklärung: Shadananam... ; Bhagavad Gita: II 11-20"
+          },
+          "E": {
+            "text": "Bhagavad Gita II 39-50",
+            "isMerged": false,
+            "rawText": "Bhagavad Gita II 39-50"
+          },
+          "F": {
+            "text": "Übersetzung/Erklärung: Ya Kundendu; Bhagavad Gita II 54-65",
+            "isMerged": false,
+            "rawText": "Übersetzung/Erklärung: Ya Kundendu; Bhagavad Gita II 54-65"
+          },
+          "G": {
+            "text": "Bhagavad Gita III 1-13",
+            "isMerged": false,
+            "rawText": "Bhagavad Gita III 1-13"
+          },
+          "H": {
+            "text": "Übersetzung 4. Strophe Dhyana Shlokas; Bhagavad Gita III 36-43",
+            "isMerged": false,
+            "rawText": "Übersetzung 4. Strophe Dhyana Shlokas; Bhagavad Gita III 36-43"
+          },
+          "I": {
+            "text": "Bhagavad Gita IV 1-8",
+            "isMerged": false,
+            "rawText": "Bhagavad Gita IV 1-8"
+          },
+          "J": {
+            "text": "Bitte auch heute die Karma Yogas machen. Ansonsten frei bis 20 Uhr.",
+            "isMerged": false,
+            "rawText": "Bitte auch heute die Karma Yogas machen. Ansonsten frei bis 20 Uhr."
+          }
+        }
+      },
+      {
+        "rowNumber": 15,
+        "type": "afternoon_lecture",
+        "label": "14:35 Uhr: Vortrag: Anatomie, Physiologie, Gesundheit",
+        "time": "14:35 - 15:30",
+        "badge": "Anatomie & Gesundheit",
+        "entries": {
+          "D": {
+            "text": "Reinkarnation",
+            "isMerged": false,
+            "rawText": "Reinkarnation"
+          },
+          "E": {
+            "text": "Sitali, Sitkari, Bhramari. Richtige Atmung: Anatomie, Physiologie",
+            "isMerged": false,
+            "rawText": "Sitali, Sitkari, Bhramari. Richtige Atmung: Anatomie, Physiologie"
+          },
+          "F": {
+            "text": "Sitali, Sitkari, Bhramari. Richtige Atmung:  Prana und Astralkörper. Atmung  im täglichen Leben",
+            "isMerged": false,
+            "rawText": "Sitali, Sitkari, Bhramari. Richtige Atmung:  Prana und Astralkörper. Atmung  im täglichen Leben"
+          },
+          "G": {
+            "text": "Denken: Der menschl. Geist. 4 Teile d. Antahkarana. Gedankenkraft und pos. Denken  Entwicklung positiver Eigenschaften",
+            "isMerged": false,
+            "rawText": "Denken: Der menschl. Geist. 4 Teile d. Antahkarana. Gedankenkraft und pos. Denken  Entwicklung positiver Eigenschaften"
+          },
+          "H": {
+            "text": "Yoga für d. Rücken Teil 1 Anatomie: Wirbelsäule, Rückenmuskeln",
+            "isMerged": false,
+            "rawText": "Yoga für d. Rücken Teil 1 Anatomie: Wirbelsäule, Rückenmuskeln"
+          },
+          "I": {
+            "text": "Yoga für den Rücken, Teil 2: Vorbeugung und Therapie von Rückenschmerzen",
+            "isMerged": false,
+            "rawText": "Yoga für den Rücken, Teil 2: Vorbeugung und Therapie von Rückenschmerzen"
+          },
+          "J": {
+            "text": "Freizeit",
+            "isMerged": false,
+            "rawText": "Freizeit"
+          }
+        }
+      },
+      {
+        "rowNumber": 16,
+        "type": "mantras",
+        "label": "Mantras zu lernen",
+        "time": "Selbststudium",
+        "badge": "Mantras",
+        "entries": {
+          "D": {
+            "text": "Gajananam 2. Strophe (“Shadananam... ”)",
+            "isMerged": false,
+            "rawText": "Gajananam 2. Strophe (“Shadananam... ”)"
+          },
+          "E": {
+            "text": "Sitali, Sitkari, Bhramari. Richtige Atmung: Anatomie, Physiologie",
+            "isMerged": true,
+            "rawText": ""
+          },
+          "F": {
+            "text": "Gajananam 3. Strophe (“Ya Kundendu ... ”)",
+            "isMerged": false,
+            "rawText": "Gajananam 3. Strophe (“Ya Kundendu ... ”)"
+          },
+          "G": {
+            "text": "Denken: Der menschl. Geist. 4 Teile d. Antahkarana. Gedankenkraft und pos. Denken  Entwicklung positiver Eigenschaften",
+            "isMerged": true,
+            "rawText": ""
+          },
+          "H": {
+            "text": "Gajananam 4. Strophe (“Om Namah Shivaya... ”)",
+            "isMerged": false,
+            "rawText": "Gajananam 4. Strophe (“Om Namah Shivaya... ”)"
+          },
+          "I": {
+            "text": "Yoga für den Rücken, Teil 2: Vorbeugung und Therapie von Rückenschmerzen",
+            "isMerged": true,
+            "rawText": ""
+          },
+          "J": {
+            "text": "Freizeit",
+            "isMerged": true,
+            "rawText": ""
+          }
+        }
+      },
+      {
+        "rowNumber": 17,
+        "type": "reading_basic",
+        "label": "Lesen: Grundwissen (YLH)",
+        "time": "Selbststudium",
+        "badge": "Grundwissen",
+        "entries": {
+          "D": {
+            "text": "YLH 2.9.-2.10",
+            "isMerged": false,
+            "rawText": "YLH 2.9.-2.10"
+          },
+          "E": {
+            "text": "YLH  2.11  YLH 10.3.-10.3.8  YLH 11.2.4.-11.2.5",
+            "isMerged": false,
+            "rawText": "YLH  2.11  YLH 10.3.-10.3.8  YLH 11.2.4.-11.2.5"
+          },
+          "F": {
+            "text": "YLH 2.12 und YLH 4.9",
+            "isMerged": false,
+            "rawText": "YLH 2.12 und YLH 4.9"
+          },
+          "G": {
+            "text": "YLH 9.2. und YLH 11.7",
+            "isMerged": false,
+            "rawText": "YLH 9.2. und YLH 11.7"
+          },
+          "H": {
+            "text": "YLH 4.4 und YLH 10.2.2.",
+            "isMerged": false,
+            "rawText": "YLH 4.4 und YLH 10.2.2."
+          },
+          "I": {
+            "text": "YLH 9.6",
+            "isMerged": false,
+            "rawText": "YLH 9.6"
+          },
+          "J": {
+            "text": "Freizeit",
+            "isMerged": true,
+            "rawText": ""
+          }
+        }
+      },
+      {
+        "rowNumber": 18,
+        "type": "reading_advanced",
+        "label": "Lesen: Aufbauwissen (YVA / Ki)",
+        "time": "Selbststudium",
+        "badge": "Aufbauwissen",
+        "entries": {
+          "D": {
+            "text": "YLH 11.2.1; YVA 117-131",
+            "isMerged": false,
+            "rawText": "YLH 11.2.1; YVA 117-131"
+          },
+          "E": {
+            "text": "YLH 11.2.3.; YVA 107-116",
+            "isMerged": false,
+            "rawText": "YLH 11.2.3.; YVA 107-116"
+          },
+          "F": {
+            "text": "YLH  6.1.-6.3.; YVA 134/135; YVA 139-143",
+            "isMerged": false,
+            "rawText": "YLH  6.1.-6.3.; YVA 134/135; YVA 139-143"
+          },
+          "G": {
+            "text": "YLH 4.8",
+            "isMerged": false,
+            "rawText": "YLH 4.8"
+          },
+          "H": {
+            "text": "YLH 4.7  YVA 24-25",
+            "isMerged": false,
+            "rawText": "YLH 4.7  YVA 24-25"
+          },
+          "I": {
+            "text": "YLH 7.2",
+            "isMerged": false,
+            "rawText": "YLH 7.2"
+          },
+          "J": {
+            "text": "Freizeit",
+            "isMerged": true,
+            "rawText": ""
+          }
+        }
+      },
+      {
+        "rowNumber": 19,
+        "type": "teaching_practice",
+        "label": "16:00 Uhr: Asanas/Pranayama: Unterrichtstechniken (Unterrichtsgruppen)",
+        "time": "16:00 - 18:30",
+        "badge": "Unterrichtsgruppen",
+        "entries": {
+          "D": {
+            "text": "Yogastunde. Korrigieren/ Hilfestellungen: Skorpion, Drehsitz, Krähe, Pfau,  Stehübungen. Klass. TE Erklärung/Einteilung der U.-Gruppen.",
+            "isMerged": false,
+            "rawText": "Yogastunde. Korrigieren/ Hilfestellungen: Skorpion, Drehsitz, Krähe, Pfau,  Stehübungen. Klass. TE Erklärung/Einteilung der U.-Gruppen."
+          },
+          "E": {
+            "text": "Yogastunde. Wiederholung Korrekturen. Klassische Tiefenentspannung. Wiederholung Unterrichtsprinzipien Yoga Vidya Stil",
+            "isMerged": false,
+            "rawText": "Yogastunde. Wiederholung Korrekturen. Klassische Tiefenentspannung. Wiederholung Unterrichtsprinzipien Yoga Vidya Stil"
+          },
+          "F": {
+            "text": "Unterrichtsgruppen 1/1: Yoga Vidya Grundreihe ohne Skorpion/ Variationen (siehe YLH 11.2.2)",
+            "isMerged": false,
+            "rawText": "Unterrichtsgruppen 1/1: Yoga Vidya Grundreihe ohne Skorpion/ Variationen (siehe YLH 11.2.2)"
+          },
+          "G": {
+            "text": "Unterrichtsgruppen 1/2: Yoga Vidya Grundreihe ohne Skorpion/ Variationen (siehe YLH 11.2.2)",
+            "isMerged": false,
+            "rawText": "Unterrichtsgruppen 1/2: Yoga Vidya Grundreihe ohne Skorpion/ Variationen (siehe YLH 11.2.2)"
+          },
+          "H": {
+            "text": "Unterrichtsgruppen 1/3: Yoga Vidya Grundreihe ohne Skorpion/ Variationen (siehe YLH 11.2.2)",
+            "isMerged": false,
+            "rawText": "Unterrichtsgruppen 1/3: Yoga Vidya Grundreihe ohne Skorpion/ Variationen (siehe YLH 11.2.2)"
+          },
+          "I": {
+            "text": "Unterrichtsgruppen 1/4: Yoga Vidya Grundreihe ohne Skorpion/ Variationen (siehe YLH 11.2.2)",
+            "isMerged": false,
+            "rawText": "Unterrichtsgruppen 1/4: Yoga Vidya Grundreihe ohne Skorpion/ Variationen (siehe YLH 11.2.2)"
+          },
+          "J": {
+            "text": "Freizeit",
+            "isMerged": true,
+            "rawText": ""
+          }
+        }
+      },
+      {
+        "rowNumber": 21,
+        "type": "evening_lecture",
+        "label": "19:00 – 19:50 Uhr: Vortrag",
+        "time": "19:00 - 19:50",
+        "badge": "Abendvortrag",
+        "entries": {
+          "D": {
+            "text": "",
+            "isMerged": false,
+            "rawText": ""
+          },
+          "E": {
+            "text": "bunter Abend",
+            "isMerged": false,
+            "rawText": "bunter Abend"
+          },
+          "F": {
+            "text": "Raja Yoga: Ashtangas: Die 8 Stufen des Yoga",
+            "isMerged": false,
+            "rawText": "Raja Yoga: Ashtangas: Die 8 Stufen des Yoga"
+          },
+          "G": {
+            "text": "19:00 - 19:45 Uhr Info Mantra-Einweihung (freiwillig)\n\nFreizeit",
+            "isMerged": false,
+            "rawText": "19:00 - 19:45 Uhr Info Mantra-Einweihung (freiwillig)\n\nFreizeit"
+          },
+          "H": {
+            "text": "Mantras Teil 2: 6 Teile des Mantras\nTratak-Meditation",
+            "isMerged": false,
+            "rawText": "Mantras Teil 2: 6 Teile des Mantras\nTratak-Meditation"
+          },
+          "I": {
+            "text": "Raja Yoga: 5 Zustände des Geistes",
+            "isMerged": false,
+            "rawText": "Raja Yoga: 5 Zustände des Geistes"
+          },
+          "J": {
+            "text": "",
+            "isMerged": false,
+            "rawText": ""
+          }
+        }
+      },
+      {
+        "rowNumber": 22,
+        "type": "satsang",
+        "label": "20:00 Uhr: Satsang & Abendprogramm",
+        "time": "20:00 - 22:00",
+        "badge": "Satsang",
+        "entries": {
+          "D": {
+            "text": "Ausdehnungsmeditation",
+            "isMerged": false,
+            "rawText": "Ausdehnungsmeditation"
+          },
+          "E": {
+            "text": "bunter Abend",
+            "isMerged": true,
+            "rawText": ""
+          },
+          "F": {
+            "text": "Energie-Meditation",
+            "isMerged": false,
+            "rawText": "Energie-Meditation"
+          },
+          "G": {
+            "text": "",
+            "isMerged": false,
+            "rawText": ""
+          },
+          "H": {
+            "text": "komb. Mantrameditation",
+            "isMerged": false,
+            "rawText": "komb. Mantrameditation"
+          },
+          "I": {
+            "text": "Eigenschaftsmeditation",
+            "isMerged": false,
+            "rawText": "Eigenschaftsmeditation"
+          },
+          "J": {
+            "text": "",
+            "isMerged": false,
+            "rawText": ""
+          }
+        }
+      },
+      {
+        "rowNumber": 23,
+        "type": "special_evening",
+        "label": "Langer Satsang / Chakra-Methode / Karmayoga-Einteilung",
+        "time": "21:45",
+        "badge": "Karmayoga",
+        "entries": {
+          "D": {
+            "text": "langer Satsang",
+            "isMerged": false,
+            "rawText": "langer Satsang"
+          },
+          "E": {
+            "text": "bunter Abend",
+            "isMerged": true,
+            "rawText": ""
+          },
+          "F": {
+            "text": "",
+            "isMerged": false,
+            "rawText": ""
+          },
+          "G": {
+            "text": "",
+            "isMerged": false,
+            "rawText": ""
+          },
+          "H": {
+            "text": "",
+            "isMerged": false,
+            "rawText": ""
+          },
+          "I": {
+            "text": "",
+            "isMerged": false,
+            "rawText": ""
+          },
+          "J": {
+            "text": "Begrüßung neuer Seminarteilnehmer; Die 7-Chakra-Methode (Singen, Sprechen); 21.45h Karmayoga Einteilung.",
+            "isMerged": false,
+            "rawText": "Begrüßung neuer Seminarteilnehmer; Die 7-Chakra-Methode (Singen, Sprechen); 21.45h Karmayoga Einteilung."
+          }
+        }
+      }
+    ],
+    "merges": [
+      "M5:M7",
+      "C12:C13",
+      "D12:D13",
+      "E12:E13",
+      "F12:F13",
+      "G12:G13",
+      "H12:H13",
+      "I12:I13",
+      "J12:J13",
+      "E15:E16",
+      "G15:G16",
+      "I15:I16",
+      "J15:J20",
+      "C19:C20",
+      "D19:D20",
+      "E19:E20",
+      "F19:F20",
+      "G19:G20",
+      "H19:H20",
+      "I19:I20",
+      "E21:E23"
+    ],
+    "rawCells": {
+      "B2": "Druckversion für die AB-Teilnehmer",
+      "C5": "Unterrichtsplan Yoga Vidya Lehrerausbildung Intensivkurs 31.5.2026 - 5.6.2026 (2. Woche)",
+      "C6": "Bund der Yoga Vidya Lehrer, Haus Yoga Vidya Bad Meinberg, Yogaweg 7, 32805 Horn-Bad Meinberg, Internet www.Yoga-Vidya.de, Email info@yoga-vidya.de, Tel. 05234-87-0, Fax –1875, Gäste:-2981; -2982",
+      "C7": "Abkürzungen: YLH=Yogalehrer Handbuch; Ki=Kirtanheft; BhG=Bhagavad Gita, YVA=Yoga Vidya Asana Buch",
+      "D8": "Karma und Reinkarnation",
+      "E8": "Karma und Reinkarnation",
+      "H8": "Gemäßigtes Schweigen               (kein  Sprechen außerhalb des Unterrichts bis 18 Uhr)",
+      "I8": "Fastentag (Wer will); Kriya-Tag; Mantra Einweihung",
+      "J8": "Freier Tag",
+      "C9": "Tagesteil",
+      "D9": "6.6. Samstag",
+      "E9": "7.6. Sonntag",
+      "F9": "8.6. Montag",
+      "G9": "9.6. Dienstag",
+      "H9": "10.6. Mittwoch",
+      "I9": "11.6. Donnerstag",
+      "J9": "12.6. Freitag",
+      "C11": "6 - 6:50 Uhr Vortrag Teil 1 \n7 - 8 Uhr Satsang \n8:10 - 8:35 Vortrag, Teil 2",
+      "D11": "Karma-Modell",
+      "E11": "Leben nach dem Tod, Geister und Astralwesen",
+      "F11": "4 Wünsche und Ashramas",
+      "G11": "Richtige Ernährung, Vegetarismus, 3 Gunas, Hauptnahrungsgruppen, Fasten",
+      "H11": "Mantras für die Meditation, Mantras Teil 1",
+      "I11": "Die 6 Kriyas",
+      "J11": "Frage & Antwort",
+      "C12": "8.45 Uhr Asanas, Pranayama: Yoga Stunden im Yoga Vidya Stil. 10.45 Uhr Frage und Antwort  Hatha Yoga",
+      "D12": "Grundstunde, besonders exakt und genau: Skorpion, Drehsitz, Krähe, Pfau, Stehende Vorwärtsbeuge, Dreieck. Klassische Tiefenentspannung",
+      "E12": "Grundstunde. Besonders exakt und genau: Rückbeugen: Kobra, Heuschrecke, Bogen.Tiefenentspannung: Traumreise",
+      "F12": "Variationen:  Fordernde Asanas im Stehen (Vira Bhadrasana), Umkehrstellungen (Handstand, Skorpion, Kopfstand-Variationen). Tiefenentspannung: Traumreise",
+      "G12": "Yoga für den Rücken. Tiefenentspannung über das Fühlen: Schwere,  Energie, Ausdehnung (Shavasana Nr. 3, YLH S. 111)",
+      "H12": "Yoga für den Rücken. Insbesondere auch  isometrische Halsübungen, Tiefenentspannung über das Fühlen: Schwere,  Energie, Ausdehnung (Shavasana Nr. 3, YLH S. 111)",
+      "I12": "Kriyas                        \n                              \n\n\n11:45 Uhr Mantra-Einweihung möglich",
+      "J12": "Für heute Abreisende Abreise ab ca. 11h (nach Feedbackrunde und Karma Yoga).",
+      "C14": "14 Uhr Bhagavad Gita",
+      "D14": "Übersetzung/Erklärung: Shadananam... ; Bhagavad Gita: II 11-20",
+      "E14": "Bhagavad Gita II 39-50",
+      "F14": "Übersetzung/Erklärung: Ya Kundendu; Bhagavad Gita II 54-65",
+      "G14": "Bhagavad Gita III 1-13",
+      "H14": "Übersetzung 4. Strophe Dhyana Shlokas; Bhagavad Gita III 36-43",
+      "I14": "Bhagavad Gita IV 1-8",
+      "J14": "Bitte auch heute die Karma Yogas machen. Ansonsten frei bis 20 Uhr.",
+      "C15": "14.35 Uhr Vortrag: Anatomie, Physiologie, Gesundheit",
+      "D15": "Reinkarnation",
+      "E15": "Sitali, Sitkari, Bhramari. Richtige Atmung: Anatomie, Physiologie",
+      "F15": "Sitali, Sitkari, Bhramari. Richtige Atmung:  Prana und Astralkörper. Atmung  im täglichen Leben",
+      "G15": "Denken: Der menschl. Geist. 4 Teile d. Antahkarana. Gedankenkraft und pos. Denken  Entwicklung positiver Eigenschaften",
+      "H15": "Yoga für d. Rücken Teil 1 Anatomie: Wirbelsäule, Rückenmuskeln",
+      "I15": "Yoga für den Rücken, Teil 2: Vorbeugung und Therapie von Rückenschmerzen",
+      "J15": "Freizeit",
+      "C16": "Mantras zu lernen",
+      "D16": "Gajananam 2. Strophe (“Shadananam... ”)",
+      "F16": "Gajananam 3. Strophe (“Ya Kundendu ... ”)",
+      "H16": "Gajananam 4. Strophe (“Om Namah Shivaya... ”)",
+      "C17": "Lesen: Grundwissen",
+      "D17": "YLH 2.9.-2.10",
+      "E17": "YLH  2.11  YLH 10.3.-10.3.8  YLH 11.2.4.-11.2.5",
+      "F17": "YLH 2.12 und YLH 4.9",
+      "G17": "YLH 9.2. und YLH 11.7",
+      "H17": "YLH 4.4 und YLH 10.2.2.",
+      "I17": "YLH 9.6",
+      "C18": "Lesen: Aufbauwissen",
+      "D18": "YLH 11.2.1; YVA 117-131",
+      "E18": "YLH 11.2.3.; YVA 107-116",
+      "F18": "YLH  6.1.-6.3.; YVA 134/135; YVA 139-143",
+      "G18": "YLH 4.8",
+      "H18": "YLH 4.7  YVA 24-25",
+      "I18": "YLH 7.2",
+      "C19": "16.00 Uhr Asanas/Pranayama: Unterrichtstechniken im Yoga Vidya Stil",
+      "D19": "Yogastunde. Korrigieren/ Hilfestellungen: Skorpion, Drehsitz, Krähe, Pfau,  Stehübungen. Klass. TE Erklärung/Einteilung der U.-Gruppen.",
+      "E19": "Yogastunde. Wiederholung Korrekturen. Klassische Tiefenentspannung. Wiederholung Unterrichtsprinzipien Yoga Vidya Stil",
+      "F19": "Unterrichtsgruppen 1/1: Yoga Vidya Grundreihe ohne Skorpion/ Variationen (siehe YLH 11.2.2)",
+      "G19": "Unterrichtsgruppen 1/2: Yoga Vidya Grundreihe ohne Skorpion/ Variationen (siehe YLH 11.2.2)",
+      "H19": "Unterrichtsgruppen 1/3: Yoga Vidya Grundreihe ohne Skorpion/ Variationen (siehe YLH 11.2.2)",
+      "I19": "Unterrichtsgruppen 1/4: Yoga Vidya Grundreihe ohne Skorpion/ Variationen (siehe YLH 11.2.2)",
+      "C21": "19 - 19:50 Uhr Vortrag",
+      "E21": "bunter Abend",
+      "F21": "Raja Yoga: Ashtangas: Die 8 Stufen des Yoga",
+      "G21": "19:00 - 19:45 Uhr Info Mantra-Einweihung (freiwillig)\n\nFreizeit",
+      "H21": "Mantras Teil 2: 6 Teile des Mantras\nTratak-Meditation",
+      "I21": "Raja Yoga: 5 Zustände des Geistes",
+      "C22": "20.00 Uhr Satsang",
+      "D22": "Ausdehnungsmeditation",
+      "F22": "Energie-Meditation",
+      "H22": "komb. Mantrameditation",
+      "I22": "Eigenschaftsmeditation",
+      "D23": "langer Satsang",
+      "J23": "Begrüßung neuer Seminarteilnehmer; Die 7-Chakra-Methode (Singen, Sprechen); 21.45h Karmayoga Einteilung.",
+      "C25": "Seite 2 von 4  Unterrichtsplan Yoga – Lehrer Ausbildung Intensiv",
+      "G25": "ã Haus Yoga Vidya e.V. Nordsee, Wiarder Altendeich 10, 26334 Wangerland",
+      "G26": "nordsee@yoga-vidya.de, www.yoga-vidya.de/nordsee"
+    }
+  },
+  {
+    "weekNumber": 3,
+    "title": "Unterrichtsplan Yoga Vidya Lehrerausbildung Intensivkurs 12.9.2026 - 18.9.2026 (3. Woche)",
+    "weekSubtitle": "3. Woche (12.09. – 18.09.2026)",
+    "dateRange": "12.09. – 18.09.2026",
+    "contactInfo": "Haus Yoga Vidya e.V. Nordsee | Wiarder Altendeich 10, 26334 Wangerland | nordsee@yoga-vidya.de",
+    "abbreviations": [
+      {
+        "abbr": "YLH",
+        "meaning": "Yogalehrer Handbuch"
+      },
+      {
+        "abbr": "Ki",
+        "meaning": "Kirtanheft"
+      },
+      {
+        "abbr": "BhG",
+        "meaning": "Bhagavad Gita"
+      },
+      {
+        "abbr": "YVA",
+        "meaning": "Yoga Vidya Asana Buch"
+      }
+    ],
+    "days": [
+      {
+        "col": "D",
+        "headerRaw": "12.9. Samstag",
+        "dateStr": "12.9.",
+        "dayName": "Samstag",
+        "specialFocus": ""
+      },
+      {
+        "col": "E",
+        "headerRaw": "13.9. Sonntag",
+        "dateStr": "13.9.",
+        "dayName": "Sonntag",
+        "specialFocus": ""
+      },
+      {
+        "col": "F",
+        "headerRaw": "14.9. Montag",
+        "dateStr": "14.9.",
+        "dayName": "Montag",
+        "specialFocus": "Kundalini Yoga im Yoga Vidya Stil"
+      },
+      {
+        "col": "G",
+        "headerRaw": "15.9. Dienstag",
+        "dateStr": "15.9.",
+        "dayName": "Dienstag",
+        "specialFocus": "Kundalini Yoga im Yoga Vidya Stil"
+      },
+      {
+        "col": "H",
+        "headerRaw": "16.9. Mittwoch",
+        "dateStr": "16.9.",
+        "dayName": "Mittwoch",
+        "specialFocus": "Schweigen      \n(kein Sprechen außerhalb des Unterrichts ganzen Tag)"
+      },
+      {
+        "col": "I",
+        "headerRaw": "17.9. Donnerstag",
+        "dateStr": "17.9.",
+        "dayName": "Donnerstag",
+        "specialFocus": "Fastentag (Wer will); Mantraweihe (freiwillig)"
+      },
+      {
+        "col": "J",
+        "headerRaw": "18.9. Freitag",
+        "dateStr": "18.9.",
+        "dayName": "Freitag",
+        "specialFocus": "Freier Tag"
+      }
+    ],
+    "slots": [
+      {
+        "rowNumber": 10,
+        "type": "early_practice",
+        "label": "09:15 Uhr / Frühe Praxis: Pranayama, Mudras, Bandhas (Höhere Stufen)",
+        "time": "09:15",
+        "badge": "Intensiv-Praxis",
+        "entries": {
+          "D": {
+            "text": "",
+            "isMerged": false,
+            "rawText": ""
+          },
+          "E": {
+            "text": "",
+            "isMerged": false,
+            "rawText": ""
+          },
+          "F": {
+            "text": "",
+            "isMerged": false,
+            "rawText": ""
+          },
+          "G": {
+            "text": "Praxis: Intensives Pranayama, Mudras.. Bandhas: Die höheren Stufen des Hatha Yoga (bis 9.00 Uhr).",
+            "isMerged": false,
+            "rawText": "Praxis: Intensives Pranayama, Mudras.. Bandhas: Die höheren Stufen des Hatha Yoga (bis 9.00 Uhr)."
+          },
+          "H": {
+            "text": "",
+            "isMerged": false,
+            "rawText": ""
+          },
+          "I": {
+            "text": "",
+            "isMerged": false,
+            "rawText": ""
+          },
+          "J": {
+            "text": "",
+            "isMerged": false,
+            "rawText": ""
+          }
+        }
+      },
+      {
+        "rowNumber": 11,
+        "type": "morning_lecture",
+        "label": "06:00 – 08:35 Uhr: Vortrag Teil 1, Satsang, Vortrag Teil 2",
+        "time": "06:00 - 08:35",
+        "badge": "Morgenpraxis & Philosophie",
+        "entries": {
+          "D": {
+            "text": "7 Bhumikas, Teil 1",
+            "isMerged": false,
+            "rawText": "7 Bhumikas, Teil 1"
+          },
+          "E": {
+            "text": "7 Bhumikas, Teil 2",
+            "isMerged": false,
+            "rawText": "7 Bhumikas, Teil 2"
+          },
+          "F": {
+            "text": "Sitali, Sitkari.  Prana, Nadis, Chakras 1",
+            "isMerged": false,
+            "rawText": "Sitali, Sitkari.  Prana, Nadis, Chakras 1"
+          },
+          "G": {
+            "text": "Praxis: Intensives Pranayama, Mudras.. Bandhas: Die höheren Stufen des Hatha Yoga (bis 9.00 Uhr).",
+            "isMerged": true,
+            "rawText": ""
+          },
+          "H": {
+            "text": "Kundalini Yoga Kosmologie: Shiva-Shakti Philosophie",
+            "isMerged": false,
+            "rawText": "Kundalini Yoga Kosmologie: Shiva-Shakti Philosophie"
+          },
+          "I": {
+            "text": "Unterrichtstechniken: Yoga für Kinder",
+            "isMerged": false,
+            "rawText": "Unterrichtstechniken: Yoga für Kinder"
+          },
+          "J": {
+            "text": "Mentales Training: Wissen und bekommen, was man wirklich will.",
+            "isMerged": false,
+            "rawText": "Mentales Training: Wissen und bekommen, was man wirklich will."
+          }
+        }
+      },
+      {
+        "rowNumber": 12,
+        "type": "morning_practice",
+        "label": "08:45 – 11:00 Uhr: Asanas, Pranayama (Yoga Vidya Stil) & F&A Hatha Yoga",
+        "time": "08:45 - 11:00",
+        "badge": "Hatha Yoga Praxis",
+        "entries": {
+          "D": {
+            "text": "Variationen: Rückbeugen. Drehsitz, Gleichgewichtsübungen (Krähe, Pfau, Kiebitz, Zehenspitzenstellung, Berg, stehende Gleichgewichtsübungen) Klassische Tiefenentspannung",
+            "isMerged": false,
+            "rawText": "Variationen: Rückbeugen. Drehsitz, Gleichgewichtsübungen (Krähe, Pfau, Kiebitz, Zehenspitzenstellung, Berg, stehende Gleichgewichtsübungen) Klassische Tiefenentspannung"
+          },
+          "E": {
+            "text": "Spüren der Knochen in den Asanas (mit Benennen der Namen und Fühlen der bewegten Gelenke). Variationen von Vira Bhadrasana und Trikonasana. Shavasana Nr. 4",
+            "isMerged": false,
+            "rawText": "Spüren der Knochen in den Asanas (mit Benennen der Namen und Fühlen der bewegten Gelenke). Variationen von Vira Bhadrasana und Trikonasana. Shavasana Nr. 4"
+          },
+          "F": {
+            "text": "Uddhiyana Bandha, Agni Sara, Nauli. Länger Kapalabhati. WA mit Samanu. Asanas mit Chakra-Konzentration, Laya Yoga Entspannung: Hineinatmen und ausstrahlen lassen",
+            "isMerged": false,
+            "rawText": "Uddhiyana Bandha, Agni Sara, Nauli. Länger Kapalabhati. WA mit Samanu. Asanas mit Chakra-Konzentration, Laya Yoga Entspannung: Hineinatmen und ausstrahlen lassen"
+          },
+          "G": {
+            "text": "9.15h Stellungen länger halten. Chakra Konzentration. Laya Yoga Entspannung: Hineinatmen und ausstrahlen lassen",
+            "isMerged": false,
+            "rawText": "9.15h Stellungen länger halten. Chakra Konzentration. Laya Yoga Entspannung: Hineinatmen und ausstrahlen lassen"
+          },
+          "H": {
+            "text": "Intensives Pranayama. Stellungen länger halten. Variationen im Sonnengebet. Variationen Vorwärtsbeugen. Shavasana Nr. 4",
+            "isMerged": false,
+            "rawText": "Intensives Pranayama. Stellungen länger halten. Variationen im Sonnengebet. Variationen Vorwärtsbeugen. Shavasana Nr. 4"
+          },
+          "I": {
+            "text": "Variationen von Schulterstand, Rad, Brücke, Fisch. Spüren der Muskeln in den Asanas (lateinische Benennung). Tiefenentspannung: Durch den Körper gehen (ohne Autosuggestion) bis 10:50 Uhr",
+            "isMerged": false,
+            "rawText": "Variationen von Schulterstand, Rad, Brücke, Fisch. Spüren der Muskeln in den Asanas (lateinische Benennung). Tiefenentspannung: Durch den Körper gehen (ohne Autosuggestion) bis 10:50 Uhr"
+          },
+          "J": {
+            "text": "Für heute Abreisende Abreise ab ca. 11h (nach Feedbackrunde und Karma Yoga).",
+            "isMerged": false,
+            "rawText": "Für heute Abreisende Abreise ab ca. 11h (nach Feedbackrunde und Karma Yoga)."
+          }
+        }
+      },
+      {
+        "rowNumber": 13,
+        "type": "midday_event",
+        "label": "11:45 Uhr: Mantra-Einweihung möglich / Karma Yoga",
+        "time": "11:45",
+        "badge": "Mantra-Weihe",
+        "entries": {
+          "D": {
+            "text": "Variationen: Rückbeugen. Drehsitz, Gleichgewichtsübungen (Krähe, Pfau, Kiebitz, Zehenspitzenstellung, Berg, stehende Gleichgewichtsübungen) Klassische Tiefenentspannung",
+            "isMerged": true,
+            "rawText": ""
+          },
+          "E": {
+            "text": "Spüren der Knochen in den Asanas (mit Benennen der Namen und Fühlen der bewegten Gelenke). Variationen von Vira Bhadrasana und Trikonasana. Shavasana Nr. 4",
+            "isMerged": true,
+            "rawText": ""
+          },
+          "F": {
+            "text": "Uddhiyana Bandha, Agni Sara, Nauli. Länger Kapalabhati. WA mit Samanu. Asanas mit Chakra-Konzentration, Laya Yoga Entspannung: Hineinatmen und ausstrahlen lassen",
+            "isMerged": true,
+            "rawText": ""
+          },
+          "G": {
+            "text": "9.15h Stellungen länger halten. Chakra Konzentration. Laya Yoga Entspannung: Hineinatmen und ausstrahlen lassen",
+            "isMerged": true,
+            "rawText": ""
+          },
+          "H": {
+            "text": "Intensives Pranayama. Stellungen länger halten. Variationen im Sonnengebet. Variationen Vorwärtsbeugen. Shavasana Nr. 4",
+            "isMerged": true,
+            "rawText": ""
+          },
+          "I": {
+            "text": "11.45 h Mantra Einweihung möglich              .",
+            "isMerged": false,
+            "rawText": "11.45 h Mantra Einweihung möglich              ."
+          },
+          "J": {
+            "text": "Bitte auch heute die Karma Yogas machen.",
+            "isMerged": false,
+            "rawText": "Bitte auch heute die Karma Yogas machen."
+          }
+        }
+      },
+      {
+        "rowNumber": 14,
+        "type": "gita",
+        "label": "14:00 Uhr: Bhagavad Gita",
+        "time": "14:00 - 14:35",
+        "badge": "Bhagavad Gita",
+        "entries": {
+          "D": {
+            "text": "5. Strophe Dhyana Shlokas Bhagavad Gita VI 1-9",
+            "isMerged": false,
+            "rawText": "5. Strophe Dhyana Shlokas Bhagavad Gita VI 1-9"
+          },
+          "E": {
+            "text": "Übersetzung 5. Strophe  Dhyana Shlokas; Bhagavad Gita VI 10-23;",
+            "isMerged": false,
+            "rawText": "Übersetzung 5. Strophe  Dhyana Shlokas; Bhagavad Gita VI 10-23;"
+          },
+          "F": {
+            "text": "Bhagavad Gita VI 24-32",
+            "isMerged": false,
+            "rawText": "Bhagavad Gita VI 24-32"
+          },
+          "G": {
+            "text": "Bhagavad Gita VI 33-47",
+            "isMerged": false,
+            "rawText": "Bhagavad Gita VI 33-47"
+          },
+          "H": {
+            "text": "Übersetzung: Saha Naa Vavatu; Bhagavad Gita VII 1-12",
+            "isMerged": false,
+            "rawText": "Übersetzung: Saha Naa Vavatu; Bhagavad Gita VII 1-12"
+          },
+          "I": {
+            "text": "Bhagavad G., Kapitel XI",
+            "isMerged": false,
+            "rawText": "Bhagavad G., Kapitel XI"
+          },
+          "J": {
+            "text": "Freizeit",
+            "isMerged": false,
+            "rawText": "Freizeit"
+          }
+        }
+      },
+      {
+        "rowNumber": 15,
+        "type": "afternoon_lecture",
+        "label": "14:35 Uhr: Vortrag: Anatomie, Physiologie, Gesundheit",
+        "time": "14:35 - 15:30",
+        "badge": "Anatomie & Gesundheit",
+        "entries": {
+          "D": {
+            "text": "Skelettsystem: Funktion und Aufbau der Knochen. Wichtigste Knochen und Gelenke und ihre Funktion. Wie bewegt sich das Skelett bei den Yoga Übungen?",
+            "isMerged": false,
+            "rawText": "Skelettsystem: Funktion und Aufbau der Knochen. Wichtigste Knochen und Gelenke und ihre Funktion. Wie bewegt sich das Skelett bei den Yoga Übungen?"
+          },
+          "E": {
+            "text": "Bhakti Yoga: 5 Bhavas und 9 Formen von Bhakti.",
+            "isMerged": false,
+            "rawText": "Bhakti Yoga: 5 Bhavas und 9 Formen von Bhakti."
+          },
+          "F": {
+            "text": "Chakras und Nadis, Teil 2: Kundalini: Physiologie des Astralkörpers.",
+            "isMerged": false,
+            "rawText": "Chakras und Nadis, Teil 2: Kundalini: Physiologie des Astralkörpers."
+          },
+          "G": {
+            "text": "Muskelsystem: Funktion und Aufbau der Muskeln. Entwicklung von Flexibilität und Kraft. Wichtigste Muskeln und ihre Funktion bei den Yoga Übungen.",
+            "isMerged": false,
+            "rawText": "Muskelsystem: Funktion und Aufbau der Muskeln. Entwicklung von Flexibilität und Kraft. Wichtigste Muskeln und ihre Funktion bei den Yoga Übungen."
+          },
+          "H": {
+            "text": "Yoga und Streß-Management, Teil1",
+            "isMerged": false,
+            "rawText": "Yoga und Streß-Management, Teil1"
+          },
+          "I": {
+            "text": "Yoga und Streß -Management, Teil-2. Bis 15.15 Uhr",
+            "isMerged": false,
+            "rawText": "Yoga und Streß -Management, Teil-2. Bis 15.15 Uhr"
+          },
+          "J": {
+            "text": "Freizeit",
+            "isMerged": true,
+            "rawText": ""
+          }
+        }
+      },
+      {
+        "rowNumber": 16,
+        "type": "mantras",
+        "label": "Mantras zu lernen",
+        "time": "Selbststudium",
+        "badge": "Mantras",
+        "entries": {
+          "D": {
+            "text": "Skelettsystem: Funktion und Aufbau der Knochen. Wichtigste Knochen und Gelenke und ihre Funktion. Wie bewegt sich das Skelett bei den Yoga Übungen?",
+            "isMerged": true,
+            "rawText": ""
+          },
+          "E": {
+            "text": "Gajananam 5. Strophe (“Om Sarva Mangala...”)",
+            "isMerged": false,
+            "rawText": "Gajananam 5. Strophe (“Om Sarva Mangala...”)"
+          },
+          "F": {
+            "text": "Chakras und Nadis, Teil 2: Kundalini: Physiologie des Astralkörpers.",
+            "isMerged": true,
+            "rawText": ""
+          },
+          "G": {
+            "text": "Muskelsystem: Funktion und Aufbau der Muskeln. Entwicklung von Flexibilität und Kraft. Wichtigste Muskeln und ihre Funktion bei den Yoga Übungen.",
+            "isMerged": true,
+            "rawText": ""
+          },
+          "H": {
+            "text": "Saha Na Vavatu 670,                                2. Strophe",
+            "isMerged": false,
+            "rawText": "Saha Na Vavatu 670,                                2. Strophe"
+          },
+          "I": {
+            "text": "Yoga und Streß -Management, Teil-2. Bis 15.15 Uhr",
+            "isMerged": true,
+            "rawText": ""
+          },
+          "J": {
+            "text": "Freizeit",
+            "isMerged": true,
+            "rawText": ""
+          }
+        }
+      },
+      {
+        "rowNumber": 17,
+        "type": "reading_basic",
+        "label": "Lesen: Grundwissen (YLH)",
+        "time": "Selbststudium",
+        "badge": "Grundwissen",
+        "entries": {
+          "D": {
+            "text": "YLH 2.13.; YLH 10.1.-10.2.4.; YLH 11.3",
+            "isMerged": false,
+            "rawText": "YLH 2.13.; YLH 10.1.-10.2.4.; YLH 11.3"
+          },
+          "E": {
+            "text": "YLH 5.2.-5.4.",
+            "isMerged": false,
+            "rawText": "YLH 5.2.-5.4."
+          },
+          "F": {
+            "text": "YLH 8.-8.4",
+            "isMerged": false,
+            "rawText": "YLH 8.-8.4"
+          },
+          "G": {
+            "text": "YLH 8.5.-8.8; YLH 10.2.5.-10.2.6; YLH 11.4",
+            "isMerged": false,
+            "rawText": "YLH 8.5.-8.8; YLH 10.2.5.-10.2.6; YLH 11.4"
+          },
+          "H": {
+            "text": "YLH 9.3-9.4; 11.12",
+            "isMerged": false,
+            "rawText": "YLH 9.3-9.4; 11.12"
+          },
+          "I": {
+            "text": "Yoga und Streß -Management, Teil-2. Bis 15.15 Uhr",
+            "isMerged": true,
+            "rawText": ""
+          },
+          "J": {
+            "text": "Freizeit",
+            "isMerged": true,
+            "rawText": ""
+          }
+        }
+      },
+      {
+        "rowNumber": 18,
+        "type": "reading_advanced",
+        "label": "Lesen: Aufbauwissen (YVA)",
+        "time": "Selbststudium",
+        "badge": "Aufbauwissen",
+        "entries": {
+          "D": {
+            "text": "YVA 175-180; YVA 196-200; YVA 58-74",
+            "isMerged": false,
+            "rawText": "YVA 175-180; YVA 196-200; YVA 58-74"
+          },
+          "E": {
+            "text": "YLH 5.1.-5.13. YVA 127-129; 134-135",
+            "isMerged": false,
+            "rawText": "YLH 5.1.-5.13. YVA 127-129; 134-135"
+          },
+          "F": {
+            "text": "YLH 8.-8.4",
+            "isMerged": true,
+            "rawText": ""
+          },
+          "G": {
+            "text": "YLH 8.5.-8.8; YLH 10.2.5.-10.2.6; YLH 11.4",
+            "isMerged": true,
+            "rawText": ""
+          },
+          "H": {
+            "text": "YVA 151-167",
+            "isMerged": false,
+            "rawText": "YVA 151-167"
+          },
+          "I": {
+            "text": "YVA 85-87; YVA 94-96; YVA 144-150",
+            "isMerged": false,
+            "rawText": "YVA 85-87; YVA 94-96; YVA 144-150"
+          },
+          "J": {
+            "text": "Freizeit",
+            "isMerged": true,
+            "rawText": ""
+          }
+        }
+      },
+      {
+        "rowNumber": 19,
+        "type": "teaching_practice",
+        "label": "16:00 Uhr: Asanas/Pranayama: Unterrichtstechniken (U-Gruppen 2/1 bis 2/4)",
+        "time": "16:00 - 17:35",
+        "badge": "Unterrichtsgruppen",
+        "entries": {
+          "D": {
+            "text": "Yogastunde; Wiederholung Korrekturen; Besprechung: Anfängerkurs; Neu-Einteilung der Unterrichtsgruppen.",
+            "isMerged": false,
+            "rawText": "Yogastunde; Wiederholung Korrekturen; Besprechung: Anfängerkurs; Neu-Einteilung der Unterrichtsgruppen."
+          },
+          "E": {
+            "text": "Unterrichtsgruppen 2/1  1.Stunde Anfängerkurs (siehe YLH 11.4.3).",
+            "isMerged": false,
+            "rawText": "Unterrichtsgruppen 2/1  1.Stunde Anfängerkurs (siehe YLH 11.4.3)."
+          },
+          "F": {
+            "text": "Asanas länger halten. Variationen: Kurmasana, Yoga Nidrasana; Kapalabhati, Wechselatmung; Erklärung von Bandas und Bhastrika.",
+            "isMerged": false,
+            "rawText": "Asanas länger halten. Variationen: Kurmasana, Yoga Nidrasana; Kapalabhati, Wechselatmung; Erklärung von Bandas und Bhastrika."
+          },
+          "G": {
+            "text": "Unterrichtsgruppen 2/2: 1.Stunde Anfängerkurse (siehe YLH 11.4.3).",
+            "isMerged": false,
+            "rawText": "Unterrichtsgruppen 2/2: 1.Stunde Anfängerkurse (siehe YLH 11.4.3)."
+          },
+          "H": {
+            "text": "Unterrichtsgruppen 2/3: Offene Stunde für Anfänger (siehe YLH 11.3).",
+            "isMerged": false,
+            "rawText": "Unterrichtsgruppen 2/3: Offene Stunde für Anfänger (siehe YLH 11.3)."
+          },
+          "I": {
+            "text": "15.30h Unterrichtsgruppen 2/4: Offene Stunde für Anfänger (YLH 11.3)",
+            "isMerged": false,
+            "rawText": "15.30h Unterrichtsgruppen 2/4: Offene Stunde für Anfänger (YLH 11.3)"
+          },
+          "J": {
+            "text": "Freizeit",
+            "isMerged": true,
+            "rawText": ""
+          }
+        }
+      },
+      {
+        "rowNumber": 20,
+        "type": "teaching_review_1",
+        "label": "17:35 Uhr: Besprechung: Gestaltung von Probestunde, Info-Abend",
+        "time": "17:35",
+        "badge": "Besprechung",
+        "entries": {
+          "D": {
+            "text": "Yogastunde; Wiederholung Korrekturen; Besprechung: Anfängerkurs; Neu-Einteilung der Unterrichtsgruppen.",
+            "isMerged": true,
+            "rawText": ""
+          },
+          "E": {
+            "text": "Unterrichtsgruppen 2/1  1.Stunde Anfängerkurs (siehe YLH 11.4.3).",
+            "isMerged": true,
+            "rawText": ""
+          },
+          "F": {
+            "text": "Asanas länger halten. Variationen: Kurmasana, Yoga Nidrasana; Kapalabhati, Wechselatmung; Erklärung von Bandas und Bhastrika.",
+            "isMerged": true,
+            "rawText": ""
+          },
+          "G": {
+            "text": "Unterrichtsgruppen 2/2: 1.Stunde Anfängerkurse (siehe YLH 11.4.3).",
+            "isMerged": true,
+            "rawText": ""
+          },
+          "H": {
+            "text": "17:35 h Besprechung: Gestaltung von Probestunde, Info-Abend",
+            "isMerged": false,
+            "rawText": "17:35 h Besprechung: Gestaltung von Probestunde, Info-Abend"
+          },
+          "I": {
+            "text": "15.30h Unterrichtsgruppen 2/4: Offene Stunde für Anfänger (YLH 11.3)",
+            "isMerged": true,
+            "rawText": ""
+          },
+          "J": {
+            "text": "Freizeit",
+            "isMerged": true,
+            "rawText": ""
+          }
+        }
+      },
+      {
+        "rowNumber": 21,
+        "type": "teaching_review_2",
+        "label": "17:35 Uhr: Besprechung: Anfängerstunde / Rücken / Kurs-Tipps",
+        "time": "17:35",
+        "badge": "Besprechung",
+        "entries": {
+          "D": {
+            "text": "Yogastunde; Wiederholung Korrekturen; Besprechung: Anfängerkurs; Neu-Einteilung der Unterrichtsgruppen.",
+            "isMerged": true,
+            "rawText": ""
+          },
+          "E": {
+            "text": "17:35 h Besprechung:  Anfängerstunde (Offene Stunde für Anfänger)",
+            "isMerged": false,
+            "rawText": "17:35 h Besprechung:  Anfängerstunde (Offene Stunde für Anfänger)"
+          },
+          "F": {
+            "text": "Asanas länger halten. Variationen: Kurmasana, Yoga Nidrasana; Kapalabhati, Wechselatmung; Erklärung von Bandas und Bhastrika.",
+            "isMerged": true,
+            "rawText": ""
+          },
+          "G": {
+            "text": "17:35 h Besprechung: Weitere Tips für Anfängerkurse",
+            "isMerged": false,
+            "rawText": "17:35 h Besprechung: Weitere Tips für Anfängerkurse"
+          },
+          "H": {
+            "text": "",
+            "isMerged": false,
+            "rawText": ""
+          },
+          "I": {
+            "text": "17.00h Besprechung: Yoga für den Rücken",
+            "isMerged": false,
+            "rawText": "17.00h Besprechung: Yoga für den Rücken"
+          },
+          "J": {
+            "text": "Freizeit",
+            "isMerged": true,
+            "rawText": ""
+          }
+        }
+      },
+      {
+        "rowNumber": 22,
+        "type": "evening_lecture",
+        "label": "19:00 – 19:50 Uhr: Vortrag (Kundalini, Maha-Kumbhakas, Ojas)",
+        "time": "19:00 - 19:50",
+        "badge": "Abendvortrag",
+        "entries": {
+          "D": {
+            "text": "",
+            "isMerged": false,
+            "rawText": ""
+          },
+          "E": {
+            "text": "Einführung ins Kundalini Yoga",
+            "isMerged": false,
+            "rawText": "Einführung ins Kundalini Yoga"
+          },
+          "F": {
+            "text": "Kundalini Erweckungserfahrungen\nUjjayi-Meditation",
+            "isMerged": false,
+            "rawText": "Kundalini Erweckungserfahrungen\nUjjayi-Meditation"
+          },
+          "G": {
+            "text": "19:00 - 19:45 Uhr Info Mantra-Einweihung (freiwillig)\n\nFreizeit",
+            "isMerged": false,
+            "rawText": "19:00 - 19:45 Uhr Info Mantra-Einweihung (freiwillig)\n\nFreizeit"
+          },
+          "H": {
+            "text": "Die 8 Maha-Kumbhakas; Die 5 Pranas und ihre Sublimierung; Ojas",
+            "isMerged": false,
+            "rawText": "Die 8 Maha-Kumbhakas; Die 5 Pranas und ihre Sublimierung; Ojas"
+          },
+          "I": {
+            "text": "",
+            "isMerged": false,
+            "rawText": ""
+          },
+          "J": {
+            "text": "",
+            "isMerged": false,
+            "rawText": ""
+          }
+        }
+      },
+      {
+        "rowNumber": 23,
+        "type": "satsang",
+        "label": "20:00 Uhr: Satsang & Abendprogramm",
+        "time": "20:00 - 22:00",
+        "badge": "Satsang",
+        "entries": {
+          "D": {
+            "text": "Energiemeditation",
+            "isMerged": false,
+            "rawText": "Energiemeditation"
+          },
+          "E": {
+            "text": "",
+            "isMerged": false,
+            "rawText": ""
+          },
+          "F": {
+            "text": "Eigenschafts-Meditation",
+            "isMerged": false,
+            "rawText": "Eigenschafts-Meditation"
+          },
+          "G": {
+            "text": "",
+            "isMerged": false,
+            "rawText": ""
+          },
+          "H": {
+            "text": "Komb.Mantra-Meditation",
+            "isMerged": false,
+            "rawText": "Komb.Mantra-Meditation"
+          },
+          "I": {
+            "text": "Ausdehnungsmeditation",
+            "isMerged": false,
+            "rawText": "Ausdehnungsmeditation"
+          },
+          "J": {
+            "text": "",
+            "isMerged": false,
+            "rawText": ""
+          }
+        }
+      },
+      {
+        "rowNumber": 24,
+        "type": "special_evening",
+        "label": "Langer Satsang / Puja / Spirituelle Namensgebung / Karmayoga-Einteilung",
+        "time": "21:45",
+        "badge": "Zeremonie & Karmayoga",
+        "entries": {
+          "D": {
+            "text": "langer Satsang",
+            "isMerged": false,
+            "rawText": "langer Satsang"
+          },
+          "E": {
+            "text": "",
+            "isMerged": false,
+            "rawText": ""
+          },
+          "F": {
+            "text": "",
+            "isMerged": false,
+            "rawText": ""
+          },
+          "G": {
+            "text": "",
+            "isMerged": false,
+            "rawText": ""
+          },
+          "H": {
+            "text": "",
+            "isMerged": false,
+            "rawText": ""
+          },
+          "I": {
+            "text": "Puja; Anschl. Spirituelle Namensgebung möglich",
+            "isMerged": false,
+            "rawText": "Puja; Anschl. Spirituelle Namensgebung möglich"
+          },
+          "J": {
+            "text": "Rückblick, Ausblick. Begrüßung neuer Seminarteilnehmer. 21.45h Karmayoga  Einteilung",
+            "isMerged": false,
+            "rawText": "Rückblick, Ausblick. Begrüßung neuer Seminarteilnehmer. 21.45h Karmayoga  Einteilung"
+          }
+        }
+      }
+    ],
+    "merges": [
+      "M5:M7",
+      "G10:G11",
+      "C12:C13",
+      "D12:D13",
+      "E12:E13",
+      "F12:F13",
+      "G12:G13",
+      "H12:H13",
+      "J14:J21",
+      "D15:D16",
+      "F15:F16",
+      "G15:G16",
+      "I15:I17",
+      "F17:F18",
+      "G17:G18",
+      "C19:C21",
+      "D19:D21",
+      "E19:E20",
+      "F19:F21",
+      "G19:G20",
+      "I19:I20"
+    ],
+    "rawCells": {
+      "B2": "Druckversion für die AB-Teilnehmer",
+      "C5": "Unterrichtsplan Yoga Vidya Lehrerausbildung Intensivkurs 31.5.2026 - 5.6.2026 (3. Woche)",
+      "C6": "Bund der Yoga Vidya Lehrer, Haus Yoga Vidya Bad Meinberg, Yogaweg 7, 32805 Horn-Bad Meinberg, Internet www.Yoga-Vidya.de, Email info@yoga-vidya.de, Tel. 05234-87-0, Fax –1875, Gäste:-2981; -2982",
+      "C7": "Abkürzungen: YLH=Yogalehrer Handbuch; Ki=Kirtanheft; BhG=Bhagavad Gita, YVA=Yoga Vidya Asana Buch",
+      "F8": "Kundalini Yoga im Yoga Vidya Stil",
+      "G8": "Kundalini Yoga im Yoga Vidya Stil",
+      "H8": "Schweigen      \n(kein Sprechen außerhalb des Unterrichts ganzen Tag)",
+      "I8": "Fastentag (Wer will); Mantraweihe (freiwillig)",
+      "J8": "Freier Tag",
+      "C9": "Tagesteil",
+      "D9": "13.6. Samstag",
+      "E9": "14.6. Sonntag",
+      "F9": "15.6. Montag",
+      "G9": "16.6. Dienstag",
+      "H9": "17.6. Mittwoch",
+      "I9": "18.6. Donnerstag",
+      "J9": "19.6. Freitag",
+      "G10": "Praxis: Intensives Pranayama, Mudras.. Bandhas: Die höheren Stufen des Hatha Yoga (bis 9.00 Uhr).",
+      "C11": "6 - 6:50 Uhr Vortrag Teil 1 \n7 - 8 Uhr Satsang \n8:10 - 8:35 Vortrag, Teil 2",
+      "D11": "7 Bhumikas, Teil 1",
+      "E11": "7 Bhumikas, Teil 2",
+      "F11": "Sitali, Sitkari.  Prana, Nadis, Chakras 1",
+      "H11": "Kundalini Yoga Kosmologie: Shiva-Shakti Philosophie",
+      "I11": "Unterrichtstechniken: Yoga für Kinder",
+      "J11": "Mentales Training: Wissen und bekommen, was man wirklich will.",
+      "C12": "8.45 Uhr Asanas, Pranayama: Yoga Stunden im Yoga Vidya Stil. 10.45 Uhr Frage und Antwort  Hatha Yoga",
+      "D12": "Variationen: Rückbeugen. Drehsitz, Gleichgewichtsübungen (Krähe, Pfau, Kiebitz, Zehenspitzenstellung, Berg, stehende Gleichgewichtsübungen) Klassische Tiefenentspannung",
+      "E12": "Spüren der Knochen in den Asanas (mit Benennen der Namen und Fühlen der bewegten Gelenke). Variationen von Vira Bhadrasana und Trikonasana. Shavasana Nr. 4",
+      "F12": "Uddhiyana Bandha, Agni Sara, Nauli. Länger Kapalabhati. WA mit Samanu. Asanas mit Chakra-Konzentration, Laya Yoga Entspannung: Hineinatmen und ausstrahlen lassen",
+      "G12": "9.15h Stellungen länger halten. Chakra Konzentration. Laya Yoga Entspannung: Hineinatmen und ausstrahlen lassen",
+      "H12": "Intensives Pranayama. Stellungen länger halten. Variationen im Sonnengebet. Variationen Vorwärtsbeugen. Shavasana Nr. 4",
+      "I12": "Variationen von Schulterstand, Rad, Brücke, Fisch. Spüren der Muskeln in den Asanas (lateinische Benennung). Tiefenentspannung: Durch den Körper gehen (ohne Autosuggestion) bis 10:50 Uhr",
+      "J12": "Für heute Abreisende Abreise ab ca. 11h (nach Feedbackrunde und Karma Yoga).",
+      "I13": "11.45 h Mantra Einweihung möglich              .",
+      "J13": "Bitte auch heute die Karma Yogas machen.",
+      "C14": "14 Uhr Bhagavad Gita",
+      "D14": "5. Strophe Dhyana Shlokas Bhagavad Gita VI 1-9",
+      "E14": "Übersetzung 5. Strophe  Dhyana Shlokas; Bhagavad Gita VI 10-23;",
+      "F14": "Bhagavad Gita VI 24-32",
+      "G14": "Bhagavad Gita VI 33-47",
+      "H14": "Übersetzung: Saha Naa Vavatu; Bhagavad Gita VII 1-12",
+      "I14": "Bhagavad G., Kapitel XI",
+      "J14": "Freizeit",
+      "C15": "14.35h Vortrag: Anatomie, Physiologie, Gesundheit",
+      "D15": "Skelettsystem: Funktion und Aufbau der Knochen. Wichtigste Knochen und Gelenke und ihre Funktion. Wie bewegt sich das Skelett bei den Yoga Übungen?",
+      "E15": "Bhakti Yoga: 5 Bhavas und 9 Formen von Bhakti.",
+      "F15": "Chakras und Nadis, Teil 2: Kundalini: Physiologie des Astralkörpers.",
+      "G15": "Muskelsystem: Funktion und Aufbau der Muskeln. Entwicklung von Flexibilität und Kraft. Wichtigste Muskeln und ihre Funktion bei den Yoga Übungen.",
+      "H15": "Yoga und Streß-Management, Teil1",
+      "I15": "Yoga und Streß -Management, Teil-2. Bis 15.15 Uhr",
+      "C16": "Mantras zu lernen",
+      "E16": "Gajananam 5. Strophe (“Om Sarva Mangala...”)",
+      "H16": "Saha Na Vavatu 670,                                2. Strophe",
+      "C17": "Lesen: Grundwissen",
+      "D17": "YLH 2.13.; YLH 10.1.-10.2.4.; YLH 11.3",
+      "E17": "YLH 5.2.-5.4.",
+      "F17": "YLH 8.-8.4",
+      "G17": "YLH 8.5.-8.8; YLH 10.2.5.-10.2.6; YLH 11.4",
+      "H17": "YLH 9.3-9.4; 11.12",
+      "C18": "Lesen: Aufbauwissen",
+      "D18": "YVA 175-180; YVA 196-200; YVA 58-74",
+      "E18": "YLH 5.1.-5.13. YVA 127-129; 134-135",
+      "H18": "YVA 151-167",
+      "I18": "YVA 85-87; YVA 94-96; YVA 144-150",
+      "C19": "16.00 Uhr Asanas/Pranayama: Unterrichtstechniken im Yoga Vidya Stil",
+      "D19": "Yogastunde; Wiederholung Korrekturen; Besprechung: Anfängerkurs; Neu-Einteilung der Unterrichtsgruppen.",
+      "E19": "Unterrichtsgruppen 2/1  1.Stunde Anfängerkurs (siehe YLH 11.4.3).",
+      "F19": "Asanas länger halten. Variationen: Kurmasana, Yoga Nidrasana; Kapalabhati, Wechselatmung; Erklärung von Bandas und Bhastrika.",
+      "G19": "Unterrichtsgruppen 2/2: 1.Stunde Anfängerkurse (siehe YLH 11.4.3).",
+      "H19": "Unterrichtsgruppen 2/3: Offene Stunde für Anfänger (siehe YLH 11.3).",
+      "I19": "15.30h Unterrichtsgruppen 2/4: Offene Stunde für Anfänger (YLH 11.3)",
+      "H20": "17:35 h Besprechung: Gestaltung von Probestunde, Info-Abend",
+      "E21": "17:35 h Besprechung:  Anfängerstunde (Offene Stunde für Anfänger)",
+      "G21": "17:35 h Besprechung: Weitere Tips für Anfängerkurse",
+      "I21": "17.00h Besprechung: Yoga für den Rücken",
+      "C22": "19 - 19:50 Uhr Vortrag",
+      "E22": "Einführung ins Kundalini Yoga",
+      "F22": "Kundalini Erweckungserfahrungen\nUjjayi-Meditation",
+      "G22": "19:00 - 19:45 Uhr Info Mantra-Einweihung (freiwillig)\n\nFreizeit",
+      "H22": "Die 8 Maha-Kumbhakas; Die 5 Pranas und ihre Sublimierung; Ojas",
+      "C23": "20.00 Uhr Satsang",
+      "D23": "Energiemeditation",
+      "F23": "Eigenschafts-Meditation",
+      "H23": "Komb.Mantra-Meditation",
+      "I23": "Ausdehnungsmeditation",
+      "D24": "langer Satsang",
+      "I24": "Puja; Anschl. Spirituelle Namensgebung möglich",
+      "J24": "Rückblick, Ausblick. Begrüßung neuer Seminarteilnehmer. 21.45h Karmayoga  Einteilung",
+      "C26": "Seite 3 von 4  Unterrichtsplan Yoga – Lehrer Ausbildung Intensiv",
+      "G26": "ã Haus Yoga Vidya e.V. Nordsee, Wiarder Altendeich 10, 26334 Wangerland",
+      "G27": "nordsee@yoga-vidya.de, www.yoga-vidya.de/nordsee"
+    }
+  },
+  {
+    "weekNumber": 4,
+    "title": "Unterrichtsplan Yoga Vidya Lehrerausbildung Intensivkurs 19.9.2026 - 27.9.2026 (4. Woche)",
+    "weekSubtitle": "4. Woche (19.09. – 27.09.2026)",
+    "dateRange": "19.09. – 27.09.2026",
+    "contactInfo": "Haus Yoga Vidya e.V. Nordsee | Wiarder Altendeich 10, 26334 Wangerland | nordsee@yoga-vidya.de",
+    "abbreviations": [
+      {
+        "abbr": "YLH",
+        "meaning": "Yogalehrer Handbuch"
+      },
+      {
+        "abbr": "Ki",
+        "meaning": "Kirtanheft"
+      },
+      {
+        "abbr": "BhG",
+        "meaning": "Bhagavad Gita"
+      },
+      {
+        "abbr": "YVA",
+        "meaning": "Yoga Vidya Asana Buch"
+      }
+    ],
+    "days": [
+      {
+        "col": "D",
+        "headerRaw": "19.9. Samstag",
+        "dateStr": "19.9.",
+        "dayName": "Samstag",
+        "specialFocus": ""
+      },
+      {
+        "col": "E",
+        "headerRaw": "20.9. Sonntag",
+        "dateStr": "20.9.",
+        "dayName": "Sonntag",
+        "specialFocus": ""
+      },
+      {
+        "col": "F",
+        "headerRaw": "21.9. Montag",
+        "dateStr": "21.9.",
+        "dayName": "Montag",
+        "specialFocus": ""
+      },
+      {
+        "col": "G",
+        "headerRaw": "22.9. Dienstag",
+        "dateStr": "22.9.",
+        "dayName": "Dienstag",
+        "specialFocus": "Schweigender Meditationstag (überhaupt kein Sprechen bis Mi. 8:30h)"
+      },
+      {
+        "col": "H",
+        "headerRaw": "23.9. Mittwoch",
+        "dateStr": "23.9.",
+        "dayName": "Mittwoch",
+        "specialFocus": ""
+      },
+      {
+        "col": "I",
+        "headerRaw": "24.9. Donnerstag",
+        "dateStr": "24.9.",
+        "dayName": "Donnerstag",
+        "specialFocus": "Mantra-Einweihung (freiwillig)"
+      },
+      {
+        "col": "J",
+        "headerRaw": "25.9. Freitag",
+        "dateStr": "25.9.",
+        "dayName": "Freitag",
+        "specialFocus": "Studientag"
+      },
+      {
+        "col": "K",
+        "headerRaw": "26.9. Samstag",
+        "dateStr": "26.9.",
+        "dayName": "Samstag",
+        "specialFocus": "Prüfung; Auch nachher Anwesenheits-\npflicht!"
+      },
+      {
+        "col": "L",
+        "headerRaw": "27.9. Sonntag",
+        "dateStr": "27.9.",
+        "dayName": "Sonntag",
+        "specialFocus": ""
+      }
+    ],
+    "slots": [
+      {
+        "rowNumber": 10,
+        "type": "early_practice",
+        "label": "Abstrakte Meditation (lange Sitzung) / Jivanmukta",
+        "time": "Frühpraxis",
+        "badge": "Meditation",
+        "entries": {
+          "D": {
+            "text": "",
+            "isMerged": false,
+            "rawText": ""
+          },
+          "E": {
+            "text": "",
+            "isMerged": false,
+            "rawText": ""
+          },
+          "F": {
+            "text": "",
+            "isMerged": false,
+            "rawText": ""
+          },
+          "G": {
+            "text": "Abstrakte Meditation (lange Sitzung). Höhere Erfahrungen in der Meditation",
+            "isMerged": false,
+            "rawText": "Abstrakte Meditation (lange Sitzung). Höhere Erfahrungen in der Meditation"
+          },
+          "H": {
+            "text": "Abstrakte Meditation (lange Sitzung) Jivanmukta",
+            "isMerged": false,
+            "rawText": "Abstrakte Meditation (lange Sitzung) Jivanmukta"
+          },
+          "I": {
+            "text": "",
+            "isMerged": false,
+            "rawText": ""
+          },
+          "J": {
+            "text": "",
+            "isMerged": false,
+            "rawText": ""
+          },
+          "K": {
+            "text": "",
+            "isMerged": false,
+            "rawText": ""
+          },
+          "L": {
+            "text": "",
+            "isMerged": false,
+            "rawText": ""
+          }
+        }
+      },
+      {
+        "rowNumber": 11,
+        "type": "morning_lecture",
+        "label": "06:00 – 08:35 Uhr: Vortrag Teil 1, Satsang, Vortrag Teil 2",
+        "time": "06:00 - 08:35",
+        "badge": "Morgenpraxis & Philosophie",
+        "entries": {
+          "D": {
+            "text": "Einführung ins Ayurveda",
+            "isMerged": false,
+            "rawText": "Einführung ins Ayurveda"
+          },
+          "E": {
+            "text": "Aufbau der Gelenke. Bewegungslehre: Flexion, Extension, etc.",
+            "isMerged": false,
+            "rawText": "Aufbau der Gelenke. Bewegungslehre: Flexion, Extension, etc."
+          },
+          "F": {
+            "text": "Hatha Yoga Pradipika; Einstimmen auf Schweigetag",
+            "isMerged": false,
+            "rawText": "Hatha Yoga Pradipika; Einstimmen auf Schweigetag"
+          },
+          "G": {
+            "text": "Abstrakte Meditation (lange Sitzung). Höhere Erfahrungen in der Meditation",
+            "isMerged": true,
+            "rawText": ""
+          },
+          "H": {
+            "text": "Abstrakte Meditation (lange Sitzung) Jivanmukta",
+            "isMerged": true,
+            "rawText": ""
+          },
+          "I": {
+            "text": "Wiederholung: Raja Yoga, Bhakti Yoga und Karma Yoga.",
+            "isMerged": false,
+            "rawText": "Wiederholung: Raja Yoga, Bhakti Yoga und Karma Yoga."
+          },
+          "J": {
+            "text": "Guru und Schüler; Karma Yoga",
+            "isMerged": false,
+            "rawText": "Guru und Schüler; Karma Yoga"
+          },
+          "K": {
+            "text": "Diene, liebe, gib, reinige Dich, meditiere und verwirkliche.",
+            "isMerged": false,
+            "rawText": "Diene, liebe, gib, reinige Dich, meditiere und verwirkliche."
+          },
+          "L": {
+            "text": "7.15-8.15h Asanas Pranayama. Anwesenheitspflicht!",
+            "isMerged": false,
+            "rawText": "7.15-8.15h Asanas Pranayama. Anwesenheitspflicht!"
+          }
+        }
+      },
+      {
+        "rowNumber": 12,
+        "type": "morning_practice",
+        "label": "08:45 – 11:00 Uhr: Asanas, Pranayama (Yoga Vidya Stil) / Abschlussprüfung / Feier",
+        "time": "08:45 - 11:00",
+        "badge": "Praxis & Abschluss",
+        "entries": {
+          "D": {
+            "text": "Sanfte Sonnengebete. Andere Stellungen  länger halten. Affirmationen. Geistige und psychische Wirkungen der Asanas.",
+            "isMerged": false,
+            "rawText": "Sanfte Sonnengebete. Andere Stellungen  länger halten. Affirmationen. Geistige und psychische Wirkungen der Asanas."
+          },
+          "E": {
+            "text": "Korr. Benennen der Bewegungen wäh- rend der Yoga-Std.: Flexion, Extension, Abduktion, Adduktion, etc. Variationen von Krähe, Pfau, Zehen-spitzenstellung, Berg. Steh.Gleichgewichts-Variationen.",
+            "isMerged": false,
+            "rawText": "Korr. Benennen der Bewegungen wäh- rend der Yoga-Std.: Flexion, Extension, Abduktion, Adduktion, etc. Variationen von Krähe, Pfau, Zehen-spitzenstellung, Berg. Steh.Gleichgewichts-Variationen."
+          },
+          "F": {
+            "text": "Eine Fortgeschrittene Yogastunde für alle mit Variationen, insbesondere: Vorwärtsbeugen. Sitzhaltungen. Asanas für Hüftflexibilität. Lotus-Variationen.",
+            "isMerged": false,
+            "rawText": "Eine Fortgeschrittene Yogastunde für alle mit Variationen, insbesondere: Vorwärtsbeugen. Sitzhaltungen. Asanas für Hüftflexibilität. Lotus-Variationen."
+          },
+          "G": {
+            "text": "Stellungen länger halten: Achtsam halten.",
+            "isMerged": false,
+            "rawText": "Stellungen länger halten: Achtsam halten."
+          },
+          "H": {
+            "text": "Yoga Vidya Stil Grundreihe ohne Variationen, Stellungen länger halten.  Klassische Tiefenentspannung.",
+            "isMerged": false,
+            "rawText": "Yoga Vidya Stil Grundreihe ohne Variationen, Stellungen länger halten.  Klassische Tiefenentspannung."
+          },
+          "I": {
+            "text": "Viele Variationen,  auch als Partnerübungen. Insbesondere (aber nicht nur) Vira Bhadrasana, Handstand, Skorpion.            Bis 10:50 Uhr",
+            "isMerged": false,
+            "rawText": "Viele Variationen,  auch als Partnerübungen. Insbesondere (aber nicht nur) Vira Bhadrasana, Handstand, Skorpion.            Bis 10:50 Uhr"
+          },
+          "J": {
+            "text": "Individuelle Praxis. Bitte auch heute Karma Yoga machen.",
+            "isMerged": false,
+            "rawText": "Individuelle Praxis. Bitte auch heute Karma Yoga machen."
+          },
+          "K": {
+            "text": "8.00 h Frühstück                                                      .",
+            "isMerged": false,
+            "rawText": "8.00 h Frühstück                                                      ."
+          },
+          "L": {
+            "text": "8.30 bis ca. 11.00h  Abschlußvortrag. Abschlußfeier, Zeremonie, spiritueller Segen, Verleihung der Diplome. Abreise ab 12.00 h",
+            "isMerged": false,
+            "rawText": "8.30 bis ca. 11.00h  Abschlußvortrag. Abschlußfeier, Zeremonie, spiritueller Segen, Verleihung der Diplome. Abreise ab 12.00 h"
+          }
+        }
+      },
+      {
+        "rowNumber": 13,
+        "type": "study_exam",
+        "label": "Studientag / 08:30 - 12:30 Uhr: Abschlussprüfung",
+        "time": "08:30 - 12:30",
+        "badge": "Abschlussprüfung",
+        "entries": {
+          "D": {
+            "text": "Sanfte Sonnengebete. Andere Stellungen  länger halten. Affirmationen. Geistige und psychische Wirkungen der Asanas.",
+            "isMerged": true,
+            "rawText": ""
+          },
+          "E": {
+            "text": "Korr. Benennen der Bewegungen wäh- rend der Yoga-Std.: Flexion, Extension, Abduktion, Adduktion, etc. Variationen von Krähe, Pfau, Zehen-spitzenstellung, Berg. Steh.Gleichgewichts-Variationen.",
+            "isMerged": true,
+            "rawText": ""
+          },
+          "F": {
+            "text": "Eine Fortgeschrittene Yogastunde für alle mit Variationen, insbesondere: Vorwärtsbeugen. Sitzhaltungen. Asanas für Hüftflexibilität. Lotus-Variationen.",
+            "isMerged": true,
+            "rawText": ""
+          },
+          "G": {
+            "text": "Stellungen länger halten: Achtsam halten.",
+            "isMerged": true,
+            "rawText": ""
+          },
+          "H": {
+            "text": "Yoga Vidya Stil Grundreihe ohne Variationen, Stellungen länger halten.  Klassische Tiefenentspannung.",
+            "isMerged": true,
+            "rawText": ""
+          },
+          "I": {
+            "text": "Viele Variationen,  auch als Partnerübungen. Insbesondere (aber nicht nur) Vira Bhadrasana, Handstand, Skorpion.            Bis 10:50 Uhr",
+            "isMerged": true,
+            "rawText": ""
+          },
+          "J": {
+            "text": "Studientag",
+            "isMerged": false,
+            "rawText": "Studientag"
+          },
+          "K": {
+            "text": "8.30-12.30h Abschlussprüfung",
+            "isMerged": false,
+            "rawText": "8.30-12.30h Abschlussprüfung"
+          },
+          "L": {
+            "text": "8.30 bis ca. 11.00h  Abschlußvortrag. Abschlußfeier, Zeremonie, spiritueller Segen, Verleihung der Diplome. Abreise ab 12.00 h",
+            "isMerged": true,
+            "rawText": ""
+          }
+        }
+      },
+      {
+        "rowNumber": 14,
+        "type": "exam_lunch",
+        "label": "11:00 - 12:30 Uhr: Mittagessen am Prüfungstag",
+        "time": "11:00 - 12:30",
+        "badge": "Mittagessen",
+        "entries": {
+          "D": {
+            "text": "Sanfte Sonnengebete. Andere Stellungen  länger halten. Affirmationen. Geistige und psychische Wirkungen der Asanas.",
+            "isMerged": true,
+            "rawText": ""
+          },
+          "E": {
+            "text": "Korr. Benennen der Bewegungen wäh- rend der Yoga-Std.: Flexion, Extension, Abduktion, Adduktion, etc. Variationen von Krähe, Pfau, Zehen-spitzenstellung, Berg. Steh.Gleichgewichts-Variationen.",
+            "isMerged": true,
+            "rawText": ""
+          },
+          "F": {
+            "text": "Eine Fortgeschrittene Yogastunde für alle mit Variationen, insbesondere: Vorwärtsbeugen. Sitzhaltungen. Asanas für Hüftflexibilität. Lotus-Variationen.",
+            "isMerged": true,
+            "rawText": ""
+          },
+          "G": {
+            "text": "Stellungen länger halten: Achtsam halten.",
+            "isMerged": true,
+            "rawText": ""
+          },
+          "H": {
+            "text": "Yoga Vidya Stil Grundreihe ohne Variationen, Stellungen länger halten.  Klassische Tiefenentspannung.",
+            "isMerged": true,
+            "rawText": ""
+          },
+          "I": {
+            "text": "Viele Variationen,  auch als Partnerübungen. Insbesondere (aber nicht nur) Vira Bhadrasana, Handstand, Skorpion.            Bis 10:50 Uhr",
+            "isMerged": true,
+            "rawText": ""
+          },
+          "J": {
+            "text": "Studientag",
+            "isMerged": true,
+            "rawText": ""
+          },
+          "K": {
+            "text": "11-12.30h Mittagessen",
+            "isMerged": false,
+            "rawText": "11-12.30h Mittagessen"
+          },
+          "L": {
+            "text": "8.30 bis ca. 11.00h  Abschlußvortrag. Abschlußfeier, Zeremonie, spiritueller Segen, Verleihung der Diplome. Abreise ab 12.00 h",
+            "isMerged": true,
+            "rawText": ""
+          }
+        }
+      },
+      {
+        "rowNumber": 15,
+        "type": "mantra_init",
+        "label": "11:30 Uhr: Mantra-Einweihung (freiwillig)",
+        "time": "11:30",
+        "badge": "Mantra-Weihe",
+        "entries": {
+          "D": {
+            "text": "Sanfte Sonnengebete. Andere Stellungen  länger halten. Affirmationen. Geistige und psychische Wirkungen der Asanas.",
+            "isMerged": true,
+            "rawText": ""
+          },
+          "E": {
+            "text": "Korr. Benennen der Bewegungen wäh- rend der Yoga-Std.: Flexion, Extension, Abduktion, Adduktion, etc. Variationen von Krähe, Pfau, Zehen-spitzenstellung, Berg. Steh.Gleichgewichts-Variationen.",
+            "isMerged": true,
+            "rawText": ""
+          },
+          "F": {
+            "text": "Eine Fortgeschrittene Yogastunde für alle mit Variationen, insbesondere: Vorwärtsbeugen. Sitzhaltungen. Asanas für Hüftflexibilität. Lotus-Variationen.",
+            "isMerged": true,
+            "rawText": ""
+          },
+          "G": {
+            "text": "Stellungen länger halten: Achtsam halten.",
+            "isMerged": true,
+            "rawText": ""
+          },
+          "H": {
+            "text": "Yoga Vidya Stil Grundreihe ohne Variationen, Stellungen länger halten.  Klassische Tiefenentspannung.",
+            "isMerged": true,
+            "rawText": ""
+          },
+          "I": {
+            "text": "11.30h Mantra-Einweihung (freiwillig)",
+            "isMerged": false,
+            "rawText": "11.30h Mantra-Einweihung (freiwillig)"
+          },
+          "J": {
+            "text": "Studientag",
+            "isMerged": true,
+            "rawText": ""
+          },
+          "K": {
+            "text": "",
+            "isMerged": false,
+            "rawText": ""
+          },
+          "L": {
+            "text": "8.30 bis ca. 11.00h  Abschlußvortrag. Abschlußfeier, Zeremonie, spiritueller Segen, Verleihung der Diplome. Abreise ab 12.00 h",
+            "isMerged": true,
+            "rawText": ""
+          }
+        }
+      },
+      {
+        "rowNumber": 16,
+        "type": "gita",
+        "label": "14:00 Uhr: Bhagavad Gita / Philosophie",
+        "time": "14:00 - 14:35",
+        "badge": "Bhagavad Gita",
+        "entries": {
+          "D": {
+            "text": "Bh.Gita, XII 1-14",
+            "isMerged": false,
+            "rawText": "Bh.Gita, XII 1-14"
+          },
+          "E": {
+            "text": "Bh G XIV 1-13",
+            "isMerged": false,
+            "rawText": "Bh G XIV 1-13"
+          },
+          "F": {
+            "text": "Yamas und Niyamas",
+            "isMerged": false,
+            "rawText": "Yamas und Niyamas"
+          },
+          "G": {
+            "text": "Meditation: Rajayoga Sutras I 1-4",
+            "isMerged": false,
+            "rawText": "Meditation: Rajayoga Sutras I 1-4"
+          },
+          "H": {
+            "text": "Bh G XVIII; Literatur-empfehlungen",
+            "isMerged": false,
+            "rawText": "Bh G XVIII; Literatur-empfehlungen"
+          },
+          "I": {
+            "text": "Wiederholung",
+            "isMerged": false,
+            "rawText": "Wiederholung"
+          },
+          "J": {
+            "text": "Studientag",
+            "isMerged": true,
+            "rawText": ""
+          },
+          "K": {
+            "text": "",
+            "isMerged": false,
+            "rawText": ""
+          },
+          "L": {
+            "text": "8.30 bis ca. 11.00h  Abschlußvortrag. Abschlußfeier, Zeremonie, spiritueller Segen, Verleihung der Diplome. Abreise ab 12.00 h",
+            "isMerged": true,
+            "rawText": ""
+          }
+        }
+      },
+      {
+        "rowNumber": 17,
+        "type": "afternoon_lecture",
+        "label": "14:35 Uhr: Vortrag: Anatomie, Physiologie / Weiterbildungsseminare",
+        "time": "14:35 - 15:30",
+        "badge": "Anatomie & Weiterbildung",
+        "entries": {
+          "D": {
+            "text": "Verdauungssystem und Stoffwechsel",
+            "isMerged": false,
+            "rawText": "Verdauungssystem und Stoffwechsel"
+          },
+          "E": {
+            "text": "Bewegungslehre: Orthopädische Probleme",
+            "isMerged": false,
+            "rawText": "Bewegungslehre: Orthopädische Probleme"
+          },
+          "F": {
+            "text": "15.00 Uhr: Information über Yogalehrer Weiterbildungsseminare, Bund der Yoga Vidya Lehrer und Yoga Vidya Zentren.",
+            "isMerged": false,
+            "rawText": "15.00 Uhr: Information über Yogalehrer Weiterbildungsseminare, Bund der Yoga Vidya Lehrer und Yoga Vidya Zentren."
+          },
+          "G": {
+            "text": "Meditation: Rajayoga Sutras I 1-4",
+            "isMerged": true,
+            "rawText": ""
+          },
+          "H": {
+            "text": "Herz- Kreislauf- System; Das Ornish-Programm",
+            "isMerged": false,
+            "rawText": "Herz- Kreislauf- System; Das Ornish-Programm"
+          },
+          "I": {
+            "text": "Wiederholung",
+            "isMerged": true,
+            "rawText": ""
+          },
+          "J": {
+            "text": "Studientag",
+            "isMerged": true,
+            "rawText": ""
+          },
+          "K": {
+            "text": "",
+            "isMerged": false,
+            "rawText": ""
+          },
+          "L": {
+            "text": "8.30 bis ca. 11.00h  Abschlußvortrag. Abschlußfeier, Zeremonie, spiritueller Segen, Verleihung der Diplome. Abreise ab 12.00 h",
+            "isMerged": true,
+            "rawText": ""
+          }
+        }
+      },
+      {
+        "rowNumber": 18,
+        "type": "reading_basic",
+        "label": "Lesen: Grundwissen (YLH)",
+        "time": "Selbststudium",
+        "badge": "Grundwissen",
+        "entries": {
+          "D": {
+            "text": "YLH 10.5.; YLH 11.11",
+            "isMerged": false,
+            "rawText": "YLH 10.5.; YLH 11.11"
+          },
+          "E": {
+            "text": "YLH 11.9-11.10 und 11.16; YLH 9.7;",
+            "isMerged": false,
+            "rawText": "YLH 11.9-11.10 und 11.16; YLH 9.7;"
+          },
+          "F": {
+            "text": "YLH 11.4.9 und 11.6; YLH 11.14-11.15",
+            "isMerged": false,
+            "rawText": "YLH 11.4.9 und 11.6; YLH 11.14-11.15"
+          },
+          "G": {
+            "text": "Meditation: Rajayoga Sutras I 1-4",
+            "isMerged": true,
+            "rawText": ""
+          },
+          "H": {
+            "text": "YLH 2.14.-2.16.; YLH 10.4.",
+            "isMerged": false,
+            "rawText": "YLH 2.14.-2.16.; YLH 10.4."
+          },
+          "I": {
+            "text": "Wiederholung des ganzen YLH",
+            "isMerged": false,
+            "rawText": "Wiederholung des ganzen YLH"
+          },
+          "J": {
+            "text": "Studientag",
+            "isMerged": true,
+            "rawText": ""
+          },
+          "K": {
+            "text": "",
+            "isMerged": false,
+            "rawText": ""
+          },
+          "L": {
+            "text": "8.30 bis ca. 11.00h  Abschlußvortrag. Abschlußfeier, Zeremonie, spiritueller Segen, Verleihung der Diplome. Abreise ab 12.00 h",
+            "isMerged": true,
+            "rawText": ""
+          }
+        }
+      },
+      {
+        "rowNumber": 19,
+        "type": "reading_advanced",
+        "label": "Lesen: Aufbauwissen (YVA)",
+        "time": "Selbststudium",
+        "badge": "Aufbauwissen",
+        "entries": {
+          "D": {
+            "text": "YLH 10.5.; YLH 11.11",
+            "isMerged": true,
+            "rawText": ""
+          },
+          "E": {
+            "text": "YVA 167-180",
+            "isMerged": false,
+            "rawText": "YVA 167-180"
+          },
+          "F": {
+            "text": "YVA 196-200",
+            "isMerged": false,
+            "rawText": "YVA 196-200"
+          },
+          "G": {
+            "text": "Meditation: Rajayoga Sutras I 1-4",
+            "isMerged": true,
+            "rawText": ""
+          },
+          "H": {
+            "text": "YVA 42-47",
+            "isMerged": false,
+            "rawText": "YVA 42-47"
+          },
+          "I": {
+            "text": "YVA",
+            "isMerged": false,
+            "rawText": "YVA"
+          },
+          "J": {
+            "text": "Studientag",
+            "isMerged": true,
+            "rawText": ""
+          },
+          "K": {
+            "text": "",
+            "isMerged": false,
+            "rawText": ""
+          },
+          "L": {
+            "text": "8.30 bis ca. 11.00h  Abschlußvortrag. Abschlußfeier, Zeremonie, spiritueller Segen, Verleihung der Diplome. Abreise ab 12.00 h",
+            "isMerged": true,
+            "rawText": ""
+          }
+        }
+      },
+      {
+        "rowNumber": 20,
+        "type": "teaching_practice",
+        "label": "16:00 Uhr: Asanas/Pranayama: Unterrichtstechniken (U-Gruppen 3/1 bis 3/4) / 15:30 Yogastunde",
+        "time": "16:00 - 17:30",
+        "badge": "Unterrichtsgruppen",
+        "entries": {
+          "D": {
+            "text": "Neu-Einteilung der Unterrichtsgruppen; Yogastunde und Besprechung: Yoga für Schwangere",
+            "isMerged": false,
+            "rawText": "Neu-Einteilung der Unterrichtsgruppen; Yogastunde und Besprechung: Yoga für Schwangere"
+          },
+          "E": {
+            "text": "Unterrichtsgruppen 3/1: Yoga für den Rücken.",
+            "isMerged": false,
+            "rawText": "Unterrichtsgruppen 3/1: Yoga für den Rücken."
+          },
+          "F": {
+            "text": "Unterrichtsgruppen 3/2: Yoga für Schwangere",
+            "isMerged": false,
+            "rawText": "Unterrichtsgruppen 3/2: Yoga für Schwangere"
+          },
+          "G": {
+            "text": "Stellungen länger halten: Geistige Wirkungen.",
+            "isMerged": false,
+            "rawText": "Stellungen länger halten: Geistige Wirkungen."
+          },
+          "H": {
+            "text": "Unterrichtsgruppen 3/3 Fortgeschrittenen-Gruppe",
+            "isMerged": false,
+            "rawText": "Unterrichtsgruppen 3/3 Fortgeschrittenen-Gruppe"
+          },
+          "I": {
+            "text": "Unterrichtsgruppen 3/4 Fortgeschrittenen-Gruppe",
+            "isMerged": false,
+            "rawText": "Unterrichtsgruppen 3/4 Fortgeschrittenen-Gruppe"
+          },
+          "J": {
+            "text": "Studientag",
+            "isMerged": true,
+            "rawText": ""
+          },
+          "K": {
+            "text": "15.30-17.00h                     Yoga-Stunde.                 Anwesenheits\npflicht",
+            "isMerged": false,
+            "rawText": "15.30-17.00h                     Yoga-Stunde.                 Anwesenheits\npflicht"
+          },
+          "L": {
+            "text": "8.30 bis ca. 11.00h  Abschlußvortrag. Abschlußfeier, Zeremonie, spiritueller Segen, Verleihung der Diplome. Abreise ab 12.00 h",
+            "isMerged": true,
+            "rawText": ""
+          }
+        }
+      },
+      {
+        "rowNumber": 21,
+        "type": "teaching_review",
+        "label": "17:35 Uhr: Besprechung / 17:30 Uhr: Festessen",
+        "time": "17:35",
+        "badge": "Festessen & Besprechung",
+        "entries": {
+          "D": {
+            "text": "Neu-Einteilung der Unterrichtsgruppen; Yogastunde und Besprechung: Yoga für Schwangere",
+            "isMerged": true,
+            "rawText": ""
+          },
+          "E": {
+            "text": "17:35h Besprechung: Yoga für Fortgeschrittene",
+            "isMerged": false,
+            "rawText": "17:35h Besprechung: Yoga für Fortgeschrittene"
+          },
+          "F": {
+            "text": "17:35h Besprechung: Yoga Vidya Prinzipien der Yoga Therapie",
+            "isMerged": false,
+            "rawText": "17:35h Besprechung: Yoga Vidya Prinzipien der Yoga Therapie"
+          },
+          "G": {
+            "text": "Stellungen länger halten: Geistige Wirkungen.",
+            "isMerged": true,
+            "rawText": ""
+          },
+          "H": {
+            "text": "",
+            "isMerged": false,
+            "rawText": ""
+          },
+          "I": {
+            "text": "17:35 h Wiederholung Unterrichts-prinzipien",
+            "isMerged": false,
+            "rawText": "17:35 h Wiederholung Unterrichts-prinzipien"
+          },
+          "J": {
+            "text": "Studientag",
+            "isMerged": true,
+            "rawText": ""
+          },
+          "K": {
+            "text": "17.30h Festessen",
+            "isMerged": false,
+            "rawText": "17.30h Festessen"
+          },
+          "L": {
+            "text": "8.30 bis ca. 11.00h  Abschlußvortrag. Abschlußfeier, Zeremonie, spiritueller Segen, Verleihung der Diplome. Abreise ab 12.00 h",
+            "isMerged": true,
+            "rawText": ""
+          }
+        }
+      },
+      {
+        "rowNumber": 22,
+        "type": "evening_lecture",
+        "label": "19:00 – 19:50 Uhr: Vortrag",
+        "time": "19:00 - 19:50",
+        "badge": "Abendvortrag",
+        "entries": {
+          "D": {
+            "text": "",
+            "isMerged": false,
+            "rawText": ""
+          },
+          "E": {
+            "text": "Yoga und Sexualität",
+            "isMerged": false,
+            "rawText": "Yoga und Sexualität"
+          },
+          "F": {
+            "text": "",
+            "isMerged": false,
+            "rawText": ""
+          },
+          "G": {
+            "text": "Lange Meditation. Vedanta: 4 Mahavakyas",
+            "isMerged": false,
+            "rawText": "Lange Meditation. Vedanta: 4 Mahavakyas"
+          },
+          "H": {
+            "text": "Indische Schriften. Geschichte des Yoga",
+            "isMerged": false,
+            "rawText": "Indische Schriften. Geschichte des Yoga"
+          },
+          "I": {
+            "text": "",
+            "isMerged": false,
+            "rawText": ""
+          },
+          "J": {
+            "text": "Hinweise für Übungen zuhause",
+            "isMerged": false,
+            "rawText": "Hinweise für Übungen zuhause"
+          },
+          "K": {
+            "text": "",
+            "isMerged": false,
+            "rawText": ""
+          },
+          "L": {
+            "text": "8.30 bis ca. 11.00h  Abschlußvortrag. Abschlußfeier, Zeremonie, spiritueller Segen, Verleihung der Diplome. Abreise ab 12.00 h",
+            "isMerged": true,
+            "rawText": ""
+          }
+        }
+      },
+      {
+        "rowNumber": 23,
+        "type": "satsang",
+        "label": "20:00 Uhr: Satsang & Abendprogramm",
+        "time": "20:00 - 22:00",
+        "badge": "Satsang",
+        "entries": {
+          "D": {
+            "text": "nach Wahl",
+            "isMerged": false,
+            "rawText": "nach Wahl"
+          },
+          "E": {
+            "text": "nach Wahl",
+            "isMerged": false,
+            "rawText": "nach Wahl"
+          },
+          "F": {
+            "text": "Freizeit",
+            "isMerged": false,
+            "rawText": "Freizeit"
+          },
+          "G": {
+            "text": "",
+            "isMerged": false,
+            "rawText": ""
+          },
+          "H": {
+            "text": "nach Wahl",
+            "isMerged": false,
+            "rawText": "nach Wahl"
+          },
+          "I": {
+            "text": "Abstrakte Meditation",
+            "isMerged": false,
+            "rawText": "Abstrakte Meditation"
+          },
+          "J": {
+            "text": "nach Wahl",
+            "isMerged": false,
+            "rawText": "nach Wahl"
+          },
+          "K": {
+            "text": "nach Wahl",
+            "isMerged": false,
+            "rawText": "nach Wahl"
+          },
+          "L": {
+            "text": "8.30 bis ca. 11.00h  Abschlußvortrag. Abschlußfeier, Zeremonie, spiritueller Segen, Verleihung der Diplome. Abreise ab 12.00 h",
+            "isMerged": true,
+            "rawText": ""
+          }
+        }
+      },
+      {
+        "rowNumber": 24,
+        "type": "special_evening",
+        "label": "Langer Satsang / Homa / Spirituelle Namensgebung",
+        "time": "21:45",
+        "badge": "Zeremonie & Homa",
+        "entries": {
+          "D": {
+            "text": "langer Satsang",
+            "isMerged": false,
+            "rawText": "langer Satsang"
+          },
+          "E": {
+            "text": "",
+            "isMerged": false,
+            "rawText": ""
+          },
+          "F": {
+            "text": "Freizeit",
+            "isMerged": true,
+            "rawText": ""
+          },
+          "G": {
+            "text": "",
+            "isMerged": false,
+            "rawText": ""
+          },
+          "H": {
+            "text": "",
+            "isMerged": false,
+            "rawText": ""
+          },
+          "I": {
+            "text": "Homa; 21.45h Namensgebung",
+            "isMerged": false,
+            "rawText": "Homa; 21.45h Namensgebung"
+          },
+          "J": {
+            "text": "",
+            "isMerged": false,
+            "rawText": ""
+          },
+          "K": {
+            "text": "langer Saatsang",
+            "isMerged": false,
+            "rawText": "langer Saatsang"
+          },
+          "L": {
+            "text": "8.30 bis ca. 11.00h  Abschlußvortrag. Abschlußfeier, Zeremonie, spiritueller Segen, Verleihung der Diplome. Abreise ab 12.00 h",
+            "isMerged": true,
+            "rawText": ""
+          }
+        }
+      }
+    ],
+    "merges": [
+      "O5:O7",
+      "G10:G11",
+      "H10:H11",
+      "C12:C15",
+      "D12:D15",
+      "E12:E15",
+      "F12:F15",
+      "G12:G15",
+      "H12:H15",
+      "I12:I14",
+      "L12:L24",
+      "J13:J21",
+      "K15:K18",
+      "G16:G19",
+      "I16:I17",
+      "D18:D19",
+      "C20:C21",
+      "D20:D21",
+      "G20:G21",
+      "F23:F24"
+    ],
+    "rawCells": {
+      "B2": "Druckversion für die AB-Teilnehmer",
+      "C5": "Unterrichtsplan Yoga Vidya Lehrerausbildung Intensivkurs 19.6.2026 - 28.6.2026 (4. Woche)",
+      "C6": "Bund der Yoga Vidya Lehrer, Haus Yoga Vidya Bad Meinberg, Yogaweg 7, 32805 Horn-Bad Meinberg, Internet www.Yoga-Vidya.de, Email info@yoga-vidya.de, Tel. 05234-87-0, Fax –1875, Gäste:-2981; -2982",
+      "C7": "Abkürzungen: YLH=Yogalehrer Handbuch; Ki=Kirtanheft; BhG=Bhagavad Gita, YVA=Yoga Vidya Asana Buch",
+      "G8": "Schweigender Meditationstag (überhaupt kein Sprechen bis Mi. 8:30h)",
+      "I8": "Mantra-Einweihung (freiwillig)",
+      "J8": "Studientag",
+      "K8": "Prüfung; Auch nachher Anwesenheits-\npflicht!",
+      "C9": "Tagesteil",
+      "D9": "20.6. Samstag",
+      "E9": "21.6. Sonntag",
+      "F9": "22.6. Montag",
+      "G9": "23.6. Dienstag",
+      "H9": "24.6. Mittwoch",
+      "I9": "25.6. Donnerstag",
+      "J9": "26.6. Freitag",
+      "K9": "27.6. Samstag",
+      "L9": "28.6. Sonntag",
+      "G10": "Abstrakte Meditation (lange Sitzung). Höhere Erfahrungen in der Meditation",
+      "H10": "Abstrakte Meditation (lange Sitzung) Jivanmukta",
+      "C11": "6 - 6:50 Uhr Vortrag Teil 1 \n7 - 8 Uhr Satsang \n8:10 - 8:35 Vortrag, Teil 2",
+      "D11": "Einführung ins Ayurveda",
+      "E11": "Aufbau der Gelenke. Bewegungslehre: Flexion, Extension, etc.",
+      "F11": "Hatha Yoga Pradipika; Einstimmen auf Schweigetag",
+      "I11": "Wiederholung: Raja Yoga, Bhakti Yoga und Karma Yoga.",
+      "J11": "Guru und Schüler; Karma Yoga",
+      "K11": "Diene, liebe, gib, reinige Dich, meditiere und verwirkliche.",
+      "L11": "7.15-8.15h Asanas Pranayama. Anwesenheitspflicht!",
+      "C12": "8.45 Uhr Asanas, Pranayama: Yoga Stunden im Yoga Vidya Stil. 10.45 Uhr Frage und Antwort  Hatha Yoga",
+      "D12": "Sanfte Sonnengebete. Andere Stellungen  länger halten. Affirmationen. Geistige und psychische Wirkungen der Asanas.",
+      "E12": "Korr. Benennen der Bewegungen wäh- rend der Yoga-Std.: Flexion, Extension, Abduktion, Adduktion, etc. Variationen von Krähe, Pfau, Zehen-spitzenstellung, Berg. Steh.Gleichgewichts-Variationen.",
+      "F12": "Eine Fortgeschrittene Yogastunde für alle mit Variationen, insbesondere: Vorwärtsbeugen. Sitzhaltungen. Asanas für Hüftflexibilität. Lotus-Variationen.",
+      "G12": "Stellungen länger halten: Achtsam halten.",
+      "H12": "Yoga Vidya Stil Grundreihe ohne Variationen, Stellungen länger halten.  Klassische Tiefenentspannung.",
+      "I12": "Viele Variationen,  auch als Partnerübungen. Insbesondere (aber nicht nur) Vira Bhadrasana, Handstand, Skorpion.            Bis 10:50 Uhr",
+      "J12": "Individuelle Praxis. Bitte auch heute Karma Yoga machen.",
+      "K12": "8.00 h Frühstück                                                      .",
+      "L12": "8.30 bis ca. 11.00h  Abschlußvortrag. Abschlußfeier, Zeremonie, spiritueller Segen, Verleihung der Diplome. Abreise ab 12.00 h",
+      "J13": "Studientag",
+      "K13": "8.30-12.30h Abschlussprüfung",
+      "K14": "11-12.30h Mittagessen",
+      "I15": "11.30h Mantra-Einweihung (freiwillig)",
+      "C16": "14.00 h Bhagavad Gita",
+      "D16": "Bh.Gita, XII 1-14",
+      "E16": "Bh G XIV 1-13",
+      "F16": "Yamas und Niyamas",
+      "G16": "Meditation: Rajayoga Sutras I 1-4",
+      "H16": "Bh G XVIII; Literatur-empfehlungen",
+      "I16": "Wiederholung",
+      "C17": "14.35h Vortrag: Anatomie, Physiologie,",
+      "D17": "Verdauungssystem und Stoffwechsel",
+      "E17": "Bewegungslehre: Orthopädische Probleme",
+      "F17": "15.00 Uhr: Information über Yogalehrer Weiterbildungsseminare, Bund der Yoga Vidya Lehrer und Yoga Vidya Zentren.",
+      "H17": "Herz- Kreislauf- System; Das Ornish-Programm",
+      "C18": "Lesen: Grundwissen",
+      "D18": "YLH 10.5.; YLH 11.11",
+      "E18": "YLH 11.9-11.10 und 11.16; YLH 9.7;",
+      "F18": "YLH 11.4.9 und 11.6; YLH 11.14-11.15",
+      "H18": "YLH 2.14.-2.16.; YLH 10.4.",
+      "I18": "Wiederholung des ganzen YLH",
+      "C19": "Lesen: Aufbauwissen",
+      "E19": "YVA 167-180",
+      "F19": "YVA 196-200",
+      "H19": "YVA 42-47",
+      "I19": "YVA",
+      "C20": "16.00 Uhr Asanas/Pranayama: Unterrichtstechniken im Yoga Vidya Stil",
+      "D20": "Neu-Einteilung der Unterrichtsgruppen; Yogastunde und Besprechung: Yoga für Schwangere",
+      "E20": "Unterrichtsgruppen 3/1: Yoga für den Rücken.",
+      "F20": "Unterrichtsgruppen 3/2: Yoga für Schwangere",
+      "G20": "Stellungen länger halten: Geistige Wirkungen.",
+      "H20": "Unterrichtsgruppen 3/3 Fortgeschrittenen-Gruppe",
+      "I20": "Unterrichtsgruppen 3/4 Fortgeschrittenen-Gruppe",
+      "K20": "15.30-17.00h                     Yoga-Stunde.                 Anwesenheits\npflicht",
+      "E21": "17:35h Besprechung: Yoga für Fortgeschrittene",
+      "F21": "17:35h Besprechung: Yoga Vidya Prinzipien der Yoga Therapie",
+      "I21": "17:35 h Wiederholung Unterrichts-prinzipien",
+      "K21": "17.30h Festessen",
+      "C22": "19 - 19:50 Uhr Vortrag",
+      "E22": "Yoga und Sexualität",
+      "G22": "Lange Meditation. Vedanta: 4 Mahavakyas",
+      "H22": "Indische Schriften. Geschichte des Yoga",
+      "J22": "Hinweise für Übungen zuhause",
+      "C23": "20:00 Uhr Satsang",
+      "D23": "nach Wahl",
+      "E23": "nach Wahl",
+      "F23": "Freizeit",
+      "H23": "nach Wahl",
+      "I23": "Abstrakte Meditation",
+      "J23": "nach Wahl",
+      "K23": "nach Wahl",
+      "C24": "Anschließend              Mantra-Singen,             Vortrag",
+      "D24": "langer Satsang",
+      "I24": "Homa; 21.45h Namensgebung",
+      "K24": "langer Saatsang",
+      "C26": "Seite 3 von 4  Unterrichtsplan Yoga – Lehrer Ausbildung Intensiv",
+      "H26": "ã Haus Yoga Vidya e.V. Nordsee, Wiarder Altendeich 10, 26334 Wangerland",
+      "H27": "nordsee@yoga-vidya.de, www.yoga-vidya.de/nordsee"
+    }
+  }
+]
