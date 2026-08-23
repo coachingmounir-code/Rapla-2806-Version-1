@@ -78,9 +78,17 @@
   function getMondayOfCurrentWeek(): Date {
     const today = new Date();
     const currentDay = today.getDay(); // 0 = Sun, 1 = Mon, ..., 6 = Sat
-    const daysSinceMonday = currentDay === 0 ? 6 : currentDay - 1;
-    const monday = new Date(today.getTime());
-    monday.setDate(today.getDate() - daysSinceMonday + (currentWeekOffset * 7));
+    let daysToMonday = 0;
+    if (currentDay === 5) daysToMonday = 3; // Friday -> upcoming Monday (+3)
+    else if (currentDay === 6) daysToMonday = 2; // Saturday -> upcoming Monday (+2)
+    else if (currentDay === 0) daysToMonday = 1; // Sunday -> tomorrow Monday (+1)
+    else if (currentDay === 1) daysToMonday = 0; // Monday -> today (0)
+    else if (currentDay === 2) daysToMonday = -1; // Tuesday -> past Monday (-1)
+    else if (currentDay === 3) daysToMonday = -2; // Wednesday -> past Monday (-2)
+    else if (currentDay === 4) daysToMonday = -3; // Thursday -> past Monday (-3)
+    
+    const monday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    monday.setDate(today.getDate() + daysToMonday + (currentWeekOffset * 7));
     return monday;
   }
 
@@ -94,6 +102,13 @@
   }
 
   function getDayDateString(dayValue: number): string {
+    if (currentPlan?.targetWeekCode) {
+      const dateStr = getLocalDateForDay(currentPlan.targetWeekCode, dayValue);
+      const parts = dateStr.split('-');
+      if (parts.length === 3) {
+        return `${parts[2]}.${parts[1]}.`;
+      }
+    }
     const monday = getMondayOfCurrentWeek();
     let offset = 0;
     if (dayValue === 5) offset = -3;
@@ -375,7 +390,7 @@
           <button type="button" class="btn btn-current-week btn-small" onclick={() => { currentWeekOffset = 0; loadData(); }}>Aktuelle Woche</button>
           <button type="button" class="btn btn-secondary btn-small" onclick={() => navigateWeek(-1)}>◀ Letzte Woche</button>
           <span class="week-title-badge">
-            KW {currentPlan ? getWeekNumber(getMondayOfCurrentWeek()) : '--'} ({currentPlan?.targetWeekCode || 'Kein Plan'})
+            KW {currentPlan?.targetWeekCode ? parseInt(currentPlan.targetWeekCode.split('-W')[1], 10) : (currentPlan ? getWeekNumber(getMondayOfCurrentWeek()) : '--')} ({currentPlan?.targetWeekCode || 'Kein Plan'})
           </span>
           <button type="button" class="btn btn-secondary btn-small" onclick={() => navigateWeek(1)}>Nächste Woche ▶</button>
         </div>
@@ -447,7 +462,7 @@
       <button type="button" class="btn btn-current-week btn-small" onclick={() => { currentWeekOffset = 0; loadData(); }}>Aktuelle Woche</button>
       <button type="button" class="btn btn-secondary btn-small" onclick={() => navigateWeek(-1)}>◀</button>
       <span class="week-title-badge-mobile">
-        KW {currentPlan ? getWeekNumber(getMondayOfCurrentWeek()) : '--'} ({currentPlan?.targetWeekCode || 'Kein Plan'})
+        KW {currentPlan?.targetWeekCode ? parseInt(currentPlan.targetWeekCode.split('-W')[1], 10) : (currentPlan ? getWeekNumber(getMondayOfCurrentWeek()) : '--')} ({currentPlan?.targetWeekCode || 'Kein Plan'})
       </span>
       <button type="button" class="btn btn-secondary btn-small" onclick={() => navigateWeek(1)}>▶</button>
     </div>

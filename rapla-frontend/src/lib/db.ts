@@ -7012,7 +7012,14 @@ export const db = {
     
     const today = new Date();
     const currentDay = today.getDay();
-    const daysSinceMonday = currentDay === 0 ? 6 : currentDay - 1;
+    let daysToMonday = 0;
+    if (currentDay === 5) daysToMonday = 3;
+    else if (currentDay === 6) daysToMonday = 2;
+    else if (currentDay === 0) daysToMonday = 1;
+    else if (currentDay === 1) daysToMonday = 0;
+    else if (currentDay === 2) daysToMonday = -1;
+    else if (currentDay === 3) daysToMonday = -2;
+    else if (currentDay === 4) daysToMonday = -3;
     
     // Helper to calculate ISO week number
     const getWeekNo = (date: Date): number => {
@@ -7025,8 +7032,8 @@ export const db = {
 
     // Generate/retrieve for 4 weeks (current week = 0, +1, +2, +3)
     for (let w = 0; w < 4; w++) {
-      const monday = new Date(today.getTime());
-      monday.setDate(today.getDate() - daysSinceMonday + (w * 7));
+      const monday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+      monday.setDate(today.getDate() + daysToMonday + (w * 7));
       
       const year = monday.getFullYear();
       const weekNum = getWeekNo(monday);

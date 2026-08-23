@@ -62,13 +62,21 @@
     loadData();
   });
 
-  // Helper to find the Monday of the current week
+  // Helper to find the Monday of the current week (Friday-Thursday cycle)
   function getMondayOfCurrentWeek(): Date {
     const today = new Date();
     const currentDay = today.getDay(); // 0 = Sun, 1 = Mon, ..., 6 = Sat
-    const daysSinceMonday = currentDay === 0 ? 6 : currentDay - 1;
-    const monday = new Date(today.getTime());
-    monday.setDate(today.getDate() - daysSinceMonday + (currentWeekOffset * 7));
+    let daysToMonday = 0;
+    if (currentDay === 5) daysToMonday = 3; // Friday -> upcoming Monday (+3)
+    else if (currentDay === 6) daysToMonday = 2; // Saturday -> upcoming Monday (+2)
+    else if (currentDay === 0) daysToMonday = 1; // Sunday -> tomorrow Monday (+1)
+    else if (currentDay === 1) daysToMonday = 0; // Monday -> today (0)
+    else if (currentDay === 2) daysToMonday = -1; // Tuesday -> past Monday (-1)
+    else if (currentDay === 3) daysToMonday = -2; // Wednesday -> past Monday (-2)
+    else if (currentDay === 4) daysToMonday = -3; // Thursday -> past Monday (-3)
+    
+    const monday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    monday.setDate(today.getDate() + daysToMonday + (currentWeekOffset * 7));
     return monday;
   }
 
@@ -83,6 +91,13 @@
 
   // Helper to calculate date of current week's days starting on Friday
   function getDayDateString(dayValue: number): string {
+    if (currentPlan?.targetWeekCode) {
+      const dateStr = getLocalDateForDay(currentPlan.targetWeekCode, dayValue);
+      const parts = dateStr.split('-');
+      if (parts.length === 3) {
+        return `${parts[2]}.${parts[1]}.`;
+      }
+    }
     const monday = getMondayOfCurrentWeek();
     let offset = 0;
     if (dayValue === 5) offset = -3;
@@ -96,6 +111,24 @@
     const targetDate = new Date(monday.getTime());
     targetDate.setDate(monday.getDate() + offset);
     return targetDate.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit' });
+  }
+
+  function navigateWeek(direction: number) {
+    currentWeekOffset += direction;
+    if (planId) {
+      goto('/schedule');
+    } else {
+      loadData();
+    }
+  }
+
+  function goToCurrentWeek() {
+    currentWeekOffset = 0;
+    if (planId) {
+      goto('/schedule');
+    } else {
+      loadData();
+    }
   }
 
   // Get color based on course name or style to match the image theme
@@ -496,6 +529,14 @@
 <!-- Wochenkursplan (Calendar Weekly Board) -->
 <div class="calendar-grid-container animate-fade-in" class:fullscreen-mode={isFullscreen}>
   <div class="grid-controls-row">
+    <div class="navigation-group">
+      <button type="button" class="btn btn-current-week btn-small" onclick={goToCurrentWeek}>Aktuelle Woche</button>
+      <button type="button" class="btn btn-secondary btn-small" onclick={() => navigateWeek(-1)}>◀ Letzte Woche</button>
+      <span class="week-title-badge">
+        KW {currentPlan?.targetWeekCode ? parseInt(currentPlan.targetWeekCode.split('-W')[1], 10) : getWeekNumber(getMondayOfCurrentWeek())} ({currentPlan?.targetWeekCode || 'Kein Plan'})
+      </span>
+      <button type="button" class="btn btn-secondary btn-small" onclick={() => navigateWeek(1)}>Nächste Woche ▶</button>
+    </div>
     {#if isFullscreen}
       <span class="fullscreen-title">🧘 Wochenplan (Vollbild)</span>
     {/if}
@@ -509,25 +550,25 @@
       <button 
         type="button" 
         class="week-nav-btn" 
-        onclick={() => { currentWeekOffset--; loadData(); }}
+        onclick={() => navigateWeek(-1)}
         title="Vorherige Woche"
       >
         ◀
       </button>
       <div class="week-label" style="font-size: 0.85rem; font-weight: 700; white-space: nowrap;">
-        KW {getWeekNumber(getMondayOfCurrentWeek())}
+        KW {currentPlan?.targetWeekCode ? parseInt(currentPlan.targetWeekCode.split('-W')[1], 10) : getWeekNumber(getMondayOfCurrentWeek())}
       </div>
       <button 
         type="button" 
         class="week-nav-btn" 
-        onclick={() => { currentWeekOffset++; loadData(); }}
+        onclick={() => navigateWeek(1)}
         title="Nächste Woche"
       >
         ▶
       </button>
     </div>
     {#each DAYS as day}
-      {@const isToday = day.value === (new Date().getDay() === 0 ? 0 : new Date().getDay())}
+      {@const isToday = new Date().getDay() === day.value && currentWeekOffset === 0 && !planId}
       <div class="grid-header-cell day-header" class:header-today={isToday}>
         <span class="day-label-short">{day.label.substring(0, 2)}</span>
         <span class="day-date">{getDayDateString(day.value)}</span>
@@ -1214,12 +1255,45 @@
   /* Fullscreen & Controls Row styling */
   .grid-controls-row {
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
     align-items: center;
     padding: 8px 12px;
     background: #f1f5f9;
     border-bottom: 1px solid #cbd5e1;
     gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .navigation-group {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .btn-current-week {
+    background: var(--primary);
+    color: white !important;
+    font-weight: 700;
+  }
+
+  .btn-current-week:hover {
+    background: var(--primary-hover);
+  }
+
+  .week-title-badge {
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: var(--text-primary);
+    background: #ffffff;
+    padding: 0.35rem 0.85rem;
+    border-radius: 6px;
+    border: 1px solid #cbd5e1;
+  }
+
+  .btn-small {
+    padding: 0.35rem 0.75rem;
+    font-size: 0.8rem;
   }
 
   .fullscreen-title {
