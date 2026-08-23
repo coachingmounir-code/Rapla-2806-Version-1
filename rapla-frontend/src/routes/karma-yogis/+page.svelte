@@ -895,7 +895,7 @@
 
         <!-- Yoga Specialties -->
         <div class="form-group" style="margin-top: 1rem;">
-          <label class="form-label">Bevorzugte Yoga-Stile & Schwerpunkte</label>
+          <span class="form-label">Bevorzugte Yoga-Stile & Schwerpunkte</span>
           <div class="checkbox-grid">
             {#each SPECIALTY_OPTIONS as spec}
               <button 

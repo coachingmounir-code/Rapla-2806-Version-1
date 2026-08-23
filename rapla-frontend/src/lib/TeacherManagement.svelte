@@ -329,6 +329,8 @@
 <!-- Teachers Grid -->
 <div class="grid-cols-3 animate-fade-in" style="margin-top: 2rem;">
   {#each filteredTeachers as teacher}
+    <!-- svelte-ignore a11y_click_events_have_key_events -->
+    <!-- svelte-ignore a11y_no_static_element_interactions -->
     <div 
       class="glass-card glass-card-interactive teacher-card" 
       class:selected-card={selectedTeacherIds.includes(teacher.id)}
@@ -419,6 +421,8 @@
 
 <!-- Add/Edit Modal -->
 {#if isModalOpen}
+  <!-- svelte-ignore a11y_click_events_have_key_events -->
+  <!-- svelte-ignore a11y_no_static_element_interactions -->
   <div class="modal-backdrop" onclick={() => isModalOpen = false}>
     <div class="modal-content glass-card" onclick={(e) => e.stopPropagation()}>
       <div class="modal-header">
@@ -471,7 +475,7 @@
 
 
           <div class="form-group">
-            <label class="form-label">Spezifische Qualifikationen</label>
+            <span class="form-label">Spezifische Qualifikationen</span>
             <div class="checkbox-grid-3">
               <label class="checkbox-chip-label">
                 <input type="checkbox" bind:checked={ruleCanLeadMeditation} />
@@ -529,7 +533,7 @@
           </div>
 
           <div class="form-group">
-            <label class="form-label">Besondere Planungsbedingungen</label>
+            <span class="form-label">Besondere Planungsbedingungen</span>
             <div class="checkbox-grid-2">
               <label class="checkbox-chip-label">
                 <input type="checkbox" bind:checked={ruleNoTwoYogaSameDay} />
