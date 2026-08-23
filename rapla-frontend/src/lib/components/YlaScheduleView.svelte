@@ -128,19 +128,26 @@
 
   function toggleFullscreen() {
     const container = document.getElementById('yla-schedule-container');
-    if (!container) return;
+    if (!container) {
+      isFullscreen = !isFullscreen;
+      return;
+    }
 
     if (!document.fullscreenElement && !isFullscreen) {
       if (container.requestFullscreen) {
-        container.requestFullscreen().catch(() => {
+        container.requestFullscreen().then(() => {
+          isFullscreen = true;
+        }).catch(() => {
           isFullscreen = true;
         });
       } else {
         isFullscreen = true;
       }
     } else {
-      if (document.exitFullscreen && document.fullscreenElement) {
-        document.exitFullscreen().catch(() => {
+      if (document.fullscreenElement && document.exitFullscreen) {
+        document.exitFullscreen().then(() => {
+          isFullscreen = false;
+        }).catch(() => {
           isFullscreen = false;
         });
       } else {
@@ -256,7 +263,8 @@
   {#if isFullscreen}
     <div class="fs-top-bar glass-card">
       <div class="fs-brand-section">
-        <h2 class="fs-main-title">{currentWeek.title}</h2>
+        <span class="fs-brand-badge">🧘 4-wöchige YLA</span>
+        <span class="fs-brand-sub" title={currentWeek.title}>Yogalehrerausbildung</span>
       </div>
 
       <!-- Quick 1-Click Week Switcher Pills in Fullscreen -->
@@ -268,9 +276,10 @@
             class="fs-week-btn" 
             class:active={isActive}
             onclick={() => selectWeek(week.weekNumber)}
+            title={week.weekSubtitle}
           >
             <span class="fs-w-title">Woche {week.weekNumber}</span>
-            <span class="fs-w-dates">{week.dateRange}</span>
+            <span class="fs-w-dates">{week.dateRange.replace('.2026', '').replace('/2026', '')}</span>
           </button>
         {/each}
       </div>
@@ -281,9 +290,11 @@
           type="button" 
           class="btn-fs-exit" 
           onclick={toggleFullscreen}
-          title="Vollbild beenden (Esc)"
+          title="Vollbild beenden (Taste Esc)"
         >
-          🗗 Vollbild beenden
+          <span class="fs-exit-icon">✕</span>
+          <span class="fs-exit-label">Vollbild beenden</span>
+          <kbd class="fs-esc-key">Esc</kbd>
         </button>
       </div>
     </div>
@@ -773,7 +784,8 @@
   }
 
   /* FULLSCREEN MODE: Fits 100% within monitor height without scrolling */
-  .fullscreen-active {
+  .fullscreen-active,
+  .yla-view-wrapper:fullscreen {
     position: fixed !important;
     top: 0 !important;
     left: 0 !important;
@@ -781,13 +793,15 @@
     bottom: 0 !important;
     width: 100vw !important;
     height: 100vh !important;
+    max-width: 100vw !important;
+    max-height: 100vh !important;
     z-index: 99999 !important;
     background: #fbf9f4 !important;
-    padding: 0.5rem 0.75rem !important;
+    padding: 0.4rem 0.6rem !important;
     overflow: hidden !important;
     display: flex !important;
     flex-direction: column !important;
-    gap: 0.4rem !important;
+    gap: 0.35rem !important;
     box-sizing: border-box !important;
   }
 
@@ -798,63 +812,76 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 0.75rem;
-    padding: 0.4rem 0.8rem;
+    gap: 0.5rem;
+    padding: 0.35rem 0.75rem;
     background: #ffffff;
     border: 1px solid #ffe082;
-    border-radius: 12px;
+    border-radius: 10px;
     box-shadow: 0 2px 8px rgba(150, 0, 64, 0.05);
     flex-shrink: 0;
-    min-height: 44px;
+    min-height: 42px;
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
   }
 
   .fs-brand-section {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.4rem;
     flex-shrink: 0;
+    min-width: 0;
   }
 
   .fs-brand-badge {
     background: #fff5cc;
     color: #960040;
     font-weight: 800;
-    font-size: 0.82rem;
-    padding: 0.2rem 0.6rem;
-    border-radius: 14px;
+    font-size: 0.8rem;
+    padding: 0.2rem 0.55rem;
+    border-radius: 12px;
     border: 1px solid #ffe082;
+    white-space: nowrap;
   }
 
-  .fs-week-pill {
+  .fs-brand-sub {
     font-size: 0.82rem;
     font-weight: 700;
     color: #2a1b1b;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .fs-week-switcher {
     display: flex;
     align-items: center;
-    gap: 0.4rem;
+    gap: 0.35rem;
     flex: 1;
     justify-content: center;
+    min-width: 0;
+    overflow: hidden;
   }
 
   .fs-week-btn {
     display: inline-flex;
     align-items: center;
-    gap: 0.35rem;
+    gap: 0.3rem;
     background: #fffdf8;
     border: 1.5px solid #ffe082;
     border-radius: 8px;
-    padding: 0.25rem 0.65rem;
+    padding: 0.22rem 0.55rem;
     cursor: pointer;
-    font-size: 0.78rem;
-    transition: all 0.2s;
+    font-size: 0.76rem;
+    transition: all 0.15s ease-in-out;
+    white-space: nowrap;
+    flex-shrink: 0;
   }
 
   .fs-week-btn:hover {
     border-color: #960040;
     background: #fff5cc;
+    color: #960040;
   }
 
   .fs-week-btn.active {
@@ -874,7 +901,7 @@
   }
 
   .fs-w-dates {
-    font-size: 0.7rem;
+    font-size: 0.68rem;
     color: #785858;
   }
 
@@ -883,56 +910,114 @@
     align-items: center;
     gap: 0.4rem;
     flex-shrink: 0;
+    margin-left: auto;
   }
 
   .btn-fs-exit {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
     background: #960040;
     color: #ffffff;
     border: 1px solid #7d0034;
     border-radius: 8px;
-    padding: 0.35rem 0.85rem;
-    font-size: 0.8rem;
+    padding: 0.3rem 0.75rem;
+    font-size: 0.78rem;
     font-weight: 700;
     cursor: pointer;
-    transition: background 0.2s;
+    white-space: nowrap;
+    box-shadow: 0 2px 6px rgba(150, 0, 64, 0.2);
+    transition: all 0.2s ease;
+    flex-shrink: 0;
   }
 
   .btn-fs-exit:hover {
     background: #7d0034;
+    transform: translateY(-1px);
+    box-shadow: 0 3px 8px rgba(150, 0, 64, 0.3);
+  }
+
+  .fs-exit-icon {
+    font-size: 0.85rem;
+    font-weight: bold;
+  }
+
+  .fs-esc-key {
+    background: rgba(255, 255, 255, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 4px;
+    padding: 0.05rem 0.3rem;
+    font-size: 0.65rem;
+    font-family: inherit;
+    font-weight: 600;
+    margin-left: 0.2rem;
   }
 
   .fs-special-ribbon {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.4rem;
     background: #fff8e1;
     border: 1px solid #ffe082;
     border-radius: 8px;
-    padding: 0.2rem 0.6rem;
-    font-size: 0.74rem;
+    padding: 0.15rem 0.5rem;
+    font-size: 0.72rem;
     flex-shrink: 0;
+    overflow-x: auto;
+    white-space: nowrap;
+    scrollbar-width: thin;
+    max-width: 100%;
+    box-sizing: border-box;
   }
 
   .fs-ribbon-label {
     font-weight: 700;
     color: #960040;
+    flex-shrink: 0;
   }
 
   .fs-ribbon-chips {
     display: flex;
-    gap: 0.6rem;
-    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+    flex-wrap: nowrap;
   }
 
   .fs-ribbon-chip {
     display: inline-flex;
     align-items: center;
-    gap: 0.25rem;
+    gap: 0.2rem;
     color: #2a1b1b;
+    flex-shrink: 0;
   }
 
   .fs-ribbon-chip strong {
     color: #960040;
+  }
+
+  .fullscreen-active .yla-mobile-view {
+    display: none !important;
+  }
+
+  @media (max-width: 1100px) {
+    .fs-w-dates {
+      display: none;
+    }
+    .fs-brand-sub {
+      display: none;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .fs-exit-label {
+      display: none;
+    }
+    .fs-esc-key {
+      display: none;
+    }
+    .btn-fs-exit {
+      padding: 0.3rem 0.5rem;
+    }
   }
 
   /* ========================================================================= */

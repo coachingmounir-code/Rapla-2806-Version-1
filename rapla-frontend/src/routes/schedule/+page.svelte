@@ -75,7 +75,54 @@
 
   onMount(() => {
     loadData();
+
+    const handleKeydown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isFullscreen) {
+        toggleFullscreen();
+      }
+    };
+
+    const handleFullscreenChange = () => {
+      isFullscreen = !!document.fullscreenElement;
+    };
+
+    window.addEventListener('keydown', handleKeydown);
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+    document.addEventListener('mozfullscreenchange', handleFullscreenChange);
+    document.addEventListener('MSFullscreenChange', handleFullscreenChange);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeydown);
+      document.removeEventListener('fullscreenchange', handleFullscreenChange);
+      document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
+      document.removeEventListener('mozfullscreenchange', handleFullscreenChange);
+      document.removeEventListener('MSFullscreenChange', handleFullscreenChange);
+    };
   });
+
+  function toggleFullscreen() {
+    const container = document.querySelector('.calendar-grid-container');
+    if (!container) return;
+
+    if (!document.fullscreenElement && !isFullscreen) {
+      if (container.requestFullscreen) {
+        container.requestFullscreen().catch(() => {
+          isFullscreen = true;
+        });
+      } else {
+        isFullscreen = true;
+      }
+    } else {
+      if (document.fullscreenElement && document.exitFullscreen) {
+        document.exitFullscreen().catch(() => {
+          isFullscreen = false;
+        });
+      } else {
+        isFullscreen = false;
+      }
+    }
+  }
 
   // Helper to find the Monday of the current week (Friday-Thursday cycle)
   function getMondayOfCurrentWeek(): Date {
@@ -660,7 +707,7 @@
     {#if isFullscreen}
       <span class="fullscreen-title">🧘 Wochenplan (Vollbild)</span>
     {/if}
-    <button type="button" class="btn btn-secondary btn-small fullscreen-toggle-btn" onclick={() => isFullscreen = !isFullscreen}>
+    <button type="button" class="btn btn-secondary btn-small fullscreen-toggle-btn" onclick={toggleFullscreen}>
       {isFullscreen ? '✕ Vollbild beenden' : '🖥️ Vollbild'}
     </button>
   </div>
@@ -705,6 +752,7 @@
         {@const coursesInSlot = getFilteredCoursesForHour(day.value, hour)}
         <div class="grid-content-cell">
           {#each coursesInSlot as course}
+            {@const cardColors = getCourseColor(course)}
             {@const roomObj = rooms.find(r => r.id === course.roomId)}
             {@const teacherObj = teachers.find(t => t.id === course.teacherId)}
             {@const courseConflicts = getCourseConflicts(course)}
@@ -1513,31 +1561,64 @@
     cursor: pointer;
   }
 
-  .calendar-grid-container.fullscreen-mode {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    z-index: 9999;
-    background: var(--bg-main);
-    padding: 0;
-    margin: 0;
-    overflow: auto;
-    border-radius: 0;
+  .calendar-grid-container.fullscreen-mode,
+  .calendar-grid-container:fullscreen {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    max-width: 100vw !important;
+    max-height: 100vh !important;
+    z-index: 99999 !important;
+    background: var(--bg-main) !important;
+    padding: 0.75rem 1rem !important;
+    margin: 0 !important;
+    overflow-y: auto !important;
+    overflow-x: auto !important;
+    border-radius: 0 !important;
+    box-sizing: border-box !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0.5rem !important;
+    border: none !important;
   }
 
-  .calendar-grid-container.fullscreen-mode .grid-controls-row {
-    position: sticky;
-    top: 0;
-    background: var(--secondary);
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    z-index: 100;
+  .calendar-grid-container.fullscreen-mode .grid-controls-row,
+  .calendar-grid-container:fullscreen .grid-controls-row {
+    position: sticky !important;
+    top: 0 !important;
+    background: var(--secondary) !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08) !important;
+    z-index: 100 !important;
+    margin-bottom: 0 !important;
+    flex-shrink: 0 !important;
   }
 
-  .calendar-grid-container.fullscreen-mode .calendar-grid {
-    height: auto;
-    min-height: calc(100vh - 55px);
+  .calendar-grid-container.fullscreen-mode .calendar-grid,
+  .calendar-grid-container:fullscreen .calendar-grid {
+    height: auto !important;
+    min-height: calc(100vh - 85px) !important;
+    grid-auto-rows: minmax(75px, auto) !important;
+    min-width: 1060px !important;
+    overflow: visible !important;
+    flex: 1 !important;
+  }
+
+  .calendar-grid-container.fullscreen-mode .grid-content-cell,
+  .calendar-grid-container:fullscreen .grid-content-cell {
+    min-height: 75px !important;
+    padding: 4px 6px !important;
+    gap: 4px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-start !important;
+  }
+
+  .calendar-grid-container.fullscreen-mode .course-card-rapla,
+  .calendar-grid-container:fullscreen .course-card-rapla {
+    padding: 6px 8px !important;
+    min-height: fit-content !important;
   }
 
   /* Externe Seminarleiter checklist styles */

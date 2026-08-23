@@ -85,8 +85,23 @@
       }
     };
     
+    const handleFullscreenChange = () => {
+      isFullscreen = !!document.fullscreenElement;
+    };
+
     window.addEventListener('keydown', handleKeydown);
-    return () => window.removeEventListener('keydown', handleKeydown);
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+    document.addEventListener('mozfullscreenchange', handleFullscreenChange);
+    document.addEventListener('MSFullscreenChange', handleFullscreenChange);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeydown);
+      document.removeEventListener('fullscreenchange', handleFullscreenChange);
+      document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
+      document.removeEventListener('mozfullscreenchange', handleFullscreenChange);
+      document.removeEventListener('MSFullscreenChange', handleFullscreenChange);
+    };
   });
 
   function getWeekCode(date: Date): string {
@@ -307,16 +322,22 @@
     const container = document.getElementById('view-calendar-container');
     if (!container) return;
 
-    if (!isFullscreen) {
+    if (!document.fullscreenElement && !isFullscreen) {
       if (container.requestFullscreen) {
-        container.requestFullscreen();
+        container.requestFullscreen().catch(() => {
+          isFullscreen = true;
+        });
+      } else {
+        isFullscreen = true;
       }
-      isFullscreen = true;
     } else {
-      if (document.exitFullscreen) {
-        document.exitFullscreen();
+      if (document.fullscreenElement && document.exitFullscreen) {
+        document.exitFullscreen().catch(() => {
+          isFullscreen = false;
+        });
+      } else {
+        isFullscreen = false;
       }
-      isFullscreen = false;
     }
   }
 
@@ -507,7 +528,7 @@
                 {@const isHighlighted = selectedTeacher && course.teacherId === selectedTeacher.id}
                 {@const colors = getCourseColor(course)}
                 {@const teacherName = teachers.find(t => t.id === course.teacherId)?.name || 'Unbesetzt'}
-                {@const roomName = rooms.find(r => r.id === course.roomId)?.name || 'Raum?'}
+                {@const roomName = rooms.find(r => r.id === course.roomId)?.name || course.roomId || 'Raum?'}
                 
                 <div 
                   class="course-card-rapla" 
@@ -997,22 +1018,83 @@
   }
 
   /* Fullscreen Mode override */
-  .calendar-grid-container.fullscreen-mode {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    z-index: 9999;
-    background: #f8fafc;
-    border-radius: 0;
-    padding: 12px;
+  .calendar-grid-container.fullscreen-mode,
+  .calendar-grid-container:fullscreen {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    max-width: 100vw !important;
+    max-height: 100vh !important;
+    z-index: 99999 !important;
+    background: #fffbf7 !important;
+    border-radius: 0 !important;
+    padding: 0.75rem 1rem !important;
+    overflow-y: auto !important;
+    overflow-x: auto !important;
+    box-sizing: border-box !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0.5rem !important;
+    margin: 0 !important;
+    border: none !important;
   }
 
-  .calendar-grid-container.fullscreen-mode .calendar-grid {
-    height: calc(100vh - 80px);
-    grid-auto-rows: 1fr; /* evenly distribute rows */
-    min-width: 100%;
+  .calendar-grid-container.fullscreen-mode .grid-controls-row,
+  .calendar-grid-container:fullscreen .grid-controls-row {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 100 !important;
+    background: #f1f5f9 !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+    margin-bottom: 0 !important;
+    flex-shrink: 0 !important;
+  }
+
+  .calendar-grid-container.fullscreen-mode .calendar-grid,
+  .calendar-grid-container:fullscreen .calendar-grid {
+    height: auto !important;
+    min-height: calc(100vh - 85px) !important;
+    grid-auto-rows: minmax(75px, auto) !important;
+    min-width: 1060px !important;
+    overflow: visible !important;
+    flex: 1 !important;
+  }
+
+  .calendar-grid-container.fullscreen-mode .grid-content-cell,
+  .calendar-grid-container:fullscreen .grid-content-cell {
+    min-height: 75px !important;
+    padding: 4px 6px !important;
+    gap: 4px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-start !important;
+  }
+
+  .calendar-grid-container.fullscreen-mode .course-card-rapla,
+  .calendar-grid-container:fullscreen .course-card-rapla {
+    padding: 6px 8px !important;
+    min-height: fit-content !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08) !important;
+    gap: 3px !important;
+  }
+
+  .calendar-grid-container.fullscreen-mode .card-title-line,
+  .calendar-grid-container:fullscreen .card-title-line {
+    font-size: 0.85rem !important;
+    font-weight: 700 !important;
+    line-height: 1.25 !important;
+  }
+
+  .calendar-grid-container.fullscreen-mode .card-top-line,
+  .calendar-grid-container:fullscreen .card-top-line {
+    font-size: 0.72rem !important;
+  }
+
+  .calendar-grid-container.fullscreen-mode .card-teacher-line,
+  .calendar-grid-container:fullscreen .card-teacher-line {
+    font-size: 0.72rem !important;
   }
 
   /* Buttons */
