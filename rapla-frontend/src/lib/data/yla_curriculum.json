@@ -29,42 +29,54 @@
         "headerRaw": "30.8. Sonntag",
         "dateStr": "30.8.",
         "dayName": "Sonntag",
-        "specialFocus": ""
+        "specialFocus": "",
+        "dayOfWeek": 0,
+        "isoDate": "2026-08-30"
       },
       {
         "col": "E",
         "headerRaw": "31.8. Montag",
         "dateStr": "31.8.",
         "dayName": "Montag",
-        "specialFocus": ""
+        "specialFocus": "",
+        "dayOfWeek": 1,
+        "isoDate": "2026-08-31"
       },
       {
         "col": "F",
         "headerRaw": "1.9. Dienstag",
         "dateStr": "1.9.",
         "dayName": "Dienstag",
-        "specialFocus": ""
+        "specialFocus": "",
+        "dayOfWeek": 2,
+        "isoDate": "2026-09-01"
       },
       {
         "col": "G",
         "headerRaw": "2.9. Mittwoch",
         "dateStr": "2.9.",
         "dayName": "Mittwoch",
-        "specialFocus": "Gemäßigtes Schweigen                                (Kein Sprechen außerhalb  des Unterrichts bis 12 Uhr)"
+        "specialFocus": "Gemäßigtes Schweigen                                (Kein Sprechen außerhalb  des Unterrichts bis 12 Uhr)",
+        "dayOfWeek": 3,
+        "isoDate": "2026-09-02"
       },
       {
         "col": "H",
         "headerRaw": "3.9. Donnerstag",
         "dateStr": "3.9.",
         "dayName": "Donnerstag",
-        "specialFocus": ""
+        "specialFocus": "",
+        "dayOfWeek": 4,
+        "isoDate": "2026-09-03"
       },
       {
         "col": "I",
         "headerRaw": "4.9. Freitag",
         "dateStr": "4.9.",
         "dayName": "Freitag",
-        "specialFocus": "Freier Tag 10.15-20h"
+        "specialFocus": "Freier Tag 10.15-20h",
+        "dayOfWeek": 5,
+        "isoDate": "2026-09-04"
       }
     ],
     "slots": [
@@ -951,49 +963,63 @@
         "headerRaw": "5.9. Samstag",
         "dateStr": "5.9.",
         "dayName": "Samstag",
-        "specialFocus": "Karma und Reinkarnation"
+        "specialFocus": "Karma und Reinkarnation",
+        "dayOfWeek": 6,
+        "isoDate": "2026-09-05"
       },
       {
         "col": "E",
         "headerRaw": "6.9. Sonntag",
         "dateStr": "6.9.",
         "dayName": "Sonntag",
-        "specialFocus": "Karma und Reinkarnation"
+        "specialFocus": "Karma und Reinkarnation",
+        "dayOfWeek": 0,
+        "isoDate": "2026-09-06"
       },
       {
         "col": "F",
         "headerRaw": "7.9. Montag",
         "dateStr": "7.9.",
         "dayName": "Montag",
-        "specialFocus": ""
+        "specialFocus": "",
+        "dayOfWeek": 1,
+        "isoDate": "2026-09-07"
       },
       {
         "col": "G",
         "headerRaw": "8.9. Dienstag",
         "dateStr": "8.9.",
         "dayName": "Dienstag",
-        "specialFocus": ""
+        "specialFocus": "",
+        "dayOfWeek": 2,
+        "isoDate": "2026-09-08"
       },
       {
         "col": "H",
         "headerRaw": "9.9. Mittwoch",
         "dateStr": "9.9.",
         "dayName": "Mittwoch",
-        "specialFocus": "Gemäßigtes Schweigen               (kein  Sprechen außerhalb des Unterrichts bis 18 Uhr)"
+        "specialFocus": "Gemäßigtes Schweigen               (kein  Sprechen außerhalb des Unterrichts bis 18 Uhr)",
+        "dayOfWeek": 3,
+        "isoDate": "2026-09-09"
       },
       {
         "col": "I",
         "headerRaw": "10.9. Donnerstag",
         "dateStr": "10.9.",
         "dayName": "Donnerstag",
-        "specialFocus": "Fastentag (Wer will); Kriya-Tag; Mantra Einweihung"
+        "specialFocus": "Fastentag (Wer will); Kriya-Tag; Mantra Einweihung",
+        "dayOfWeek": 4,
+        "isoDate": "2026-09-10"
       },
       {
         "col": "J",
         "headerRaw": "11.9. Freitag",
         "dateStr": "11.9.",
         "dayName": "Freitag",
-        "specialFocus": "Freier Tag"
+        "specialFocus": "Freier Tag",
+        "dayOfWeek": 5,
+        "isoDate": "2026-09-11"
       }
     ],
     "slots": [
@@ -2174,49 +2200,63 @@
         "headerRaw": "12.9. Samstag",
         "dateStr": "12.9.",
         "dayName": "Samstag",
-        "specialFocus": ""
+        "specialFocus": "",
+        "dayOfWeek": 6,
+        "isoDate": "2026-09-12"
       },
       {
         "col": "E",
         "headerRaw": "13.9. Sonntag",
         "dateStr": "13.9.",
         "dayName": "Sonntag",
-        "specialFocus": ""
+        "specialFocus": "",
+        "dayOfWeek": 0,
+        "isoDate": "2026-09-13"
       },
       {
         "col": "F",
         "headerRaw": "14.9. Montag",
         "dateStr": "14.9.",
         "dayName": "Montag",
-        "specialFocus": "Kundalini Yoga im Yoga Vidya Stil"
+        "specialFocus": "Kundalini Yoga im Yoga Vidya Stil",
+        "dayOfWeek": 1,
+        "isoDate": "2026-09-14"
       },
       {
         "col": "G",
         "headerRaw": "15.9. Dienstag",
         "dateStr": "15.9.",
         "dayName": "Dienstag",
-        "specialFocus": "Kundalini Yoga im Yoga Vidya Stil"
+        "specialFocus": "Kundalini Yoga im Yoga Vidya Stil",
+        "dayOfWeek": 2,
+        "isoDate": "2026-09-15"
       },
       {
         "col": "H",
         "headerRaw": "16.9. Mittwoch",
         "dateStr": "16.9.",
         "dayName": "Mittwoch",
-        "specialFocus": "Schweigen      \n(kein Sprechen außerhalb des Unterrichts ganzen Tag)"
+        "specialFocus": "Schweigen      \n(kein Sprechen außerhalb des Unterrichts ganzen Tag)",
+        "dayOfWeek": 3,
+        "isoDate": "2026-09-16"
       },
       {
         "col": "I",
         "headerRaw": "17.9. Donnerstag",
         "dateStr": "17.9.",
         "dayName": "Donnerstag",
-        "specialFocus": "Fastentag (Wer will); Mantraweihe (freiwillig)"
+        "specialFocus": "Fastentag (Wer will); Mantraweihe (freiwillig)",
+        "dayOfWeek": 4,
+        "isoDate": "2026-09-17"
       },
       {
         "col": "J",
         "headerRaw": "18.9. Freitag",
         "dateStr": "18.9.",
         "dayName": "Freitag",
-        "specialFocus": "Freier Tag"
+        "specialFocus": "Freier Tag",
+        "dayOfWeek": 5,
+        "isoDate": "2026-09-18"
       }
     ],
     "slots": [
@@ -3742,63 +3782,81 @@
         "headerRaw": "19.9. Samstag",
         "dateStr": "19.9.",
         "dayName": "Samstag",
-        "specialFocus": ""
+        "specialFocus": "",
+        "dayOfWeek": 6,
+        "isoDate": "2026-09-19"
       },
       {
         "col": "E",
         "headerRaw": "20.9. Sonntag",
         "dateStr": "20.9.",
         "dayName": "Sonntag",
-        "specialFocus": ""
+        "specialFocus": "",
+        "dayOfWeek": 0,
+        "isoDate": "2026-09-20"
       },
       {
         "col": "F",
         "headerRaw": "21.9. Montag",
         "dateStr": "21.9.",
         "dayName": "Montag",
-        "specialFocus": ""
+        "specialFocus": "",
+        "dayOfWeek": 1,
+        "isoDate": "2026-09-21"
       },
       {
         "col": "G",
         "headerRaw": "22.9. Dienstag",
         "dateStr": "22.9.",
         "dayName": "Dienstag",
-        "specialFocus": "Schweigender Meditationstag (überhaupt kein Sprechen bis Mi. 8:30h)"
+        "specialFocus": "Schweigender Meditationstag (überhaupt kein Sprechen bis Mi. 8:30h)",
+        "dayOfWeek": 2,
+        "isoDate": "2026-09-22"
       },
       {
         "col": "H",
         "headerRaw": "23.9. Mittwoch",
         "dateStr": "23.9.",
         "dayName": "Mittwoch",
-        "specialFocus": ""
+        "specialFocus": "",
+        "dayOfWeek": 3,
+        "isoDate": "2026-09-23"
       },
       {
         "col": "I",
         "headerRaw": "24.9. Donnerstag",
         "dateStr": "24.9.",
         "dayName": "Donnerstag",
-        "specialFocus": "Mantra-Einweihung (freiwillig)"
+        "specialFocus": "Mantra-Einweihung (freiwillig)",
+        "dayOfWeek": 4,
+        "isoDate": "2026-09-24"
       },
       {
         "col": "J",
         "headerRaw": "25.9. Freitag",
         "dateStr": "25.9.",
         "dayName": "Freitag",
-        "specialFocus": "Studientag"
+        "specialFocus": "Studientag",
+        "dayOfWeek": 5,
+        "isoDate": "2026-09-25"
       },
       {
         "col": "K",
         "headerRaw": "26.9. Samstag",
         "dateStr": "26.9.",
         "dayName": "Samstag",
-        "specialFocus": "Prüfung; Auch nachher Anwesenheits-\npflicht!"
+        "specialFocus": "Prüfung; Auch nachher Anwesenheits-\npflicht!",
+        "dayOfWeek": 6,
+        "isoDate": "2026-09-26"
       },
       {
         "col": "L",
         "headerRaw": "27.9. Sonntag",
         "dateStr": "27.9.",
         "dayName": "Sonntag",
-        "specialFocus": ""
+        "specialFocus": "",
+        "dayOfWeek": 0,
+        "isoDate": "2026-09-27"
       }
     ],
     "slots": [

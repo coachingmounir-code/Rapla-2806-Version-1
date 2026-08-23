@@ -1,11 +1,25 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { getYlaWeeks, getYlaWeek, searchYlaCurriculum, type YlaWeek, type YlaSearchResult, type YlaDayEntry, type YlaDay, type YlaSlot } from '$lib/ylaData';
+  import { 
+    getYlaWeeks, 
+    getYlaWeek, 
+    searchYlaCurriculum, 
+    setYlaAssignment,
+    getYlaAssignments,
+    YLA_TEACHERS,
+    YLA_TEACHERS_META,
+    type YlaWeek, 
+    type YlaSearchResult, 
+    type YlaDayEntry, 
+    type YlaDay, 
+    type YlaSlot,
+    type YlaTeacherName
+  } from '$lib/ylaData';
 
   // Props
   let { initialWeek = 1, onWeekChange }: { initialWeek?: number; onWeekChange?: (week: number) => void } = $props();
 
-  const allWeeks = getYlaWeeks();
+  let assignmentsMap = $state<Record<string, string>>({});
   let selectedWeekNumber = $state(initialWeek || 1);
   let activeMobileDayIndex = $state(0);
   let isFullscreen = $state(false);
@@ -16,6 +30,8 @@
   let activeDetailModal = $state<{
     weekSubtitle: string;
     weekNumber: number;
+    dayCol: string;
+    slotRowNumber: number;
     dayName: string;
     dateStr: string;
     specialFocus?: string;
@@ -26,7 +42,53 @@
     entry: YlaDayEntry;
   } | null>(null);
 
-  let currentWeek = $derived(getYlaWeek(selectedWeekNumber) || allWeeks[0]);
+  // Load and subscribe to assignments
+  function refreshAssignments() {
+    assignmentsMap = getYlaAssignments();
+  }
+
+  onMount(() => {
+    refreshAssignments();
+    const handleStorage = () => refreshAssignments();
+    window.addEventListener('storage', handleStorage);
+    window.addEventListener('yla-assignment-changed', handleStorage);
+
+    const handleKeydown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        if (activeDetailModal) {
+          closeSlotDetail();
+        } else if (searchQuery) {
+          searchQuery = '';
+        }
+      }
+    };
+    window.addEventListener('keydown', handleKeydown);
+
+    return () => {
+      window.removeEventListener('storage', handleStorage);
+      window.removeEventListener('yla-assignment-changed', handleStorage);
+      window.removeEventListener('keydown', handleKeydown);
+    };
+  });
+
+  const allWeeks = getYlaWeeks();
+  let currentWeekRaw = $derived(getYlaWeek(selectedWeekNumber) || allWeeks[0]);
+
+  // Merge live assignments into current week
+  let currentWeek = $derived.by(() => {
+    const w = JSON.parse(JSON.stringify(currentWeekRaw)) as YlaWeek;
+    for (const slot of w.slots) {
+      for (const day of w.days) {
+        const key = `${w.weekNumber}_${day.col}_${slot.rowNumber}`;
+        const entry = slot.entries[day.col];
+        if (entry) {
+          entry.assignedTeacher = assignmentsMap[key] || null;
+        }
+      }
+    }
+    return w;
+  });
+
   let searchResults = $derived(searchYlaCurriculum(searchQuery));
   let specialDays = $derived(currentWeek.days.filter(d => d.specialFocus));
   let activeDay = $derived(currentWeek.days[activeMobileDayIndex]);
@@ -69,9 +131,14 @@
 
   function openSlotDetail(day: YlaDay, slot: YlaSlot, entry: YlaDayEntry) {
     if (!entry || (!entry.text && !entry.shortTitle)) return;
+    const key = `${currentWeek.weekNumber}_${day.col}_${slot.rowNumber}`;
+    const assigned = assignmentsMap[key] || entry.assignedTeacher || null;
+
     activeDetailModal = {
       weekSubtitle: currentWeek.weekSubtitle,
       weekNumber: currentWeek.weekNumber,
+      dayCol: day.col,
+      slotRowNumber: slot.rowNumber,
       dayName: day.dayName,
       dateStr: day.dateStr,
       specialFocus: day.specialFocus,
@@ -79,7 +146,7 @@
       slotTime: slot.time,
       slotBadge: slot.badge,
       slotType: slot.type,
-      entry: entry
+      entry: { ...entry, assignedTeacher: assigned }
     };
   }
 
@@ -87,20 +154,13 @@
     activeDetailModal = null;
   }
 
-  // Handle ESC key for closing modal
-  onMount(() => {
-    const handleKeydown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        if (activeDetailModal) {
-          closeSlotDetail();
-        } else if (searchQuery) {
-          searchQuery = '';
-        }
-      }
-    };
-    window.addEventListener('keydown', handleKeydown);
-    return () => window.removeEventListener('keydown', handleKeydown);
-  });
+  function assignTeacherToSlot(weekNumber: number, dayCol: string, rowNumber: number, teacherName: string | null) {
+    setYlaAssignment(weekNumber, dayCol, rowNumber, teacherName);
+    refreshAssignments();
+    if (activeDetailModal && activeDetailModal.weekNumber === weekNumber && activeDetailModal.dayCol === dayCol && activeDetailModal.slotRowNumber === rowNumber) {
+      activeDetailModal.entry.assignedTeacher = teacherName;
+    }
+  }
 
   function getSlotCategoryIcon(type: string): string {
     switch (type) {
@@ -164,6 +224,22 @@
     if (textLower.includes('karma')) return '☸️';
     return '✨';
   }
+
+  function getTeacherBadgeStyle(name: string) {
+    const meta = YLA_TEACHERS_META[name as YlaTeacherName];
+    if (meta) {
+      return {
+        color: meta.color,
+        bg: meta.badgeBg,
+        avatar: meta.avatar
+      };
+    }
+    return {
+      color: '#960040',
+      bg: '#fff5cc',
+      avatar: '👤'
+    };
+  }
 </script>
 
 <div id="yla-schedule-container" class="yla-view-wrapper" class:fullscreen-active={isFullscreen}>
@@ -184,7 +260,7 @@
         <input 
           type="text" 
           bind:value={searchQuery}
-          placeholder="Im 4-Wochen-Plan suchen (z.B. Gita, Anatomie, Prüfung, Pranayama)..." 
+          placeholder="Im 4-Wochen-Plan suchen (z.B. Anjali, Gita, Bernie, Anatomie, Prüfung)..." 
           class="yla-search-input"
         />
         {#if searchQuery}
@@ -383,21 +459,66 @@
           <!-- Day Columns for this slot -->
           {#each currentWeek.days as day}
             {@const entry = slot.entries[day.col]}
+            {@const key = `${currentWeek.weekNumber}_${day.col}_${slot.rowNumber}`}
+            {@const assignedTeacher = assignmentsMap[key] || entry?.assignedTeacher}
             <!-- svelte-ignore a11y_click_events_have_key_events -->
             <!-- svelte-ignore a11y_no_static_element_interactions -->
             <div 
               class="yla-cell yla-slot-content-cell {getSlotStyleClass(slot.type)}" 
               class:is-empty={!entry || (!entry.text && !entry.shortTitle)}
               class:is-clickable={entry && (entry.text || entry.shortTitle)}
+              class:has-assigned-teacher={!!assignedTeacher}
               onclick={() => entry && (entry.text || entry.shortTitle) && openSlotDetail(day, slot, entry)}
-              title={entry && entry.fullText ? 'Klicken für alle Details' : ''}
+              title={entry && entry.fullText ? 'Klicken für alle Details & Lehrerauswahl' : ''}
             >
               {#if entry && (entry.text || entry.shortTitle)}
                 <div class="compact-slot-box">
-                  <!-- Time pill if specific sub-time exists -->
-                  {#if entry.time}
-                    <span class="compact-slot-time-pill">{entry.time}</span>
-                  {/if}
+                  <!-- Top Row: Time Pill and Inline Teacher Selector / Badge -->
+                  <div class="compact-slot-top-row">
+                    {#if entry.time}
+                      <span class="compact-slot-time-pill">{entry.time}</span>
+                    {/if}
+
+                    <!-- Teacher Badge or Quick Select Dropdown -->
+                    <div class="slot-teacher-assign-wrapper" onclick={(e) => e.stopPropagation()}>
+                      {#if assignedTeacher}
+                        {@const meta = getTeacherBadgeStyle(assignedTeacher)}
+                        <div 
+                          class="assigned-teacher-badge" 
+                          style="color: {meta.color}; background: {meta.bg}; border-color: {meta.color};"
+                          title="Eingeteilt: {assignedTeacher} (Klicken zum Ändern)"
+                        >
+                          <span class="t-avatar">{meta.avatar}</span>
+                          <span class="t-name">{assignedTeacher}</span>
+                          <button 
+                            type="button" 
+                            class="btn-clear-teacher"
+                            onclick={(e) => {
+                              e.stopPropagation();
+                              assignTeacherToSlot(currentWeek.weekNumber, day.col, slot.rowNumber, null);
+                            }}
+                            title="Zuweisung entfernen"
+                          >✕</button>
+                        </div>
+                      {:else}
+                        <!-- Inline Quick Dropdown -->
+                        <select 
+                          class="inline-teacher-select"
+                          value=""
+                          onchange={(e) => {
+                            const val = (e.target as HTMLSelectElement).value;
+                            assignTeacherToSlot(currentWeek.weekNumber, day.col, slot.rowNumber, val || null);
+                          }}
+                          title="Lehrkraft für diese Einheit einteilen"
+                        >
+                          <option value="">+ Person</option>
+                          {#each YLA_TEACHERS as tName}
+                            <option value={tName}>{YLA_TEACHERS_META[tName].avatar} {tName}</option>
+                          {/each}
+                        </select>
+                      {/if}
+                    </div>
+                  </div>
 
                   <!-- Primary Concise Title (3-5 keywords) -->
                   <div class="compact-slot-title">
@@ -416,7 +537,7 @@
                   <!-- Click info hint -->
                   <div class="slot-click-hint">
                     <span class="hint-icon">🔍</span>
-                    <span class="hint-text">Details anzeigen</span>
+                    <span class="hint-text">Details & Zuweisung</span>
                   </div>
                 </div>
               {:else}
@@ -465,6 +586,8 @@
         <div class="mobile-slots-list">
           {#each currentWeek.slots as slot}
             {@const entry = slot.entries[activeDay.col]}
+            {@const key = `${currentWeek.weekNumber}_${activeDay.col}_${slot.rowNumber}`}
+            {@const assignedTeacher = assignmentsMap[key] || entry?.assignedTeacher}
             {#if entry && (entry.text || entry.shortTitle)}
               <!-- svelte-ignore a11y_click_events_have_key_events -->
               <!-- svelte-ignore a11y_no_static_element_interactions -->
@@ -482,6 +605,17 @@
                   {/if}
                 </div>
 
+                <!-- Mobile Teacher Badge -->
+                {#if assignedTeacher}
+                  {@const meta = getTeacherBadgeStyle(assignedTeacher)}
+                  <div class="mobile-assigned-teacher-row">
+                    <span class="assigned-teacher-badge" style="color: {meta.color}; background: {meta.bg}; border-color: {meta.color};">
+                      <span>{meta.avatar}</span>
+                      <strong>{assignedTeacher}</strong>
+                    </span>
+                  </div>
+                {/if}
+
                 <div class="m-slot-title">{entry.shortTitle || slot.label}</div>
 
                 {#if entry.keywords && entry.keywords.length > 0}
@@ -493,7 +627,7 @@
                 {/if}
 
                 <div class="m-click-note">
-                  <span>ℹ️ Klicken für vollständige Beschreibung & Details</span>
+                  <span>ℹ️ Klicken für vollständige Beschreibung & Lehrerauswahl</span>
                 </div>
               </div>
             {/if}
@@ -503,8 +637,10 @@
     {/if}
   </div>
 
-  <!-- INTERACTIVE SLOT DETAIL MODAL -->
+  <!-- INTERACTIVE SLOT DETAIL MODAL WITH TEACHER SELECTION -->
   {#if activeDetailModal}
+    {@const modalKey = `${activeDetailModal.weekNumber}_${activeDetailModal.dayCol}_${activeDetailModal.slotRowNumber}`}
+    {@const currentAssigned = assignmentsMap[modalKey] || activeDetailModal.entry.assignedTeacher}
     <!-- svelte-ignore a11y_click_events_have_key_events -->
     <!-- svelte-ignore a11y_no_static_element_interactions -->
     <div class="detail-modal-backdrop animate-fade-in" onclick={closeSlotDetail}>
@@ -535,6 +671,49 @@
           <!-- Slot label context -->
           <div class="detail-slot-context">
             <strong>Einheit:</strong> {activeDetailModal.slotLabel}
+          </div>
+
+          <!-- TEACHER SELECTION SECTION -->
+          <div class="detail-teacher-selection-section">
+            <div class="section-label-with-icon">
+              <span>👤</span>
+              <span>Lehrkraft für diese YLA-Einheit einteilen:</span>
+            </div>
+            <div class="teacher-chips-picker">
+              {#each YLA_TEACHERS as tName}
+                {@const meta = YLA_TEACHERS_META[tName]}
+                {@const isSelected = currentAssigned === tName}
+                <button 
+                  type="button" 
+                  class="teacher-select-btn"
+                  class:selected={isSelected}
+                  style={isSelected ? `background: ${meta.color}; border-color: ${meta.color}; color: #ffffff;` : ''}
+                  onclick={() => assignTeacherToSlot(activeDetailModal!.weekNumber, activeDetailModal!.dayCol, activeDetailModal!.slotRowNumber, isSelected ? null : tName)}
+                >
+                  <span class="t-btn-avatar">{meta.avatar}</span>
+                  <span class="t-btn-name">{tName}</span>
+                  {#if isSelected}
+                    <span class="t-btn-check">✓</span>
+                  {/if}
+                </button>
+              {/each}
+              {#if currentAssigned}
+                <button 
+                  type="button" 
+                  class="teacher-select-btn btn-clear-assignment"
+                  onclick={() => assignTeacherToSlot(activeDetailModal!.weekNumber, activeDetailModal!.dayCol, activeDetailModal!.slotRowNumber, null)}
+                  title="Zuweisung aufheben"
+                >
+                  <span>✕ Keine Person</span>
+                </button>
+              {/if}
+            </div>
+
+            {#if currentAssigned}
+              <div class="assignment-notice-box">
+                <span>✓ <strong>{currentAssigned}</strong> ist fest für diese Einheit eingeteilt und wird in der regulären Wochenplanung für diesen Zeitraum automatisch geblockt.</span>
+              </div>
+            {/if}
           </div>
 
           <!-- Special Focus if any -->
@@ -571,7 +750,7 @@
         <!-- Modal Footer -->
         <div class="detail-modal-footer">
           <button type="button" class="btn btn-secondary btn-modal-done" onclick={closeSlotDetail}>
-            Schließen
+            Schließen & Speichern
           </button>
         </div>
       </div>
@@ -1224,6 +1403,10 @@
     box-shadow: inset 0 0 0 2px #960040;
   }
 
+  .yla-slot-content-cell.has-assigned-teacher {
+    box-shadow: inset 0 3px 0 #960040;
+  }
+
   .yla-slot-content-cell.is-empty {
     background: #faf8f5;
     text-align: center;
@@ -1244,8 +1427,15 @@
     justify-content: flex-start;
   }
 
+  .compact-slot-top-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.3rem;
+    flex-wrap: wrap;
+  }
+
   .compact-slot-time-pill {
-    align-self: flex-start;
     font-size: 0.68rem;
     font-weight: 700;
     color: #960040;
@@ -1253,6 +1443,65 @@
     border: 1px solid #ffe082;
     padding: 0.1rem 0.4rem;
     border-radius: 6px;
+  }
+
+  /* Inline Teacher Badge / Select */
+  .slot-teacher-assign-wrapper {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .assigned-teacher-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.15rem 0.45rem;
+    border-radius: 12px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  }
+
+  .assigned-teacher-badge .t-avatar {
+    font-size: 0.8rem;
+  }
+
+  .assigned-teacher-badge .t-name {
+    font-weight: 700;
+  }
+
+  .btn-clear-teacher {
+    background: none;
+    border: none;
+    font-size: 0.75rem;
+    line-height: 1;
+    color: inherit;
+    cursor: pointer;
+    padding: 0 0 0 0.2rem;
+    opacity: 0.7;
+  }
+
+  .btn-clear-teacher:hover {
+    opacity: 1;
+  }
+
+  .inline-teacher-select {
+    padding: 0.12rem 0.35rem;
+    font-size: 0.68rem;
+    font-weight: 600;
+    color: #7a5c5c;
+    background: #fff9e6;
+    border: 1px dashed #e0c885;
+    border-radius: 6px;
+    cursor: pointer;
+    outline: none;
+    transition: all 0.2s;
+  }
+
+  .inline-teacher-select:hover {
+    background: #fff0b3;
+    border-color: #960040;
+    color: #960040;
   }
 
   .compact-slot-title {
@@ -1302,45 +1551,19 @@
   }
 
   /* Category Themes & Colors */
-  .slot-morning-lecture {
-    background: #fffef5;
-  }
-  .slot-morning-practice {
-    background: #fffaf5;
-  }
-  .slot-gita {
-    background: #f8fbff;
-  }
-  .slot-afternoon-lecture {
-    background: #fcf8f2;
-  }
-  .slot-mantra {
-    background: #faf5ff;
-  }
-  .slot-reading-basic {
-    background: #f6faff;
-  }
-  .slot-reading-advanced {
-    background: #fff9f5;
-  }
-  .slot-teaching {
-    background: #fff5f0;
-  }
-  .slot-review {
-    background: #fffdf5;
-  }
-  .slot-evening-lecture {
-    background: #fcfaf5;
-  }
-  .slot-satsang {
-    background: #fffbe8;
-  }
-  .slot-ceremony {
-    background: #fff5eb;
-  }
-  .slot-exam {
-    background: #fff2f2;
-  }
+  .slot-morning-lecture { background: #fffef5; }
+  .slot-morning-practice { background: #fffaf5; }
+  .slot-gita { background: #f8fbff; }
+  .slot-afternoon-lecture { background: #fcf8f2; }
+  .slot-mantra { background: #faf5ff; }
+  .slot-reading-basic { background: #f6faff; }
+  .slot-reading-advanced { background: #fff9f5; }
+  .slot-teaching { background: #fff5f0; }
+  .slot-review { background: #fffdf5; }
+  .slot-evening-lecture { background: #fcfaf5; }
+  .slot-satsang { background: #fffbe8; }
+  .slot-ceremony { background: #fff5eb; }
+  .slot-exam { background: #fff2f2; }
 
   /* DETAIL MODAL STYLES */
   .detail-modal-backdrop {
@@ -1363,8 +1586,8 @@
     border: 2px solid #ffe082;
     border-radius: 20px;
     width: 100%;
-    max-width: 650px;
-    max-height: 88vh;
+    max-width: 680px;
+    max-height: 90vh;
     display: flex;
     flex-direction: column;
     box-shadow: 0 20px 50px rgba(150, 0, 64, 0.25);
@@ -1460,6 +1683,91 @@
   .detail-slot-context {
     font-size: 0.88rem;
     color: #6b5151;
+  }
+
+  /* Teacher Selection Section */
+  .detail-teacher-selection-section {
+    background: #fffdf8;
+    border: 1.5px solid #ffe082;
+    border-radius: 14px;
+    padding: 1rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .section-label-with-icon {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: #960040;
+  }
+
+  .teacher-chips-picker {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .teacher-select-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.5rem 0.9rem;
+    border-radius: 10px;
+    border: 1.5px solid #e0c885;
+    background: #ffffff;
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: #2a1b1b;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .teacher-select-btn:hover {
+    background: #fff5cc;
+    border-color: #960040;
+    transform: translateY(-1px);
+  }
+
+  .teacher-select-btn.selected {
+    box-shadow: 0 4px 12px rgba(150, 0, 64, 0.25);
+  }
+
+  .t-btn-avatar {
+    font-size: 1.1rem;
+  }
+
+  .t-btn-name {
+    font-weight: 700;
+  }
+
+  .t-btn-check {
+    font-weight: 800;
+    font-size: 0.9rem;
+  }
+
+  .btn-clear-assignment {
+    background: #fdf2f2;
+    border-color: #ffcdd2;
+    color: #c62828;
+  }
+
+  .btn-clear-assignment:hover {
+    background: #ffebee;
+    border-color: #c62828;
+  }
+
+  .assignment-notice-box {
+    background: #f1f8e9;
+    border: 1px solid #c5e1a5;
+    border-radius: 8px;
+    padding: 0.55rem 0.85rem;
+    font-size: 0.82rem;
+    color: #33691e;
+    line-height: 1.4;
   }
 
   .detail-special-banner {
@@ -1706,6 +2014,10 @@
       border-radius: 6px;
     }
 
+    .mobile-assigned-teacher-row {
+      margin-top: 0.2rem;
+    }
+
     .m-slot-title {
       font-weight: 700;
       font-size: 0.95rem;
@@ -1746,6 +2058,7 @@
     .btn-clear-search,
     .mobile-day-tabs,
     .detail-modal-backdrop,
+    .slot-teacher-assign-wrapper,
     :global(.sidebar),
     :global(.top-header),
     :global(.view-header) {

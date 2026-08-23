@@ -5,6 +5,7 @@
   import { page } from '$app/state';
   import { goto } from '$app/navigation';
   import YlaScheduleView from '$lib/components/YlaScheduleView.svelte';
+  import { getYlaConflictForTeacher } from '$lib/ylaData';
 
   let courses = $state<Course[]>([]);
   let teachers = $state<Teacher[]>([]);
@@ -345,6 +346,17 @@
     const teacher = teachers.find(t => t.id === course.teacherId);
     if (!teacher) return [];
     return validateAssignment(teacher, course, courses, currentPlan?.seminarLeaderIds || [], currentPlan?.targetWeekCode);
+  }
+
+  function isTeacherYlaBusy(teacherName: string): boolean {
+    if (!formStartTime || !formEndTime) return false;
+    return getYlaConflictForTeacher(
+      teacherName,
+      Number(formDayOfWeek),
+      formStartTime,
+      formEndTime,
+      currentPlan?.targetWeekCode
+    ) !== null;
   }
 
   // Reactively validate the form selection
@@ -897,14 +909,14 @@
             <option value={null}>-- Unbesetzt (Später per KI einteilen) --</option>
             <optgroup label="Sevakas (Kernteam)">
               {#each teachers.filter(t => t.roleType === 'sevaka') as t}
-                <option value={t.id}>🧘 {t.name}</option>
+                <option value={t.id}>🧘 {t.name}{isTeacherYlaBusy(t.name) ? ' ⚠️ (YLA belegt)' : ''}</option>
               {/each}
             </optgroup>
             {#if getActiveKarmaInHouseForCourse().length > 0}
               <optgroup label="✨ Karma-Yogis & externe Seminarleiter (Aktuell im Haus)">
                 {#each getActiveKarmaInHouseForCourse() as t}
                   <option value={t.id}>
-                    ✨ {t.name} ({t.roleType === 'guest_teacher' ? 'Gast-SL' : 'Karma-Yogi'} | {formatStayLabel(t)}{t.isYogaTeacher ? ' | Yoga ✓' : ''}{t.rules.canLeadMeditation ? ' | Medi ✓' : ''})
+                    ✨ {t.name} ({t.roleType === 'guest_teacher' ? 'Gast-SL' : 'Karma-Yogi'} | {formatStayLabel(t)}{t.isYogaTeacher ? ' | Yoga ✓' : ''}{t.rules.canLeadMeditation ? ' | Medi ✓' : ''}){isTeacherYlaBusy(t.name) ? ' ⚠️ (YLA belegt)' : ''}
                   </option>
                 {/each}
               </optgroup>
@@ -913,14 +925,14 @@
               <optgroup label="⏳ Weitere Karma-Yogis & externe Seminarleiter (Anderes Zeitfenster)">
                 {#each getOtherKarmaGuestsForCourse() as t}
                   <option value={t.id}>
-                    ⏳ {t.name} ({t.roleType === 'guest_teacher' ? 'Gast-SL' : 'Karma-Yogi'} | {formatStayLabel(t)})
+                    ⏳ {t.name} ({t.roleType === 'guest_teacher' ? 'Gast-SL' : 'Karma-Yogi'} | {formatStayLabel(t)}){isTeacherYlaBusy(t.name) ? ' ⚠️ (YLA belegt)' : ''}
                   </option>
                 {/each}
               </optgroup>
             {/if}
             <optgroup label="Externe Yogalehrer / Seminarleiter">
               {#each teachers.filter(t => t.roleType !== 'sevaka' && t.roleType !== 'karma_yogi' && t.roleType !== 'guest_teacher' && !t.stayStartDate && !t.stayEndDate) as t}
-                <option value={t.id}>👤 {t.name}</option>
+                <option value={t.id}>👤 {t.name}{isTeacherYlaBusy(t.name) ? ' ⚠️ (YLA belegt)' : ''}</option>
               {/each}
             </optgroup>
           </select>
