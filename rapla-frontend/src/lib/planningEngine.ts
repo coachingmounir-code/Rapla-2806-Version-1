@@ -761,7 +761,7 @@ export function validateAssignment(
   }
 
   // 10. Check Room Rules from Raum Regeln.txt (Hard)
-  const roomConflicts = validateRoomRules(course, allCourses, teachers || db.getTeachers());
+  const roomConflicts = validateRoomRules(course, allCourses, teachers || db.getTeachers(), targetWeekCode);
   conflicts.push(...roomConflicts);
 
   return conflicts;
@@ -780,12 +780,12 @@ export function validateAllCourses(
   courses.forEach(course => {
     if (!course.teacherId) {
       // Validate room rules even if no teacher is assigned
-      validationMap[course.id] = validateRoomRules(course, courses, teachers);
+      validationMap[course.id] = validateRoomRules(course, courses, teachers, targetWeekCode);
       return;
     }
     const teacher = teachers.find(t => t.id === course.teacherId);
     if (!teacher) {
-      validationMap[course.id] = validateRoomRules(course, courses, teachers);
+      validationMap[course.id] = validateRoomRules(course, courses, teachers, targetWeekCode);
       return;
     }
     validationMap[course.id] = validateAssignment(teacher, course, courses, seminarLeaderIds, targetWeekCode, teachers, absences);
@@ -841,7 +841,7 @@ export function runAiPlanning(
     
     // Simulate layout with this assignment and auto-adjust rooms
     const tempLayout = workingCourses.map(x => x.id === c.id ? { ...x, teacherId: teacher.id } : { ...x });
-    adjustRoomsForRules(tempLayout, teachers);
+    adjustRoomsForRules(tempLayout, teachers, targetWeekCode);
     const adjustedCourse = tempLayout.find(x => x.id === c.id)!;
 
     const conflicts = validateAssignment(teacher, adjustedCourse, tempLayout, seminarLeaderIds, targetWeekCode, teachers, absences);
@@ -891,7 +891,7 @@ export function runAiPlanning(
       // Get conflicts for assigning this teacher to this course in the current layout
       // Simulate layout with this assignment and auto-adjust rooms
       const tempLayout = workingCourses.map(x => x.id === course.id ? { ...x, teacherId: teacher.id } : { ...x });
-      adjustRoomsForRules(tempLayout, teachers);
+      adjustRoomsForRules(tempLayout, teachers, targetWeekCode);
       const adjustedCourse = tempLayout.find(x => x.id === course.id)!;
 
       const conflicts = validateAssignment(teacher, adjustedCourse, tempLayout, seminarLeaderIds, targetWeekCode, teachers, absences);
@@ -1295,7 +1295,7 @@ export function runAiPlanning(
         }
 
         const tempLayout = workingCourses.map(x => x.id === course.id ? { ...x, teacherId: teacher.id } : { ...x });
-        adjustRoomsForRules(tempLayout, teachers);
+        adjustRoomsForRules(tempLayout, teachers, targetWeekCode);
         const adjustedCourse = tempLayout.find(x => x.id === course.id)!;
 
         const conflicts = validateAssignment(teacher, adjustedCourse, tempLayout, seminarLeaderIds, targetWeekCode, teachers, absences);
@@ -1445,7 +1445,7 @@ export function runAiPlanning(
   }
 
   // Apply room rules to auto-adjust rooms based on final teacher assignments
-  adjustRoomsForRules(workingCourses, teachers);
+  adjustRoomsForRules(workingCourses, teachers, targetWeekCode);
 
   const assignedCount = workingCourses.filter(c => c.teacherId !== null && c.isAiPlanned).length;
   logs.push(`Planung abgeschlossen. ${assignedCount} von ${coursesToPlan.length} Kursen wurden erfolgreich zugewiesen.`);
@@ -1460,11 +1460,38 @@ export function runAiPlanning(
 export function validateRoomRules(
   course: Course,
   allCourses: Course[],
-  teachers: Teacher[]
+  teachers: Teacher[],
+  targetWeekCode?: string
 ): ConflictMessage[] {
   const conflicts: ConflictMessage[] = [];
   const nameLower = course.name.toLowerCase();
   const styleLower = course.style.toLowerCase();
+
+  const isBeginner = nameLower.includes('anfänger');
+  const isIntermediate = nameLower.includes('mittelstufe');
+
+  // Check 4-week Yogalehrerausbildung (YLA: 30.08.2026 – 27.09.2026)
+  if (targetWeekCode) {
+    const courseDate = getLocalDateForDay(targetWeekCode, course.dayOfWeek);
+    if (isDateInYlaRange(courseDate)) {
+      if (isBeginner) {
+        if (course.roomId !== 'room-4') { // Sitaram
+          conflicts.push({
+            type: 'hard',
+            message: `Während der 4-wöchigen Yogalehrerausbildung müssen alle Anfängerstunden im Sitaram Raum stattfinden.`
+          });
+        }
+      } else if (isIntermediate) {
+        if (course.roomId !== 'room-3') { // Hanuman
+          conflicts.push({
+            type: 'hard',
+            message: `Während der 4-wöchigen Yogalehrerausbildung müssen alle Mittelstufenstunden im Hanuman Raum stattfinden.`
+          });
+        }
+      }
+      return conflicts;
+    }
+  }
 
   // 1. Pranayama rule: Pranayama always in Radhakrishna (room-2)
   if (nameLower.includes('pranayama') || styleLower.includes('pranayama')) {
@@ -1477,7 +1504,7 @@ export function validateRoomRules(
   }
 
   // 2. Beginner rule: Yoga beginner classes in Radhakrishna (room-2), except when parallel to Pranava's Klangyogastunde Mittelstufe (then Tripura room-5)
-  if (nameLower.includes('anfänger')) {
+  if (isBeginner) {
     // Check if there is a parallel Klangyogastunde taught by Pranava
     const hasParallelPranavaKlang = allCourses.some(c => {
       if (c.id === course.id) return false;
@@ -1506,7 +1533,7 @@ export function validateRoomRules(
   }
 
   // 3. Intermediate rule: Yoga intermediate classes in Tripura (room-5), except when taught by Pranava as Klangyogastunde (then Radhakrishna room-2)
-  if (nameLower.includes('mittelstufe')) {
+  if (isIntermediate) {
     const isKlang = nameLower.includes('klang');
     let isPranava = false;
     if (course.teacherId) {
@@ -1537,10 +1564,26 @@ export function validateRoomRules(
 }
 
 // Room auto-adjustment logic
-export function adjustRoomsForRules(courses: Course[], teachers: Teacher[]): Course[] {
+export function adjustRoomsForRules(courses: Course[], teachers: Teacher[], targetWeekCode?: string): Course[] {
   courses.forEach(course => {
     const nameLower = course.name.toLowerCase();
     const styleLower = course.style.toLowerCase();
+
+    const isBeginner = nameLower.includes('anfänger');
+    const isIntermediate = nameLower.includes('mittelstufe');
+
+    // Check 4-week Yogalehrerausbildung (YLA: 30.08.2026 – 27.09.2026)
+    if (targetWeekCode) {
+      const courseDate = getLocalDateForDay(targetWeekCode, course.dayOfWeek);
+      if (isDateInYlaRange(courseDate)) {
+        if (isBeginner) {
+          course.roomId = 'room-4'; // Sitaram
+        } else if (isIntermediate) {
+          course.roomId = 'room-3'; // Hanuman
+        }
+        return;
+      }
+    }
 
     // 1. Pranayama rule
     if (nameLower.includes('pranayama') || styleLower.includes('pranayama')) {
@@ -1549,9 +1592,6 @@ export function adjustRoomsForRules(courses: Course[], teachers: Teacher[]): Cou
     }
 
     // 2. Beginner/Intermediate rules
-    const isBeginner = nameLower.includes('anfänger');
-    const isIntermediate = nameLower.includes('mittelstufe');
-
     if (isBeginner) {
       // Look for a parallel Klangyogastunde taught by Pranava
       const hasParallelPranavaKlang = courses.some(c => {
@@ -1667,8 +1707,8 @@ export function adjustNamesForRules(courses: Course[], teachers: Teacher[]): Cou
 }
 
 // Combined adjustment logic
-export function adjustCoursesForRules(courses: Course[], teachers: Teacher[]): Course[] {
+export function adjustCoursesForRules(courses: Course[], teachers: Teacher[], targetWeekCode?: string): Course[] {
   adjustNamesForRules(courses, teachers);
-  adjustRoomsForRules(courses, teachers);
+  adjustRoomsForRules(courses, teachers, targetWeekCode);
   return courses;
 }

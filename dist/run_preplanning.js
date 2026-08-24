@@ -158,8 +158,16 @@ function planWeekWithAbsences(weekCode, standardCourses) {
         return true;
     })
         .map((c, idx) => {
+        const courseDate = getLocalDateForDay(weekCode, c.dayOfWeek);
+        const inYla = courseDate >= '2026-08-30' && courseDate <= '2026-09-27';
+        let roomId = c.roomId;
+        if (inYla) {
+            if (c.name.toLowerCase().includes('anfänger')) roomId = 'room-4';
+            else if (c.name.toLowerCase().includes('mittelstufe')) roomId = 'room-3';
+        }
         const courseCopy = {
             ...c,
+            roomId,
             id: `course-${weekCode}-${idx + 1}`,
             isAiPlanned: false,
             status: 'approved'

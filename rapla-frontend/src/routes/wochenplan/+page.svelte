@@ -260,7 +260,17 @@
             }
             return true;
           })
-          .map(c => ({ ...c, teacherId: null, isAiPlanned: false, status: 'draft' })) : []
+          .map(c => {
+            const courseDate = getLocalDateForDay(weekCode, c.dayOfWeek);
+            const inYla = isDateInYlaRange(courseDate);
+            const nameLower = c.name.toLowerCase();
+            let roomId = c.roomId;
+            if (inYla) {
+              if (nameLower.includes('anfänger')) roomId = 'room-4';
+              else if (nameLower.includes('mittelstufe')) roomId = 'room-3';
+            }
+            return { ...c, roomId, teacherId: null, isAiPlanned: false, status: 'draft' };
+          }) : []
       };
     }
     currentPlan = foundPlan;

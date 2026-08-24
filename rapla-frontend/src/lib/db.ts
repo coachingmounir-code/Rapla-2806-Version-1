@@ -1751,7 +1751,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 0,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-anjali-gelzleichter",
         "isAiPlanned": false,
         "status": "approved"
@@ -1763,7 +1763,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 0,
         "startTime": "16:30",
         "endTime": "18:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": false,
         "status": "approved"
@@ -1775,7 +1775,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 0,
         "startTime": "16:30",
         "endTime": "18:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
         "status": "approved"
@@ -1847,7 +1847,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 1,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-burnie-bansemer",
         "isAiPlanned": false,
         "status": "approved"
@@ -1859,7 +1859,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 1,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-harishakti",
         "isAiPlanned": false,
         "status": "approved"
@@ -1871,7 +1871,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 1,
         "startTime": "16:15",
         "endTime": "18:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": false,
         "status": "approved"
@@ -1883,7 +1883,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 1,
         "startTime": "16:15",
         "endTime": "18:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-ulrich-nebel",
         "isAiPlanned": false,
         "status": "approved"
@@ -1955,7 +1955,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 2,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-harishakti",
         "isAiPlanned": false,
         "status": "approved"
@@ -1967,7 +1967,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 2,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-anjali-gelzleichter",
         "isAiPlanned": false,
         "status": "approved"
@@ -1979,7 +1979,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 2,
         "startTime": "16:15",
         "endTime": "18:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-alexander-melior",
         "isAiPlanned": true,
         "status": "approved"
@@ -1991,7 +1991,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 2,
         "startTime": "16:15",
         "endTime": "18:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-narayani-kedenburg",
         "isAiPlanned": false,
         "status": "approved"
@@ -2039,7 +2039,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 3,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-alexander-melior",
         "isAiPlanned": false,
         "status": "approved"
@@ -2051,7 +2051,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 3,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-narayani-kedenburg",
         "isAiPlanned": false,
         "status": "approved"
@@ -2123,7 +2123,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 4,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-alexander-melior",
         "isAiPlanned": false,
         "status": "approved"
@@ -2135,7 +2135,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 4,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-narayani-kedenburg",
         "isAiPlanned": true,
         "status": "approved"
@@ -2147,7 +2147,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 4,
         "startTime": "16:15",
         "endTime": "18:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-ulrich-nebel",
         "isAiPlanned": false,
         "status": "approved"
@@ -2159,7 +2159,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 4,
         "startTime": "16:15",
         "endTime": "18:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-nirmaya-fodor",
         "isAiPlanned": false,
         "status": "approved"
@@ -2252,7 +2252,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 5,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-5",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-harishakti",
         "isAiPlanned": false,
         "status": "approved"
@@ -2264,7 +2264,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 5,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-2",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": false,
         "status": "approved"
@@ -2276,7 +2276,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 5,
         "startTime": "16:30",
         "endTime": "18:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-alexander-melior",
         "isAiPlanned": true,
         "status": "approved"
@@ -2288,7 +2288,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 5,
         "startTime": "16:30",
         "endTime": "18:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
         "status": "approved"
@@ -2360,7 +2360,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 6,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": false,
         "status": "approved"
@@ -2372,7 +2372,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 6,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": true,
         "status": "approved"
@@ -2384,7 +2384,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 6,
         "startTime": "16:15",
         "endTime": "18:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-yl",
         "isAiPlanned": false,
         "status": "approved"
@@ -2396,7 +2396,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 6,
         "startTime": "16:15",
         "endTime": "18:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-anjali-gelzleichter",
         "isAiPlanned": false,
         "status": "approved"
@@ -2480,7 +2480,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 0,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-anjali-gelzleichter",
         "isAiPlanned": false,
         "status": "approved"
@@ -2492,7 +2492,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 0,
         "startTime": "16:30",
         "endTime": "18:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": false,
         "status": "approved"
@@ -2504,7 +2504,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 0,
         "startTime": "16:30",
         "endTime": "18:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
         "status": "approved"
@@ -2576,7 +2576,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 1,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-burnie-bansemer",
         "isAiPlanned": false,
         "status": "approved"
@@ -2588,7 +2588,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 1,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-harishakti",
         "isAiPlanned": false,
         "status": "approved"
@@ -2600,7 +2600,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 1,
         "startTime": "16:15",
         "endTime": "18:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": false,
         "status": "approved"
@@ -2612,7 +2612,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 1,
         "startTime": "16:15",
         "endTime": "18:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-ulrich-nebel",
         "isAiPlanned": false,
         "status": "approved"
@@ -2684,7 +2684,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 2,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-harishakti",
         "isAiPlanned": false,
         "status": "approved"
@@ -2696,7 +2696,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 2,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-anjali-gelzleichter",
         "isAiPlanned": false,
         "status": "approved"
@@ -2708,7 +2708,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 2,
         "startTime": "16:15",
         "endTime": "18:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-alexander-melior",
         "isAiPlanned": true,
         "status": "approved"
@@ -2720,7 +2720,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 2,
         "startTime": "16:15",
         "endTime": "18:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-narayani-kedenburg",
         "isAiPlanned": false,
         "status": "approved"
@@ -2768,7 +2768,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 3,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-alexander-melior",
         "isAiPlanned": false,
         "status": "approved"
@@ -2780,7 +2780,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 3,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-narayani-kedenburg",
         "isAiPlanned": false,
         "status": "approved"
@@ -2852,7 +2852,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 4,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-alexander-melior",
         "isAiPlanned": false,
         "status": "approved"
@@ -2864,7 +2864,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 4,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-narayani-kedenburg",
         "isAiPlanned": true,
         "status": "approved"
@@ -2876,7 +2876,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 4,
         "startTime": "16:15",
         "endTime": "18:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-ulrich-nebel",
         "isAiPlanned": false,
         "status": "approved"
@@ -2888,7 +2888,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 4,
         "startTime": "16:15",
         "endTime": "18:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-nirmaya-fodor",
         "isAiPlanned": false,
         "status": "approved"
@@ -2981,7 +2981,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 5,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-5",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-harishakti",
         "isAiPlanned": false,
         "status": "approved"
@@ -2993,7 +2993,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 5,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-2",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": false,
         "status": "approved"
@@ -3005,7 +3005,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 5,
         "startTime": "16:30",
         "endTime": "18:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-alexander-melior",
         "isAiPlanned": true,
         "status": "approved"
@@ -3017,7 +3017,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 5,
         "startTime": "16:30",
         "endTime": "18:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
         "status": "approved"
@@ -3089,7 +3089,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 6,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": false,
         "status": "approved"
@@ -3101,7 +3101,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 6,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": true,
         "status": "approved"
@@ -3113,7 +3113,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 6,
         "startTime": "16:15",
         "endTime": "18:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-yl",
         "isAiPlanned": false,
         "status": "approved"
@@ -3125,7 +3125,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 6,
         "startTime": "16:15",
         "endTime": "18:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-anjali-gelzleichter",
         "isAiPlanned": false,
         "status": "approved"
@@ -3209,7 +3209,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 0,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-anjali-gelzleichter",
         "isAiPlanned": false,
         "status": "approved"
@@ -3221,7 +3221,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 0,
         "startTime": "16:30",
         "endTime": "18:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": false,
         "status": "approved"
@@ -3233,7 +3233,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 0,
         "startTime": "16:30",
         "endTime": "18:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
         "status": "approved"
@@ -3305,7 +3305,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 1,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-burnie-bansemer",
         "isAiPlanned": false,
         "status": "approved"
@@ -3317,7 +3317,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 1,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-harishakti",
         "isAiPlanned": false,
         "status": "approved"
@@ -3329,7 +3329,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 1,
         "startTime": "16:15",
         "endTime": "18:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": false,
         "status": "approved"
@@ -3341,7 +3341,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 1,
         "startTime": "16:15",
         "endTime": "18:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-ulrich-nebel",
         "isAiPlanned": false,
         "status": "approved"
@@ -3413,7 +3413,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 2,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-harishakti",
         "isAiPlanned": false,
         "status": "approved"
@@ -3425,7 +3425,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 2,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-anjali-gelzleichter",
         "isAiPlanned": false,
         "status": "approved"
@@ -3437,7 +3437,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 2,
         "startTime": "16:15",
         "endTime": "18:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-alexander-melior",
         "isAiPlanned": true,
         "status": "approved"
@@ -3449,7 +3449,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 2,
         "startTime": "16:15",
         "endTime": "18:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-narayani-kedenburg",
         "isAiPlanned": false,
         "status": "approved"
@@ -3497,7 +3497,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 3,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-alexander-melior",
         "isAiPlanned": false,
         "status": "approved"
@@ -3509,7 +3509,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 3,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-narayani-kedenburg",
         "isAiPlanned": false,
         "status": "approved"
@@ -3581,7 +3581,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 4,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-alexander-melior",
         "isAiPlanned": false,
         "status": "approved"
@@ -3593,7 +3593,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 4,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-narayani-kedenburg",
         "isAiPlanned": true,
         "status": "approved"
@@ -3605,7 +3605,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 4,
         "startTime": "16:15",
         "endTime": "18:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-ulrich-nebel",
         "isAiPlanned": false,
         "status": "approved"
@@ -3617,7 +3617,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 4,
         "startTime": "16:15",
         "endTime": "18:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-nirmaya-fodor",
         "isAiPlanned": false,
         "status": "approved"
@@ -3710,7 +3710,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 5,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-5",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-harishakti",
         "isAiPlanned": false,
         "status": "approved"
@@ -3722,7 +3722,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 5,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-2",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": false,
         "status": "approved"
@@ -3734,7 +3734,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 5,
         "startTime": "16:30",
         "endTime": "18:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-alexander-melior",
         "isAiPlanned": true,
         "status": "approved"
@@ -3746,7 +3746,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 5,
         "startTime": "16:30",
         "endTime": "18:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
         "status": "approved"
@@ -3818,7 +3818,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 6,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": false,
         "status": "approved"
@@ -3830,7 +3830,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 6,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": true,
         "status": "approved"
@@ -3842,7 +3842,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 6,
         "startTime": "16:15",
         "endTime": "18:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-yl",
         "isAiPlanned": false,
         "status": "approved"
@@ -3854,7 +3854,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 6,
         "startTime": "16:15",
         "endTime": "18:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-anjali-gelzleichter",
         "isAiPlanned": false,
         "status": "approved"
@@ -3938,7 +3938,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 0,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-anjali-gelzleichter",
         "isAiPlanned": false,
         "status": "approved"
@@ -3950,7 +3950,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 0,
         "startTime": "16:30",
         "endTime": "18:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": false,
         "status": "approved"
@@ -3962,7 +3962,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 0,
         "startTime": "16:30",
         "endTime": "18:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
         "status": "approved"
@@ -4034,7 +4034,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 1,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-burnie-bansemer",
         "isAiPlanned": false,
         "status": "approved"
@@ -4046,7 +4046,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 1,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-harishakti",
         "isAiPlanned": false,
         "status": "approved"
@@ -4058,7 +4058,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 1,
         "startTime": "16:15",
         "endTime": "18:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": false,
         "status": "approved"
@@ -4070,7 +4070,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 1,
         "startTime": "16:15",
         "endTime": "18:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-ulrich-nebel",
         "isAiPlanned": false,
         "status": "approved"
@@ -4142,7 +4142,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 2,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-harishakti",
         "isAiPlanned": false,
         "status": "approved"
@@ -4154,7 +4154,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 2,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-anjali-gelzleichter",
         "isAiPlanned": false,
         "status": "approved"
@@ -4166,7 +4166,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 2,
         "startTime": "16:15",
         "endTime": "18:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-alexander-melior",
         "isAiPlanned": true,
         "status": "approved"
@@ -4178,7 +4178,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 2,
         "startTime": "16:15",
         "endTime": "18:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-narayani-kedenburg",
         "isAiPlanned": false,
         "status": "approved"
@@ -4226,7 +4226,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 3,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-alexander-melior",
         "isAiPlanned": false,
         "status": "approved"
@@ -4238,7 +4238,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 3,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-narayani-kedenburg",
         "isAiPlanned": false,
         "status": "approved"
@@ -4310,7 +4310,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 4,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-alexander-melior",
         "isAiPlanned": false,
         "status": "approved"
@@ -4322,7 +4322,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 4,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-narayani-kedenburg",
         "isAiPlanned": true,
         "status": "approved"
@@ -4334,7 +4334,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 4,
         "startTime": "16:15",
         "endTime": "18:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-ulrich-nebel",
         "isAiPlanned": false,
         "status": "approved"
@@ -4346,7 +4346,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 4,
         "startTime": "16:15",
         "endTime": "18:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-nirmaya-fodor",
         "isAiPlanned": false,
         "status": "approved"
@@ -4439,7 +4439,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 5,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-5",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-harishakti",
         "isAiPlanned": false,
         "status": "approved"
@@ -4451,7 +4451,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 5,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-2",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": false,
         "status": "approved"
@@ -4463,7 +4463,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 5,
         "startTime": "16:30",
         "endTime": "18:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-alexander-melior",
         "isAiPlanned": true,
         "status": "approved"
@@ -4475,7 +4475,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 5,
         "startTime": "16:30",
         "endTime": "18:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
         "status": "approved"
@@ -4547,7 +4547,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 6,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": false,
         "status": "approved"
@@ -4559,7 +4559,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 6,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": true,
         "status": "approved"
@@ -4571,7 +4571,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 6,
         "startTime": "16:15",
         "endTime": "18:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-yl",
         "isAiPlanned": false,
         "status": "approved"
@@ -4583,7 +4583,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 6,
         "startTime": "16:15",
         "endTime": "18:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-anjali-gelzleichter",
         "isAiPlanned": false,
         "status": "approved"
@@ -4667,7 +4667,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 0,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-anjali-gelzleichter",
         "isAiPlanned": false,
         "status": "approved"
@@ -4679,7 +4679,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 0,
         "startTime": "16:30",
         "endTime": "18:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": false,
         "status": "approved"
@@ -4691,7 +4691,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 0,
         "startTime": "16:30",
         "endTime": "18:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
         "status": "approved"
@@ -6672,7 +6672,7 @@ function setStored<T>(key: string, value: T): void {
   localStorage.setItem(key, JSON.stringify(value));
 }
 
-const CURRENT_DB_VERSION = 77;
+const CURRENT_DB_VERSION = 78;
 
 // Database Actions
 export const db = {
@@ -7020,12 +7020,25 @@ export const db = {
 
         // Migration & Rule: Abha does not teach regular courses during the 4-week YLA (30.08.2026 – 27.09.2026)
         for (const c of p.courses) {
-          if (c.teacherId === 'teacher-gen-abha-morkoetter' || c.teacherId === 'abha') {
-            const courseDate = getLocalDateForDay(p.targetWeekCode, c.dayOfWeek);
-            if (isDateInYlaRange(courseDate)) {
+          const courseDate = getLocalDateForDay(p.targetWeekCode, c.dayOfWeek);
+          if (isDateInYlaRange(courseDate)) {
+            if (c.teacherId === 'teacher-gen-abha-morkoetter' || c.teacherId === 'abha') {
               c.teacherId = null;
               c.isAiPlanned = false;
               updated = true;
+            }
+            // Migration & Rule: During 4-week YLA, Anfänger in Sitaram (room-4), Mittelstufe in Hanuman (room-3)
+            const nameLower = c.name.toLowerCase();
+            if (nameLower.includes('anfänger')) {
+              if (c.roomId !== 'room-4') {
+                c.roomId = 'room-4';
+                updated = true;
+              }
+            } else if (nameLower.includes('mittelstufe')) {
+              if (c.roomId !== 'room-3') {
+                c.roomId = 'room-3';
+                updated = true;
+              }
             }
           }
         }
@@ -7211,9 +7224,17 @@ export const db = {
             .map(c => {
               const cDate = getLocalDateForPlanDay(c.dayOfWeek);
               const isAbhaInYla = (c.teacherId === 'teacher-gen-abha-morkoetter' || c.teacherId === 'abha') && isDateInYlaRange(cDate);
+              const inYla = isDateInYlaRange(cDate);
+              const nameLower = c.name.toLowerCase();
+              let roomId = c.roomId;
+              if (inYla) {
+                if (nameLower.includes('anfänger')) roomId = 'room-4';
+                else if (nameLower.includes('mittelstufe')) roomId = 'room-3';
+              }
               return {
                 ...c,
                 id: 'course-' + Math.random().toString(36).substr(2, 9),
+                roomId,
                 teacherId: (isAfterW40 || isAbhaInYla) ? null : c.teacherId,
                 isAiPlanned: false,
                 status: 'draft'
