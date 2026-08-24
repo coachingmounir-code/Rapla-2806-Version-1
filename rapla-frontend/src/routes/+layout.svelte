@@ -4,6 +4,7 @@
 	import nataraja from '$lib/assets/nataraja.jpg';
 	import { onMount } from 'svelte';
 	import { todoManager } from '$lib/todoStore.svelte';
+	import { adminTodoStore } from '$lib/adminTodoStore.svelte';
 	import { db } from '$lib/db';
 
 	let { children } = $props();
@@ -54,6 +55,8 @@
 			}
 		} else if (storedRole === 'admin' || storedRole === 'viewer') {
 			if (path === '/login') {
+				goto('/');
+			} else if (storedRole === 'viewer' && path.startsWith('/admin-todos')) {
 				goto('/');
 			}
 		}
@@ -185,6 +188,22 @@
 							<span class="nav-icon">🏠</span>
 							<span class="nav-label">Kommende Seminare</span>
 						</a>
+
+						<!-- Admin-only Seminar To-Do List (Tagesübersicht) -->
+						{#if userRole === 'admin'}
+							<a 
+								href="/admin-todos" 
+								class="nav-item admin-nav-item" 
+								class:active={page.url.pathname.startsWith('/admin-todos')}
+							>
+								<span class="nav-icon">📋</span>
+								<span class="nav-label">Seminar To-Dos</span>
+								{#if adminTodoStore.pendingCount > 0}
+									<span class="admin-todo-badge">{adminTodoStore.pendingCount}</span>
+								{/if}
+							</a>
+						{/if}
+
 						<!-- Wochenplan -->
 						<a 
 							href="/schedule" 
@@ -524,6 +543,23 @@
 
 	.nav-icon {
 		font-size: 1.1rem;
+	}
+
+	.admin-todo-badge {
+		margin-left: auto;
+		background: #ef4444;
+		color: #ffffff;
+		font-size: 0.72rem;
+		font-weight: 800;
+		padding: 0.1rem 0.45rem;
+		border-radius: 999px;
+		line-height: 1.2;
+		box-shadow: 0 2px 5px rgba(239, 68, 68, 0.35);
+	}
+
+	.nav-item.active .admin-todo-badge {
+		background: #ffffff;
+		color: var(--primary);
 	}
 
 	.sidebar-footer {
