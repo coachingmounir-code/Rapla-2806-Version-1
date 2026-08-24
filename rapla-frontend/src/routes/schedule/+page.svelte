@@ -512,6 +512,10 @@
       status: editingCourse?.status || 'draft'
     };
 
+    if (currentPlan && !db.getWeekPlan(currentPlan.id)) {
+      db.addWeekPlan(currentPlan);
+    }
+
     if (editingCourse) {
       db.updateCourse(courseData, currentPlan?.id);
     } else {

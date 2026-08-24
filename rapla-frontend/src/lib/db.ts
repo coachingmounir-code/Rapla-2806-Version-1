@@ -7038,18 +7038,6 @@ export const db = {
               c.isAiPlanned = false;
               updated = true;
             }
-            // During 4-week YLA, Anfänger in Sitaram (room-4), Mittelstufe in Hanuman (room-3)
-            if (nameLower.includes('anfänger')) {
-              if (c.roomId !== 'room-4') {
-                c.roomId = 'room-4';
-                updated = true;
-              }
-            } else if (nameLower.includes('mittelstufe')) {
-              if (c.roomId !== 'room-3') {
-                c.roomId = 'room-3';
-                updated = true;
-              }
-            }
 
             // Morning 7:00 Satsang during 1st week of YLA matches the YLA morning teacher
             if (nameLower === 'satsang' && c.startTime === '07:00') {

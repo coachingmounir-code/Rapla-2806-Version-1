@@ -1484,15 +1484,15 @@ export function validateRoomRules(
       if (isBeginner) {
         if (course.roomId !== 'room-4') { // Sitaram
           conflicts.push({
-            type: 'hard',
-            message: `Während der 4-wöchigen Yogalehrerausbildung müssen alle Anfängerstunden im Sitaram Raum stattfinden.`
+            type: 'soft',
+            message: `Hinweis: In den YLA-Wochen finden Anfängerstunden standardmäßig im Sitaram Raum statt.`
           });
         }
       } else if (isIntermediate) {
         if (course.roomId !== 'room-3') { // Hanuman
           conflicts.push({
-            type: 'hard',
-            message: `Während der 4-wöchigen Yogalehrerausbildung müssen alle Mittelstufenstunden im Hanuman Raum stattfinden.`
+            type: 'soft',
+            message: `Hinweis: In den YLA-Wochen finden Mittelstufenstunden standardmäßig im Hanuman Raum statt.`
           });
         }
       }
@@ -1504,8 +1504,8 @@ export function validateRoomRules(
   if (nameLower.includes('pranayama') || styleLower.includes('pranayama')) {
     if (course.roomId !== 'room-2') {
       conflicts.push({
-        type: 'hard',
-        message: `Pranayama-Stunden müssen im Radhakrishna Raum stattfinden.`
+        type: 'soft',
+        message: `Pranayama-Stunden finden standardmäßig im Radhakrishna Raum statt.`
       });
     }
   }
@@ -1525,15 +1525,15 @@ export function validateRoomRules(
     if (hasParallelPranavaKlang) {
       if (course.roomId !== 'room-5') {
         conflicts.push({
-          type: 'hard',
-          message: `Da parallel eine Klangyogastunde Mittelstufe von Pranava stattfindet, muss die Anfängerstunde im Tripura Raum stattfinden.`
+          type: 'soft',
+          message: `Da parallel eine Klangyogastunde Mittelstufe von Pranava stattfindet, sollte die Anfängerstunde im Tripura Raum stattfinden.`
         });
       }
     } else {
       if (course.roomId !== 'room-2') {
         conflicts.push({
-          type: 'hard',
-          message: `Yoga-Anfängerstunden müssen im Radhakrishna Raum stattfinden.`
+          type: 'soft',
+          message: `Yoga-Anfängerstunden finden standardmäßig im Radhakrishna Raum statt.`
         });
       }
     }
@@ -1553,15 +1553,15 @@ export function validateRoomRules(
     if (isKlang && isPranava) {
       if (course.roomId !== 'room-2') {
         conflicts.push({
-          type: 'hard',
-          message: `Klangyogastunden Mittelstufe von Pranava müssen im Radhakrishna Raum stattfinden.`
+          type: 'soft',
+          message: `Klangyogastunden Mittelstufe von Pranava sollten im Radhakrishna Raum stattfinden.`
         });
       }
     } else {
       if (course.roomId !== 'room-5') {
         conflicts.push({
-          type: 'hard',
-          message: `Yoga-Mittelstufen müssen im Tripura Raum stattfinden.`
+          type: 'soft',
+          message: `Yoga-Mittelstufen sollten standardmäßig im Tripura Raum stattfinden.`
         });
       }
     }
