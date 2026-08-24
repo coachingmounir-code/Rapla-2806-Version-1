@@ -102,7 +102,8 @@
             ],
             "fullText": "Was ist Meditation? Einführung in Meditation und  Mantra-Singen",
             "hasMore": true,
-            "time": ""
+            "time": "",
+            "assignedTeacher": "Anjali"
           },
           "F": {
             "text": "Konzentration und Meditation. Ratschläge für die Meditation. Hindu Mythologie: Brahma, Vishnu, Shiva, … Erläuterung von Jaya Ganesha, OM Tryambakam, Arati",
@@ -116,7 +117,8 @@
             ],
             "fullText": "Konzentration und Meditation. Ratschläge für die Meditation. Hindu Mythologie: Brahma, Vishnu, Shiva, … Erläuterung von Jaya Ganesha, OM Tryambakam, Arati",
             "hasMore": true,
-            "time": ""
+            "time": "",
+            "assignedTeacher": "Karuna"
           },
           "G": {
             "text": "Stimmschulung mit Mantra-Singen: 3-Chakra-Methode; Erläuterung zum Schweigen Hindernisse und Erfahrungen in der Meditation",
@@ -130,7 +132,8 @@
             ],
             "fullText": "Stimmschulung mit Mantra-Singen: 3-Chakra-Methode; Erläuterung zum Schweigen Hindernisse und Erfahrungen in der Meditation",
             "hasMore": true,
-            "time": ""
+            "time": "",
+            "assignedTeacher": "Anjali"
           },
           "H": {
             "text": "Vedanta Philosophie: 3 Körper. 5 Hüllen. 3 Gunas.",
@@ -144,7 +147,8 @@
             ],
             "fullText": "Vedanta Philosophie: 3 Körper. 5 Hüllen. 3 Gunas.",
             "hasMore": true,
-            "time": ""
+            "time": "",
+            "assignedTeacher": "Karuna"
           },
           "I": {
             "text": "Geschichte des Mahabharata. Einführung in die Bhagavad Gita. Hinweise zur Aussprache von Sanskrit.",
@@ -158,7 +162,8 @@
             ],
             "fullText": "Geschichte des Mahabharata. Einführung in die Bhagavad Gita. Hinweise zur Aussprache von Sanskrit.",
             "hasMore": true,
-            "time": ""
+            "time": "",
+            "assignedTeacher": "Narayani"
           }
         }
       },
@@ -186,7 +191,8 @@
             ],
             "fullText": "Kapalabhati, Wechselatmung Einfache Asana-Reihe. Bes.: Augenübungen, Krokodilsübungen, Nackenentspannung, Sonnengebet. Klassische Tiefenentspannung",
             "hasMore": true,
-            "time": ""
+            "time": "",
+            "assignedTeacher": "Abba"
           },
           "F": {
             "text": "Kapalabhati, Wechselatmung Augenübungen. Schmetterling, etc.: Hilfe für Stellung mit gekreuzten Beinen. Meditations-Stellungen. Einfache Asana-Reihe. Klassische Tiefenentspannung",
@@ -200,7 +206,8 @@
             ],
             "fullText": "Kapalabhati, Wechselatmung Augenübungen. Schmetterling, etc.: Hilfe für Stellung mit gekreuzten Beinen. Meditations-Stellungen. Einfache Asana-Reihe. Klassische Tiefenentspannung",
             "hasMore": true,
-            "time": ""
+            "time": "",
+            "assignedTeacher": "Abba"
           },
           "G": {
             "text": "Kapalabhati, Wechselatmung. Yoga Vidya Stil Grundreihe. Besonders genau und exakt: Kopfstand. Klassische Tiefenentspannung",
@@ -214,7 +221,8 @@
             ],
             "fullText": "Kapalabhati, Wechselatmung. Yoga Vidya Stil Grundreihe. Besonders genau und exakt: Kopfstand. Klassische Tiefenentspannung",
             "hasMore": true,
-            "time": ""
+            "time": "",
+            "assignedTeacher": "Abba"
           },
           "H": {
             "text": "Kapalabhati, Wechselatmung. Besonders exakt und genau: Schulterstand, Pflug, Fisch, Vorwärtsbeuge, Tiefenentspannung: Autogenes Training",
@@ -228,7 +236,8 @@
             ],
             "fullText": "Kapalabhati, Wechselatmung. Besonders exakt und genau: Schulterstand, Pflug, Fisch, Vorwärtsbeuge, Tiefenentspannung: Autogenes Training",
             "hasMore": true,
-            "time": ""
+            "time": "",
+            "assignedTeacher": "Abba"
           },
           "I": {
             "text": "Bitte auch heute die Karma Yogas machen. Ansonsten frei \n10.15-20h. Für 1-Woche Teilnehmer Abreise ab ca. 11h  (nach Feedback-runde und Karma Yoga).",
@@ -269,7 +278,8 @@
             ],
             "fullText": "14.30h 6 Yoga Wege: Hatha Yoga, Kundalini Yoga, Raja Yoga, Jnana Yoga, Bhakti Yoga, Karma Yoga",
             "hasMore": true,
-            "time": "14.30h"
+            "time": "14.30h",
+            "assignedTeacher": "Bintje"
           },
           "F": {
             "text": "14.00h Gajananam. Brahmarpanam. Vedanta Philosophie: Brahman, Maya, Ishwara, 3 Gunas. Sat Chid Ananda.",
@@ -283,7 +293,8 @@
             ],
             "fullText": "14.00h Gajananam. Brahmarpanam. Vedanta Philosophie: Brahman, Maya, Ishwara, 3 Gunas. Sat Chid Ananda.",
             "hasMore": true,
-            "time": "14.00h"
+            "time": "14.00h",
+            "assignedTeacher": "Karuna"
           },
           "G": {
             "text": "Kleine Trainingslehre. Allgemeines Anpassungsprinzip. Yogische Hausrezepte",
@@ -297,7 +308,8 @@
             ],
             "fullText": "Kleine Trainingslehre. Allgemeines Anpassungsprinzip. Yogische Hausrezepte",
             "hasMore": true,
-            "time": ""
+            "time": "",
+            "assignedTeacher": "Pranava"
           },
           "H": {
             "text": "Gajananam. Übersetzung, Erläuterung, genaue Aussprache 1. Strophe. Vedanta Philosophie: Ursachen v. Krankheit anhand Modell 3 Körper/ 5 Hüllen. Fragen zu Gesundheit/Krankheit.",
@@ -311,7 +323,8 @@
             ],
             "fullText": "Gajananam. Übersetzung, Erläuterung, genaue Aussprache 1. Strophe. Vedanta Philosophie: Ursachen v. Krankheit anhand Modell 3 Körper/ 5 Hüllen. Fragen zu Gesundheit/Krankheit.",
             "hasMore": true,
-            "time": ""
+            "time": "",
+            "assignedTeacher": "Karuna"
           },
           "I": {
             "text": "Freizeit",
@@ -595,7 +608,8 @@
             ],
             "fullText": "Yogastunde. Korrigieren/ Hilfestellungen: Sitzhaltung; Entspannung, Krokodilsübungen Klassische Tiefenentspannung  Theorie: Hauptprinzipien des Yogaunterrichts im Yoga Vidya Stil",
             "hasMore": true,
-            "time": ""
+            "time": "",
+            "assignedTeacher": "Abba, Anjali"
           },
           "F": {
             "text": "Yogastunde. Korrigieren/ Hilfestellungen: Sitzhaltung, Kapalabhati, Sonnengebet. Klassische Tiefenentspannung Theorie: Yoga Vidya Reihe: Nutzen der Asanas.",
@@ -609,7 +623,8 @@
             ],
             "fullText": "Yogastunde. Korrigieren/ Hilfestellungen: Sitzhaltung, Kapalabhati, Sonnengebet. Klassische Tiefenentspannung Theorie: Yoga Vidya Reihe: Nutzen der Asanas.",
             "hasMore": true,
-            "time": ""
+            "time": "",
+            "assignedTeacher": "Abba, Anjali"
           },
           "G": {
             "text": "Yogastunde. Korrigieren/ Hilfestellungen: Wechselatmung Kopfstand, Rückwärtsbeugen.Klassische Tiefenentspannung",
@@ -623,7 +638,8 @@
             ],
             "fullText": "Yogastunde. Korrigieren/ Hilfestellungen: Wechselatmung Kopfstand, Rückwärtsbeugen.Klassische Tiefenentspannung",
             "hasMore": true,
-            "time": ""
+            "time": "",
+            "assignedTeacher": "Abba, Anjali"
           },
           "H": {
             "text": "Yogastunde. Korrigieren/ Hilfestellungen: Schulterstand, Pflug, Fisch, Vorwärtsbeuge.Klassische Tiefenentspannung",
@@ -637,7 +653,8 @@
             ],
             "fullText": "Yogastunde. Korrigieren/ Hilfestellungen: Schulterstand, Pflug, Fisch, Vorwärtsbeuge.Klassische Tiefenentspannung",
             "hasMore": true,
-            "time": ""
+            "time": "",
+            "assignedTeacher": "Abba, Anjali"
           },
           "I": {
             "text": "Freizeit",
@@ -676,7 +693,8 @@
             ],
             "fullText": "Swami Sivananda",
             "hasMore": false,
-            "time": ""
+            "time": "",
+            "assignedTeacher": "Narayani"
           },
           "F": {
             "text": "",
@@ -693,7 +711,8 @@
             ],
             "fullText": "Der Geist des Aspiranten",
             "hasMore": false,
-            "time": ""
+            "time": "",
+            "assignedTeacher": "Karuna"
           },
           "H": {
             "text": "Wer bin ich? Unsterblichkeit und Freiheit. Geschichte: Chudulai und Shikidwaja",
@@ -707,7 +726,8 @@
             ],
             "fullText": "Wer bin ich? Unsterblichkeit und Freiheit. Geschichte: Chudulai und Shikidwaja",
             "hasMore": true,
-            "time": ""
+            "time": "",
+            "assignedTeacher": "Karuna"
           },
           "I": {
             "text": "",
@@ -745,7 +765,8 @@
             ],
             "fullText": "Einfache Mantra-Meditation",
             "hasMore": false,
-            "time": ""
+            "time": "",
+            "assignedTeacher": "Narayani"
           },
           "F": {
             "text": "Freizeit oder Teilnahme am meditativen Spaziergang",
@@ -771,7 +792,8 @@
             ],
             "fullText": "Komb. Mantra-Meditation",
             "hasMore": true,
-            "time": ""
+            "time": "",
+            "assignedTeacher": "Karuna"
           },
           "H": {
             "text": "Ausdehnungsmeditation",
@@ -783,7 +805,8 @@
             ],
             "fullText": "Ausdehnungsmeditation",
             "hasMore": false,
-            "time": ""
+            "time": "",
+            "assignedTeacher": "Karuna"
           },
           "I": {
             "text": "",

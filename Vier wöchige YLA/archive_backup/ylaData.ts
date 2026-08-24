@@ -5,9 +5,11 @@ export const YLA_TEACHERS = [
   'Abba',
   'Anjali',
   'Bernie',
+  'Bintje',
   'Hu',
   'Karuna',
-  'Narayani'
+  'Narayani',
+  'Pranava'
 ] as const;
 
 export type YlaTeacherName = (typeof YLA_TEACHERS)[number];
@@ -42,6 +44,13 @@ export const YLA_TEACHERS_META: Record<YlaTeacherName, YlaTeacherMeta> = {
     color: '#1976d2',
     badgeBg: '#e3f2fd'
   },
+  Bintje: {
+    name: 'Bintje',
+    alias: ['bintje'],
+    avatar: '🧘‍♀️',
+    color: '#00897b',
+    badgeBg: '#e0f2f1'
+  },
   Hu: {
     name: 'Hu',
     alias: ['hu'],
@@ -51,7 +60,7 @@ export const YLA_TEACHERS_META: Record<YlaTeacherName, YlaTeacherMeta> = {
   },
   Karuna: {
     name: 'Karuna',
-    alias: ['karuna'],
+    alias: ['karuna', 'kamuna'],
     avatar: '🧘‍♀️',
     color: '#e65100',
     badgeBg: '#fff3e0'
@@ -62,6 +71,13 @@ export const YLA_TEACHERS_META: Record<YlaTeacherName, YlaTeacherMeta> = {
     avatar: '🧘‍♀️',
     color: '#512da8',
     badgeBg: '#ede7f6'
+  },
+  Pranava: {
+    name: 'Pranava',
+    alias: ['pranava'],
+    avatar: '🧘‍♂️',
+    color: '#3949ab',
+    badgeBg: '#e8eaf6'
   }
 };
 
@@ -142,6 +158,26 @@ export interface YlaConflictDetail {
 const STORAGE_KEY = 'rapla_yla_assignments';
 
 /**
+ * Extracts default assigned teachers from yla_curriculum.json
+ */
+export function getDefaultYlaAssignments(): Record<string, string> {
+  const defaults: Record<string, string> = {};
+  const weeks = ylaCurriculumData as unknown as YlaWeek[];
+  for (const week of weeks) {
+    for (const slot of week.slots) {
+      for (const day of week.days) {
+        const entry = slot.entries[day.col];
+        if (entry && entry.assignedTeacher) {
+          const key = `${week.weekNumber}_${day.col}_${slot.rowNumber}`;
+          defaults[key] = entry.assignedTeacher;
+        }
+      }
+    }
+  }
+  return defaults;
+}
+
+/**
  * Returns all 4 weeks of the YLA curriculum enriched with current assigned teachers
  */
 export function getYlaWeeks(): YlaWeek[] {
@@ -170,17 +206,27 @@ export function getYlaWeek(weekNumber: number): YlaWeek | undefined {
 }
 
 /**
- * Read assignments mapping from localStorage
+ * Read assignments mapping from localStorage merged with curriculum defaults
  */
 export function getYlaAssignments(): Record<string, string> {
-  if (typeof window === 'undefined') return {};
+  const defaults = getDefaultYlaAssignments();
+  if (typeof window === 'undefined') return defaults;
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return {};
-    return JSON.parse(raw);
+    if (!raw) return defaults;
+    const custom = JSON.parse(raw);
+    const merged = { ...defaults };
+    for (const [k, v] of Object.entries(custom)) {
+      if (v === '__NONE__' || !v) {
+        delete merged[k];
+      } else {
+        merged[k] = v as string;
+      }
+    }
+    return merged;
   } catch (e) {
     console.error('Error reading YLA assignments from localStorage', e);
-    return {};
+    return defaults;
   }
 }
 
@@ -190,18 +236,35 @@ export function getYlaAssignments(): Record<string, string> {
 export function setYlaAssignment(weekNumber: number, dayCol: string, rowNumber: number, teacherName: string | null): void {
   if (typeof window === 'undefined') return;
   try {
-    const assignments = getYlaAssignments();
+    const raw = localStorage.getItem(STORAGE_KEY);
+    const custom = raw ? JSON.parse(raw) : {};
     const key = `${weekNumber}_${dayCol}_${rowNumber}`;
     if (teacherName && teacherName.trim()) {
-      assignments[key] = teacherName.trim();
+      custom[key] = teacherName.trim();
     } else {
-      delete assignments[key];
+      custom[key] = '__NONE__';
     }
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(assignments));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(custom));
     window.dispatchEvent(new CustomEvent('yla-assignment-changed', { detail: { weekNumber, dayCol, rowNumber, teacherName } }));
   } catch (e) {
     console.error('Error saving YLA assignment to localStorage', e);
   }
+}
+
+/**
+ * Normalizes teacher name for alias comparisons (e.g. Abba/Abha, Bernie/Burnie, Karuna/Kamuna)
+ */
+export function normalizeTeacherName(name: string): string {
+  const n = name.toLowerCase().trim();
+  if (n === 'abba' || n === 'abha') return 'abba';
+  if (n === 'bernie' || n === 'burnie') return 'bernie';
+  if (n === 'anjali') return 'anjali';
+  if (n === 'bintje') return 'bintje';
+  if (n === 'hu') return 'hu';
+  if (n === 'karuna' || n === 'kamuna') return 'karuna';
+  if (n === 'narayani') return 'narayani';
+  if (n === 'pranava') return 'pranava';
+  return n;
 }
 
 /**
@@ -258,19 +321,7 @@ export function getYlaSlotTimeRange(slotType: string, slotTime: string, entryTim
   }
 }
 
-/**
- * Normalizes teacher name for alias comparisons (e.g. Abba/Abha, Bernie/Burnie)
- */
-export function normalizeTeacherName(name: string): string {
-  const n = name.toLowerCase().trim();
-  if (n === 'abba' || n === 'abha') return 'abba';
-  if (n === 'bernie' || n === 'burnie') return 'bernie';
-  if (n === 'anjali') return 'anjali';
-  if (n === 'hu') return 'hu';
-  if (n === 'karuna') return 'karuna';
-  if (n === 'narayani') return 'narayani';
-  return n;
-}
+
 
 function timeToMins(timeStr: string): number {
   if (!timeStr) return 0;
@@ -297,11 +348,50 @@ export function getYlaConflictForTeacher(
   targetWeekCode?: string
 ): YlaConflictDetail | null {
   if (!teacherName) return null;
-  const normTarget = normalizeTeacherName(teacherName);
   const assignments = getYlaAssignments();
   if (Object.keys(assignments).length === 0) return null;
 
+  const namesToCheck = teacherName.includes(',')
+    ? teacherName.split(',').map(n => normalizeTeacherName(n))
+    : [normalizeTeacherName(teacherName)];
+
   const weeks = ylaCurriculumData as unknown as YlaWeek[];
+
+  let targetCourseDate = '';
+  if (targetWeekCode && targetWeekCode.includes('-W')) {
+    const [yearStr, weekStr] = targetWeekCode.split('-W');
+    const year = parseInt(yearStr, 10);
+    const week = parseInt(weekStr, 10);
+    if (!isNaN(year) && !isNaN(week)) {
+      const jan4 = new Date(year, 0, 4);
+      const daysToMonday = jan4.getDay() === 0 ? 6 : jan4.getDay() - 1;
+      const mondayOfW1 = new Date(jan4.getTime());
+      mondayOfW1.setDate(jan4.getDate() - daysToMonday);
+
+      const targetMonday = new Date(mondayOfW1.getTime());
+      targetMonday.setDate(mondayOfW1.getDate() + (week - 1) * 7);
+
+      const targetFriday = new Date(targetMonday.getTime());
+      targetFriday.setDate(targetMonday.getDate() - 3);
+
+      let offset = 0;
+      if (dayOfWeek === 5) offset = 0;
+      else if (dayOfWeek === 6) offset = 1;
+      else if (dayOfWeek === 0) offset = 2;
+      else if (dayOfWeek === 1) offset = 3;
+      else if (dayOfWeek === 2) offset = 4;
+      else if (dayOfWeek === 3) offset = 5;
+      else if (dayOfWeek === 4) offset = 6;
+
+      const targetDate = new Date(targetFriday.getTime());
+      targetDate.setDate(targetFriday.getDate() + offset);
+
+      const yyyy = targetDate.getFullYear();
+      const mm = (targetDate.getMonth() + 1).toString().padStart(2, '0');
+      const dd = targetDate.getDate().toString().padStart(2, '0');
+      targetCourseDate = `${yyyy}-${mm}-${dd}`;
+    }
+  }
 
   for (const week of weeks) {
     for (const slot of week.slots) {
@@ -310,21 +400,25 @@ export function getYlaConflictForTeacher(
         const assigned = assignments[key];
         if (!assigned) continue;
 
-        if (normalizeTeacherName(assigned) !== normTarget) continue;
+        const normAssigned = normalizeTeacherName(assigned);
+        const matchesTeacher = namesToCheck.some(
+          name => name === normAssigned || normAssigned.includes(name) || name.includes(normAssigned)
+        );
+        if (!matchesTeacher) continue;
 
         // Check if date or day matches
-        const slotTimeRange = getYlaSlotTimeRange(slot.type, slot.time, slot.entries[day.col]?.time);
-
         let matchesDate = false;
-        if (targetWeekCode && day.isoDate) {
-          // If targetWeekCode matches the isoDate or targetWeekCode is the same week
-          // e.g. targetWeekCode "2026-W36" or direct date
-          matchesDate = (day.dayOfWeek === dayOfWeek);
+        if (targetCourseDate && day.isoDate) {
+          matchesDate = (day.isoDate === targetCourseDate);
         } else {
           matchesDate = (day.dayOfWeek === dayOfWeek);
         }
 
-        if (matchesDate && timesOverlap(startTime, endTime, slotTimeRange.start, slotTimeRange.end)) {
+        if (!matchesDate) continue;
+
+        const slotTimeRange = getYlaSlotTimeRange(slot.type, slot.time, slot.entries[day.col]?.time);
+
+        if (timesOverlap(startTime, endTime, slotTimeRange.start, slotTimeRange.end)) {
           const entry = slot.entries[day.col];
           return {
             weekNumber: week.weekNumber,
