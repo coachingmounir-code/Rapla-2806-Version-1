@@ -815,7 +815,6 @@
     </div>
   </div>
 </div>
-{/if}
 
 <!-- Add/Edit Course Modal -->
 {#if isModalOpen}
@@ -947,6 +946,7 @@
       </div>
     </div>
   </div>
+{/if}
 
 <style>
   .page-header {
