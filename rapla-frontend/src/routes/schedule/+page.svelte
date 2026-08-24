@@ -1232,6 +1232,7 @@
     flex-direction: column;
     gap: 2px;
     transition: transform 0.1s ease, box-shadow 0.1s ease;
+    flex-shrink: 0;
   }
 
   .course-card-rapla:hover {
@@ -1473,16 +1474,18 @@
   .calendar-grid-container.fullscreen-mode .calendar-grid,
   .calendar-grid-container:fullscreen .calendar-grid {
     height: auto !important;
-    min-height: calc(100vh - 85px) !important;
+    min-height: fit-content !important;
     grid-auto-rows: minmax(75px, auto) !important;
     min-width: 1060px !important;
     overflow: visible !important;
-    flex: 1 !important;
+    flex: none !important;
+    width: 100% !important;
   }
 
   .calendar-grid-container.fullscreen-mode .grid-content-cell,
   .calendar-grid-container:fullscreen .grid-content-cell {
     min-height: 75px !important;
+    height: auto !important;
     padding: 4px 6px !important;
     gap: 4px !important;
     display: flex !important;
@@ -1494,6 +1497,7 @@
   .calendar-grid-container:fullscreen .course-card-rapla {
     padding: 6px 8px !important;
     min-height: fit-content !important;
+    flex-shrink: 0 !important;
   }
 
   /* Externe Seminarleiter checklist styles */
