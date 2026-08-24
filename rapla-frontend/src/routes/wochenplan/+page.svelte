@@ -2,6 +2,7 @@
   import { onMount, untrack } from 'svelte';
   import { db, type Course, type Teacher, type Room, type WeekPlan } from '$lib/db';
   import { getLocalDateForDay } from '$lib/planningEngine';
+  import { isDateInYlaRange } from '$lib/ylaData';
   import { page } from '$app/state';
   import { goto } from '$app/navigation';
 
@@ -250,17 +251,35 @@
         ...template,
         id: `plan-blank-${weekCode}`,
         targetWeekCode: weekCode,
-        courses: template ? template.courses.map(c => ({ ...c, teacherId: null, isAiPlanned: false, status: 'draft' })) : []
+        courses: template ? template.courses
+          .filter(c => {
+            const isPranayama = c.name.toLowerCase().includes('pranayama') || c.style.toLowerCase().includes('pranayama');
+            if (isPranayama) {
+              const courseDate = getLocalDateForDay(weekCode, c.dayOfWeek);
+              if (isDateInYlaRange(courseDate)) return false;
+            }
+            return true;
+          })
+          .map(c => ({ ...c, teacherId: null, isAiPlanned: false, status: 'draft' })) : []
       };
     }
     currentPlan = foundPlan;
     
     if (currentPlan) {
-      // Dynamically filter out absent teachers
+      // Dynamically filter out absent teachers & remove Pranayama during YLA
       const saved = typeof window !== 'undefined' ? localStorage.getItem('rapla_sevafrei') : null;
       const sevafreiList = saved ? JSON.parse(saved) : [];
       
-      courses = currentPlan.courses.map(c => {
+      courses = currentPlan.courses
+        .filter(c => {
+          const isPranayama = c.name.toLowerCase().includes('pranayama') || c.style.toLowerCase().includes('pranayama');
+          if (isPranayama) {
+            const courseDate = getLocalDateForDay(weekCode, c.dayOfWeek);
+            if (isDateInYlaRange(courseDate)) return false;
+          }
+          return true;
+        })
+        .map(c => {
         if (!c.teacherId) return c;
         const teacher = teachers.find(t => t.id === c.teacherId);
         if (!teacher) return c;

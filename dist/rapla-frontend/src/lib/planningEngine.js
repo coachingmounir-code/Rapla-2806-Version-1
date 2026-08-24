@@ -79,6 +79,16 @@ function getAbsenceDetails(teacherName, dayOfWeek, targetWeekCode, absences) {
     if (!targetWeekCode)
         return null;
     const courseDate = getLocalDateForDay(targetWeekCode, dayOfWeek);
+    // Abha is completely unavailable during the 4 weeks of Yogalehrerausbildung (YLA: 30.08.2026 - 27.09.2026)
+    if (teacherName.toLowerCase().includes('abha') && (0, ylaData_1.isDateInYlaRange)(courseDate)) {
+        return {
+            teacherName: 'Abha',
+            type: 'Yogalehrerausbildung',
+            startDate: '2026-08-30',
+            endDate: '2026-09-27',
+            note: 'In den 4 Wochen der Yogalehrerausbildung steht Abha komplett nicht zur Verfügung.'
+        };
+    }
     if (absences && absences.length > 0) {
         const entry = absences.find((entry) => {
             if (!entry)
@@ -736,6 +746,20 @@ function runAiPlanning(courses, teachers, seminarLeaderIds = [], targetWeekCode,
     logs.push(`Berücksichtige ${yogaTeachers.length} Sevakas (Kernteam) für die KI-Vorplanung.`);
     // Clone courses to avoid modifying original array until approved
     let workingCourses = courses.map(c => ({ ...c }));
+    // Exclude Pranayama courses during the 4-week Yogalehrerausbildung (30.08.2026 – 27.09.2026)
+    if (targetWeekCode) {
+        workingCourses = workingCourses.filter(c => {
+            const isPranayama = c.name.toLowerCase().includes('pranayama') || c.style.toLowerCase().includes('pranayama');
+            if (isPranayama) {
+                const courseDate = getLocalDateForDay(targetWeekCode, c.dayOfWeek);
+                if ((0, ylaData_1.isDateInYlaRange)(courseDate)) {
+                    logs.push(`[YLA-Regel] "${c.name}" (${c.startTime}) am ${courseDate} (${targetWeekCode}) entfällt wegen der 4-wöchigen Yogalehrerausbildung.`);
+                    return false;
+                }
+            }
+            return true;
+        });
+    }
     // Find which courses need planning: either unassigned, marked for AI planning, or having an active absence (sevafrei/urlaub) for their pre-assigned teacher
     const coursesToPlan = workingCourses.filter(c => {
         if (c.teacherId === null || c.isAiPlanned)

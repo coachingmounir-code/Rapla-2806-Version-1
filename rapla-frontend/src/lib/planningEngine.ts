@@ -818,6 +818,21 @@ export function runAiPlanning(
   // Clone courses to avoid modifying original array until approved
   let workingCourses = courses.map(c => ({ ...c }));
   
+  // Exclude Pranayama courses during the 4-week Yogalehrerausbildung (30.08.2026 – 27.09.2026)
+  if (targetWeekCode) {
+    workingCourses = workingCourses.filter(c => {
+      const isPranayama = c.name.toLowerCase().includes('pranayama') || c.style.toLowerCase().includes('pranayama');
+      if (isPranayama) {
+        const courseDate = getLocalDateForDay(targetWeekCode, c.dayOfWeek);
+        if (isDateInYlaRange(courseDate)) {
+          logs.push(`[YLA-Regel] "${c.name}" (${c.startTime}) am ${courseDate} (${targetWeekCode}) entfällt wegen der 4-wöchigen Yogalehrerausbildung.`);
+          return false;
+        }
+      }
+      return true;
+    });
+  }
+  
   // Find which courses need planning: either unassigned, marked for AI planning, or having an active absence (sevafrei/urlaub) for their pre-assigned teacher
   const coursesToPlan = workingCourses.filter(c => {
     if (c.teacherId === null || c.isAiPlanned) return true;
