@@ -297,11 +297,50 @@ export function getYlaConflictForTeacher(
   targetWeekCode?: string
 ): YlaConflictDetail | null {
   if (!teacherName) return null;
-  const normTarget = normalizeTeacherName(teacherName);
   const assignments = getYlaAssignments();
   if (Object.keys(assignments).length === 0) return null;
 
+  const namesToCheck = teacherName.includes(',')
+    ? teacherName.split(',').map(n => normalizeTeacherName(n))
+    : [normalizeTeacherName(teacherName)];
+
   const weeks = ylaCurriculumData as unknown as YlaWeek[];
+
+  let targetCourseDate = '';
+  if (targetWeekCode && targetWeekCode.includes('-W')) {
+    const [yearStr, weekStr] = targetWeekCode.split('-W');
+    const year = parseInt(yearStr, 10);
+    const week = parseInt(weekStr, 10);
+    if (!isNaN(year) && !isNaN(week)) {
+      const jan4 = new Date(year, 0, 4);
+      const daysToMonday = jan4.getDay() === 0 ? 6 : jan4.getDay() - 1;
+      const mondayOfW1 = new Date(jan4.getTime());
+      mondayOfW1.setDate(jan4.getDate() - daysToMonday);
+
+      const targetMonday = new Date(mondayOfW1.getTime());
+      targetMonday.setDate(mondayOfW1.getDate() + (week - 1) * 7);
+
+      const targetFriday = new Date(targetMonday.getTime());
+      targetFriday.setDate(targetMonday.getDate() - 3);
+
+      let offset = 0;
+      if (dayOfWeek === 5) offset = 0;
+      else if (dayOfWeek === 6) offset = 1;
+      else if (dayOfWeek === 0) offset = 2;
+      else if (dayOfWeek === 1) offset = 3;
+      else if (dayOfWeek === 2) offset = 4;
+      else if (dayOfWeek === 3) offset = 5;
+      else if (dayOfWeek === 4) offset = 6;
+
+      const targetDate = new Date(targetFriday.getTime());
+      targetDate.setDate(targetFriday.getDate() + offset);
+
+      const yyyy = targetDate.getFullYear();
+      const mm = (targetDate.getMonth() + 1).toString().padStart(2, '0');
+      const dd = targetDate.getDate().toString().padStart(2, '0');
+      targetCourseDate = `${yyyy}-${mm}-${dd}`;
+    }
+  }
 
   for (const week of weeks) {
     for (const slot of week.slots) {
@@ -310,21 +349,25 @@ export function getYlaConflictForTeacher(
         const assigned = assignments[key];
         if (!assigned) continue;
 
-        if (normalizeTeacherName(assigned) !== normTarget) continue;
+        const normAssigned = normalizeTeacherName(assigned);
+        const matchesTeacher = namesToCheck.some(
+          name => name === normAssigned || normAssigned.includes(name) || name.includes(normAssigned)
+        );
+        if (!matchesTeacher) continue;
 
         // Check if date or day matches
-        const slotTimeRange = getYlaSlotTimeRange(slot.type, slot.time, slot.entries[day.col]?.time);
-
         let matchesDate = false;
-        if (targetWeekCode && day.isoDate) {
-          // If targetWeekCode matches the isoDate or targetWeekCode is the same week
-          // e.g. targetWeekCode "2026-W36" or direct date
-          matchesDate = (day.dayOfWeek === dayOfWeek);
+        if (targetCourseDate && day.isoDate) {
+          matchesDate = (day.isoDate === targetCourseDate);
         } else {
           matchesDate = (day.dayOfWeek === dayOfWeek);
         }
 
-        if (matchesDate && timesOverlap(startTime, endTime, slotTimeRange.start, slotTimeRange.end)) {
+        if (!matchesDate) continue;
+
+        const slotTimeRange = getYlaSlotTimeRange(slot.type, slot.time, slot.entries[day.col]?.time);
+
+        if (timesOverlap(startTime, endTime, slotTimeRange.start, slotTimeRange.end)) {
           const entry = slot.entries[day.col];
           return {
             weekNumber: week.weekNumber,

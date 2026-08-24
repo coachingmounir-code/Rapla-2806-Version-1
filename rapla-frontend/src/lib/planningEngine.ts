@@ -1,5 +1,6 @@
 import { db, type Teacher, type Course, type Room, type TimeSlot } from './db';
 import wochenplanRules from './data/wochenplan_rules.json' with { type: 'json' };
+import { getYlaConflictForTeacher } from './ylaData';
 
 export interface ConflictMessage {
   type: 'hard' | 'soft'; // hard = invalid assignment, soft = warning/preference
@@ -270,6 +271,21 @@ export function validateAssignment(
     conflicts.push({
       type: 'hard',
       message: `${teacher.name} hat zur gleichen Zeit bereits eine andere Klasse zugeteilt.`
+    });
+  }
+
+  // 2b. Check Yogalehrer-Ausbildung (YLA) Overlap (Hard)
+  const ylaConflict = getYlaConflictForTeacher(
+    teacher.name,
+    course.dayOfWeek,
+    course.startTime,
+    course.endTime,
+    targetWeekCode
+  );
+  if (ylaConflict) {
+    conflicts.push({
+      type: 'hard',
+      message: `${teacher.name} ist zeitgleich in der Yogalehrer-Ausbildung (YLA ${ylaConflict.weekNumber}. Woche: „${ylaConflict.shortTitle || ylaConflict.slotLabel}“ von ${ylaConflict.timeRange}) eingeteilt und steht nicht zur Verfügung.`
     });
   }
 

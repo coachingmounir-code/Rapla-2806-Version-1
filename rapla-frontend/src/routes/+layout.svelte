@@ -195,6 +195,16 @@
 							<span class="nav-label">Wochenplan</span>
 						</a>
 
+						<!-- 4-Wöchige Yogalehrer-Ausbildung (YLA) -->
+						<a 
+							href="/yla" 
+							class="nav-item" 
+							class:active={page.url.pathname.startsWith('/yla')}
+						>
+							<span class="nav-icon">🧘‍♂️</span>
+							<span class="nav-label">4-Wochen YLA</span>
+						</a>
+
 						<!-- Karma-Yogis & externe Seminarleiter als eigener Hauptreiter (1-Klick) -->
 						<a 
 							href="/karma-yogis" 

@@ -71,7 +71,13 @@
       isFullscreen = !!document.fullscreenElement;
     };
 
+    const handleYlaChange = () => {
+      loadData();
+    };
+
     window.addEventListener('keydown', handleKeydown);
+    window.addEventListener('storage', handleYlaChange);
+    window.addEventListener('yla-assignment-changed', handleYlaChange);
     document.addEventListener('fullscreenchange', handleFullscreenChange);
     document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
     document.addEventListener('mozfullscreenchange', handleFullscreenChange);
@@ -79,6 +85,8 @@
 
     return () => {
       window.removeEventListener('keydown', handleKeydown);
+      window.removeEventListener('storage', handleYlaChange);
+      window.removeEventListener('yla-assignment-changed', handleYlaChange);
       document.removeEventListener('fullscreenchange', handleFullscreenChange);
       document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
       document.removeEventListener('mozfullscreenchange', handleFullscreenChange);
@@ -566,6 +574,9 @@
         <span>{currentPlan.isManualOnly ? '🔒 Manuell (Geschützt)' : '🔓 Auto-Updates erlaubt'}</span>
       </label>
     {/if}
+    <a href="/yla" class="btn btn-secondary" title="Zur Yogalehrer-Ausbildungsplanung (YLA)">
+      <span>🧘‍♂️</span> 4-Wochen YLA
+    </a>
     <button class="btn btn-secondary" onclick={handleSync} title="Lädt den neuesten Stand aus dem System">
       <span>🔄</span> Synchronisieren
     </button>
