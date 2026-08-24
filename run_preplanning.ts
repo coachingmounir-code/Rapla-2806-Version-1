@@ -137,14 +137,26 @@ function planWeekWithAbsences(weekCode: string, standardCourses: any[]) {
   console.log(`PLANNING FOR WEEK: ${weekCode}`);
   console.log(`======================================================`);
 
-  // Build working courses from standard week
-  const courses = standardCourses.map((c, idx) => {
-    const courseCopy = {
-      ...c,
-      id: `course-${weekCode}-${idx + 1}`,
-      isAiPlanned: false,
-      status: 'approved'
-    };
+  // Build working courses from standard week (excluding Pranayama during 4-week YLA: 30.08.2026 - 27.09.2026)
+  const courses = standardCourses
+    .filter(c => {
+      const isPranayama = c.name.toLowerCase().includes('pranayama') || c.style.toLowerCase().includes('pranayama');
+      if (isPranayama) {
+        const courseDate = getLocalDateForDay(weekCode, c.dayOfWeek);
+        if (courseDate >= '2026-08-30' && courseDate <= '2026-09-27') {
+          console.log(`[PRANAYAMA REMOVED] ${c.name} (${c.startTime}) entfällt am ${courseDate} (${weekCode}) wegen der 4-wöchigen Yogalehrerausbildung.`);
+          return false;
+        }
+      }
+      return true;
+    })
+    .map((c, idx) => {
+      const courseCopy = {
+        ...c,
+        id: `course-${weekCode}-${idx + 1}`,
+        isAiPlanned: false,
+        status: 'approved'
+      };
 
     if (!courseCopy.teacherId) {
       courseCopy.isAiPlanned = true;

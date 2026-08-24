@@ -1,7 +1,15 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.db = void 0;
+exports.isTeacherInHouseOnDate = isTeacherInHouseOnDate;
+exports.getTeacherStayStatus = getTeacherStayStatus;
 // LocalStorage Database helper for Yoga Studio Scheduler
-import { supabase } from './supabaseClient.js';
-import wochenplanRules from './data/wochenplan_rules.json' with { type: 'json' };
-export function isTeacherInHouseOnDate(teacher, dateStr) {
+const supabaseClient_1 = require("./supabaseClient");
+const wochenplan_rules_json_1 = __importDefault(require("./data/wochenplan_rules.json"));
+function isTeacherInHouseOnDate(teacher, dateStr) {
     if (teacher.roleType === 'sevaka')
         return true;
     if (!teacher.stayStartDate && !teacher.stayEndDate) {
@@ -13,7 +21,7 @@ export function isTeacherInHouseOnDate(teacher, dateStr) {
         return false;
     return true;
 }
-export function getTeacherStayStatus(teacher, referenceDateStr) {
+function getTeacherStayStatus(teacher, referenceDateStr) {
     if (teacher.roleType === 'sevaka')
         return 'permanent';
     if (!teacher.stayStartDate && !teacher.stayEndDate)
@@ -150,8 +158,8 @@ function getTeacherAvailability(name, isSevaka) {
         return [0, 1, 2, 3, 4, 5, 6].map(d => ({ day: d, start: '08:00', end: '22:00' }));
     }
     // Look up rules in parsed JSON
-    const teacherKey = Object.keys(wochenplanRules.teachers).find(k => nameLower.includes(k) || k.includes(nameLower));
-    const tRules = teacherKey ? wochenplanRules.teachers[teacherKey] : null;
+    const teacherKey = Object.keys(wochenplan_rules_json_1.default.teachers).find(k => nameLower.includes(k) || k.includes(nameLower));
+    const tRules = teacherKey ? wochenplan_rules_json_1.default.teachers[teacherKey] : null;
     if (!tRules) {
         // Default fallback for any other Sevaka
         return [0, 1, 2, 3, 4, 5, 6].map(d => ({ day: d, start: '06:00', end: '22:00' }));
@@ -186,8 +194,8 @@ function getTeacherAvailability(name, isSevaka) {
 function getTeacherRules(name, isSevaka) {
     const nameLower = name.toLowerCase().trim();
     // Look up rules in parsed JSON
-    const teacherKey = Object.keys(wochenplanRules.teachers).find(k => nameLower.includes(k) || k.includes(nameLower));
-    const tRules = teacherKey ? wochenplanRules.teachers[teacherKey] : null;
+    const teacherKey = Object.keys(wochenplan_rules_json_1.default.teachers).find(k => nameLower.includes(k) || k.includes(nameLower));
+    const tRules = teacherKey ? wochenplan_rules_json_1.default.teachers[teacherKey] : null;
     if (!isSevaka || !tRules) {
         return {
             canLeadMeditation: false,
@@ -207,8 +215,8 @@ function getTeacherRules(name, isSevaka) {
         weekendAsBackupOnly: tRules.weekendAsBackupOnly || false,
         noYogaOnWeekend: tRules.noYogaOnWeekend || false,
         prefersMittelstufe: tRules.prefersMittelstufe || false,
-        canLeadMeditation: wochenplanRules.meditation.allowed.some((a) => nameLower.includes(a)),
-        canLeadSatsang: isSevaka && !wochenplanRules.satsang.forbidden.some((a) => nameLower.includes(a)),
+        canLeadMeditation: wochenplan_rules_json_1.default.meditation.allowed.some((a) => nameLower.includes(a)),
+        canLeadSatsang: isSevaka && !wochenplan_rules_json_1.default.satsang.forbidden.some((a) => nameLower.includes(a)),
         canLeadPranayama: tRules.canLeadPranayama || false,
         canLeadSatsangEinfuehrung: tRules.canLeadSatsangEinfuehrung || false,
         canLeadOnn: tRules.canLeadOnn !== undefined ? tRules.canLeadOnn : true,
@@ -818,7 +826,7 @@ const DEFAULT_WEEK_PLANS = [
                 "startTime": "19:00",
                 "endTime": "19:30",
                 "roomId": "Rezeption",
-                "teacherId": "teacher-gen-satyam",
+                "teacherId": "teacher-gen-ulrich-nebel",
                 "isAiPlanned": true,
                 "status": "approved"
             },
@@ -1142,8 +1150,8 @@ const DEFAULT_WEEK_PLANS = [
                 "startTime": "07:00",
                 "endTime": "07:30",
                 "roomId": "room-5",
-                "teacherId": "teacher-gen-satyam",
-                "isAiPlanned": false,
+                "teacherId": "teacher-gen-mouniir-jaber",
+                "isAiPlanned": true,
                 "status": "approved"
             },
             {
@@ -1409,13 +1417,13 @@ const DEFAULT_WEEK_PLANS = [
             },
             {
                 "id": "course-2026-W36-7",
-                "name": "Yoga Flow Mittelstufe",
+                "name": "Mittelstufe Ankommensstunde",
                 "style": "Hatha",
                 "dayOfWeek": 5,
                 "startTime": "16:30",
                 "endTime": "18:00",
                 "roomId": "room-5",
-                "teacherId": "teacher-gen-satyam",
+                "teacherId": "teacher-gen-pranava-pauly",
                 "isAiPlanned": true,
                 "status": "approved"
             },
@@ -1895,8 +1903,8 @@ const DEFAULT_WEEK_PLANS = [
                 "startTime": "07:00",
                 "endTime": "07:30",
                 "roomId": "room-5",
-                "teacherId": "teacher-gen-satyam",
-                "isAiPlanned": false,
+                "teacherId": "teacher-gen-mouniir-jaber",
+                "isAiPlanned": true,
                 "status": "approved"
             },
             {
@@ -2324,7 +2332,7 @@ const DEFAULT_WEEK_PLANS = [
                 "startTime": "19:00",
                 "endTime": "19:30",
                 "roomId": "Rezeption",
-                "teacherId": "teacher-gen-satyam",
+                "teacherId": "teacher-gen-ulrich-nebel",
                 "isAiPlanned": true,
                 "status": "approved"
             },
@@ -2648,8 +2656,8 @@ const DEFAULT_WEEK_PLANS = [
                 "startTime": "07:00",
                 "endTime": "07:30",
                 "roomId": "room-5",
-                "teacherId": "teacher-gen-satyam",
-                "isAiPlanned": false,
+                "teacherId": "teacher-gen-mouniir-jaber",
+                "isAiPlanned": true,
                 "status": "approved"
             },
             {
@@ -3401,8 +3409,8 @@ const DEFAULT_WEEK_PLANS = [
                 "startTime": "07:00",
                 "endTime": "07:30",
                 "roomId": "room-5",
-                "teacherId": "teacher-gen-satyam",
-                "isAiPlanned": false,
+                "teacherId": "teacher-gen-mouniir-jaber",
+                "isAiPlanned": true,
                 "status": "approved"
             },
             {
@@ -3830,7 +3838,7 @@ const DEFAULT_WEEK_PLANS = [
                 "startTime": "19:00",
                 "endTime": "19:30",
                 "roomId": "Rezeption",
-                "teacherId": "teacher-gen-satyam",
+                "teacherId": "teacher-gen-ulrich-nebel",
                 "isAiPlanned": true,
                 "status": "approved"
             },
@@ -4154,8 +4162,8 @@ const DEFAULT_WEEK_PLANS = [
                 "startTime": "07:00",
                 "endTime": "07:30",
                 "roomId": "room-5",
-                "teacherId": "teacher-gen-satyam",
-                "isAiPlanned": false,
+                "teacherId": "teacher-gen-mouniir-jaber",
+                "isAiPlanned": true,
                 "status": "approved"
             },
             {
@@ -4202,7 +4210,7 @@ const DEFAULT_WEEK_PLANS = [
                 "startTime": "19:30",
                 "endTime": "20:00",
                 "roomId": "room-2",
-                "teacherId": "teacher-gen-mouniir-jaber",
+                "teacherId": "teacher-gen-teresa-allgaeu",
                 "isAiPlanned": true,
                 "status": "approved"
             },
@@ -4907,8 +4915,8 @@ const DEFAULT_WEEK_PLANS = [
                 "startTime": "07:00",
                 "endTime": "07:30",
                 "roomId": "room-5",
-                "teacherId": "teacher-gen-satyam",
-                "isAiPlanned": false,
+                "teacherId": "teacher-gen-mouniir-jaber",
+                "isAiPlanned": true,
                 "status": "approved"
             },
             {
@@ -5336,7 +5344,7 @@ const DEFAULT_WEEK_PLANS = [
                 "startTime": "19:00",
                 "endTime": "19:30",
                 "roomId": "Rezeption",
-                "teacherId": "teacher-gen-satyam",
+                "teacherId": "teacher-gen-ulrich-nebel",
                 "isAiPlanned": true,
                 "status": "approved"
             },
@@ -5660,8 +5668,8 @@ const DEFAULT_WEEK_PLANS = [
                 "startTime": "07:00",
                 "endTime": "07:30",
                 "roomId": "room-5",
-                "teacherId": "teacher-gen-satyam",
-                "isAiPlanned": false,
+                "teacherId": "teacher-gen-mouniir-jaber",
+                "isAiPlanned": true,
                 "status": "approved"
             },
             {
@@ -5921,7 +5929,7 @@ const DEFAULT_WEEK_PLANS = [
                 "startTime": "16:30",
                 "endTime": "18:00",
                 "roomId": "room-2",
-                "teacherId": "teacher-gen-satyam",
+                "teacherId": "teacher-gen-alexander-melior",
                 "isAiPlanned": true,
                 "status": "approved"
             },
@@ -6023,13 +6031,13 @@ const DEFAULT_WEEK_PLANS = [
             },
             {
                 "id": "course-2026-W42-15",
-                "name": "Yoga Flow Mittelstufe",
+                "name": "Mittelstufe",
                 "style": "Hatha",
                 "dayOfWeek": 6,
                 "startTime": "09:15",
                 "endTime": "11:00",
                 "roomId": "room-5",
-                "teacherId": "teacher-gen-satyam",
+                "teacherId": "teacher-gen-karuna-wapke",
                 "isAiPlanned": true,
                 "status": "approved"
             },
@@ -6377,7 +6385,7 @@ const DEFAULT_WEEK_PLANS = [
                 "startTime": "16:15",
                 "endTime": "18:00",
                 "roomId": "room-2",
-                "teacherId": "teacher-gen-satyam",
+                "teacherId": "teacher-gen-alexander-melior",
                 "isAiPlanned": true,
                 "status": "approved"
             },
@@ -6413,8 +6421,8 @@ const DEFAULT_WEEK_PLANS = [
                 "startTime": "07:00",
                 "endTime": "07:30",
                 "roomId": "room-5",
-                "teacherId": "teacher-gen-satyam",
-                "isAiPlanned": false,
+                "teacherId": "teacher-gen-mouniir-jaber",
+                "isAiPlanned": true,
                 "status": "approved"
             },
             {
@@ -6608,7 +6616,7 @@ let cloudInitialized = false;
 function getStored(key, defaultValue) {
     if (typeof window === 'undefined')
         return defaultValue;
-    if (supabase && cloudInitialized) {
+    if (supabaseClient_1.supabase && cloudInitialized) {
         if (inMemoryStore[key] !== undefined) {
             return inMemoryStore[key];
         }
@@ -6630,10 +6638,10 @@ function getStored(key, defaultValue) {
 function setStored(key, value) {
     if (typeof window === 'undefined')
         return;
-    if (supabase && cloudInitialized) {
+    if (supabaseClient_1.supabase && cloudInitialized) {
         inMemoryStore[key] = value;
         // Asynchronously push to cloud
-        supabase.from('app_state').upsert({ key, value: JSON.stringify(value) })
+        supabaseClient_1.supabase.from('app_state').upsert({ key, value: JSON.stringify(value) })
             .then(({ error }) => {
             if (error)
                 console.error('Failed to sync to cloud', error);
@@ -6642,14 +6650,14 @@ function setStored(key, value) {
     // Always write to local storage as fallback and offline cache
     localStorage.setItem(key, JSON.stringify(value));
 }
-const CURRENT_DB_VERSION = 70;
+const CURRENT_DB_VERSION = 73;
 // Database Actions
-export const db = {
+exports.db = {
     initializeCloudSync: async () => {
-        if (typeof window === 'undefined' || !supabase)
+        if (typeof window === 'undefined' || !supabaseClient_1.supabase)
             return;
         try {
-            const { data, error } = await supabase.from('app_state').select('*');
+            const { data, error } = await supabaseClient_1.supabase.from('app_state').select('*');
             if (!error && data) {
                 let changed = false;
                 for (const row of data) {
@@ -6866,9 +6874,47 @@ export const db = {
                 t.rules.canLeadSatsang = shouldLeadSatsang;
                 updated = true;
             }
+            if (nameLower.includes('tanja') || t.id.includes('tanja')) {
+                if (t.roleType !== 'karma_yogi') {
+                    t.roleType = 'karma_yogi';
+                    updated = true;
+                }
+                if (t.isYogaTeacher !== true) {
+                    t.isYogaTeacher = true;
+                    updated = true;
+                }
+                if (t.stayStartDate !== '2026-09-06') {
+                    t.stayStartDate = '2026-09-06';
+                    updated = true;
+                }
+                if (t.stayEndDate !== '2026-09-20') {
+                    t.stayEndDate = '2026-09-20';
+                    updated = true;
+                }
+                if (!t.stayNotes) {
+                    t.stayNotes = 'Karma Yogini als Yogalehrerin (06.09. bis 20.09.2026).';
+                    updated = true;
+                }
+                if (t.availabilityMode !== 'always') {
+                    t.availabilityMode = 'always';
+                    updated = true;
+                }
+                if (!t.rules.availability || t.rules.availability.length === 0 || t.rules.availability.some(s => s.start === '08:00')) {
+                    t.rules.availability = [
+                        { day: 1, start: '06:30', end: '22:00' },
+                        { day: 2, start: '06:30', end: '22:00' },
+                        { day: 3, start: '06:30', end: '22:00' },
+                        { day: 4, start: '06:30', end: '22:00' },
+                        { day: 5, start: '06:30', end: '22:00' },
+                        { day: 6, start: '06:30', end: '22:00' },
+                        { day: 0, start: '06:30', end: '22:00' }
+                    ];
+                    updated = true;
+                }
+            }
         }
         if (updated) {
-            db.saveTeachers(list);
+            exports.db.saveTeachers(list);
         }
         if (isOutdated && typeof window !== 'undefined') {
             localStorage.setItem('rapla_db_version', CURRENT_DB_VERSION.toString());
@@ -6877,34 +6923,34 @@ export const db = {
     },
     saveTeachers: (teachers) => setStored('rapla_teachers', teachers),
     addTeacher: (teacher) => {
-        const list = db.getTeachers();
+        const list = exports.db.getTeachers();
         list.push(teacher);
-        db.saveTeachers(list);
+        exports.db.saveTeachers(list);
     },
     updateTeacher: (teacher) => {
-        const list = db.getTeachers();
+        const list = exports.db.getTeachers();
         const index = list.findIndex(t => t.id === teacher.id);
         if (index !== -1) {
             list[index] = teacher;
-            db.saveTeachers(list);
+            exports.db.saveTeachers(list);
         }
     },
     deleteTeacher: (id) => {
-        const list = db.getTeachers();
-        db.saveTeachers(list.filter(t => t.id !== id));
+        const list = exports.db.getTeachers();
+        exports.db.saveTeachers(list.filter(t => t.id !== id));
         // Clean up course assignments across all plans for deleted teacher
-        const plans = db.getWeekPlans();
+        const plans = exports.db.getWeekPlans();
         const updated = plans.map(plan => ({
             ...plan,
             courses: plan.courses.map(c => c.teacherId === id ? { ...c, teacherId: null, isAiPlanned: false } : c)
         }));
-        db.saveWeekPlans(updated);
+        exports.db.saveWeekPlans(updated);
     },
     getRooms: () => {
         const stored = getStored('rapla_rooms', DEFAULT_ROOMS);
         const isOld = stored.length !== 5 || stored.some(r => r.name === 'Sivananda Saal');
         if (isOld) {
-            db.saveRooms(DEFAULT_ROOMS);
+            exports.db.saveRooms(DEFAULT_ROOMS);
             return DEFAULT_ROOMS;
         }
         return stored;
@@ -6917,7 +6963,7 @@ export const db = {
         const stored = getStored('rapla_week_plans', DEFAULT_WEEK_PLANS);
         const hasOldCourses = stored.some(p => p.courses.some(c => c.name === 'Morgen-Hatha Flow'));
         if (hasOldCourses) {
-            db.saveWeekPlans(DEFAULT_WEEK_PLANS);
+            exports.db.saveWeekPlans(DEFAULT_WEEK_PLANS);
             return DEFAULT_WEEK_PLANS;
         }
         let updated = false;
@@ -6966,7 +7012,7 @@ export const db = {
             }
         }
         if (updated) {
-            db.saveWeekPlans(list);
+            exports.db.saveWeekPlans(list);
         }
         if (isOutdated && typeof window !== 'undefined') {
             localStorage.setItem('rapla_db_version', CURRENT_DB_VERSION.toString());
@@ -6974,78 +7020,78 @@ export const db = {
         return list;
     },
     saveWeekPlans: (plans) => setStored('rapla_week_plans', plans),
-    getWeekPlan: (id) => db.getWeekPlans().find(p => p.id === id),
+    getWeekPlan: (id) => exports.db.getWeekPlans().find(p => p.id === id),
     addWeekPlan: (plan) => {
-        const list = db.getWeekPlans();
+        const list = exports.db.getWeekPlans();
         list.push(plan);
-        db.saveWeekPlans(list);
+        exports.db.saveWeekPlans(list);
     },
     updateWeekPlan: (plan) => {
-        const list = db.getWeekPlans();
+        const list = exports.db.getWeekPlans();
         const index = list.findIndex(p => p.id === plan.id);
         if (index !== -1) {
             list[index] = plan;
-            db.saveWeekPlans(list);
+            exports.db.saveWeekPlans(list);
         }
     },
     deleteWeekPlan: (id) => {
-        const list = db.getWeekPlans();
-        db.saveWeekPlans(list.filter(p => p.id !== id));
+        const list = exports.db.getWeekPlans();
+        exports.db.saveWeekPlans(list.filter(p => p.id !== id));
     },
     // Courses API - maps to specific plan (defaults to first approved plan if no planId provided)
     getCourses: (planId) => {
-        const plans = db.getWeekPlans();
+        const plans = exports.db.getWeekPlans();
         const id = planId || plans.find(p => p.status === 'approved')?.id || plans[0]?.id || '';
-        const plan = db.getWeekPlan(id);
+        const plan = exports.db.getWeekPlan(id);
         return plan ? plan.courses : [];
     },
     saveCourses: (courses, planId) => {
-        const plans = db.getWeekPlans();
+        const plans = exports.db.getWeekPlans();
         const id = planId || plans.find(p => p.status === 'approved')?.id || plans[0]?.id || '';
-        const plan = db.getWeekPlan(id);
+        const plan = exports.db.getWeekPlan(id);
         if (plan) {
             plan.courses = courses;
-            db.updateWeekPlan(plan);
+            exports.db.updateWeekPlan(plan);
         }
     },
     addCourse: (course, planId) => {
-        const plans = db.getWeekPlans();
+        const plans = exports.db.getWeekPlans();
         const id = planId || plans.find(p => p.status === 'approved')?.id || plans[0]?.id || '';
-        const plan = db.getWeekPlan(id);
+        const plan = exports.db.getWeekPlan(id);
         if (plan) {
             plan.courses.push(course);
-            db.updateWeekPlan(plan);
+            exports.db.updateWeekPlan(plan);
         }
     },
     updateCourse: (course, planId) => {
-        const plans = db.getWeekPlans();
+        const plans = exports.db.getWeekPlans();
         const id = planId || plans.find(p => p.status === 'approved')?.id || plans[0]?.id || '';
-        const plan = db.getWeekPlan(id);
+        const plan = exports.db.getWeekPlan(id);
         if (plan) {
             const index = plan.courses.findIndex(c => c.id === course.id);
             if (index !== -1) {
                 plan.courses[index] = course;
-                db.updateWeekPlan(plan);
+                exports.db.updateWeekPlan(plan);
             }
         }
     },
     deleteCourse: (id, planId) => {
-        const plans = db.getWeekPlans();
+        const plans = exports.db.getWeekPlans();
         const pId = planId || plans.find(p => p.status === 'approved')?.id || plans[0]?.id || '';
-        const plan = db.getWeekPlan(pId);
+        const plan = exports.db.getWeekPlan(pId);
         if (plan) {
             plan.courses = plan.courses.filter(c => c.id !== id);
-            db.updateWeekPlan(plan);
+            exports.db.updateWeekPlan(plan);
         }
     },
     // Clear all planner data for a specific plan
     resetSchedule: (planId) => {
-        const plans = db.getWeekPlans();
+        const plans = exports.db.getWeekPlans();
         const pId = planId || plans.find(p => p.status === 'approved')?.id || plans[0]?.id || '';
-        const plan = db.getWeekPlan(pId);
+        const plan = exports.db.getWeekPlan(pId);
         if (plan) {
             plan.courses = plan.courses.map(c => ({ ...c, teacherId: null, isAiPlanned: false, status: 'draft' }));
-            db.updateWeekPlan(plan);
+            exports.db.updateWeekPlan(plan);
         }
     },
     syncDatabase: () => {
@@ -7057,7 +7103,7 @@ export const db = {
         }
     },
     getOrCreateUpcomingWeekPlans: () => {
-        const plans = db.getWeekPlans();
+        const plans = exports.db.getWeekPlans();
         const upcoming = [];
         const today = new Date();
         const currentDay = today.getDay();
@@ -7120,7 +7166,7 @@ export const db = {
                     createdAt: new Date().toISOString()
                 };
                 plans.push(plan);
-                db.saveWeekPlans(plans);
+                exports.db.saveWeekPlans(plans);
             }
             upcoming.push(plan);
         }

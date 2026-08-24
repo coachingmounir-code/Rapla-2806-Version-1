@@ -426,6 +426,7 @@ export const EXCEL_ABSENCES = [
   { excelName: "Abha", startDate: "2026-05-01", endDate: "2026-05-02", type: "Urlaub" as const, status: "Genehmigt" as const, note: "Sevafrei" },
   { excelName: "Abha", startDate: "2026-05-04", endDate: "2026-05-04", type: "Urlaub" as const, status: "Genehmigt" as const, note: "Sevafrei" },
   { excelName: "Abha", startDate: "2026-08-13", endDate: "2026-08-15", type: "Urlaub" as const, status: "Genehmigt" as const, note: "Sevafrei" },
+  { excelName: "Abha", startDate: "2026-08-30", endDate: "2026-09-27", type: "Urlaub" as const, status: "Genehmigt" as const, note: "Yogalehrerausbildung (4 Wochen komplett nicht zur Verfügung)" },
   { excelName: "Abha", startDate: "2026-10-09", endDate: "2026-10-10", type: "Urlaub" as const, status: "Genehmigt" as const, note: "Sevafrei" },
   { excelName: "Abha", startDate: "2026-10-15", endDate: "2026-10-15", type: "Urlaub" as const, status: "Genehmigt" as const, note: "Sevafrei" },
   { excelName: "Abha", startDate: "2026-01-01", endDate: "2026-01-06", type: "Seminartage" as const, status: "Genehmigt" as const, note: "Seminartage" },

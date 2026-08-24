@@ -1,5 +1,8 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.EXCEL_ABSENCES = void 0;
 // Auto-generated Excel absences data
-export const EXCEL_ABSENCES = [
+exports.EXCEL_ABSENCES = [
     { excelName: "Karuna", startDate: "2026-04-01", endDate: "2026-04-01", type: "Urlaub", status: "Genehmigt", note: "Sevafrei" },
     { excelName: "Karuna", startDate: "2026-07-28", endDate: "2026-07-29", type: "Urlaub", status: "Genehmigt", note: "Sevafrei" },
     { excelName: "Karuna", startDate: "2026-08-13", endDate: "2026-08-14", type: "Urlaub", status: "Genehmigt", note: "Sevafrei" },

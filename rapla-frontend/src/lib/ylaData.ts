@@ -338,6 +338,14 @@ function timesOverlap(start1: string, end1: string, start2: string, end2: string
 }
 
 /**
+ * Checks if a specific ISO date (YYYY-MM-DD) falls into the 4-week YLA period (30.08.2026 - 27.09.2026).
+ */
+export function isDateInYlaRange(dateStr: string): boolean {
+  if (!dateStr) return false;
+  return dateStr >= '2026-08-30' && dateStr <= '2026-09-27';
+}
+
+/**
  * Checks if a teacher is busy with a YLA session at the given day/date and time
  */
 export function getYlaConflictForTeacher(

@@ -1,6 +1,6 @@
 import { db, type Teacher, type Course, type Room, type TimeSlot } from './db';
 import wochenplanRules from './data/wochenplan_rules.json' with { type: 'json' };
-import { getYlaConflictForTeacher } from './ylaData';
+import { getYlaConflictForTeacher, isDateInYlaRange } from './ylaData';
 
 export interface ConflictMessage {
   type: 'hard' | 'soft'; // hard = invalid assignment, soft = warning/preference
@@ -69,6 +69,17 @@ export function getDayName(day: number): string {
 export function getAbsenceDetails(teacherName: string, dayOfWeek: number, targetWeekCode?: string, absences?: any[]): any | null {
   if (!targetWeekCode) return null;
   const courseDate = getLocalDateForDay(targetWeekCode, dayOfWeek);
+  
+  // Abha is completely unavailable during the 4 weeks of Yogalehrerausbildung (YLA: 30.08.2026 - 27.09.2026)
+  if (teacherName.toLowerCase().includes('abha') && isDateInYlaRange(courseDate)) {
+    return {
+      teacherName: 'Abha',
+      type: 'Yogalehrerausbildung',
+      startDate: '2026-08-30',
+      endDate: '2026-09-27',
+      note: 'In den 4 Wochen der Yogalehrerausbildung steht Abha komplett nicht zur Verfügung.'
+    };
+  }
   
   if (absences && absences.length > 0) {
     const entry = absences.find((entry: any) => {
@@ -343,6 +354,16 @@ export function validateAssignment(
   // 3. Pranayama constraints
   const isPranayama = courseNameLower.includes('pranayama') || courseStyleLower.includes('pranayama');
   if (isPranayama) {
+    if (targetWeekCode) {
+      const courseDate = getLocalDateForDay(targetWeekCode, course.dayOfWeek);
+      if (isDateInYlaRange(courseDate)) {
+        conflicts.push({
+          type: 'hard',
+          message: `Im Zeitraum der 4-wöchigen Yogalehrerausbildung (${courseDate}) finden keine Pranayama-Stunden statt.`
+        });
+      }
+    }
+
     const allowed = wochenplanRules.pranayama.allowed;
     const isAllowed = allowed.some((a: string) => teacherNameLower.includes(a));
     if (!isAllowed) {

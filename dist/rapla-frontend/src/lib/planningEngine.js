@@ -1,13 +1,31 @@
-import { db } from './db.js';
-import wochenplanRules from './data/wochenplan_rules.json' with { type: 'json' };
-const getYlaConflictForTeacher = () => null;
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.timeToMinutes = timeToMinutes;
+exports.isOverlapping = isOverlapping;
+exports.getLocalDateForDay = getLocalDateForDay;
+exports.getDayName = getDayName;
+exports.getAbsenceDetails = getAbsenceDetails;
+exports.isTeacherAbsent = isTeacherAbsent;
+exports.validateAssignment = validateAssignment;
+exports.validateAllCourses = validateAllCourses;
+exports.runAiPlanning = runAiPlanning;
+exports.validateRoomRules = validateRoomRules;
+exports.adjustRoomsForRules = adjustRoomsForRules;
+exports.adjustNamesForRules = adjustNamesForRules;
+exports.adjustCoursesForRules = adjustCoursesForRules;
+const db_1 = require("./db");
+const wochenplan_rules_json_1 = __importDefault(require("./data/wochenplan_rules.json"));
+const ylaData_1 = require("./ylaData");
 // Convert "HH:MM" string to minutes from start of day
-export function timeToMinutes(timeStr) {
+function timeToMinutes(timeStr) {
     const [hrs, mins] = timeStr.split(':').map(Number);
     return hrs * 60 + mins;
 }
 // Check if two time ranges overlap
-export function isOverlapping(start1, end1, start2, end2) {
+function isOverlapping(start1, end1, start2, end2) {
     const s1 = timeToMinutes(start1);
     const e1 = timeToMinutes(end1);
     const s2 = timeToMinutes(start2);
@@ -15,7 +33,7 @@ export function isOverlapping(start1, end1, start2, end2) {
     return s1 < e2 && s2 < e1;
 }
 // Convert ISO week code (e.g. "2026-W28") to actual date string for a specific day of the week
-export function getLocalDateForDay(weekCode, dayOfWeek) {
+function getLocalDateForDay(weekCode, dayOfWeek) {
     const [yearStr, weekStr] = weekCode.split('-W');
     const year = parseInt(yearStr, 10);
     const week = parseInt(weekStr, 10);
@@ -53,11 +71,11 @@ export function getLocalDateForDay(weekCode, dayOfWeek) {
     const dd = targetDate.getDate().toString().padStart(2, '0');
     return `${yyyy}-${mm}-${dd}`;
 }
-export function getDayName(day) {
+function getDayName(day) {
     const dayNames = ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag'];
     return dayNames[day] || '';
 }
-export function getAbsenceDetails(teacherName, dayOfWeek, targetWeekCode, absences) {
+function getAbsenceDetails(teacherName, dayOfWeek, targetWeekCode, absences) {
     if (!targetWeekCode)
         return null;
     const courseDate = getLocalDateForDay(targetWeekCode, dayOfWeek);
@@ -94,11 +112,11 @@ export function getAbsenceDetails(teacherName, dayOfWeek, targetWeekCode, absenc
     }
     return null;
 }
-export function isTeacherAbsent(teacherName, dayOfWeek, targetWeekCode, absences) {
+function isTeacherAbsent(teacherName, dayOfWeek, targetWeekCode, absences) {
     return getAbsenceDetails(teacherName, dayOfWeek, targetWeekCode, absences) !== null;
 }
 // Validate a single assignment and return all conflict messages
-export function validateAssignment(teacher, course, allCourses, seminarLeaderIds = [], targetWeekCode, teachers, absences) {
+function validateAssignment(teacher, course, allCourses, seminarLeaderIds = [], targetWeekCode, teachers, absences) {
     const conflicts = [];
     // 0a. Check active Sevafrei / Abwesenheiten (Hard)
     if (targetWeekCode) {
@@ -156,6 +174,13 @@ export function validateAssignment(teacher, course, allCourses, seminarLeaderIds
     const isEntspannungForSevaka = courseStyleLower.includes('entspannung') || courseNameLower.includes('entspannung');
     const isSonstigesForSevaka = courseStyleLower.includes('sonstiges') || courseNameLower.includes('hausführung') || courseNameLower.includes('hausfuehrung');
     const isYogaClassForSevaka = !isMeditationForSevaka && !isSatsangForSevaka && !isOnnForSevaka && !isEntspannungForSevaka && !isSonstigesForSevaka;
+    // Complete exclusion for Satyam
+    if (teacherNameLower.includes('satyam')) {
+        conflicts.push({
+            type: 'hard',
+            message: `${teacher.name} ist komplett herausgenommen und darf für keine Stunden oder Dienste eingeteilt werden.`
+        });
+    }
     // Qualifications for Karma-Yogis and Guest Teachers
     if (teacher.roleType === 'karma_yogi' || teacher.roleType === 'guest_teacher') {
         if (isYogaClassForSevaka && teacher.isYogaTeacher === false) {
@@ -176,12 +201,6 @@ export function validateAssignment(teacher, course, allCourses, seminarLeaderIds
                 message: `${teacher.name} ist nicht für das Leiten von Satsangs eingetragen.`
             });
         }
-    }
-    if (teacherNameLower.includes('satyam')) {
-        conflicts.push({
-            type: 'hard',
-            message: `${teacher.name} ist komplett herausgenommen und darf für keine Stunden oder Dienste eingeteilt werden.`
-        });
     }
     const otherSevakaAssignments = allCourses.filter(c => c.teacherId === teacher.id && c.id !== course.id);
     const getWeeklyCounts = () => {
@@ -214,8 +233,8 @@ export function validateAssignment(teacher, course, allCourses, seminarLeaderIds
     };
     const counts = getWeeklyCounts();
     // Look up teacher rules dynamically from wochenplanRules.teachers
-    const teacherKey = Object.keys(wochenplanRules.teachers).find(k => teacherNameLower.includes(k) || k.includes(teacherNameLower));
-    const tRules = teacherKey ? wochenplanRules.teachers[teacherKey] : null;
+    const teacherKey = Object.keys(wochenplan_rules_json_1.default.teachers).find(k => teacherNameLower.includes(k) || k.includes(teacherNameLower));
+    const tRules = teacherKey ? wochenplan_rules_json_1.default.teachers[teacherKey] : null;
     // 1. Check availability / Free days (Hard)
     const courseStart = timeToMinutes(course.startTime);
     const courseEnd = timeToMinutes(course.endTime);
@@ -245,7 +264,7 @@ export function validateAssignment(teacher, course, allCourses, seminarLeaderIds
         });
     }
     // 2b. Check Yogalehrer-Ausbildung (YLA) Overlap (Hard)
-    const ylaConflict = getYlaConflictForTeacher(teacher.name, course.dayOfWeek, course.startTime, course.endTime, targetWeekCode);
+    const ylaConflict = (0, ylaData_1.getYlaConflictForTeacher)(teacher.name, course.dayOfWeek, course.startTime, course.endTime, targetWeekCode);
     if (ylaConflict) {
         conflicts.push({
             type: 'hard',
@@ -299,7 +318,16 @@ export function validateAssignment(teacher, course, allCourses, seminarLeaderIds
     // 3. Pranayama constraints
     const isPranayama = courseNameLower.includes('pranayama') || courseStyleLower.includes('pranayama');
     if (isPranayama) {
-        const allowed = wochenplanRules.pranayama.allowed;
+        if (targetWeekCode) {
+            const courseDate = getLocalDateForDay(targetWeekCode, course.dayOfWeek);
+            if ((0, ylaData_1.isDateInYlaRange)(courseDate)) {
+                conflicts.push({
+                    type: 'hard',
+                    message: `Im Zeitraum der 4-wöchigen Yogalehrerausbildung (${courseDate}) finden keine Pranayama-Stunden statt.`
+                });
+            }
+        }
+        const allowed = wochenplan_rules_json_1.default.pranayama.allowed;
         const isAllowed = allowed.some((a) => teacherNameLower.includes(a));
         if (!isAllowed) {
             conflicts.push({
@@ -323,7 +351,7 @@ export function validateAssignment(teacher, course, allCourses, seminarLeaderIds
     // 4. Satsang Einführung rule
     const isSatsangEinfuehrung = courseNameLower.includes('satsang einführung') || courseNameLower.includes('satsang-einführung') || courseNameLower.includes('satsangeinführung');
     if (isSatsangEinfuehrung) {
-        const generalAllowed = wochenplanRules.satsangEinfuehrung.allowed;
+        const generalAllowed = wochenplan_rules_json_1.default.satsangEinfuehrung.allowed;
         const isGeneralAllowed = generalAllowed.some((a) => teacherNameLower.includes(a));
         if (!isGeneralAllowed) {
             conflicts.push({
@@ -332,7 +360,7 @@ export function validateAssignment(teacher, course, allCourses, seminarLeaderIds
             });
         }
         if (course.dayOfWeek === 5) {
-            const primary = wochenplanRules.satsangEinfuehrung.friday;
+            const primary = wochenplan_rules_json_1.default.satsangEinfuehrung.friday;
             const isPrimaryAbsent = isTeacherAbsent(primary, course.dayOfWeek, targetWeekCode, absences);
             if (!teacherNameLower.includes(primary) && !isPrimaryAbsent) {
                 conflicts.push({
@@ -342,7 +370,7 @@ export function validateAssignment(teacher, course, allCourses, seminarLeaderIds
             }
         }
         else if (course.dayOfWeek === 0) {
-            const allowed = wochenplanRules.satsangEinfuehrung.sunday;
+            const allowed = wochenplan_rules_json_1.default.satsangEinfuehrung.sunday;
             const isAllowed = allowed.some((a) => teacherNameLower.includes(a));
             if (!isAllowed) {
                 conflicts.push({
@@ -355,7 +383,7 @@ export function validateAssignment(teacher, course, allCourses, seminarLeaderIds
     // 5. Satsang rules
     const isSatsangCourse = course.name === 'Satsang';
     if (isSatsangCourse) {
-        const forbiddenForSatsang = wochenplanRules.satsang.forbidden;
+        const forbiddenForSatsang = wochenplan_rules_json_1.default.satsang.forbidden;
         const isForbidden = forbiddenForSatsang.some((name) => teacherNameLower.includes(name));
         if (isForbidden) {
             conflicts.push({
@@ -370,7 +398,7 @@ export function validateAssignment(teacher, course, allCourses, seminarLeaderIds
             });
         }
         if (course.startTime === '07:00') {
-            const allowedMorningSatsang = wochenplanRules.satsang.morningAllowed;
+            const allowedMorningSatsang = wochenplan_rules_json_1.default.satsang.morningAllowed;
             const isAllowedMorning = allowedMorningSatsang.some((name) => teacherNameLower.includes(name));
             if (!isAllowedMorning) {
                 conflicts.push({
@@ -379,7 +407,7 @@ export function validateAssignment(teacher, course, allCourses, seminarLeaderIds
                 });
             }
             else {
-                const canDoTwo = wochenplanRules.satsang.morningMaxTwo.some((name) => teacherNameLower.includes(name));
+                const canDoTwo = wochenplan_rules_json_1.default.satsang.morningMaxTwo.some((name) => teacherNameLower.includes(name));
                 const maxMorningSatsangs = canDoTwo ? 2 : 1;
                 const otherMorningSatsangs = otherSevakaAssignments.filter(c => c.name === 'Satsang' && c.startTime === '07:00');
                 if (otherMorningSatsangs.length >= maxMorningSatsangs) {
@@ -392,7 +420,7 @@ export function validateAssignment(teacher, course, allCourses, seminarLeaderIds
         }
         if (course.startTime === '20:00') {
             if ([3, 4, 5, 6, 0].includes(course.dayOfWeek)) {
-                const primary = wochenplanRules.satsang.evening.wedSun.primary;
+                const primary = wochenplan_rules_json_1.default.satsang.evening.wedSun.primary;
                 const isPrimaryAbsent = isTeacherAbsent(primary, course.dayOfWeek, targetWeekCode, absences);
                 if (!teacherNameLower.includes(primary)) {
                     if (!isPrimaryAbsent) {
@@ -402,7 +430,7 @@ export function validateAssignment(teacher, course, allCourses, seminarLeaderIds
                         });
                     }
                     else {
-                        const backups = wochenplanRules.satsang.evening.wedSun.backups;
+                        const backups = wochenplan_rules_json_1.default.satsang.evening.wedSun.backups;
                         const isBackup = backups.some((name) => teacherNameLower.includes(name));
                         if (!isBackup) {
                             conflicts.push({
@@ -414,7 +442,7 @@ export function validateAssignment(teacher, course, allCourses, seminarLeaderIds
                 }
             }
             if (course.dayOfWeek === 1) {
-                const primary = wochenplanRules.satsang.evening.mon.primary;
+                const primary = wochenplan_rules_json_1.default.satsang.evening.mon.primary;
                 const isPrimaryAbsent = isTeacherAbsent(primary, course.dayOfWeek, targetWeekCode, absences);
                 if (!teacherNameLower.includes(primary)) {
                     if (!isPrimaryAbsent) {
@@ -424,7 +452,7 @@ export function validateAssignment(teacher, course, allCourses, seminarLeaderIds
                         });
                     }
                     else {
-                        const backups = wochenplanRules.satsang.evening.mon.backups;
+                        const backups = wochenplan_rules_json_1.default.satsang.evening.mon.backups;
                         const isBackup = backups.some((name) => teacherNameLower.includes(name));
                         if (!isBackup) {
                             conflicts.push({
@@ -439,7 +467,7 @@ export function validateAssignment(teacher, course, allCourses, seminarLeaderIds
     }
     // 6. Meditation daily primary
     if (isMeditationForSevaka && course.startTime === '07:00') {
-        const primaryName = wochenplanRules.meditation.dailyPrimary[course.dayOfWeek];
+        const primaryName = wochenplan_rules_json_1.default.meditation.dailyPrimary[course.dayOfWeek];
         if (primaryName) {
             const isPrimaryAbsent = isTeacherAbsent(primaryName, course.dayOfWeek, targetWeekCode, absences);
             if (!isPrimaryAbsent && !teacherNameLower.includes(primaryName)) {
@@ -455,7 +483,7 @@ export function validateAssignment(teacher, course, allCourses, seminarLeaderIds
         course.startTime === '16:30' &&
         courseNameLower.includes('mittelstufe');
     if (isMittelstufeAnkommen) {
-        const primary = wochenplanRules.yoga.fridayMittelstufeAnkommen.primary;
+        const primary = wochenplan_rules_json_1.default.yoga.fridayMittelstufeAnkommen.primary;
         const isPrimaryAbsent = isTeacherAbsent(primary, course.dayOfWeek, targetWeekCode, absences);
         if (!isPrimaryAbsent) {
             if (!teacherNameLower.includes(primary)) {
@@ -466,7 +494,7 @@ export function validateAssignment(teacher, course, allCourses, seminarLeaderIds
             }
         }
         else if (course.dayOfWeek === 0) {
-            const backups = wochenplanRules.yoga.sundayMittelstufeAnkommen.backups;
+            const backups = wochenplan_rules_json_1.default.yoga.sundayMittelstufeAnkommen.backups;
             let assignedBackup = null;
             for (const backupName of backups) {
                 const isBackupAbsent = isTeacherAbsent(backupName, course.dayOfWeek, targetWeekCode, absences);
@@ -488,7 +516,7 @@ export function validateAssignment(teacher, course, allCourses, seminarLeaderIds
         course.startTime === '09:15' &&
         courseNameLower.includes('anfänger');
     if (isFridayMorningAnfaenger) {
-        const primary = wochenplanRules.yoga.fridayMorningAnfaenger.primary;
+        const primary = wochenplan_rules_json_1.default.yoga.fridayMorningAnfaenger.primary;
         const isPrimaryAbsent = isTeacherAbsent(primary, course.dayOfWeek, targetWeekCode, absences);
         if (!isPrimaryAbsent) {
             if (!teacherNameLower.includes(primary)) {
@@ -499,7 +527,7 @@ export function validateAssignment(teacher, course, allCourses, seminarLeaderIds
             }
         }
         else {
-            const backup = wochenplanRules.yoga.fridayMorningAnfaenger.backup;
+            const backup = wochenplan_rules_json_1.default.yoga.fridayMorningAnfaenger.backup;
             const isBackupAbsent = isTeacherAbsent(backup, course.dayOfWeek, targetWeekCode, absences);
             if (!isBackupAbsent && !teacherNameLower.includes(backup)) {
                 conflicts.push({
@@ -512,7 +540,7 @@ export function validateAssignment(teacher, course, allCourses, seminarLeaderIds
     // 8.5 Hausführung rules
     const isHausfuehrung = courseNameLower.includes('hausführung') || courseNameLower.includes('hausfuehrung');
     if (isHausfuehrung) {
-        const rules = wochenplanRules.hausfuehrung;
+        const rules = wochenplan_rules_json_1.default.hausfuehrung;
         if (rules) {
             const isAllowed = rules.allowed.some((a) => teacherNameLower.includes(a));
             if (!isAllowed) {
@@ -677,12 +705,12 @@ export function validateAssignment(teacher, course, allCourses, seminarLeaderIds
         }
     }
     // 10. Check Room Rules from Raum Regeln.txt (Hard)
-    const roomConflicts = validateRoomRules(course, allCourses, teachers || db.getTeachers());
+    const roomConflicts = validateRoomRules(course, allCourses, teachers || db_1.db.getTeachers());
     conflicts.push(...roomConflicts);
     return conflicts;
 }
 // Check validation for all courses in a list and return a map of courseId -> conflicts
-export function validateAllCourses(courses, teachers, seminarLeaderIds = [], targetWeekCode, absences) {
+function validateAllCourses(courses, teachers, seminarLeaderIds = [], targetWeekCode, absences) {
     const validationMap = {};
     courses.forEach(course => {
         if (!course.teacherId) {
@@ -700,7 +728,7 @@ export function validateAllCourses(courses, teachers, seminarLeaderIds = [], tar
     return validationMap;
 }
 // AI Pre-planning Core Heuristic Engine
-export function runAiPlanning(courses, teachers, seminarLeaderIds = [], targetWeekCode, customConstraints = [], absences) {
+function runAiPlanning(courses, teachers, seminarLeaderIds = [], targetWeekCode, customConstraints = [], absences) {
     const logs = [];
     logs.push('Starte automatischen KI-Planungsalgorithmus...');
     // Only plan with Sevakas (Kernteam)
@@ -735,7 +763,7 @@ export function runAiPlanning(courses, teachers, seminarLeaderIds = [], targetWe
         c.teacherId = null;
         c.isAiPlanned = false;
         // Revert custom course names to original template names using template lookup
-        const templateCourse = db.getDefaultCourses?.().find(tc => tc.dayOfWeek === c.dayOfWeek && tc.startTime === c.startTime && tc.roomId === c.roomId);
+        const templateCourse = db_1.db.getDefaultCourses?.().find(tc => tc.dayOfWeek === c.dayOfWeek && tc.startTime === c.startTime && tc.roomId === c.roomId);
         if (templateCourse) {
             c.name = templateCourse.name;
         }
@@ -839,7 +867,7 @@ export function runAiPlanning(courses, teachers, seminarLeaderIds = [], targetWe
                 }
             }
             // Rule 8: Friday morning (09:15) Beginner class from compiled rules
-            const yogaRules = wochenplanRules.yoga;
+            const yogaRules = wochenplan_rules_json_1.default.yoga;
             if (course.dayOfWeek === 5 && course.startTime === '09:15' && course.name.toLowerCase().includes('anfänger')) {
                 if (teacherNameLower.includes(yogaRules.fridayMorningAnfaenger.primary)) {
                     score += 10000;
@@ -877,7 +905,7 @@ export function runAiPlanning(courses, teachers, seminarLeaderIds = [], targetWe
             // Hausführung Scoring
             const isHausfuehrungCourse = course.name.toLowerCase().includes('hausführung') || course.name.toLowerCase().includes('hausfuehrung');
             if (isHausfuehrungCourse) {
-                const rules = wochenplanRules.hausfuehrung;
+                const rules = wochenplan_rules_json_1.default.hausfuehrung;
                 if (rules) {
                     if (course.dayOfWeek === 5) { // Freitag
                         if (teacherNameLower.includes(rules.friday.primary)) {
@@ -912,7 +940,7 @@ export function runAiPlanning(courses, teachers, seminarLeaderIds = [], targetWe
             // Custom scoring rules for Pranayama from compiled rules
             const isPranayamaCourse = course.name.toLowerCase().includes('pranayama') || course.style.toLowerCase().includes('pranayama');
             if (isPranayamaCourse) {
-                const allowed = wochenplanRules.pranayama.allowed || [];
+                const allowed = wochenplan_rules_json_1.default.pranayama.allowed || [];
                 const isAllowed = allowed.some((n) => teacherNameLower.includes(n));
                 if (isAllowed) {
                     score += 500;
@@ -956,7 +984,7 @@ export function runAiPlanning(courses, teachers, seminarLeaderIds = [], targetWe
             // Custom scoring rules for Sunday Satsang Einführung from compiled rules
             const isSatsangEinfuehrungCourse = course.name.toLowerCase().includes('satsang einführung') || course.name.toLowerCase().includes('satsang-einführung');
             if (isSatsangEinfuehrungCourse && course.dayOfWeek === 0) {
-                const allowed = wochenplanRules.satsangEinfuehrung.sunday;
+                const allowed = wochenplan_rules_json_1.default.satsangEinfuehrung.sunday;
                 const isAllowed = allowed.some((a) => teacherNameLower.includes(a));
                 if (isAllowed) {
                     score += 500;
@@ -982,8 +1010,8 @@ export function runAiPlanning(courses, teachers, seminarLeaderIds = [], targetWe
                 course.name.toLowerCase().includes('yogageschichten am kamin') ||
                 course.name.toLowerCase().includes('peziebälle') ||
                 course.name.toLowerCase().includes('fantasiereise');
-            if (isEntspannungsangebot && wochenplanRules.entspannungsangebot) {
-                const erules = wochenplanRules.entspannungsangebot;
+            if (isEntspannungsangebot && wochenplan_rules_json_1.default.entspannungsangebot) {
+                const erules = wochenplan_rules_json_1.default.entspannungsangebot;
                 let isDesignatedTeacher = false;
                 if (course.dayOfWeek === 1 && erules.montag?.primary) {
                     if (teacherNameLower.includes(erules.montag.primary.toLowerCase())) {
@@ -1026,8 +1054,8 @@ export function runAiPlanning(courses, teachers, seminarLeaderIds = [], targetWe
             // --- GEFÜHRTE MEDITATION SCORING RULES ---
             const isMeditationCourse = (course.name === 'Geführte Meditation' || course.style.toLowerCase() === 'meditation') && !course.name.toLowerCase().includes('om namo') && !course.name.toLowerCase().includes('narayanaya');
             if (isMeditationCourse) {
-                const allowed = wochenplanRules.meditation.allowed;
-                const forbidden = wochenplanRules.meditation.forbidden;
+                const allowed = wochenplan_rules_json_1.default.meditation.allowed;
+                const forbidden = wochenplan_rules_json_1.default.meditation.forbidden;
                 const isAllowed = allowed.some((name) => teacherNameLower.includes(name));
                 const isForbidden = forbidden.some((name) => teacherNameLower.includes(name));
                 if (isForbidden) {
@@ -1035,7 +1063,7 @@ export function runAiPlanning(courses, teachers, seminarLeaderIds = [], targetWe
                 }
                 else if (isAllowed) {
                     score += 100;
-                    const primaryName = wochenplanRules.meditation.dailyPrimary[course.dayOfWeek];
+                    const primaryName = wochenplan_rules_json_1.default.meditation.dailyPrimary[course.dayOfWeek];
                     if (primaryName && teacherNameLower.includes(primaryName)) {
                         score += 10000;
                     }
@@ -1054,7 +1082,7 @@ export function runAiPlanning(courses, teachers, seminarLeaderIds = [], targetWe
             if (course.name === 'Satsang') {
                 // Morgen-Satsang (07:00):
                 if (course.startTime === '07:00') {
-                    const allowedMorningSatsang = wochenplanRules.satsang.morningAllowed;
+                    const allowedMorningSatsang = wochenplan_rules_json_1.default.satsang.morningAllowed;
                     if (allowedMorningSatsang.some((name) => teacherNameLower.includes(name))) {
                         score += 500;
                         if (teacherNameLower.includes('burnie') && course.dayOfWeek === 1) {
@@ -1069,14 +1097,14 @@ export function runAiPlanning(courses, teachers, seminarLeaderIds = [], targetWe
                 if (course.startTime === '20:00') {
                     // Mittwochs bis sonntags: Karuna ist Standard
                     if ([3, 4, 5, 6, 0].includes(course.dayOfWeek)) {
-                        const primary = wochenplanRules.satsang.evening.wedSun.primary;
+                        const primary = wochenplan_rules_json_1.default.satsang.evening.wedSun.primary;
                         if (teacherNameLower.includes(primary)) {
                             score += 10000;
                         }
                         else {
                             const isPrimaryAbsent = isTeacherAbsent(primary, course.dayOfWeek, targetWeekCode, absences);
                             if (isPrimaryAbsent) {
-                                const backups = wochenplanRules.satsang.evening.wedSun.backups;
+                                const backups = wochenplan_rules_json_1.default.satsang.evening.wedSun.backups;
                                 const isBackup = backups.some((name) => teacherNameLower.includes(name));
                                 if (isBackup) {
                                     score += 8000;
@@ -1096,14 +1124,14 @@ export function runAiPlanning(courses, teachers, seminarLeaderIds = [], targetWe
                     }
                     // Montag: Narayani ist Standard
                     if (course.dayOfWeek === 1) {
-                        const primary = wochenplanRules.satsang.evening.mon.primary;
+                        const primary = wochenplan_rules_json_1.default.satsang.evening.mon.primary;
                         if (teacherNameLower.includes(primary)) {
                             score += 10000;
                         }
                         else {
                             const isPrimaryAbsent = isTeacherAbsent(primary, course.dayOfWeek, targetWeekCode, absences);
                             if (isPrimaryAbsent) {
-                                const backups = wochenplanRules.satsang.evening.mon.backups;
+                                const backups = wochenplan_rules_json_1.default.satsang.evening.mon.backups;
                                 const isBackup = backups.some((name) => teacherNameLower.includes(name));
                                 if (isBackup) {
                                     score += 8000;
@@ -1236,8 +1264,8 @@ export function runAiPlanning(courses, teachers, seminarLeaderIds = [], targetWe
             return;
         const tNameLower = teacher.name.toLowerCase();
         // Look up teacher custom course renames dynamically
-        const teacherKey = Object.keys(wochenplanRules.teachers).find(k => tNameLower.includes(k) || k.includes(tNameLower));
-        const tRules = teacherKey ? wochenplanRules.teachers[teacherKey] : null;
+        const teacherKey = Object.keys(wochenplan_rules_json_1.default.teachers).find(k => tNameLower.includes(k) || k.includes(tNameLower));
+        const tRules = teacherKey ? wochenplan_rules_json_1.default.teachers[teacherKey] : null;
         if (tRules && tRules.customCourseNames && tRules.customCourseNames.length > 0) {
             tRules.customCourseNames.forEach((item) => {
                 if (c.name.toLowerCase().includes(item.originalName.toLowerCase())) {
@@ -1291,7 +1319,7 @@ export function runAiPlanning(courses, teachers, seminarLeaderIds = [], targetWe
     };
 }
 // Room rule validation from Raum Regeln.txt
-export function validateRoomRules(course, allCourses, teachers) {
+function validateRoomRules(course, allCourses, teachers) {
     const conflicts = [];
     const nameLower = course.name.toLowerCase();
     const styleLower = course.style.toLowerCase();
@@ -1366,7 +1394,7 @@ export function validateRoomRules(course, allCourses, teachers) {
     return conflicts;
 }
 // Room auto-adjustment logic
-export function adjustRoomsForRules(courses, teachers) {
+function adjustRoomsForRules(courses, teachers) {
     courses.forEach(course => {
         const nameLower = course.name.toLowerCase();
         const styleLower = course.style.toLowerCase();
@@ -1419,7 +1447,7 @@ export function adjustRoomsForRules(courses, teachers) {
     return courses;
 }
 // Name auto-adjustment logic
-export function adjustNamesForRules(courses, teachers) {
+function adjustNamesForRules(courses, teachers) {
     courses.forEach(course => {
         if (!course.teacherId) {
             // Revert to template name if possible, or keep original
@@ -1492,7 +1520,7 @@ export function adjustNamesForRules(courses, teachers) {
     return courses;
 }
 // Combined adjustment logic
-export function adjustCoursesForRules(courses, teachers) {
+function adjustCoursesForRules(courses, teachers) {
     adjustNamesForRules(courses, teachers);
     adjustRoomsForRules(courses, teachers);
     return courses;
