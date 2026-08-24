@@ -344,7 +344,7 @@
         "startTime": "20:00",
         "endTime": "20:35",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-nirmaya-fodor",
+        "teacherId": "teacher-gen-burnie-bansemer",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -1019,7 +1019,7 @@
         "dayOfWeek": 0,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-burnie-bansemer",
         "isAiPlanned": false,
         "status": "approved"
@@ -1031,7 +1031,7 @@
         "dayOfWeek": 0,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-anjali-gelzleichter",
         "isAiPlanned": false,
         "status": "approved"
@@ -1043,7 +1043,7 @@
         "dayOfWeek": 0,
         "startTime": "16:30",
         "endTime": "18:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": false,
         "status": "approved"
@@ -1055,7 +1055,7 @@
         "dayOfWeek": 0,
         "startTime": "16:30",
         "endTime": "18:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
         "status": "approved"
@@ -1067,7 +1067,7 @@
         "dayOfWeek": 0,
         "startTime": "19:30",
         "endTime": "20:00",
-        "roomId": "room-2",
+        "roomId": "room-1",
         "teacherId": "teacher-gen-burnie-narayani",
         "isAiPlanned": false,
         "status": "approved"
@@ -1080,7 +1080,7 @@
         "startTime": "20:00",
         "endTime": "20:35",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-nirmaya-fodor",
+        "teacherId": "teacher-gen-burnie-bansemer",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -1127,7 +1127,7 @@
         "dayOfWeek": 1,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-burnie-bansemer",
         "isAiPlanned": false,
         "status": "approved"
@@ -1139,7 +1139,7 @@
         "dayOfWeek": 1,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-harishakti",
         "isAiPlanned": false,
         "status": "approved"
@@ -1151,7 +1151,7 @@
         "dayOfWeek": 1,
         "startTime": "16:15",
         "endTime": "18:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": false,
         "status": "approved"
@@ -1163,7 +1163,7 @@
         "dayOfWeek": 1,
         "startTime": "16:15",
         "endTime": "18:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-ulrich-nebel",
         "isAiPlanned": false,
         "status": "approved"
@@ -1175,7 +1175,7 @@
         "dayOfWeek": 1,
         "startTime": "19:30",
         "endTime": "20:00",
-        "roomId": "room-2",
+        "roomId": "room-1",
         "teacherId": "teacher-gen-nirmaya-fodor",
         "isAiPlanned": false,
         "status": "approved"
@@ -1235,7 +1235,7 @@
         "dayOfWeek": 2,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-harishakti",
         "isAiPlanned": false,
         "status": "approved"
@@ -1247,19 +1247,19 @@
         "dayOfWeek": 2,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-anjali-gelzleichter",
         "isAiPlanned": false,
         "status": "approved"
       },
       {
         "id": "course-2026-W36-43",
-        "name": "Anfänger Yin Yoga",
+        "name": "Anfänger",
         "style": "Hatha",
         "dayOfWeek": 2,
         "startTime": "16:15",
         "endTime": "18:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-alexander-melior",
         "isAiPlanned": true,
         "status": "approved"
@@ -1271,7 +1271,7 @@
         "dayOfWeek": 2,
         "startTime": "16:15",
         "endTime": "18:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-narayani-kedenburg",
         "isAiPlanned": false,
         "status": "approved"
@@ -1283,7 +1283,7 @@
         "dayOfWeek": 2,
         "startTime": "19:30",
         "endTime": "20:00",
-        "roomId": "room-2",
+        "roomId": "room-1",
         "teacherId": "teacher-gen-christopher",
         "isAiPlanned": false,
         "status": "approved"
@@ -1319,7 +1319,7 @@
         "dayOfWeek": 3,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-alexander-melior",
         "isAiPlanned": false,
         "status": "approved"
@@ -1331,7 +1331,7 @@
         "dayOfWeek": 3,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-narayani-kedenburg",
         "isAiPlanned": false,
         "status": "approved"
@@ -1343,7 +1343,7 @@
         "dayOfWeek": 3,
         "startTime": "19:30",
         "endTime": "20:00",
-        "roomId": "room-2",
+        "roomId": "room-1",
         "teacherId": "teacher-gen-adam-zmuda",
         "isAiPlanned": true,
         "status": "approved"
@@ -1403,7 +1403,7 @@
         "dayOfWeek": 4,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-alexander-melior",
         "isAiPlanned": false,
         "status": "approved"
@@ -1415,7 +1415,7 @@
         "dayOfWeek": 4,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-narayani-kedenburg",
         "isAiPlanned": true,
         "status": "approved"
@@ -1427,7 +1427,7 @@
         "dayOfWeek": 4,
         "startTime": "16:15",
         "endTime": "18:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-ulrich-nebel",
         "isAiPlanned": false,
         "status": "approved"
@@ -1439,7 +1439,7 @@
         "dayOfWeek": 4,
         "startTime": "16:15",
         "endTime": "18:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-nirmaya-fodor",
         "isAiPlanned": false,
         "status": "approved"
@@ -1451,7 +1451,7 @@
         "dayOfWeek": 4,
         "startTime": "19:30",
         "endTime": "20:00",
-        "roomId": "room-2",
+        "roomId": "room-1",
         "teacherId": "teacher-gen-harishakti",
         "isAiPlanned": false,
         "status": "approved"
@@ -1527,7 +1527,7 @@
         "dayOfWeek": 5,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-5",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-harishakti",
         "isAiPlanned": false,
         "status": "approved"
@@ -1539,7 +1539,7 @@
         "dayOfWeek": 5,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-2",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": false,
         "status": "approved"
@@ -1551,7 +1551,7 @@
         "dayOfWeek": 5,
         "startTime": "16:30",
         "endTime": "18:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-alexander-melior",
         "isAiPlanned": true,
         "status": "approved"
@@ -1563,7 +1563,7 @@
         "dayOfWeek": 5,
         "startTime": "16:30",
         "endTime": "18:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
         "status": "approved"
@@ -1575,7 +1575,7 @@
         "dayOfWeek": 5,
         "startTime": "19:30",
         "endTime": "20:00",
-        "roomId": "room-2",
+        "roomId": "room-1",
         "teacherId": "teacher-gen-adam-anjali",
         "isAiPlanned": false,
         "status": "approved"
@@ -1635,7 +1635,7 @@
         "dayOfWeek": 6,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": false,
         "status": "approved"
@@ -1647,7 +1647,7 @@
         "dayOfWeek": 6,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": true,
         "status": "approved"
@@ -1659,7 +1659,7 @@
         "dayOfWeek": 6,
         "startTime": "16:15",
         "endTime": "18:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-yl",
         "isAiPlanned": false,
         "status": "approved"
@@ -1671,7 +1671,7 @@
         "dayOfWeek": 6,
         "startTime": "16:15",
         "endTime": "18:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-anjali-gelzleichter",
         "isAiPlanned": false,
         "status": "approved"
@@ -1683,7 +1683,7 @@
         "dayOfWeek": 6,
         "startTime": "19:30",
         "endTime": "20:00",
-        "roomId": "room-2",
+        "roomId": "room-1",
         "teacherId": "teacher-gen-anjali-gelzleichter",
         "isAiPlanned": false,
         "status": "approved"
@@ -1743,7 +1743,7 @@
         "dayOfWeek": 0,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-burnie-bansemer",
         "isAiPlanned": false,
         "status": "approved"
@@ -1755,7 +1755,7 @@
         "dayOfWeek": 0,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-anjali-gelzleichter",
         "isAiPlanned": false,
         "status": "approved"
@@ -1767,7 +1767,7 @@
         "dayOfWeek": 0,
         "startTime": "16:30",
         "endTime": "18:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": false,
         "status": "approved"
@@ -1779,7 +1779,7 @@
         "dayOfWeek": 0,
         "startTime": "16:30",
         "endTime": "18:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
         "status": "approved"
@@ -1791,7 +1791,7 @@
         "dayOfWeek": 0,
         "startTime": "19:30",
         "endTime": "20:00",
-        "roomId": "room-2",
+        "roomId": "room-1",
         "teacherId": "teacher-gen-burnie-narayani",
         "isAiPlanned": false,
         "status": "approved"
@@ -1804,7 +1804,7 @@
         "startTime": "20:00",
         "endTime": "20:35",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-nirmaya-fodor",
+        "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -1851,7 +1851,7 @@
         "dayOfWeek": 1,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-burnie-bansemer",
         "isAiPlanned": false,
         "status": "approved"
@@ -1863,7 +1863,7 @@
         "dayOfWeek": 1,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-harishakti",
         "isAiPlanned": false,
         "status": "approved"
@@ -1875,7 +1875,7 @@
         "dayOfWeek": 1,
         "startTime": "16:15",
         "endTime": "18:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": false,
         "status": "approved"
@@ -1887,7 +1887,7 @@
         "dayOfWeek": 1,
         "startTime": "16:15",
         "endTime": "18:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-ulrich-nebel",
         "isAiPlanned": false,
         "status": "approved"
@@ -1899,7 +1899,7 @@
         "dayOfWeek": 1,
         "startTime": "19:30",
         "endTime": "20:00",
-        "roomId": "room-2",
+        "roomId": "room-1",
         "teacherId": "teacher-gen-nirmaya-fodor",
         "isAiPlanned": false,
         "status": "approved"
@@ -1959,7 +1959,7 @@
         "dayOfWeek": 2,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-harishakti",
         "isAiPlanned": false,
         "status": "approved"
@@ -1971,19 +1971,19 @@
         "dayOfWeek": 2,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-anjali-gelzleichter",
         "isAiPlanned": false,
         "status": "approved"
       },
       {
         "id": "course-2026-W37-42",
-        "name": "Anfänger Yin Yoga",
+        "name": "Anfänger",
         "style": "Hatha",
         "dayOfWeek": 2,
         "startTime": "16:15",
         "endTime": "18:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-alexander-melior",
         "isAiPlanned": true,
         "status": "approved"
@@ -1995,7 +1995,7 @@
         "dayOfWeek": 2,
         "startTime": "16:15",
         "endTime": "18:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-narayani-kedenburg",
         "isAiPlanned": false,
         "status": "approved"
@@ -2007,7 +2007,7 @@
         "dayOfWeek": 2,
         "startTime": "19:30",
         "endTime": "20:00",
-        "roomId": "room-2",
+        "roomId": "room-1",
         "teacherId": "teacher-gen-christopher",
         "isAiPlanned": false,
         "status": "approved"
@@ -2043,7 +2043,7 @@
         "dayOfWeek": 3,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-alexander-melior",
         "isAiPlanned": false,
         "status": "approved"
@@ -2055,7 +2055,7 @@
         "dayOfWeek": 3,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-narayani-kedenburg",
         "isAiPlanned": false,
         "status": "approved"
@@ -2067,7 +2067,7 @@
         "dayOfWeek": 3,
         "startTime": "19:30",
         "endTime": "20:00",
-        "roomId": "room-2",
+        "roomId": "room-1",
         "teacherId": "teacher-gen-adam-zmuda",
         "isAiPlanned": true,
         "status": "approved"
@@ -2127,7 +2127,7 @@
         "dayOfWeek": 4,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-alexander-melior",
         "isAiPlanned": false,
         "status": "approved"
@@ -2139,7 +2139,7 @@
         "dayOfWeek": 4,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-narayani-kedenburg",
         "isAiPlanned": true,
         "status": "approved"
@@ -2151,7 +2151,7 @@
         "dayOfWeek": 4,
         "startTime": "16:15",
         "endTime": "18:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-ulrich-nebel",
         "isAiPlanned": false,
         "status": "approved"
@@ -2163,7 +2163,7 @@
         "dayOfWeek": 4,
         "startTime": "16:15",
         "endTime": "18:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-nirmaya-fodor",
         "isAiPlanned": false,
         "status": "approved"
@@ -2175,7 +2175,7 @@
         "dayOfWeek": 4,
         "startTime": "19:30",
         "endTime": "20:00",
-        "roomId": "room-2",
+        "roomId": "room-1",
         "teacherId": "teacher-gen-harishakti",
         "isAiPlanned": false,
         "status": "approved"
@@ -2251,7 +2251,7 @@
         "dayOfWeek": 5,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-5",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-harishakti",
         "isAiPlanned": false,
         "status": "approved"
@@ -2263,7 +2263,7 @@
         "dayOfWeek": 5,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-2",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": false,
         "status": "approved"
@@ -2275,7 +2275,7 @@
         "dayOfWeek": 5,
         "startTime": "16:30",
         "endTime": "18:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-alexander-melior",
         "isAiPlanned": true,
         "status": "approved"
@@ -2287,7 +2287,7 @@
         "dayOfWeek": 5,
         "startTime": "16:30",
         "endTime": "18:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
         "status": "approved"
@@ -2299,7 +2299,7 @@
         "dayOfWeek": 5,
         "startTime": "19:30",
         "endTime": "20:00",
-        "roomId": "room-2",
+        "roomId": "room-1",
         "teacherId": "teacher-gen-adam-anjali",
         "isAiPlanned": false,
         "status": "approved"
@@ -2359,7 +2359,7 @@
         "dayOfWeek": 6,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": false,
         "status": "approved"
@@ -2371,7 +2371,7 @@
         "dayOfWeek": 6,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": true,
         "status": "approved"
@@ -2383,7 +2383,7 @@
         "dayOfWeek": 6,
         "startTime": "16:15",
         "endTime": "18:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-yl",
         "isAiPlanned": false,
         "status": "approved"
@@ -2395,7 +2395,7 @@
         "dayOfWeek": 6,
         "startTime": "16:15",
         "endTime": "18:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-anjali-gelzleichter",
         "isAiPlanned": false,
         "status": "approved"
@@ -2407,7 +2407,7 @@
         "dayOfWeek": 6,
         "startTime": "19:30",
         "endTime": "20:00",
-        "roomId": "room-2",
+        "roomId": "room-1",
         "teacherId": "teacher-gen-anjali-gelzleichter",
         "isAiPlanned": false,
         "status": "approved"
@@ -2467,7 +2467,7 @@
         "dayOfWeek": 0,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-burnie-bansemer",
         "isAiPlanned": false,
         "status": "approved"
@@ -2479,7 +2479,7 @@
         "dayOfWeek": 0,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-anjali-gelzleichter",
         "isAiPlanned": false,
         "status": "approved"
@@ -2491,7 +2491,7 @@
         "dayOfWeek": 0,
         "startTime": "16:30",
         "endTime": "18:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": false,
         "status": "approved"
@@ -2503,7 +2503,7 @@
         "dayOfWeek": 0,
         "startTime": "16:30",
         "endTime": "18:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
         "status": "approved"
@@ -2515,7 +2515,7 @@
         "dayOfWeek": 0,
         "startTime": "19:30",
         "endTime": "20:00",
-        "roomId": "room-2",
+        "roomId": "room-1",
         "teacherId": "teacher-gen-burnie-narayani",
         "isAiPlanned": false,
         "status": "approved"
@@ -2528,7 +2528,7 @@
         "startTime": "20:00",
         "endTime": "20:35",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-nirmaya-fodor",
+        "teacherId": "teacher-gen-burnie-bansemer",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -2575,7 +2575,7 @@
         "dayOfWeek": 1,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-burnie-bansemer",
         "isAiPlanned": false,
         "status": "approved"
@@ -2587,7 +2587,7 @@
         "dayOfWeek": 1,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-harishakti",
         "isAiPlanned": false,
         "status": "approved"
@@ -2599,7 +2599,7 @@
         "dayOfWeek": 1,
         "startTime": "16:15",
         "endTime": "18:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": false,
         "status": "approved"
@@ -2611,7 +2611,7 @@
         "dayOfWeek": 1,
         "startTime": "16:15",
         "endTime": "18:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-ulrich-nebel",
         "isAiPlanned": false,
         "status": "approved"
@@ -2623,7 +2623,7 @@
         "dayOfWeek": 1,
         "startTime": "19:30",
         "endTime": "20:00",
-        "roomId": "room-2",
+        "roomId": "room-1",
         "teacherId": "teacher-gen-nirmaya-fodor",
         "isAiPlanned": false,
         "status": "approved"
@@ -2683,7 +2683,7 @@
         "dayOfWeek": 2,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-harishakti",
         "isAiPlanned": false,
         "status": "approved"
@@ -2695,19 +2695,19 @@
         "dayOfWeek": 2,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-anjali-gelzleichter",
         "isAiPlanned": false,
         "status": "approved"
       },
       {
         "id": "course-2026-W38-42",
-        "name": "Anfänger Yin Yoga",
+        "name": "Anfänger",
         "style": "Hatha",
         "dayOfWeek": 2,
         "startTime": "16:15",
         "endTime": "18:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-alexander-melior",
         "isAiPlanned": true,
         "status": "approved"
@@ -2719,7 +2719,7 @@
         "dayOfWeek": 2,
         "startTime": "16:15",
         "endTime": "18:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-narayani-kedenburg",
         "isAiPlanned": false,
         "status": "approved"
@@ -2731,7 +2731,7 @@
         "dayOfWeek": 2,
         "startTime": "19:30",
         "endTime": "20:00",
-        "roomId": "room-2",
+        "roomId": "room-1",
         "teacherId": "teacher-gen-christopher",
         "isAiPlanned": false,
         "status": "approved"
@@ -2767,7 +2767,7 @@
         "dayOfWeek": 3,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-alexander-melior",
         "isAiPlanned": false,
         "status": "approved"
@@ -2779,7 +2779,7 @@
         "dayOfWeek": 3,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-narayani-kedenburg",
         "isAiPlanned": false,
         "status": "approved"
@@ -2791,7 +2791,7 @@
         "dayOfWeek": 3,
         "startTime": "19:30",
         "endTime": "20:00",
-        "roomId": "room-2",
+        "roomId": "room-1",
         "teacherId": "teacher-gen-adam-zmuda",
         "isAiPlanned": true,
         "status": "approved"
@@ -2851,7 +2851,7 @@
         "dayOfWeek": 4,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-alexander-melior",
         "isAiPlanned": false,
         "status": "approved"
@@ -2863,7 +2863,7 @@
         "dayOfWeek": 4,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-narayani-kedenburg",
         "isAiPlanned": true,
         "status": "approved"
@@ -2875,7 +2875,7 @@
         "dayOfWeek": 4,
         "startTime": "16:15",
         "endTime": "18:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-ulrich-nebel",
         "isAiPlanned": false,
         "status": "approved"
@@ -2887,7 +2887,7 @@
         "dayOfWeek": 4,
         "startTime": "16:15",
         "endTime": "18:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-nirmaya-fodor",
         "isAiPlanned": false,
         "status": "approved"
@@ -2899,7 +2899,7 @@
         "dayOfWeek": 4,
         "startTime": "19:30",
         "endTime": "20:00",
-        "roomId": "room-2",
+        "roomId": "room-1",
         "teacherId": "teacher-gen-harishakti",
         "isAiPlanned": false,
         "status": "approved"
@@ -2975,7 +2975,7 @@
         "dayOfWeek": 5,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-5",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-harishakti",
         "isAiPlanned": false,
         "status": "approved"
@@ -2987,7 +2987,7 @@
         "dayOfWeek": 5,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-2",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": false,
         "status": "approved"
@@ -2999,7 +2999,7 @@
         "dayOfWeek": 5,
         "startTime": "16:30",
         "endTime": "18:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-alexander-melior",
         "isAiPlanned": true,
         "status": "approved"
@@ -3011,7 +3011,7 @@
         "dayOfWeek": 5,
         "startTime": "16:30",
         "endTime": "18:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
         "status": "approved"
@@ -3023,7 +3023,7 @@
         "dayOfWeek": 5,
         "startTime": "19:30",
         "endTime": "20:00",
-        "roomId": "room-2",
+        "roomId": "room-1",
         "teacherId": "teacher-gen-adam-anjali",
         "isAiPlanned": false,
         "status": "approved"
@@ -3083,7 +3083,7 @@
         "dayOfWeek": 6,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": false,
         "status": "approved"
@@ -3095,7 +3095,7 @@
         "dayOfWeek": 6,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": true,
         "status": "approved"
@@ -3107,7 +3107,7 @@
         "dayOfWeek": 6,
         "startTime": "16:15",
         "endTime": "18:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-yl",
         "isAiPlanned": false,
         "status": "approved"
@@ -3119,7 +3119,7 @@
         "dayOfWeek": 6,
         "startTime": "16:15",
         "endTime": "18:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-anjali-gelzleichter",
         "isAiPlanned": false,
         "status": "approved"
@@ -3131,7 +3131,7 @@
         "dayOfWeek": 6,
         "startTime": "19:30",
         "endTime": "20:00",
-        "roomId": "room-2",
+        "roomId": "room-1",
         "teacherId": "teacher-gen-anjali-gelzleichter",
         "isAiPlanned": false,
         "status": "approved"
@@ -3191,7 +3191,7 @@
         "dayOfWeek": 0,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-burnie-bansemer",
         "isAiPlanned": false,
         "status": "approved"
@@ -3203,7 +3203,7 @@
         "dayOfWeek": 0,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-anjali-gelzleichter",
         "isAiPlanned": false,
         "status": "approved"
@@ -3215,7 +3215,7 @@
         "dayOfWeek": 0,
         "startTime": "16:30",
         "endTime": "18:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": false,
         "status": "approved"
@@ -3227,7 +3227,7 @@
         "dayOfWeek": 0,
         "startTime": "16:30",
         "endTime": "18:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
         "status": "approved"
@@ -3239,7 +3239,7 @@
         "dayOfWeek": 0,
         "startTime": "19:30",
         "endTime": "20:00",
-        "roomId": "room-2",
+        "roomId": "room-1",
         "teacherId": "teacher-gen-adam-zmuda",
         "isAiPlanned": true,
         "status": "approved"
@@ -3299,7 +3299,7 @@
         "dayOfWeek": 1,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-burnie-bansemer",
         "isAiPlanned": false,
         "status": "approved"
@@ -3311,7 +3311,7 @@
         "dayOfWeek": 1,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-harishakti",
         "isAiPlanned": false,
         "status": "approved"
@@ -3323,7 +3323,7 @@
         "dayOfWeek": 1,
         "startTime": "16:15",
         "endTime": "18:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": false,
         "status": "approved"
@@ -3335,7 +3335,7 @@
         "dayOfWeek": 1,
         "startTime": "16:15",
         "endTime": "18:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-ulrich-nebel",
         "isAiPlanned": false,
         "status": "approved"
@@ -3347,7 +3347,7 @@
         "dayOfWeek": 1,
         "startTime": "19:30",
         "endTime": "20:00",
-        "roomId": "room-2",
+        "roomId": "room-1",
         "teacherId": "teacher-gen-nirmaya-fodor",
         "isAiPlanned": false,
         "status": "approved"
@@ -3407,7 +3407,7 @@
         "dayOfWeek": 2,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-harishakti",
         "isAiPlanned": false,
         "status": "approved"
@@ -3419,19 +3419,19 @@
         "dayOfWeek": 2,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-anjali-gelzleichter",
         "isAiPlanned": false,
         "status": "approved"
       },
       {
         "id": "course-2026-W39-42",
-        "name": "Anfänger Yin Yoga",
+        "name": "Anfänger",
         "style": "Hatha",
         "dayOfWeek": 2,
         "startTime": "16:15",
         "endTime": "18:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-alexander-melior",
         "isAiPlanned": true,
         "status": "approved"
@@ -3443,7 +3443,7 @@
         "dayOfWeek": 2,
         "startTime": "16:15",
         "endTime": "18:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-narayani-kedenburg",
         "isAiPlanned": false,
         "status": "approved"
@@ -3455,7 +3455,7 @@
         "dayOfWeek": 2,
         "startTime": "19:30",
         "endTime": "20:00",
-        "roomId": "room-2",
+        "roomId": "room-1",
         "teacherId": "teacher-gen-christopher",
         "isAiPlanned": false,
         "status": "approved"
@@ -3491,7 +3491,7 @@
         "dayOfWeek": 3,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-alexander-melior",
         "isAiPlanned": false,
         "status": "approved"
@@ -3503,7 +3503,7 @@
         "dayOfWeek": 3,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-narayani-kedenburg",
         "isAiPlanned": false,
         "status": "approved"
@@ -3515,7 +3515,7 @@
         "dayOfWeek": 3,
         "startTime": "19:30",
         "endTime": "20:00",
-        "roomId": "room-2",
+        "roomId": "room-1",
         "teacherId": "teacher-gen-teresa-allgaeu",
         "isAiPlanned": true,
         "status": "approved"
@@ -3575,7 +3575,7 @@
         "dayOfWeek": 4,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-alexander-melior",
         "isAiPlanned": false,
         "status": "approved"
@@ -3587,7 +3587,7 @@
         "dayOfWeek": 4,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-narayani-kedenburg",
         "isAiPlanned": true,
         "status": "approved"
@@ -3599,7 +3599,7 @@
         "dayOfWeek": 4,
         "startTime": "16:15",
         "endTime": "18:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-ulrich-nebel",
         "isAiPlanned": false,
         "status": "approved"
@@ -3611,7 +3611,7 @@
         "dayOfWeek": 4,
         "startTime": "16:15",
         "endTime": "18:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-nirmaya-fodor",
         "isAiPlanned": false,
         "status": "approved"
@@ -3623,7 +3623,7 @@
         "dayOfWeek": 4,
         "startTime": "19:30",
         "endTime": "20:00",
-        "roomId": "room-2",
+        "roomId": "room-1",
         "teacherId": "teacher-gen-harishakti",
         "isAiPlanned": false,
         "status": "approved"
@@ -3699,7 +3699,7 @@
         "dayOfWeek": 5,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-5",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-harishakti",
         "isAiPlanned": false,
         "status": "approved"
@@ -3711,7 +3711,7 @@
         "dayOfWeek": 5,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-2",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": false,
         "status": "approved"
@@ -3723,7 +3723,7 @@
         "dayOfWeek": 5,
         "startTime": "16:30",
         "endTime": "18:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-alexander-melior",
         "isAiPlanned": true,
         "status": "approved"
@@ -3735,7 +3735,7 @@
         "dayOfWeek": 5,
         "startTime": "16:30",
         "endTime": "18:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
         "status": "approved"
@@ -3747,7 +3747,7 @@
         "dayOfWeek": 5,
         "startTime": "19:30",
         "endTime": "20:00",
-        "roomId": "room-2",
+        "roomId": "room-1",
         "teacherId": "teacher-gen-adam-anjali",
         "isAiPlanned": false,
         "status": "approved"
@@ -3807,7 +3807,7 @@
         "dayOfWeek": 6,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": false,
         "status": "approved"
@@ -3819,7 +3819,7 @@
         "dayOfWeek": 6,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": true,
         "status": "approved"
@@ -3831,7 +3831,7 @@
         "dayOfWeek": 6,
         "startTime": "16:15",
         "endTime": "18:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-yl",
         "isAiPlanned": false,
         "status": "approved"
@@ -3843,7 +3843,7 @@
         "dayOfWeek": 6,
         "startTime": "16:15",
         "endTime": "18:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-anjali-gelzleichter",
         "isAiPlanned": false,
         "status": "approved"
@@ -3855,7 +3855,7 @@
         "dayOfWeek": 6,
         "startTime": "19:30",
         "endTime": "20:00",
-        "roomId": "room-2",
+        "roomId": "room-1",
         "teacherId": "teacher-gen-anjali-gelzleichter",
         "isAiPlanned": false,
         "status": "approved"
@@ -3915,7 +3915,7 @@
         "dayOfWeek": 0,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-burnie-bansemer",
         "isAiPlanned": false,
         "status": "approved"
@@ -3927,7 +3927,7 @@
         "dayOfWeek": 0,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-anjali-gelzleichter",
         "isAiPlanned": false,
         "status": "approved"
@@ -3939,7 +3939,7 @@
         "dayOfWeek": 0,
         "startTime": "16:30",
         "endTime": "18:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": false,
         "status": "approved"
@@ -3951,7 +3951,7 @@
         "dayOfWeek": 0,
         "startTime": "16:30",
         "endTime": "18:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
         "status": "approved"
@@ -3963,7 +3963,7 @@
         "dayOfWeek": 0,
         "startTime": "19:30",
         "endTime": "20:00",
-        "roomId": "room-2",
+        "roomId": "room-1",
         "teacherId": "teacher-gen-burnie-narayani",
         "isAiPlanned": false,
         "status": "approved"
@@ -3976,7 +3976,7 @@
         "startTime": "20:00",
         "endTime": "20:35",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-nirmaya-fodor",
+        "teacherId": "teacher-gen-burnie-bansemer",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -4724,7 +4724,7 @@
         "startTime": "20:00",
         "endTime": "20:35",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-nirmaya-fodor",
+        "teacherId": "teacher-gen-burnie-bansemer",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -5472,7 +5472,7 @@
         "startTime": "20:00",
         "endTime": "20:35",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-nirmaya-fodor",
+        "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": true,
         "status": "approved"
       },

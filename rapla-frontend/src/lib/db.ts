@@ -710,7 +710,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
     createdAt: new Date().toISOString()
   },
   // --- PREPLANNED WEEKS ---
-                                                                                              {
+                                                                                                {
     id: "plan-pre-2026-W35",
     name: "Vorplanung 2026-W35 (Automatisch)",
     status: "approved",
@@ -938,7 +938,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "style": "Meditation",
         "dayOfWeek": 6,
         "startTime": "20:00",
-        "endTime": "22:00",
+        "endTime": "21:00",
         "roomId": "room-2",
         "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
@@ -1060,7 +1060,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "20:00",
         "endTime": "20:35",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-nirmaya-fodor",
+        "teacherId": "teacher-gen-burnie-bansemer",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -1691,7 +1691,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "style": "Meditation",
         "dayOfWeek": 6,
         "startTime": "20:00",
-        "endTime": "22:00",
+        "endTime": "21:00",
         "roomId": "room-2",
         "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
@@ -1740,7 +1740,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 0,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-burnie-bansemer",
         "isAiPlanned": false,
         "status": "approved"
@@ -1788,7 +1788,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 0,
         "startTime": "19:30",
         "endTime": "20:00",
-        "roomId": "room-2",
+        "roomId": "room-1",
         "teacherId": "teacher-gen-burnie-narayani",
         "isAiPlanned": false,
         "status": "approved"
@@ -1801,7 +1801,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "20:00",
         "endTime": "20:35",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-nirmaya-fodor",
+        "teacherId": "teacher-gen-burnie-bansemer",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -1896,7 +1896,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 1,
         "startTime": "19:30",
         "endTime": "20:00",
-        "roomId": "room-2",
+        "roomId": "room-1",
         "teacherId": "teacher-gen-nirmaya-fodor",
         "isAiPlanned": false,
         "status": "approved"
@@ -1975,7 +1975,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W36-43",
-        "name": "Anfänger Yin Yoga",
+        "name": "Anfänger",
         "style": "Hatha",
         "dayOfWeek": 2,
         "startTime": "16:15",
@@ -2004,7 +2004,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 2,
         "startTime": "19:30",
         "endTime": "20:00",
-        "roomId": "room-2",
+        "roomId": "room-1",
         "teacherId": "teacher-gen-christopher",
         "isAiPlanned": false,
         "status": "approved"
@@ -2064,7 +2064,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 3,
         "startTime": "19:30",
         "endTime": "20:00",
-        "roomId": "room-2",
+        "roomId": "room-1",
         "teacherId": "teacher-gen-adam-zmuda",
         "isAiPlanned": true,
         "status": "approved"
@@ -2172,7 +2172,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 4,
         "startTime": "19:30",
         "endTime": "20:00",
-        "roomId": "room-2",
+        "roomId": "room-1",
         "teacherId": "teacher-gen-harishakti",
         "isAiPlanned": false,
         "status": "approved"
@@ -2301,7 +2301,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 5,
         "startTime": "19:30",
         "endTime": "20:00",
-        "roomId": "room-2",
+        "roomId": "room-1",
         "teacherId": "teacher-gen-adam-anjali",
         "isAiPlanned": false,
         "status": "approved"
@@ -2409,7 +2409,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 6,
         "startTime": "19:30",
         "endTime": "20:00",
-        "roomId": "room-2",
+        "roomId": "room-1",
         "teacherId": "teacher-gen-anjali-gelzleichter",
         "isAiPlanned": false,
         "status": "approved"
@@ -2420,7 +2420,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "style": "Meditation",
         "dayOfWeek": 6,
         "startTime": "20:00",
-        "endTime": "22:00",
+        "endTime": "21:00",
         "roomId": "room-2",
         "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
@@ -2469,7 +2469,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 0,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-burnie-bansemer",
         "isAiPlanned": false,
         "status": "approved"
@@ -2517,7 +2517,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 0,
         "startTime": "19:30",
         "endTime": "20:00",
-        "roomId": "room-2",
+        "roomId": "room-1",
         "teacherId": "teacher-gen-burnie-narayani",
         "isAiPlanned": false,
         "status": "approved"
@@ -2530,7 +2530,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "20:00",
         "endTime": "20:35",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-nirmaya-fodor",
+        "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -2625,7 +2625,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 1,
         "startTime": "19:30",
         "endTime": "20:00",
-        "roomId": "room-2",
+        "roomId": "room-1",
         "teacherId": "teacher-gen-nirmaya-fodor",
         "isAiPlanned": false,
         "status": "approved"
@@ -2704,7 +2704,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W37-42",
-        "name": "Anfänger Yin Yoga",
+        "name": "Anfänger",
         "style": "Hatha",
         "dayOfWeek": 2,
         "startTime": "16:15",
@@ -2733,7 +2733,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 2,
         "startTime": "19:30",
         "endTime": "20:00",
-        "roomId": "room-2",
+        "roomId": "room-1",
         "teacherId": "teacher-gen-christopher",
         "isAiPlanned": false,
         "status": "approved"
@@ -2793,7 +2793,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 3,
         "startTime": "19:30",
         "endTime": "20:00",
-        "roomId": "room-2",
+        "roomId": "room-1",
         "teacherId": "teacher-gen-adam-zmuda",
         "isAiPlanned": true,
         "status": "approved"
@@ -2901,7 +2901,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 4,
         "startTime": "19:30",
         "endTime": "20:00",
-        "roomId": "room-2",
+        "roomId": "room-1",
         "teacherId": "teacher-gen-harishakti",
         "isAiPlanned": false,
         "status": "approved"
@@ -3030,7 +3030,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 5,
         "startTime": "19:30",
         "endTime": "20:00",
-        "roomId": "room-2",
+        "roomId": "room-1",
         "teacherId": "teacher-gen-adam-anjali",
         "isAiPlanned": false,
         "status": "approved"
@@ -3138,7 +3138,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 6,
         "startTime": "19:30",
         "endTime": "20:00",
-        "roomId": "room-2",
+        "roomId": "room-1",
         "teacherId": "teacher-gen-anjali-gelzleichter",
         "isAiPlanned": false,
         "status": "approved"
@@ -3149,7 +3149,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "style": "Meditation",
         "dayOfWeek": 6,
         "startTime": "20:00",
-        "endTime": "22:00",
+        "endTime": "21:00",
         "roomId": "room-2",
         "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
@@ -3198,7 +3198,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 0,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-burnie-bansemer",
         "isAiPlanned": false,
         "status": "approved"
@@ -3246,7 +3246,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 0,
         "startTime": "19:30",
         "endTime": "20:00",
-        "roomId": "room-2",
+        "roomId": "room-1",
         "teacherId": "teacher-gen-burnie-narayani",
         "isAiPlanned": false,
         "status": "approved"
@@ -3259,7 +3259,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "20:00",
         "endTime": "20:35",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-nirmaya-fodor",
+        "teacherId": "teacher-gen-burnie-bansemer",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -3354,7 +3354,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 1,
         "startTime": "19:30",
         "endTime": "20:00",
-        "roomId": "room-2",
+        "roomId": "room-1",
         "teacherId": "teacher-gen-nirmaya-fodor",
         "isAiPlanned": false,
         "status": "approved"
@@ -3433,7 +3433,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W38-42",
-        "name": "Anfänger Yin Yoga",
+        "name": "Anfänger",
         "style": "Hatha",
         "dayOfWeek": 2,
         "startTime": "16:15",
@@ -3462,7 +3462,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 2,
         "startTime": "19:30",
         "endTime": "20:00",
-        "roomId": "room-2",
+        "roomId": "room-1",
         "teacherId": "teacher-gen-christopher",
         "isAiPlanned": false,
         "status": "approved"
@@ -3522,7 +3522,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 3,
         "startTime": "19:30",
         "endTime": "20:00",
-        "roomId": "room-2",
+        "roomId": "room-1",
         "teacherId": "teacher-gen-adam-zmuda",
         "isAiPlanned": true,
         "status": "approved"
@@ -3630,7 +3630,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 4,
         "startTime": "19:30",
         "endTime": "20:00",
-        "roomId": "room-2",
+        "roomId": "room-1",
         "teacherId": "teacher-gen-harishakti",
         "isAiPlanned": false,
         "status": "approved"
@@ -3759,7 +3759,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 5,
         "startTime": "19:30",
         "endTime": "20:00",
-        "roomId": "room-2",
+        "roomId": "room-1",
         "teacherId": "teacher-gen-adam-anjali",
         "isAiPlanned": false,
         "status": "approved"
@@ -3867,7 +3867,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 6,
         "startTime": "19:30",
         "endTime": "20:00",
-        "roomId": "room-2",
+        "roomId": "room-1",
         "teacherId": "teacher-gen-anjali-gelzleichter",
         "isAiPlanned": false,
         "status": "approved"
@@ -3878,7 +3878,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "style": "Meditation",
         "dayOfWeek": 6,
         "startTime": "20:00",
-        "endTime": "22:00",
+        "endTime": "21:00",
         "roomId": "room-2",
         "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
@@ -3927,7 +3927,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 0,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-burnie-bansemer",
         "isAiPlanned": false,
         "status": "approved"
@@ -3975,7 +3975,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 0,
         "startTime": "19:30",
         "endTime": "20:00",
-        "roomId": "room-2",
+        "roomId": "room-1",
         "teacherId": "teacher-gen-adam-zmuda",
         "isAiPlanned": true,
         "status": "approved"
@@ -4083,7 +4083,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 1,
         "startTime": "19:30",
         "endTime": "20:00",
-        "roomId": "room-2",
+        "roomId": "room-1",
         "teacherId": "teacher-gen-nirmaya-fodor",
         "isAiPlanned": false,
         "status": "approved"
@@ -4162,7 +4162,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W39-42",
-        "name": "Anfänger Yin Yoga",
+        "name": "Anfänger",
         "style": "Hatha",
         "dayOfWeek": 2,
         "startTime": "16:15",
@@ -4191,7 +4191,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 2,
         "startTime": "19:30",
         "endTime": "20:00",
-        "roomId": "room-2",
+        "roomId": "room-1",
         "teacherId": "teacher-gen-christopher",
         "isAiPlanned": false,
         "status": "approved"
@@ -4251,7 +4251,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 3,
         "startTime": "19:30",
         "endTime": "20:00",
-        "roomId": "room-2",
+        "roomId": "room-1",
         "teacherId": "teacher-gen-teresa-allgaeu",
         "isAiPlanned": true,
         "status": "approved"
@@ -4359,7 +4359,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 4,
         "startTime": "19:30",
         "endTime": "20:00",
-        "roomId": "room-2",
+        "roomId": "room-1",
         "teacherId": "teacher-gen-harishakti",
         "isAiPlanned": false,
         "status": "approved"
@@ -4488,7 +4488,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 5,
         "startTime": "19:30",
         "endTime": "20:00",
-        "roomId": "room-2",
+        "roomId": "room-1",
         "teacherId": "teacher-gen-adam-anjali",
         "isAiPlanned": false,
         "status": "approved"
@@ -4596,7 +4596,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 6,
         "startTime": "19:30",
         "endTime": "20:00",
-        "roomId": "room-2",
+        "roomId": "room-1",
         "teacherId": "teacher-gen-anjali-gelzleichter",
         "isAiPlanned": false,
         "status": "approved"
@@ -4607,7 +4607,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "style": "Meditation",
         "dayOfWeek": 6,
         "startTime": "20:00",
-        "endTime": "22:00",
+        "endTime": "21:00",
         "roomId": "room-2",
         "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
@@ -4656,7 +4656,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 0,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-2",
+        "roomId": "room-4",
         "teacherId": "teacher-gen-burnie-bansemer",
         "isAiPlanned": false,
         "status": "approved"
@@ -4704,7 +4704,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 0,
         "startTime": "19:30",
         "endTime": "20:00",
-        "roomId": "room-2",
+        "roomId": "room-1",
         "teacherId": "teacher-gen-burnie-narayani",
         "isAiPlanned": false,
         "status": "approved"
@@ -4717,7 +4717,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "20:00",
         "endTime": "20:35",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-nirmaya-fodor",
+        "teacherId": "teacher-gen-burnie-bansemer",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -5348,7 +5348,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "style": "Meditation",
         "dayOfWeek": 6,
         "startTime": "20:00",
-        "endTime": "22:00",
+        "endTime": "21:00",
         "roomId": "room-2",
         "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
@@ -5470,7 +5470,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "20:00",
         "endTime": "20:35",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-nirmaya-fodor",
+        "teacherId": "teacher-gen-burnie-bansemer",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -6101,7 +6101,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "style": "Meditation",
         "dayOfWeek": 6,
         "startTime": "20:00",
-        "endTime": "22:00",
+        "endTime": "21:00",
         "roomId": "room-2",
         "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
@@ -6223,7 +6223,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "20:00",
         "endTime": "20:35",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-nirmaya-fodor",
+        "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -6673,7 +6673,7 @@ function setStored<T>(key: string, value: T): void {
   }
 }
 
-const CURRENT_DB_VERSION = 78;
+const CURRENT_DB_VERSION = 79;
 
 // Database Actions
 export const db = {
@@ -7039,6 +7039,12 @@ export const db = {
           }
 
           if (isDateInYlaRange(courseDate)) {
+            // Om Namo Narayanaya takes place in Devi room (room-1) during YLA
+            if ((nameLower.includes('om namo') || nameLower.includes('narayanaya')) && c.roomId !== 'room-1') {
+              c.roomId = 'room-1';
+              updated = true;
+            }
+
             // Abha does not teach regular courses during the 4-week YLA
             if (c.teacherId === 'teacher-gen-abha-morkoetter' || c.teacherId === 'abha') {
               c.teacherId = null;

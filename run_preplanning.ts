@@ -157,6 +157,7 @@ function planWeekWithAbsences(weekCode: string, standardCourses: any[]) {
       if (inYla) {
         if (c.name.toLowerCase().includes('anfänger')) roomId = 'room-4';
         else if (c.name.toLowerCase().includes('mittelstufe')) roomId = 'room-3';
+        else if (c.name.toLowerCase().includes('om namo') || c.name.toLowerCase().includes('narayanaya')) roomId = 'room-1';
       }
       const courseCopy = {
         ...c,
@@ -175,8 +176,6 @@ function planWeekWithAbsences(weekCode: string, standardCourses: any[]) {
     if (!teacher) return courseCopy;
 
     // Check absence
-    const courseDate = getLocalDateForDay(weekCode, courseCopy.dayOfWeek);
-    
     // For composite teachers, check if any of the components is absent
     const namesToCheck: string[] = [];
     if (teacher.name.includes(',')) {

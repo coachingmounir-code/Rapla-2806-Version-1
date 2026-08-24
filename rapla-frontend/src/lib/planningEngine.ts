@@ -1476,12 +1476,20 @@ export function validateRoomRules(
 
   const isBeginner = nameLower.includes('anfänger');
   const isIntermediate = nameLower.includes('mittelstufe');
+  const isOnn = nameLower.includes('om namo') || nameLower.includes('narayanaya');
 
   // Check 4-week Yogalehrerausbildung (YLA: 30.08.2026 – 27.09.2026)
   if (targetWeekCode) {
     const courseDate = getLocalDateForDay(targetWeekCode, course.dayOfWeek);
     if (isDateInYlaRange(courseDate)) {
-      if (isBeginner) {
+      if (isOnn) {
+        if (course.roomId !== 'room-1') { // Devi
+          conflicts.push({
+            type: 'soft',
+            message: `Hinweis: In den YLA-Wochen findet Om Namo Narayanaya standardmäßig im Devi Raum statt.`
+          });
+        }
+      } else if (isBeginner) {
         if (course.roomId !== 'room-4') { // Sitaram
           conflicts.push({
             type: 'soft',
@@ -1578,12 +1586,15 @@ export function adjustRoomsForRules(courses: Course[], teachers: Teacher[], targ
 
     const isBeginner = nameLower.includes('anfänger');
     const isIntermediate = nameLower.includes('mittelstufe');
+    const isOnn = nameLower.includes('om namo') || nameLower.includes('narayanaya');
 
     // Check 4-week Yogalehrerausbildung (YLA: 30.08.2026 – 27.09.2026)
     if (targetWeekCode) {
       const courseDate = getLocalDateForDay(targetWeekCode, course.dayOfWeek);
       if (isDateInYlaRange(courseDate)) {
-        if (isBeginner) {
+        if (isOnn) {
+          course.roomId = 'room-1'; // Devi
+        } else if (isBeginner) {
           course.roomId = 'room-4'; // Sitaram
         } else if (isIntermediate) {
           course.roomId = 'room-3'; // Hanuman
