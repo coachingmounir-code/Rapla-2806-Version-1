@@ -622,7 +622,7 @@ const generateDefaultCourses = (): Course[] => {
     { name: 'Anfänger', style: 'Hatha', dayOfWeek: 6, startTime: '16:15', endTime: '18:00', roomId: 'room-2', teacherName: 'YL' },
     { name: 'Mittelstufe Mantrayogastunde', style: 'Hatha', dayOfWeek: 6, startTime: '16:15', endTime: '18:00', roomId: 'room-5', teacherName: 'Anjali' },
     { name: 'Om Namo Narayanaya', style: 'Meditation', dayOfWeek: 6, startTime: '19:30', endTime: '20:00', roomId: 'room-2', teacherName: 'Anjali' },
-    { name: 'Satsang', style: 'Meditation', dayOfWeek: 6, startTime: '20:00', endTime: '21:00', roomId: 'room-2', teacherName: 'Karuna' },
+    { name: 'Satsang', style: 'Meditation', dayOfWeek: 6, startTime: '20:00', endTime: '22:00', roomId: 'room-2', teacherName: 'Karuna' },
 
     // Sunday (dayOfWeek: 0)
     { name: 'Fortgeschrittenes Pranayama', style: 'Hatha', dayOfWeek: 0, startTime: '06:00', endTime: '06:50', roomId: 'room-2', teacherName: 'burnie' },
@@ -937,7 +937,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "style": "Meditation",
         "dayOfWeek": 6,
         "startTime": "20:00",
-        "endTime": "21:00",
+        "endTime": "22:00",
         "roomId": "room-2",
         "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
@@ -1690,7 +1690,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "style": "Meditation",
         "dayOfWeek": 6,
         "startTime": "20:00",
-        "endTime": "21:00",
+        "endTime": "22:00",
         "roomId": "room-2",
         "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
@@ -2419,7 +2419,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "style": "Meditation",
         "dayOfWeek": 6,
         "startTime": "20:00",
-        "endTime": "21:00",
+        "endTime": "22:00",
         "roomId": "room-2",
         "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
@@ -3148,7 +3148,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "style": "Meditation",
         "dayOfWeek": 6,
         "startTime": "20:00",
-        "endTime": "21:00",
+        "endTime": "22:00",
         "roomId": "room-2",
         "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
@@ -3877,7 +3877,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "style": "Meditation",
         "dayOfWeek": 6,
         "startTime": "20:00",
-        "endTime": "21:00",
+        "endTime": "22:00",
         "roomId": "room-2",
         "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
@@ -4606,7 +4606,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "style": "Meditation",
         "dayOfWeek": 6,
         "startTime": "20:00",
-        "endTime": "21:00",
+        "endTime": "22:00",
         "roomId": "room-2",
         "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
@@ -5347,7 +5347,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "style": "Meditation",
         "dayOfWeek": 6,
         "startTime": "20:00",
-        "endTime": "21:00",
+        "endTime": "22:00",
         "roomId": "room-2",
         "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
@@ -6100,7 +6100,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "style": "Meditation",
         "dayOfWeek": 6,
         "startTime": "20:00",
-        "endTime": "21:00",
+        "endTime": "22:00",
         "roomId": "room-2",
         "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
@@ -7003,6 +7003,54 @@ export const db = {
       }
       // Migration & Rule: Remove Pranayama during the 4-week Yogalehrerausbildung (30.08.2026 – 27.09.2026)
       if (p.targetWeekCode) {
+        // Migration & Rule: Satsang times & YLA congruence
+        for (const c of p.courses) {
+          const courseDate = getLocalDateForDay(p.targetWeekCode, c.dayOfWeek);
+          const nameLower = c.name.toLowerCase();
+
+          // Saturday evening Satsang always lasts until 22:00 (Langer Satsang)
+          if (c.dayOfWeek === 6 && nameLower === 'satsang' && c.startTime === '20:00' && c.endTime !== '22:00') {
+            c.endTime = '22:00';
+            updated = true;
+          }
+
+          if (isDateInYlaRange(courseDate)) {
+            // Abha does not teach regular courses during the 4-week YLA
+            if (c.teacherId === 'teacher-gen-abha-morkoetter' || c.teacherId === 'abha') {
+              c.teacherId = null;
+              c.isAiPlanned = false;
+              updated = true;
+            }
+            // During 4-week YLA, Anfänger in Sitaram (room-4), Mittelstufe in Hanuman (room-3)
+            if (nameLower.includes('anfänger')) {
+              if (c.roomId !== 'room-4') {
+                c.roomId = 'room-4';
+                updated = true;
+              }
+            } else if (nameLower.includes('mittelstufe')) {
+              if (c.roomId !== 'room-3') {
+                c.roomId = 'room-3';
+                updated = true;
+              }
+            }
+
+            // Morning 7:00 Satsang during 1st week of YLA matches the YLA morning teacher
+            if (nameLower === 'satsang' && c.startTime === '07:00') {
+              const ylaMorningMap: Record<string, string> = {
+                '2026-08-31': 'teacher-gen-anjali-gelzleichter',
+                '2026-09-01': 'teacher-gen-karuna-wapke',
+                '2026-09-02': 'teacher-gen-anjali-gelzleichter',
+                '2026-09-03': 'teacher-gen-karuna-wapke',
+                '2026-09-04': 'teacher-gen-narayani-schumacher'
+              };
+              if (ylaMorningMap[courseDate] && c.teacherId !== ylaMorningMap[courseDate]) {
+                c.teacherId = ylaMorningMap[courseDate];
+                updated = true;
+              }
+            }
+          }
+        }
+        
         const preLen = p.courses.length;
         p.courses = p.courses.filter(c => {
           const isPranayama = c.name.toLowerCase().includes('pranayama') || c.style.toLowerCase().includes('pranayama');
@@ -7016,31 +7064,6 @@ export const db = {
         });
         if (p.courses.length !== preLen) {
           updated = true;
-        }
-
-        // Migration & Rule: Abha does not teach regular courses during the 4-week YLA (30.08.2026 – 27.09.2026)
-        for (const c of p.courses) {
-          const courseDate = getLocalDateForDay(p.targetWeekCode, c.dayOfWeek);
-          if (isDateInYlaRange(courseDate)) {
-            if (c.teacherId === 'teacher-gen-abha-morkoetter' || c.teacherId === 'abha') {
-              c.teacherId = null;
-              c.isAiPlanned = false;
-              updated = true;
-            }
-            // Migration & Rule: During 4-week YLA, Anfänger in Sitaram (room-4), Mittelstufe in Hanuman (room-3)
-            const nameLower = c.name.toLowerCase();
-            if (nameLower.includes('anfänger')) {
-              if (c.roomId !== 'room-4') {
-                c.roomId = 'room-4';
-                updated = true;
-              }
-            } else if (nameLower.includes('mittelstufe')) {
-              if (c.roomId !== 'room-3') {
-                c.roomId = 'room-3';
-                updated = true;
-              }
-            }
-          }
         }
       }
     }

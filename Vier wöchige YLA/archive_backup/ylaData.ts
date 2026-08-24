@@ -4,8 +4,7 @@ import ylaCurriculumData from './data/yla_curriculum.json' with { type: 'json' }
 export const YLA_TEACHERS = [
   'Abba',
   'Anjali',
-  'Bernie',
-  'Bintje',
+  'Burnie',
   'Hu',
   'Karuna',
   'Narayani',
@@ -37,19 +36,12 @@ export const YLA_TEACHERS_META: Record<YlaTeacherName, YlaTeacherMeta> = {
     color: '#c2185b',
     badgeBg: '#fce4ec'
   },
-  Bernie: {
-    name: 'Bernie',
-    alias: ['bernie', 'burnie'],
+  Burnie: {
+    name: 'Burnie',
+    alias: ['burnie', 'bernie', 'bintje'],
     avatar: '🧘‍♂️',
     color: '#1976d2',
     badgeBg: '#e3f2fd'
-  },
-  Bintje: {
-    name: 'Bintje',
-    alias: ['bintje'],
-    avatar: '🧘‍♀️',
-    color: '#00897b',
-    badgeBg: '#e0f2f1'
   },
   Hu: {
     name: 'Hu',
@@ -158,6 +150,22 @@ export interface YlaConflictDetail {
 const STORAGE_KEY = 'rapla_yla_assignments';
 
 /**
+ * Normalizes teacher display name (e.g. Bintje/Bernie -> Burnie, Kamuna -> Karuna, Abha -> Abba)
+ */
+export function normalizeTeacherDisplayName(name: string | null | undefined): string | null {
+  if (!name) return null;
+  const n = name.toLowerCase().trim();
+  if (n === 'bintje' || n === 'bernie' || n === 'burnie') return 'Burnie';
+  if (n === 'abba' || n === 'abha') return 'Abba';
+  if (n === 'kamuna' || n === 'karuna') return 'Karuna';
+  if (n === 'anjali') return 'Anjali';
+  if (n === 'hu') return 'Hu';
+  if (n === 'narayani') return 'Narayani';
+  if (n === 'pranava') return 'Pranava';
+  return name.trim();
+}
+
+/**
  * Extracts default assigned teachers from yla_curriculum.json
  */
 export function getDefaultYlaAssignments(): Record<string, string> {
@@ -169,7 +177,7 @@ export function getDefaultYlaAssignments(): Record<string, string> {
         const entry = slot.entries[day.col];
         if (entry && entry.assignedTeacher) {
           const key = `${week.weekNumber}_${day.col}_${slot.rowNumber}`;
-          defaults[key] = entry.assignedTeacher;
+          defaults[key] = normalizeTeacherDisplayName(entry.assignedTeacher) || entry.assignedTeacher;
         }
       }
     }
@@ -190,7 +198,8 @@ export function getYlaWeeks(): YlaWeek[] {
         const entry = slot.entries[day.col];
         if (entry) {
           const key = `${week.weekNumber}_${day.col}_${slot.rowNumber}`;
-          entry.assignedTeacher = assignments[key] || null;
+          const assigned = assignments[key] || entry.assignedTeacher || null;
+          entry.assignedTeacher = normalizeTeacherDisplayName(assigned) || null;
         }
       }
     }
@@ -220,7 +229,7 @@ export function getYlaAssignments(): Record<string, string> {
       if (v === '__NONE__' || !v) {
         delete merged[k];
       } else {
-        merged[k] = v as string;
+        merged[k] = normalizeTeacherDisplayName(v as string) || (v as string);
       }
     }
     return merged;
@@ -239,27 +248,27 @@ export function setYlaAssignment(weekNumber: number, dayCol: string, rowNumber: 
     const raw = localStorage.getItem(STORAGE_KEY);
     const custom = raw ? JSON.parse(raw) : {};
     const key = `${weekNumber}_${dayCol}_${rowNumber}`;
-    if (teacherName && teacherName.trim()) {
-      custom[key] = teacherName.trim();
+    const normalized = normalizeTeacherDisplayName(teacherName);
+    if (normalized && normalized.trim()) {
+      custom[key] = normalized.trim();
     } else {
       custom[key] = '__NONE__';
     }
     localStorage.setItem(STORAGE_KEY, JSON.stringify(custom));
-    window.dispatchEvent(new CustomEvent('yla-assignment-changed', { detail: { weekNumber, dayCol, rowNumber, teacherName } }));
+    window.dispatchEvent(new CustomEvent('yla-assignment-changed', { detail: { weekNumber, dayCol, rowNumber, teacherName: normalized } }));
   } catch (e) {
     console.error('Error saving YLA assignment to localStorage', e);
   }
 }
 
 /**
- * Normalizes teacher name for alias comparisons (e.g. Abba/Abha, Bernie/Burnie, Karuna/Kamuna)
+ * Normalizes teacher name for alias comparisons (e.g. Abba/Abha, Bernie/Burnie/Bintje, Karuna/Kamuna)
  */
 export function normalizeTeacherName(name: string): string {
   const n = name.toLowerCase().trim();
   if (n === 'abba' || n === 'abha') return 'abba';
-  if (n === 'bernie' || n === 'burnie') return 'bernie';
+  if (n === 'bernie' || n === 'burnie' || n === 'bintje') return 'burnie';
   if (n === 'anjali') return 'anjali';
-  if (n === 'bintje') return 'bintje';
   if (n === 'hu') return 'hu';
   if (n === 'karuna' || n === 'kamuna') return 'karuna';
   if (n === 'narayani') return 'narayani';

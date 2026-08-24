@@ -577,10 +577,10 @@
                         <div 
                           class="assigned-person-badge" 
                           style="color: {meta.color}; background: {meta.badgeBg}; border: 1.5px solid {meta.color}40;"
-                          title="Eingeteilt: {assignedTeacher}{isAdmin ? ' (Klicken zum Bearbeiten)' : ''}"
+                          title="Eingeteilt: {meta.name || assignedTeacher}{isAdmin ? ' (Klicken zum Bearbeiten)' : ''}"
                         >
                           <span class="person-avatar">{meta.avatar}</span>
-                          <span class="person-name">{assignedTeacher}</span>
+                          <span class="person-name">{meta.name || assignedTeacher}</span>
                         </div>
                       {:else if isAdmin}
                         <div class="admin-unassigned-pill" title="Klicken zum Zuweisen einer Lehrkraft">
@@ -721,7 +721,7 @@
                       {@const meta = getYlaTeacherMeta(assignedTeacher)}
                       <div class="agenda-assigned-teacher-badge" style="color: {meta.color}; background: {meta.badgeBg}; border: 1.5px solid {meta.color}50;">
                         <span class="t-avatar">{meta.avatar}</span>
-                        <span class="t-name">Leitung: <strong>{assignedTeacher}</strong></span>
+                        <span class="t-name">Leitung: <strong>{meta.name || assignedTeacher}</strong></span>
                       </div>
                     {:else if isAdmin}
                       <div class="agenda-admin-assign-btn">

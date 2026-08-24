@@ -181,7 +181,7 @@ export function validateAssignment(
   // Categorize course types
   const isOnnForSevaka = courseNameLower.includes('om namo') || courseNameLower.includes('narayanaya');
   const isMeditationForSevaka = (courseNameLower.includes('meditation') || courseNameLower.includes('medi.') || (courseStyleLower.includes('meditation') && !isOnnForSevaka)) && !courseNameLower.includes('satsang') && !isOnnForSevaka;
-  const isSatsangForSevaka = courseNameLower.includes('satsang');
+  const isSatsangForSevaka = courseNameLower.includes('satsang') && !courseNameLower.includes('einführung') && !courseNameLower.includes('einfuehrung');
   const isEntspannungForSevaka = courseStyleLower.includes('entspannung') || courseNameLower.includes('entspannung');
   const isSonstigesForSevaka = courseStyleLower.includes('sonstiges') || courseNameLower.includes('hausführung') || courseNameLower.includes('hausfuehrung');
   const isYogaClassForSevaka = !isMeditationForSevaka && !isSatsangForSevaka && !isOnnForSevaka && !isEntspannungForSevaka && !isSonstigesForSevaka;
@@ -299,7 +299,8 @@ export function validateAssignment(
     course.dayOfWeek,
     course.startTime,
     course.endTime,
-    targetWeekCode
+    targetWeekCode,
+    course.name
   );
   if (ylaConflict) {
     conflicts.push({
@@ -440,22 +441,26 @@ export function validateAssignment(
     }
 
     if (course.startTime === '07:00') {
-      const allowedMorningSatsang = wochenplanRules.satsang.morningAllowed;
-      const isAllowedMorning = allowedMorningSatsang.some((name: string) => teacherNameLower.includes(name));
-      if (!isAllowedMorning) {
-        conflicts.push({
-          type: 'hard',
-          message: `${teacher.name} darf morgens keinen Satsang leiten. Nur ${allowedMorningSatsang.join(', ').toUpperCase()} sind dafür eingeteilt.`
-        });
-      } else {
-        const canDoTwo = wochenplanRules.satsang.morningMaxTwo.some((name: string) => teacherNameLower.includes(name));
-        const maxMorningSatsangs = canDoTwo ? 2 : 1;
-        const otherMorningSatsangs = otherSevakaAssignments.filter(c => c.name === 'Satsang' && c.startTime === '07:00');
-        if (otherMorningSatsangs.length >= maxMorningSatsangs) {
+      const courseDate = targetWeekCode ? getLocalDateForDay(targetWeekCode, course.dayOfWeek) : '';
+      const inYla = isDateInYlaRange(courseDate);
+      if (!inYla) {
+        const allowedMorningSatsang = wochenplanRules.satsang.morningAllowed;
+        const isAllowedMorning = allowedMorningSatsang.some((name: string) => teacherNameLower.includes(name));
+        if (!isAllowedMorning) {
           conflicts.push({
             type: 'hard',
-            message: `${teacher.name} darf maximal ${maxMorningSatsangs} mal pro Woche für einen Satsang am Morgen eingeteilt werden.`
+            message: `${teacher.name} darf morgens keinen Satsang leiten. Nur ${allowedMorningSatsang.join(', ').toUpperCase()} sind dafür eingeteilt.`
           });
+        } else {
+          const canDoTwo = wochenplanRules.satsang.morningMaxTwo.some((name: string) => teacherNameLower.includes(name));
+          const maxMorningSatsangs = canDoTwo ? 2 : 1;
+          const otherMorningSatsangs = otherSevakaAssignments.filter(c => c.name === 'Satsang' && c.startTime === '07:00');
+          if (otherMorningSatsangs.length >= maxMorningSatsangs) {
+            conflicts.push({
+              type: 'hard',
+              message: `${teacher.name} darf maximal ${maxMorningSatsangs} mal pro Woche für einen Satsang am Morgen eingeteilt werden.`
+            });
+          }
         }
       }
     }
@@ -688,7 +693,9 @@ export function validateAssignment(
     });
   }
 
-  if (teacher.rules.maxMorningSatsangsPerWeek !== undefined && teacher.rules.maxMorningSatsangsPerWeek !== null && isSatsangForSevaka && course.startTime < '12:00') {
+  const courseDateForYla = targetWeekCode ? getLocalDateForDay(targetWeekCode, course.dayOfWeek) : '';
+  const inYlaForSatsang = isDateInYlaRange(courseDateForYla);
+  if (!inYlaForSatsang && teacher.rules.maxMorningSatsangsPerWeek !== undefined && teacher.rules.maxMorningSatsangsPerWeek !== null && isSatsangForSevaka && course.startTime < '12:00') {
     const morningSatsangs = otherSevakaAssignments.filter(c => c.name.toLowerCase().includes('satsang') && c.startTime < '12:00').length + 1;
     if (morningSatsangs > teacher.rules.maxMorningSatsangsPerWeek) {
       conflicts.push({
