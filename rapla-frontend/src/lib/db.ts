@@ -6637,22 +6637,23 @@ let cloudInitialized = false;
 function getStored<T>(key: string, defaultValue: T): T {
   if (typeof window === 'undefined') return defaultValue;
   
-  if (supabase && cloudInitialized) {
-    if (inMemoryStore[key] !== undefined) {
-      return inMemoryStore[key] as T;
-    }
-    return defaultValue;
+  if (inMemoryStore[key] !== undefined) {
+    return inMemoryStore[key] as T;
   }
 
   // Fallback to localStorage
   const stored = localStorage.getItem(key);
   if (!stored) {
     localStorage.setItem(key, JSON.stringify(defaultValue));
+    inMemoryStore[key] = defaultValue;
     return defaultValue;
   }
   try {
-    return JSON.parse(stored) as T;
+    const parsed = JSON.parse(stored) as T;
+    inMemoryStore[key] = parsed;
+    return parsed;
   } catch (e) {
+    inMemoryStore[key] = defaultValue;
     return defaultValue;
   }
 }
@@ -6660,28 +6661,29 @@ function getStored<T>(key: string, defaultValue: T): T {
 function setStored<T>(key: string, value: T): void {
   if (typeof window === 'undefined') return;
   
-  if (supabase && cloudInitialized) {
-    inMemoryStore[key] = value;
+  inMemoryStore[key] = value;
+  localStorage.setItem(key, JSON.stringify(value));
+
+  if (supabase) {
     // Asynchronously push to cloud
     supabase.from('app_state').upsert({ key, value: JSON.stringify(value) })
       .then(({ error }) => {
         if (error) console.error('Failed to sync to cloud', error);
       });
   }
-
-  // Always write to local storage as fallback and offline cache
-  localStorage.setItem(key, JSON.stringify(value));
 }
 
 const CURRENT_DB_VERSION = 78;
 
 // Database Actions
 export const db = {
+  getStored,
+  setStored,
   initializeCloudSync: async (): Promise<void> => {
     if (typeof window === 'undefined' || !supabase) return;
     try {
       const { data, error } = await supabase.from('app_state').select('*');
-      if (!error && data) {
+      if (!error && data && data.length > 0) {
         let changed = false;
         for (const row of data) {
           try {
@@ -6695,14 +6697,19 @@ export const db = {
         }
         cloudInitialized = true;
         if (changed) {
-          // If cloud data is different from local cache, reload to ensure UI updates
-          window.location.reload();
+          // Dispatch event so active components refresh their state smoothly without reloading the window
+          window.dispatchEvent(new CustomEvent('rapla-data-synced'));
         }
+      } else {
+        cloudInitialized = true;
       }
     } catch (e) {
       console.error('Failed to initialize cloud sync', e);
+      cloudInitialized = true;
     }
   },
+  getSevafrei: (): any[] => getStored<any[]>('rapla_sevafrei', []),
+  saveSevafrei: (list: any[]): void => setStored('rapla_sevafrei', list),
   getDefaultCourses: (): Course[] => DEFAULT_COURSES,
   getTeachers: (): Teacher[] => {
     const storedVersion = typeof window !== 'undefined' ? localStorage.getItem('rapla_db_version') : null;

@@ -83,9 +83,15 @@
     }
 
     refreshAssignments();
-    const handleStorage = () => refreshAssignments();
+    const handleStorage = () => {
+      try {
+        allTeachersList = db.getTeachers();
+      } catch (e) {}
+      refreshAssignments();
+    };
     window.addEventListener('storage', handleStorage);
     window.addEventListener('yla-assignment-changed', handleStorage);
+    window.addEventListener('rapla-data-synced', handleStorage);
 
     // Fullscreen change listener
     const handleFullscreenChange = () => {
@@ -107,6 +113,7 @@
     return () => {
       window.removeEventListener('storage', handleStorage);
       window.removeEventListener('yla-assignment-changed', handleStorage);
+      window.removeEventListener('rapla-data-synced', handleStorage);
       document.removeEventListener('fullscreenchange', handleFullscreenChange);
       window.removeEventListener('keydown', handleKeydown);
     };

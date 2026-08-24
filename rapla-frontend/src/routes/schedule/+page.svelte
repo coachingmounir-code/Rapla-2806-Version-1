@@ -79,6 +79,7 @@
     window.addEventListener('keydown', handleKeydown);
     window.addEventListener('storage', handleYlaChange);
     window.addEventListener('yla-assignment-changed', handleYlaChange);
+    window.addEventListener('rapla-data-synced', handleYlaChange);
     document.addEventListener('fullscreenchange', handleFullscreenChange);
     document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
     document.addEventListener('mozfullscreenchange', handleFullscreenChange);
@@ -88,6 +89,7 @@
       window.removeEventListener('keydown', handleKeydown);
       window.removeEventListener('storage', handleYlaChange);
       window.removeEventListener('yla-assignment-changed', handleYlaChange);
+      window.removeEventListener('rapla-data-synced', handleYlaChange);
       document.removeEventListener('fullscreenchange', handleFullscreenChange);
       document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
       document.removeEventListener('mozfullscreenchange', handleFullscreenChange);

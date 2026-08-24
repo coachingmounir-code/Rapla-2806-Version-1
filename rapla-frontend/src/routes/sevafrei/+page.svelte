@@ -219,16 +219,12 @@
     return day === 0 ? 6 : day - 1;
   }
 
-  onMount(() => {
-    userRole = localStorage.getItem('rapla_user_role') || '';
-
-    // Load Sevakas
+  function loadSevafreiData() {
     sevakas = db.getTeachers().filter(t => t.roleType === 'sevaka');
-    if (sevakas.length > 0) {
+    if (sevakas.length > 0 && !formTeacherId) {
       formTeacherId = sevakas[0].id;
     }
 
-    // Load Sevafrei entries from localStorage
     const saved = localStorage.getItem('rapla_sevafrei');
     if (saved) {
       sevafreiList = JSON.parse(saved);
@@ -267,6 +263,17 @@
       // Seed Excel data automatically on first load!
       importExcelData(false);
     }
+  }
+
+  onMount(() => {
+    userRole = localStorage.getItem('rapla_user_role') || '';
+    loadSevafreiData();
+
+    const handleSync = () => {
+      loadSevafreiData();
+    };
+    window.addEventListener('storage', handleSync);
+    window.addEventListener('rapla-data-synced', handleSync);
 
     // Listen to fullscreen changes to sync state (handles ESC key)
     const handleFullscreenChange = () => {
@@ -275,6 +282,8 @@
     document.addEventListener('fullscreenchange', handleFullscreenChange);
     
     return () => {
+      window.removeEventListener('storage', handleSync);
+      window.removeEventListener('rapla-data-synced', handleSync);
       document.removeEventListener('fullscreenchange', handleFullscreenChange);
     };
   });
@@ -359,7 +368,7 @@
   }
 
   function saveToStorage() {
-    localStorage.setItem('rapla_sevafrei', JSON.stringify(sevafreiList));
+    db.saveSevafrei(sevafreiList);
     fetch('/api/sevafrei', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

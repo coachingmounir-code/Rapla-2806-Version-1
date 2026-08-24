@@ -68,29 +68,26 @@
 	async function syncData() {
 		if (isSyncing) return;
 		isSyncing = true;
-		// Sync wishes from server JSON to localStorage
+		// Sync wishes from server JSON to localStorage & cloud
 		try {
 			const wishesRes = await fetch('/api/sevakas-wishes');
 			if (wishesRes.ok) {
 				const wishes = await wishesRes.json();
 				if (wishes && wishes.length > 0) {
-					const savedTeachers = localStorage.getItem('rapla_teachers');
-					if (savedTeachers) {
-						const teachers = JSON.parse(savedTeachers);
-						let updated = false;
-						for (const wish of wishes) {
-							const idx = teachers.findIndex((t: any) => t.id === wish.id || t.name === wish.name);
-							if (idx !== -1) {
-								teachers[idx].rules = { ...teachers[idx].rules, ...wish.rules };
-								if (wish.availabilityMode) teachers[idx].availabilityMode = wish.availabilityMode;
-								if (wish.specialties) teachers[idx].specialties = wish.specialties;
-								teachers[idx].customWishes = wish.customWishes; // sync custom wishes field
-								updated = true;
-							}
+					const teachers = db.getTeachers();
+					let updated = false;
+					for (const wish of wishes) {
+						const idx = teachers.findIndex((t: any) => t.id === wish.id || t.name === wish.name);
+						if (idx !== -1) {
+							teachers[idx].rules = { ...teachers[idx].rules, ...wish.rules };
+							if (wish.availabilityMode) teachers[idx].availabilityMode = wish.availabilityMode;
+							if (wish.specialties) teachers[idx].specialties = wish.specialties;
+							teachers[idx].customWishes = wish.customWishes; // sync custom wishes field
+							updated = true;
 						}
-						if (updated) {
-							localStorage.setItem('rapla_teachers', JSON.stringify(teachers));
-						}
+					}
+					if (updated) {
+						db.saveTeachers(teachers);
 					}
 				}
 			}
@@ -98,14 +95,13 @@
 			console.error('Failed to sync wishes:', e);
 		}
 
-		// Sync absences from server JSON to localStorage
+		// Sync absences from server JSON to localStorage & cloud
 		try {
 			const absencesRes = await fetch('/api/sevafrei');
 			if (absencesRes.ok) {
 				const serverAbsences = await absencesRes.json();
 				if (serverAbsences && serverAbsences.length > 0) {
-					const localAbsencesStr = localStorage.getItem('rapla_sevafrei') || '[]';
-					const localAbsences = JSON.parse(localAbsencesStr);
+					const localAbsences = db.getSevafrei();
 					let updated = false;
 					for (const sAbs of serverAbsences) {
 						const idx = localAbsences.findIndex((a: any) => a.id === sAbs.id);
@@ -118,7 +114,7 @@
 						}
 					}
 					if (updated) {
-						localStorage.setItem('rapla_sevafrei', JSON.stringify(localAbsences));
+						db.saveSevafrei(localAbsences);
 					}
 				}
 			}
@@ -129,10 +125,7 @@
 		// Small delay to make the sync animation visible
 		setTimeout(() => {
 			isSyncing = false;
-			// Reload page to reflect changes if manually triggered
-			if (typeof window !== 'undefined' && userRole) {
-				// Don't reload on mount, but reload when button is explicitly clicked
-			}
+			window.dispatchEvent(new CustomEvent('rapla-data-synced'));
 		}, 600);
 	}
 
@@ -293,11 +286,9 @@
 							type="button" 
 							class="nav-item sync-action-btn" 
 							class:syncing={isSyncing}
-							onclick={() => {
-								syncData().then(() => {
-									// Optional: window.location.reload() to refresh the data on the current page immediately
-									window.location.reload();
-								});
+							onclick={async () => {
+								await syncData();
+								window.dispatchEvent(new CustomEvent('rapla-data-synced'));
 							}}
 							disabled={isSyncing}
 							title="Lade neueste Urlaube & Wünsche neu vom Server"

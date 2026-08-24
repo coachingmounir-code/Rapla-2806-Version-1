@@ -76,7 +76,13 @@
       isFullscreen = !!document.fullscreenElement;
     };
 
+    const handleSync = () => {
+      loadData();
+    };
+
     window.addEventListener('keydown', handleKeydown);
+    window.addEventListener('storage', handleSync);
+    window.addEventListener('rapla-data-synced', handleSync);
     document.addEventListener('fullscreenchange', handleFullscreenChange);
     document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
     document.addEventListener('mozfullscreenchange', handleFullscreenChange);
@@ -84,6 +90,8 @@
 
     return () => {
       window.removeEventListener('keydown', handleKeydown);
+      window.removeEventListener('storage', handleSync);
+      window.removeEventListener('rapla-data-synced', handleSync);
       document.removeEventListener('fullscreenchange', handleFullscreenChange);
       document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
       document.removeEventListener('mozfullscreenchange', handleFullscreenChange);
