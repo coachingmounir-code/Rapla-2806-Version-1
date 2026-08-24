@@ -1575,6 +1575,16 @@ export function validateRoomRules(
     }
   }
 
+  // 4. Yogageschichten am Kamin rule: always am Kamin (room-6)
+  if (nameLower.includes('yogageschichten am kamin') || nameLower.includes('am kamin')) {
+    if (course.roomId !== 'room-6') {
+      conflicts.push({
+        type: 'soft',
+        message: `Yogageschichten am Kamin finden standardmäßig am Kamin statt.`
+      });
+    }
+  }
+
   return conflicts;
 }
 
@@ -1583,6 +1593,12 @@ export function adjustRoomsForRules(courses: Course[], teachers: Teacher[], targ
   courses.forEach(course => {
     const nameLower = course.name.toLowerCase();
     const styleLower = course.style.toLowerCase();
+
+    // 0. Yogageschichten am Kamin rule
+    if (nameLower.includes('yogageschichten am kamin') || nameLower.includes('am kamin')) {
+      course.roomId = 'room-6'; // am Kamin
+      return;
+    }
 
     const isBeginner = nameLower.includes('anfänger');
     const isIntermediate = nameLower.includes('mittelstufe');

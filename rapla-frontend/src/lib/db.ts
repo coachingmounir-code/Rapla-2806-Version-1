@@ -150,7 +150,8 @@ const DEFAULT_ROOMS: Room[] = [
   { id: 'room-2', name: 'Radhakrisna', color: '#f57c00' },
   { id: 'room-3', name: 'Hanuman', color: '#388e3c' },
   { id: 'room-4', name: 'Sitaram', color: '#1976d2' },
-  { id: 'room-5', name: 'Tripura', color: '#7b1fa2' }
+  { id: 'room-5', name: 'Tripura', color: '#7b1fa2' },
+  { id: 'room-6', name: 'am Kamin', color: '#ea580c' }
 ];
 
 const NEW_TEACHER_NAMES = [
@@ -664,7 +665,7 @@ const generateDefaultCourses = (): Course[] => {
     { name: 'Mittelstufe', style: 'Hatha', dayOfWeek: 3, startTime: '09:15', endTime: '11:00', roomId: 'room-5', teacherName: 'Narayani' },
     { name: 'Om Namo Narayanaya', style: 'Meditation', dayOfWeek: 3, startTime: '19:30', endTime: '20:00', roomId: 'room-2', teacherName: 'Abha' },
     { name: 'Satsang', style: 'Meditation', dayOfWeek: 3, startTime: '20:00', endTime: '21:00', roomId: 'room-2', teacherName: 'Karuna' },
-    { name: 'Entspannungsangebot: Yogageschichten am Kamin', style: 'Entspannung', dayOfWeek: 3, startTime: '21:10', endTime: '22:00', roomId: 'room-5', teacherName: '' },
+    { name: 'Entspannungsangebot: Yogageschichten am Kamin', style: 'Entspannung', dayOfWeek: 3, startTime: '21:10', endTime: '22:00', roomId: 'room-6', teacherName: '' },
 
     // Thursday (dayOfWeek: 4)
     { name: 'Geführte Meditation', style: 'Meditation', dayOfWeek: 4, startTime: '07:00', endTime: '07:30', roomId: 'room-5', teacherName: 'Christopher' },
@@ -1347,7 +1348,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 3,
         "startTime": "21:10",
         "endTime": "22:00",
-        "roomId": "room-5",
+        "roomId": "room-6",
         "teacherId": "teacher-gen-hu-buerkle",
         "isAiPlanned": true,
         "status": "approved"
@@ -2088,7 +2089,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 3,
         "startTime": "21:10",
         "endTime": "22:00",
-        "roomId": "room-5",
+        "roomId": "room-6",
         "teacherId": "teacher-gen-hu-buerkle",
         "isAiPlanned": true,
         "status": "approved"
@@ -2817,7 +2818,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 3,
         "startTime": "21:10",
         "endTime": "22:00",
-        "roomId": "room-5",
+        "roomId": "room-6",
         "teacherId": "teacher-gen-hu-buerkle",
         "isAiPlanned": true,
         "status": "approved"
@@ -3546,7 +3547,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 3,
         "startTime": "21:10",
         "endTime": "22:00",
-        "roomId": "room-5",
+        "roomId": "room-6",
         "teacherId": "teacher-gen-hu-buerkle",
         "isAiPlanned": true,
         "status": "approved"
@@ -4275,7 +4276,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 3,
         "startTime": "21:10",
         "endTime": "22:00",
-        "roomId": "room-5",
+        "roomId": "room-6",
         "teacherId": "teacher-gen-hu-buerkle",
         "isAiPlanned": true,
         "status": "approved"
@@ -5004,7 +5005,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 3,
         "startTime": "21:10",
         "endTime": "22:00",
-        "roomId": "room-5",
+        "roomId": "room-6",
         "teacherId": "teacher-gen-hu-buerkle",
         "isAiPlanned": true,
         "status": "approved"
@@ -5757,7 +5758,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 3,
         "startTime": "21:10",
         "endTime": "22:00",
-        "roomId": "room-5",
+        "roomId": "room-6",
         "teacherId": "teacher-gen-hu-buerkle",
         "isAiPlanned": true,
         "status": "approved"
@@ -6510,7 +6511,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 3,
         "startTime": "21:10",
         "endTime": "22:00",
-        "roomId": "room-5",
+        "roomId": "room-6",
         "teacherId": "teacher-gen-hu-buerkle",
         "isAiPlanned": true,
         "status": "approved"
@@ -6673,7 +6674,7 @@ function setStored<T>(key: string, value: T): void {
   }
 }
 
-const CURRENT_DB_VERSION = 79;
+const CURRENT_DB_VERSION = 80;
 
 // Database Actions
 export const db = {
@@ -6962,7 +6963,7 @@ export const db = {
   
   getRooms: (): Room[] => {
     const stored = getStored<Room[]>('rapla_rooms', DEFAULT_ROOMS);
-    const isOld = stored.length !== 5 || stored.some(r => r.name === 'Sivananda Saal');
+    const isOld = stored.length !== DEFAULT_ROOMS.length || stored.some(r => r.name === 'Sivananda Saal') || !stored.some(r => r.name === 'am Kamin');
     if (isOld) {
       db.saveRooms(DEFAULT_ROOMS);
       return DEFAULT_ROOMS;
