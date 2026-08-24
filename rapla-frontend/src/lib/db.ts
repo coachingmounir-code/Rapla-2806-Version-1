@@ -424,7 +424,7 @@ const GENERATED_TEACHERS: Teacher[] = NEW_TEACHER_NAMES.map((name, index) => {
 const DEFAULT_TEACHERS: Teacher[] = [
   {
     id: 'teacher-karma-marlene',
-    name: 'Marlene',
+    name: 'Marlen',
     email: '',
     phone: '',
     avatarColor: 'from-amber-400 to-orange-500',
@@ -588,6 +588,7 @@ const generateDefaultCourses = (): Course[] => {
     if (nameLower === 'narayani') return 'teacher-gen-narayani-kedenburg';
     if (nameLower === 'mouniir' || nameLower === 'mounir') return 'teacher-gen-mouniir-jaber';
     if (nameLower === 'christopher') return 'teacher-gen-christopher';
+    if (nameLower === 'marlen' || nameLower === 'marlene') return 'teacher-karma-marlene';
     return null;
   };
 
@@ -6711,9 +6712,10 @@ export const db = {
     let updated = false;
     const list = [...stored];
 
-    // Migration to update existing Sevakas' names to first names
+    // Migration to update existing Sevakas' and Karma Yogis' names to correct format
     for (const t of list) {
-      if (t.id === "teacher-gen-abha-morkoetter" && t.name !== "Abha") { t.name = "Abha"; updated = true; }
+      if ((t.id === "teacher-karma-marlene" || t.name === "Marlene") && t.name !== "Marlen") { t.name = "Marlen"; updated = true; }
+      else if (t.id === "teacher-gen-abha-morkoetter" && t.name !== "Abha") { t.name = "Abha"; updated = true; }
       else if (t.id === "teacher-gen-adam-zmuda" && t.name !== "Adam") { t.name = "Adam"; updated = true; }
       else if (t.id === "teacher-gen-alexander-melior" && t.name !== "Alexander") { t.name = "Alexander"; updated = true; }
       else if (t.id === "teacher-gen-anjali-gelzleichter" && t.name !== "Anjali") { t.name = "Anjali"; updated = true; }
@@ -6897,6 +6899,21 @@ export const db = {
             { day: 6, start: '06:30', end: '22:00' },
             { day: 0, start: '06:30', end: '22:00' }
           ];
+          updated = true;
+        }
+      }
+
+      if (nameLower === 'marlen' || nameLower === 'marlene' || t.id === 'teacher-karma-marlene') {
+        if (t.name !== 'Marlen') {
+          t.name = 'Marlen';
+          updated = true;
+        }
+        if (t.roleType !== 'karma_yogi') {
+          t.roleType = 'karma_yogi';
+          updated = true;
+        }
+        if (t.isYogaTeacher !== true) {
+          t.isYogaTeacher = true;
           updated = true;
         }
       }
