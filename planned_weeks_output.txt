@@ -236,7 +236,7 @@
         "startTime": "19:00",
         "endTime": "19:30",
         "roomId": "Rezeption",
-        "teacherId": "teacher-gen-satyam",
+        "teacherId": "teacher-gen-ulrich-nebel",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -560,8 +560,8 @@
         "startTime": "07:00",
         "endTime": "07:30",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-satyam",
-        "isAiPlanned": false,
+        "teacherId": "teacher-gen-mouniir-jaber",
+        "isAiPlanned": true,
         "status": "approved"
       },
       {
@@ -822,13 +822,13 @@
       },
       {
         "id": "course-2026-W36-7",
-        "name": "Yoga Flow Mittelstufe",
+        "name": "Mittelstufe Ankommensstunde",
         "style": "Hatha",
         "dayOfWeek": 5,
         "startTime": "16:30",
         "endTime": "18:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-satyam",
+        "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -1308,8 +1308,8 @@
         "startTime": "07:00",
         "endTime": "07:30",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-satyam",
-        "isAiPlanned": false,
+        "teacherId": "teacher-gen-mouniir-jaber",
+        "isAiPlanned": true,
         "status": "approved"
       },
       {
@@ -1732,7 +1732,7 @@
         "startTime": "19:00",
         "endTime": "19:30",
         "roomId": "Rezeption",
-        "teacherId": "teacher-gen-satyam",
+        "teacherId": "teacher-gen-ulrich-nebel",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -2056,8 +2056,8 @@
         "startTime": "07:00",
         "endTime": "07:30",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-satyam",
-        "isAiPlanned": false,
+        "teacherId": "teacher-gen-mouniir-jaber",
+        "isAiPlanned": true,
         "status": "approved"
       },
       {
@@ -2804,8 +2804,8 @@
         "startTime": "07:00",
         "endTime": "07:30",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-satyam",
-        "isAiPlanned": false,
+        "teacherId": "teacher-gen-mouniir-jaber",
+        "isAiPlanned": true,
         "status": "approved"
       },
       {
@@ -3228,7 +3228,7 @@
         "startTime": "19:00",
         "endTime": "19:30",
         "roomId": "Rezeption",
-        "teacherId": "teacher-gen-satyam",
+        "teacherId": "teacher-gen-ulrich-nebel",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -3552,8 +3552,8 @@
         "startTime": "07:00",
         "endTime": "07:30",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-satyam",
-        "isAiPlanned": false,
+        "teacherId": "teacher-gen-mouniir-jaber",
+        "isAiPlanned": true,
         "status": "approved"
       },
       {
@@ -3600,7 +3600,7 @@
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-mouniir-jaber",
+        "teacherId": "teacher-gen-teresa-allgaeu",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -4300,8 +4300,8 @@
         "startTime": "07:00",
         "endTime": "07:30",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-satyam",
-        "isAiPlanned": false,
+        "teacherId": "teacher-gen-mouniir-jaber",
+        "isAiPlanned": true,
         "status": "approved"
       },
       {
@@ -4724,7 +4724,7 @@
         "startTime": "19:00",
         "endTime": "19:30",
         "roomId": "Rezeption",
-        "teacherId": "teacher-gen-satyam",
+        "teacherId": "teacher-gen-ulrich-nebel",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -5048,8 +5048,8 @@
         "startTime": "07:00",
         "endTime": "07:30",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-satyam",
-        "isAiPlanned": false,
+        "teacherId": "teacher-gen-mouniir-jaber",
+        "isAiPlanned": true,
         "status": "approved"
       },
       {
@@ -5304,7 +5304,7 @@
         "startTime": "16:30",
         "endTime": "18:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-satyam",
+        "teacherId": "teacher-gen-alexander-melior",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -5406,13 +5406,13 @@
       },
       {
         "id": "course-2026-W42-15",
-        "name": "Yoga Flow Mittelstufe",
+        "name": "Mittelstufe",
         "style": "Hatha",
         "dayOfWeek": 6,
         "startTime": "09:15",
         "endTime": "11:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-satyam",
+        "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -5760,7 +5760,7 @@
         "startTime": "16:15",
         "endTime": "18:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-satyam",
+        "teacherId": "teacher-gen-alexander-melior",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -5796,8 +5796,8 @@
         "startTime": "07:00",
         "endTime": "07:30",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-satyam",
-        "isAiPlanned": false,
+        "teacherId": "teacher-gen-mouniir-jaber",
+        "isAiPlanned": true,
         "status": "approved"
       },
       {

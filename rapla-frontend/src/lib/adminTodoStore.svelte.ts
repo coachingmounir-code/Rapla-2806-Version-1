@@ -328,9 +328,12 @@ export const DEFAULT_ADMIN_TODOS: AdminTodoItem[] = [
     category: 'sevakas',
     priority: 'high',
     dueDate: '2026-09-06',
-    completed: false,
+    completed: true,
     assignee: 'Tanja',
-    subtasks: [],
+    subtasks: [
+      { id: 'sub-17-1', text: 'Tanja als Karma Yogini / Yogalehrerin (06.09. – 20.09.2026) im Rapla-Plan hinterlegen', completed: true },
+      { id: 'sub-17-2', text: 'Bestätigungsmail an Tanja senden', completed: false }
+    ],
     tags: ['Rapla', 'Einteilung', 'Email'],
     createdAt: '2026-08-24T08:00:00.000Z'
   },

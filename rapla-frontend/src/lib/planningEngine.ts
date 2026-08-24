@@ -175,6 +175,14 @@ export function validateAssignment(
   const isSonstigesForSevaka = courseStyleLower.includes('sonstiges') || courseNameLower.includes('hausführung') || courseNameLower.includes('hausfuehrung');
   const isYogaClassForSevaka = !isMeditationForSevaka && !isSatsangForSevaka && !isOnnForSevaka && !isEntspannungForSevaka && !isSonstigesForSevaka;
 
+  // Complete exclusion for Satyam
+  if (teacherNameLower.includes('satyam')) {
+    conflicts.push({
+      type: 'hard',
+      message: `${teacher.name} ist komplett herausgenommen und darf für keine Stunden oder Dienste eingeteilt werden.`
+    });
+  }
+
   // Qualifications for Karma-Yogis and Guest Teachers
   if (teacher.roleType === 'karma_yogi' || teacher.roleType === 'guest_teacher') {
     if (isYogaClassForSevaka && teacher.isYogaTeacher === false) {
@@ -598,8 +606,8 @@ export function validateAssignment(
             }
           }
 
-          if (availableAlts.length > 0) {
-            let turnIndex = weekNum % 2;
+          if (availableAlts.length > 0 && alts.length > 0) {
+            let turnIndex = weekNum % alts.length;
             let primaryTurn = alts[turnIndex];
             
             let assignedPrimary = null;
@@ -995,12 +1003,14 @@ export function runAiPlanning(
               }
             }
             const alts = rules.sunday.alternating;
-            const turnIndex = weekNum % 2;
-            const primaryTurn = alts[turnIndex];
-            if (teacherNameLower.includes(primaryTurn)) {
-              score += 10000;
-            } else if (alts.some((a: string) => teacherNameLower.includes(a))) {
-              score += 5000; // The other alternating person
+            if (alts && alts.length > 0) {
+              const turnIndex = weekNum % alts.length;
+              const primaryTurn = alts[turnIndex];
+              if (teacherNameLower.includes(primaryTurn)) {
+                score += 10000;
+              } else if (alts.some((a: string) => teacherNameLower.includes(a))) {
+                score += 5000; // The other alternating person
+              }
             }
           }
         }

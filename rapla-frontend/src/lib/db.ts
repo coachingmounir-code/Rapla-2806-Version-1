@@ -195,7 +195,6 @@ const NEW_TEACHER_NAMES = [
   "Susanne Sirringhaus",
   "Swami Tattvarupananda",
   "Swami Yatidharmananda",
-  "Tanja Eichenmüller",
   "Teresa",
   "Ulrich",
   "Venulo Broszinski",
@@ -356,7 +355,8 @@ const GENERATED_TEACHERS: Teacher[] = NEW_TEACHER_NAMES.map((name, index) => {
     name.toLowerCase().includes('teresa') || 
     name.toLowerCase().includes('hu') || 
     name.toLowerCase().includes('mounir') || 
-    name.toLowerCase().includes('adam')
+    name.toLowerCase().includes('adam') ||
+    name.toLowerCase().includes('satyam')
   ) : true;
 
   const tRules = getTeacherRules(name, isSevaka);
@@ -402,6 +402,38 @@ const DEFAULT_TEACHERS: Teacher[] = [
       canLeadSatsang: false,
       canLeadHausfuehrung: true,
       prefersMittelstufe: true,
+      availability: [
+        { day: 1, start: '06:30', end: '22:00' },
+        { day: 2, start: '06:30', end: '22:00' },
+        { day: 3, start: '06:30', end: '22:00' },
+        { day: 4, start: '06:30', end: '22:00' },
+        { day: 5, start: '06:30', end: '22:00' },
+        { day: 6, start: '06:30', end: '22:00' },
+        { day: 0, start: '06:30', end: '22:00' }
+      ]
+    }
+  },
+  {
+    id: 'teacher-karma-tanja-eichenmueller',
+    name: 'Tanja Eichenmüller',
+    email: 'tanja.eichenmueller@yoga.de',
+    phone: '',
+    avatarColor: 'from-pink-500 to-rose-500',
+    specialties: ['Hatha', 'Anfänger', 'Mittelstufe', 'Meditation'],
+    isYogaTeacher: true,
+    availabilityMode: 'always',
+    roleType: 'karma_yogi',
+    stayStartDate: '2026-09-06',
+    stayEndDate: '2026-09-20',
+    stayNotes: 'Karma Yogini als Yogalehrerin (06.09. bis 20.09.2026).',
+    customWishes: 'Unterrichtet als Yogalehrerin vom 06.09. bis 20.09.2026.',
+    rules: {
+      preferredRooms: [],
+      preferredDays: [],
+      canLeadMeditation: true,
+      canLeadSatsang: false,
+      canLeadHausfuehrung: false,
+      prefersMittelstufe: false,
       availability: [
         { day: 1, start: '06:30', end: '22:00' },
         { day: 2, start: '06:30', end: '22:00' },
@@ -584,7 +616,7 @@ const generateDefaultCourses = (): Course[] => {
     { name: 'Om Namo Narayanaya', style: 'Meditation', dayOfWeek: 2, startTime: '19:30', endTime: '20:00', roomId: 'room-2', teacherName: 'Mounir' },
 
     // Wednesday (dayOfWeek: 3)
-    { name: 'Geführte Meditation', style: 'Meditation', dayOfWeek: 3, startTime: '07:00', endTime: '07:30', roomId: 'room-5', teacherName: 'Satyam' },
+    { name: 'Geführte Meditation', style: 'Meditation', dayOfWeek: 3, startTime: '07:00', endTime: '07:30', roomId: 'room-5', teacherName: '' },
     { name: 'Satsang', style: 'Meditation', dayOfWeek: 3, startTime: '07:00', endTime: '08:00', roomId: 'room-2', teacherName: 'Narayani' },
     { name: 'Anfänger', style: 'Hatha', dayOfWeek: 3, startTime: '09:15', endTime: '11:00', roomId: 'room-2', teacherName: 'Alexander' },
     { name: 'Mittelstufe', style: 'Hatha', dayOfWeek: 3, startTime: '09:15', endTime: '11:00', roomId: 'room-5', teacherName: 'Narayani' },
@@ -636,7 +668,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
     createdAt: new Date().toISOString()
   },
   // --- PREPLANNED WEEKS ---
-                                                                                  {
+                                                                                      {
     id: "plan-pre-2026-W35",
     name: "Vorplanung 2026-W35 (Automatisch)",
     status: "approved",
@@ -878,7 +910,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "19:00",
         "endTime": "19:30",
         "roomId": "Rezeption",
-        "teacherId": "teacher-gen-satyam",
+        "teacherId": "teacher-gen-ulrich-nebel",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -1202,8 +1234,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "07:00",
         "endTime": "07:30",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-satyam",
-        "isAiPlanned": false,
+        "teacherId": "teacher-gen-mouniir-jaber",
+        "isAiPlanned": true,
         "status": "approved"
       },
       {
@@ -1469,13 +1501,13 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W36-7",
-        "name": "Yoga Flow Mittelstufe",
+        "name": "Mittelstufe Ankommensstunde",
         "style": "Hatha",
         "dayOfWeek": 5,
         "startTime": "16:30",
         "endTime": "18:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-satyam",
+        "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -1955,8 +1987,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "07:00",
         "endTime": "07:30",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-satyam",
-        "isAiPlanned": false,
+        "teacherId": "teacher-gen-mouniir-jaber",
+        "isAiPlanned": true,
         "status": "approved"
       },
       {
@@ -2384,7 +2416,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "19:00",
         "endTime": "19:30",
         "roomId": "Rezeption",
-        "teacherId": "teacher-gen-satyam",
+        "teacherId": "teacher-gen-ulrich-nebel",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -2708,8 +2740,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "07:00",
         "endTime": "07:30",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-satyam",
-        "isAiPlanned": false,
+        "teacherId": "teacher-gen-mouniir-jaber",
+        "isAiPlanned": true,
         "status": "approved"
       },
       {
@@ -3461,8 +3493,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "07:00",
         "endTime": "07:30",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-satyam",
-        "isAiPlanned": false,
+        "teacherId": "teacher-gen-mouniir-jaber",
+        "isAiPlanned": true,
         "status": "approved"
       },
       {
@@ -3890,7 +3922,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "19:00",
         "endTime": "19:30",
         "roomId": "Rezeption",
-        "teacherId": "teacher-gen-satyam",
+        "teacherId": "teacher-gen-ulrich-nebel",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -4214,8 +4246,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "07:00",
         "endTime": "07:30",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-satyam",
-        "isAiPlanned": false,
+        "teacherId": "teacher-gen-mouniir-jaber",
+        "isAiPlanned": true,
         "status": "approved"
       },
       {
@@ -4262,7 +4294,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-mouniir-jaber",
+        "teacherId": "teacher-gen-teresa-allgaeu",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -4967,8 +4999,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "07:00",
         "endTime": "07:30",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-satyam",
-        "isAiPlanned": false,
+        "teacherId": "teacher-gen-mouniir-jaber",
+        "isAiPlanned": true,
         "status": "approved"
       },
       {
@@ -5396,7 +5428,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "19:00",
         "endTime": "19:30",
         "roomId": "Rezeption",
-        "teacherId": "teacher-gen-satyam",
+        "teacherId": "teacher-gen-ulrich-nebel",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -5720,8 +5752,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "07:00",
         "endTime": "07:30",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-satyam",
-        "isAiPlanned": false,
+        "teacherId": "teacher-gen-mouniir-jaber",
+        "isAiPlanned": true,
         "status": "approved"
       },
       {
@@ -5981,7 +6013,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "16:30",
         "endTime": "18:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-satyam",
+        "teacherId": "teacher-gen-alexander-melior",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -6083,13 +6115,13 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W42-15",
-        "name": "Yoga Flow Mittelstufe",
+        "name": "Mittelstufe",
         "style": "Hatha",
         "dayOfWeek": 6,
         "startTime": "09:15",
         "endTime": "11:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-satyam",
+        "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -6437,7 +6469,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "16:15",
         "endTime": "18:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-satyam",
+        "teacherId": "teacher-gen-alexander-melior",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -6473,8 +6505,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "07:00",
         "endTime": "07:30",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-satyam",
-        "isAiPlanned": false,
+        "teacherId": "teacher-gen-mouniir-jaber",
+        "isAiPlanned": true,
         "status": "approved"
       },
       {
@@ -6707,7 +6739,7 @@ function setStored<T>(key: string, value: T): void {
   localStorage.setItem(key, JSON.stringify(value));
 }
 
-const CURRENT_DB_VERSION = 70;
+const CURRENT_DB_VERSION = 72;
 
 // Database Actions
 export const db = {
@@ -6868,7 +6900,25 @@ export const db = {
         t.rules.preferredDays = [];
         updated = true;
       }
-      const shouldLeadMeditation = ['pranava', 'harishakti', 'alexander', 'burnie', 'satyam', 'nirmaya', 'narayani', 'mounir', 'mouniir', 'hu', 'christopher'].some(n => nameLower.includes(n));
+      if (nameLower.includes('satyam')) {
+        if (t.isYogaTeacher !== false) {
+          t.isYogaTeacher = false;
+          updated = true;
+        }
+        if (t.rules.availability && t.rules.availability.length > 0) {
+          t.rules.availability = [];
+          updated = true;
+        }
+        if (t.rules.canLeadHausfuehrung) {
+          t.rules.canLeadHausfuehrung = false;
+          updated = true;
+        }
+        if (t.rules.canLeadOnn) {
+          t.rules.canLeadOnn = false;
+          updated = true;
+        }
+      }
+      const shouldLeadMeditation = ['pranava', 'harishakti', 'alexander', 'burnie', 'nirmaya', 'narayani', 'mounir', 'mouniir', 'hu', 'christopher'].some(n => nameLower.includes(n));
       const shouldLeadSatsang = correctRole === 'sevaka' && !['adam', 'hu', 'mounir', 'mouniir', 'teresa', 'satyam', 'ulrich', 'pranava'].some(n => nameLower.includes(n));
       if (t.rules.canLeadMeditation !== shouldLeadMeditation) {
         t.rules.canLeadMeditation = shouldLeadMeditation;
@@ -6877,6 +6927,45 @@ export const db = {
       if (t.rules.canLeadSatsang !== shouldLeadSatsang) {
         t.rules.canLeadSatsang = shouldLeadSatsang;
         updated = true;
+      }
+
+      if (nameLower.includes('tanja') || t.id.includes('tanja')) {
+        if (t.roleType !== 'karma_yogi') {
+          t.roleType = 'karma_yogi';
+          updated = true;
+        }
+        if (t.isYogaTeacher !== true) {
+          t.isYogaTeacher = true;
+          updated = true;
+        }
+        if (t.stayStartDate !== '2026-09-06') {
+          t.stayStartDate = '2026-09-06';
+          updated = true;
+        }
+        if (t.stayEndDate !== '2026-09-20') {
+          t.stayEndDate = '2026-09-20';
+          updated = true;
+        }
+        if (!t.stayNotes) {
+          t.stayNotes = 'Karma Yogini als Yogalehrerin (06.09. bis 20.09.2026).';
+          updated = true;
+        }
+        if (t.availabilityMode !== 'always') {
+          t.availabilityMode = 'always';
+          updated = true;
+        }
+        if (!t.rules.availability || t.rules.availability.length === 0 || t.rules.availability.some(s => s.start === '08:00')) {
+          t.rules.availability = [
+            { day: 1, start: '06:30', end: '22:00' },
+            { day: 2, start: '06:30', end: '22:00' },
+            { day: 3, start: '06:30', end: '22:00' },
+            { day: 4, start: '06:30', end: '22:00' },
+            { day: 5, start: '06:30', end: '22:00' },
+            { day: 6, start: '06:30', end: '22:00' },
+            { day: 0, start: '06:30', end: '22:00' }
+          ];
+          updated = true;
+        }
       }
     }
     if (updated) {

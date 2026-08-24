@@ -31,33 +31,34 @@
     "satyam": {
       "name": "Satyam",
       "freeDays": [
-        1
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
       ],
-      "maxMeditationPerWeek": null,
+      "maxMeditationPerWeek": 0,
       "maxSatsangsPerWeek": 0,
       "maxMorningSatsangsPerWeek": 0,
-      "maxYogaClassesPerWeek": null,
-      "maxOnnPerWeek": null,
-      "maxAnfaengerYogaPerWeek": null,
-      "isYogaTeacher": true,
+      "maxYogaClassesPerWeek": 0,
+      "maxOnnPerWeek": 0,
+      "maxAnfaengerYogaPerWeek": 0,
+      "isYogaTeacher": false,
       "canLeadSatsang": false,
       "canLeadPranayama": false,
       "canLeadSatsangEinfuehrung": false,
       "canLeadOnn": false,
-      "noYogaOnWeekend": false,
-      "noTwoYogaSameDay": false,
+      "noYogaOnWeekend": true,
+      "noTwoYogaSameDay": true,
       "weekendAfternoonOnly": false,
       "weekendAsBackupOnly": false,
-      "prefersMittelstufe": true,
-      "customCourseNames": [
-        {
-          "originalName": "Mittelstufe",
-          "customName": "Yoga Flow Mittelstufe"
-        }
-      ],
+      "prefersMittelstufe": false,
+      "customCourseNames": [],
       "availabilityRestrictions": [],
       "preferredAvailability": [],
-      "maxClassesPerDay": 2
+      "maxClassesPerDay": 0
     },
     "teresa": {
       "name": "Teresa",
@@ -470,6 +471,30 @@
       "availabilityRestrictions": [],
       "preferredAvailability": [],
       "maxClassesPerDay": 2
+    },
+    "tanja": {
+      "name": "Tanja Eichenmüller",
+      "freeDays": [],
+      "maxMeditationPerWeek": null,
+      "maxSatsangsPerWeek": 0,
+      "maxMorningSatsangsPerWeek": 0,
+      "maxYogaClassesPerWeek": null,
+      "maxOnnPerWeek": 0,
+      "maxAnfaengerYogaPerWeek": null,
+      "isYogaTeacher": true,
+      "canLeadSatsang": false,
+      "canLeadPranayama": false,
+      "canLeadSatsangEinfuehrung": false,
+      "canLeadOnn": false,
+      "noYogaOnWeekend": false,
+      "noTwoYogaSameDay": false,
+      "weekendAfternoonOnly": false,
+      "weekendAsBackupOnly": false,
+      "prefersMittelstufe": false,
+      "customCourseNames": [],
+      "availabilityRestrictions": [],
+      "preferredAvailability": [],
+      "maxClassesPerDay": 2
     }
   },
   "meditation": {
@@ -478,7 +503,6 @@
       "harishakti",
       "alexander",
       "burnie",
-      "satyam",
       "nirmaya",
       "narayani",
       "mounir",
@@ -491,13 +515,13 @@
       "abha",
       "ulrich",
       "adam",
-      "teresa"
+      "teresa",
+      "satyam"
     ],
     "dailyPrimary": {
       "0": "harishakti",
       "1": "hu",
       "2": "alexander",
-      "3": "satyam",
       "4": "christopher",
       "5": "pranava",
       "6": "nirmaya"
@@ -615,7 +639,6 @@
   "hausfuehrung": {
     "allowed": [
       "pranava",
-      "satyam",
       "ulrich",
       "burnie",
       "christopher",
@@ -628,8 +651,7 @@
     },
     "sunday": {
       "alternating": [
-        "ulrich",
-        "satyam"
+        "ulrich"
       ]
     }
   }
