@@ -4,8 +4,6 @@
   import { validateAssignment, type ConflictMessage, getLocalDateForDay } from '$lib/planningEngine';
   import { page } from '$app/state';
   import { goto } from '$app/navigation';
-  import YlaScheduleView from '$lib/components/YlaScheduleView.svelte';
-  import { getYlaConflictForTeacher } from '$lib/ylaData';
 
   let courses = $state<Course[]>([]);
   let teachers = $state<Teacher[]>([]);
@@ -13,19 +11,6 @@
   let weekPlans = $state<WeekPlan[]>([]);
   let currentPlan = $state<WeekPlan | null>(null);
   let currentWeekOffset = $state(0);
-
-  // Tab state: 'regular' | 'yla'
-  let tabParam = $derived(page.url.searchParams.get('tab'));
-  let ylaWeekParam = $derived(parseInt(page.url.searchParams.get('week') || '1', 10));
-  let activeTab = $state<'regular' | 'yla'>('regular');
-
-  $effect(() => {
-    if (tabParam === 'yla') {
-      activeTab = 'yla';
-    } else if (tabParam === 'regular') {
-      activeTab = 'regular';
-    }
-  });
 
   function getWeekCode(date: Date): string {
     const year = date.getFullYear();
@@ -395,17 +380,6 @@
     return validateAssignment(teacher, course, courses, currentPlan?.seminarLeaderIds || [], currentPlan?.targetWeekCode);
   }
 
-  function isTeacherYlaBusy(teacherName: string): boolean {
-    if (!formStartTime || !formEndTime) return false;
-    return getYlaConflictForTeacher(
-      teacherName,
-      Number(formDayOfWeek),
-      formStartTime,
-      formEndTime,
-      currentPlan?.targetWeekCode
-    ) !== null;
-  }
-
   // Reactively validate the form selection
   $effect(() => {
     if (!formTeacherId) {
@@ -601,53 +575,6 @@
   </div>
 </div>
 
-<!-- Sub-tab switcher: Regulärer Wochenplan vs. 4-wöchige YLA -->
-<div class="schedule-tabs-bar">
-  <button 
-    type="button" 
-    class="schedule-tab-btn" 
-    class:active={activeTab === 'regular'}
-    onclick={() => {
-      activeTab = 'regular';
-      const params = new URLSearchParams(page.url.searchParams);
-      params.delete('tab');
-      params.delete('week');
-      goto(`?${params.toString()}`);
-    }}
-  >
-    <span class="tab-icon">📅</span>
-    <span class="tab-label">Regulärer Wochenplan</span>
-  </button>
-
-  <button 
-    type="button" 
-    class="schedule-tab-btn" 
-    class:active={activeTab === 'yla'}
-    onclick={() => {
-      activeTab = 'yla';
-      const params = new URLSearchParams(page.url.searchParams);
-      params.set('tab', 'yla');
-      goto(`?${params.toString()}`);
-    }}
-  >
-    <span class="tab-icon">🧘</span>
-    <span class="tab-label">4-wöchige YLA (Unterrichtsplan)</span>
-    <span class="tab-badge">4 Wochen</span>
-  </button>
-</div>
-
-{#if activeTab === 'yla'}
-  <YlaScheduleView 
-    initialWeek={ylaWeekParam || 1} 
-    readOnly={false}
-    onWeekChange={(w) => {
-      const params = new URLSearchParams(page.url.searchParams);
-      params.set('tab', 'yla');
-      params.set('week', w.toString());
-      goto(`?${params.toString()}`, { replaceState: true });
-    }}
-  />
-{:else}
 <!-- Filters Toolbar on top of Calendar -->
 <div class="filters-bar glass-card">
   <div class="filter-group">
@@ -958,14 +885,14 @@
             <option value={null}>-- Unbesetzt (Später per KI einteilen) --</option>
             <optgroup label="Sevakas (Kernteam)">
               {#each teachers.filter(t => t.roleType === 'sevaka') as t}
-                <option value={t.id}>🧘 {t.name}{isTeacherYlaBusy(t.name) ? ' ⚠️ (YLA belegt)' : ''}</option>
+                <option value={t.id}>🧘 {t.name}</option>
               {/each}
             </optgroup>
             {#if getActiveKarmaInHouseForCourse().length > 0}
               <optgroup label="✨ Karma-Yogis & externe Seminarleiter (Aktuell im Haus)">
                 {#each getActiveKarmaInHouseForCourse() as t}
                   <option value={t.id}>
-                    ✨ {t.name} ({t.roleType === 'guest_teacher' ? 'Gast-SL' : 'Karma-Yogi'} | {formatStayLabel(t)}{t.isYogaTeacher ? ' | Yoga ✓' : ''}{t.rules.canLeadMeditation ? ' | Medi ✓' : ''}){isTeacherYlaBusy(t.name) ? ' ⚠️ (YLA belegt)' : ''}
+                    ✨ {t.name} ({t.roleType === 'guest_teacher' ? 'Gast-SL' : 'Karma-Yogi'} | {formatStayLabel(t)}{t.isYogaTeacher ? ' | Yoga ✓' : ''}{t.rules.canLeadMeditation ? ' | Medi ✓' : ''})
                   </option>
                 {/each}
               </optgroup>
@@ -974,14 +901,14 @@
               <optgroup label="⏳ Weitere Karma-Yogis & externe Seminarleiter (Anderes Zeitfenster)">
                 {#each getOtherKarmaGuestsForCourse() as t}
                   <option value={t.id}>
-                    ⏳ {t.name} ({t.roleType === 'guest_teacher' ? 'Gast-SL' : 'Karma-Yogi'} | {formatStayLabel(t)}){isTeacherYlaBusy(t.name) ? ' ⚠️ (YLA belegt)' : ''}
+                    ⏳ {t.name} ({t.roleType === 'guest_teacher' ? 'Gast-SL' : 'Karma-Yogi'} | {formatStayLabel(t)})
                   </option>
                 {/each}
               </optgroup>
             {/if}
             <optgroup label="Externe Yogalehrer / Seminarleiter">
               {#each teachers.filter(t => t.roleType !== 'sevaka' && t.roleType !== 'karma_yogi' && t.roleType !== 'guest_teacher' && !t.stayStartDate && !t.stayEndDate) as t}
-                <option value={t.id}>👤 {t.name}{isTeacherYlaBusy(t.name) ? ' ⚠️ (YLA belegt)' : ''}</option>
+                <option value={t.id}>👤 {t.name}</option>
               {/each}
             </optgroup>
           </select>
@@ -1020,92 +947,8 @@
       </div>
     </div>
   </div>
-{/if}
 
 <style>
-  /* Schedule Sub-Tabs Switcher */
-  .schedule-tabs-bar {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    margin-bottom: 2rem;
-    background: var(--bg-card, #ffffff);
-    padding: 0.5rem;
-    border-radius: 14px;
-    border: 1px solid var(--border-color, #ffe082);
-    box-shadow: 0 2px 10px rgba(150, 0, 64, 0.04);
-    flex-wrap: wrap;
-  }
-
-  .schedule-tab-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.65rem 1.25rem;
-    border-radius: 10px;
-    border: 1px solid transparent;
-    background: transparent;
-    font-size: 0.95rem;
-    font-weight: 600;
-    color: var(--text-secondary, #6b5151);
-    cursor: pointer;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  .schedule-tab-btn:hover {
-    background: #fff9e6;
-    color: #960040;
-  }
-
-  .schedule-tab-btn.active {
-    background: #960040;
-    color: #ffffff;
-    box-shadow: 0 4px 12px rgba(150, 0, 64, 0.25);
-  }
-
-  .tab-icon {
-    font-size: 1.1rem;
-  }
-
-  .tab-label {
-    font-weight: 700;
-  }
-
-  .tab-badge {
-    font-size: 0.72rem;
-    font-weight: 700;
-    padding: 0.15rem 0.5rem;
-    border-radius: 12px;
-    background: rgba(255, 255, 255, 0.25);
-    color: #ffffff;
-  }
-
-  .schedule-tab-btn:not(.active) .tab-badge {
-    background: #fff5cc;
-    color: #960040;
-  }
-
-  @media (max-width: 640px) {
-    .schedule-tabs-bar {
-      gap: 0.4rem;
-      padding: 0.35rem;
-      margin-bottom: 1.25rem;
-    }
-
-    .schedule-tab-btn {
-      flex: 1 1 calc(50% - 0.4rem);
-      padding: 0.5rem 0.65rem;
-      font-size: 0.82rem;
-      justify-content: center;
-      text-align: center;
-      gap: 0.35rem;
-    }
-
-    .tab-icon {
-      font-size: 0.95rem;
-    }
-  }
-
   .page-header {
     display: flex;
     justify-content: space-between;

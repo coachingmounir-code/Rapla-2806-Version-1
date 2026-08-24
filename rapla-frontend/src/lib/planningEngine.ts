@@ -1,6 +1,5 @@
 import { db, type Teacher, type Course, type Room, type TimeSlot } from './db';
 import wochenplanRules from './data/wochenplan_rules.json' with { type: 'json' };
-import { getYlaConflictForTeacher } from './ylaData';
 
 export interface ConflictMessage {
   type: 'hard' | 'soft'; // hard = invalid assignment, soft = warning/preference
@@ -162,21 +161,6 @@ export function validateAssignment(
         message: `${teacher.name} ist am ${courseDate} nicht mehr im Haus (Aufenthaltszeitraum endete am ${teacher.stayEndDate}).`
       });
     }
-  }
-
-  // 0c. Check 4-wöchige YLA assignment conflicts (Hard)
-  const ylaConflict = getYlaConflictForTeacher(
-    teacher.name,
-    course.dayOfWeek,
-    course.startTime,
-    course.endTime,
-    targetWeekCode
-  );
-  if (ylaConflict) {
-    conflicts.push({
-      type: 'hard',
-      message: `🚨 ${teacher.name} leitet zeitgleich eine YLA-Einheit (${ylaConflict.slotLabel}: "${ylaConflict.shortTitle}", ${ylaConflict.timeRange}) in Woche ${ylaConflict.weekNumber} der 4-wöchigen Ausbildung.`
-    });
   }
 
   // --- SEVAKA RULES FROM JSON ---
