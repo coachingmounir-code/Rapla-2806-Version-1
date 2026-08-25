@@ -327,8 +327,14 @@
           if (activeAbsence) {
             const isSatsang = c.name.toLowerCase().includes('satsang');
             const isBypassedType = ['seminartage'].includes(activeAbsence.type.toLowerCase());
+            const isWalk = c.name.toLowerCase().includes('spaziergang');
+            const isPranava = teacher.name.toLowerCase().includes('pranava');
+            const isRegularFreeDay = activeAbsence.type?.toLowerCase() === 'frei' || (activeAbsence.note && activeAbsence.note.toLowerCase().includes('regulärer freier wochentag'));
+
             if (isSatsang && isBypassedType) {
               // Bypassed for Satsangs
+            } else if (isWalk && isPranava && isRegularFreeDay) {
+              // Pranava standardmäßig für meditativen Spaziergang eingeteilt
             } else {
               isAbsent = true;
               break;

@@ -257,6 +257,7 @@ const SEVAKA_NAMES = [
   "Alexander",
   "Anjali",
   "Burnie",
+  "Christopher",
   "Harishakti",
   "Hu",
   "Karuna",
@@ -349,6 +350,7 @@ function getTeacherRules(name: string, isSevaka: boolean): Partial<TeacherRules>
     canLeadSatsang: isSevaka && !wochenplanRules.satsang.forbidden.some((a: string) => nameLower.includes(a)),
     canLeadPranayama: tRules.canLeadPranayama || false,
     canLeadSatsangEinfuehrung: tRules.canLeadSatsangEinfuehrung || false,
+    canLeadHausfuehrung: (wochenplanRules.hausfuehrung?.allowed || []).some((a: string) => nameLower.includes(a)),
     canLeadOnn: tRules.canLeadOnn !== undefined ? tRules.canLeadOnn : true,
     customCourseNames: tRules.customCourseNames || []
   };
@@ -6777,7 +6779,7 @@ function setStored<T>(key: string, value: T): void {
   }
 }
 
-const CURRENT_DB_VERSION = 83;
+const CURRENT_DB_VERSION = 85;
 
 // Database Actions
 export const db = {
@@ -7082,6 +7084,9 @@ export const db = {
       if (idx === -1) {
         list.push(defPlan);
         updated = true;
+      } else if (isOutdated && !list[idx].isManualOnly && !list[idx].hasManualEdits) {
+        list[idx] = defPlan;
+        updated = true;
       }
     }
     for (const p of list) {
@@ -7170,6 +7175,28 @@ export const db = {
         if (p.courses.length !== preLen) {
           updated = true;
         }
+      }
+
+      // Migration: Ensure Tuesday 19:30 Meditativer Spaziergang is present in every week plan
+      const hasWalk = p.courses.some(c => c.dayOfWeek === 2 && (c.name.toLowerCase().includes('spaziergang') || (c.startTime === '19:30' && c.roomId === 'room-7')));
+      if (!hasWalk) {
+        p.courses.push({
+          id: `course-${p.targetWeekCode || p.id}-walk-tue`,
+          name: 'Meditativer Spaziergang',
+          style: 'Entspannung',
+          dayOfWeek: 2,
+          startTime: '19:30',
+          endTime: '20:30',
+          roomId: 'room-7',
+          teacherId: 'teacher-gen-pranava-pauly',
+          isAiPlanned: false,
+          status: p.status === 'approved' ? 'approved' : 'draft'
+        });
+        p.courses.sort((a, b) => {
+          if (a.dayOfWeek !== b.dayOfWeek) return a.dayOfWeek - b.dayOfWeek;
+          return a.startTime.localeCompare(b.startTime);
+        });
+        updated = true;
       }
     }
     if (updated) {
