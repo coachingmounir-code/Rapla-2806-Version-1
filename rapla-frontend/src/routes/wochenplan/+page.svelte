@@ -100,6 +100,35 @@
     };
   });
 
+  let isSyncing = $state(false);
+  let syncFeedback = $state<string | null>(null);
+
+  async function handleHeaderSync() {
+    if (isSyncing) return;
+    isSyncing = true;
+    try {
+      await db.syncWithServerAndCloud();
+      loadData();
+      syncFeedback = '✅ Daten erfolgreich synchronisiert!';
+      setTimeout(() => { syncFeedback = null; }, 3500);
+    } catch (e: any) {
+      syncFeedback = '❌ Fehler: ' + (e?.message || '');
+      setTimeout(() => { syncFeedback = null; }, 4000);
+    } finally {
+      isSyncing = false;
+    }
+  }
+
+  function handleResetCurrentPlan() {
+    if (!currentPlan) return;
+    if (confirm(`Möchtest du den Plan für "${currentPlan.name}" wirklich auf die Standard-Vorlage zurücksetzen? Alle manuellen Zuweisungen für diese Woche werden dabei verworfen.`)) {
+      db.resetSchedule(currentPlan.id);
+      loadData();
+      syncFeedback = 'ℹ️ Plan wurde auf die Standard-Vorlage zurückgesetzt.';
+      setTimeout(() => { syncFeedback = null; }, 3500);
+    }
+  }
+
   function getWeekCode(date: Date): string {
     const year = date.getFullYear();
     const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
@@ -403,11 +432,11 @@
       <button 
         type="button" 
         class="btn sync-header-btn" 
-        onclick={() => { 
-          db.syncDatabase();
-        }}
+        onclick={handleHeaderSync}
+        disabled={isSyncing}
+        title="Lade neueste Urlaube & Wünsche neu vom Server"
       >
-        🔄 Synchronisieren
+        <span class:icon-spin={isSyncing}>🔄</span> {isSyncing ? 'Synchronisiere...' : 'Synchronisieren'}
       </button>
 
       <button 
@@ -430,6 +459,13 @@
         </div>
     </div>
   </header>
+
+  {#if syncFeedback}
+    <div style="margin-bottom: 1.5rem; padding: 0.75rem 1.25rem; background: #ecfdf5; border: 1px solid #6ee7b7; color: #065f46; border-radius: 8px; font-weight: 500; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+      <span>{syncFeedback}</span>
+      <button type="button" onclick={() => { syncFeedback = null; }} style="background: none; border: none; font-size: 1.1rem; cursor: pointer; color: #065f46;">✕</button>
+    </div>
+  {/if}
 
   <!-- Calendar Roster Grid (Desktop Only) -->
   <div class="desktop-only-grid">
@@ -623,8 +659,10 @@
   
   <footer class="view-footer-info" style="margin-top: 2rem; text-align: center; font-size: 0.8rem; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 1rem; clear: both;">
     <span>Yoga Vidya Nordsee © 2026</span>
-    <span style="margin: 0 10px;">•</span>
-    <button type="button" onclick={() => { db.syncDatabase(); }} style="background: none; border: none; color: #3b82f6; cursor: pointer; text-decoration: underline; font-size: 0.8rem; padding: 0; font-family: inherit;">Planungsdaten zurücksetzen (Synchronisieren)</button>
+    {#if currentPlan}
+      <span style="margin: 0 10px;">•</span>
+      <button type="button" onclick={handleResetCurrentPlan} style="background: none; border: none; color: #3b82f6; cursor: pointer; text-decoration: underline; font-size: 0.8rem; padding: 0; font-family: inherit;">Aktuellen Plan auf Blanko-Vorlage zurücksetzen</button>
+    {/if}
   </footer>
 </div>
 

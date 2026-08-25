@@ -131,6 +131,7 @@ export interface Course {
   teacherId: string | null; // assigned teacher
   isAiPlanned: boolean;
   status: 'draft' | 'approved';
+  isManuallyEdited?: boolean;
 }
 
 export interface WeekPlan {
@@ -143,6 +144,8 @@ export interface WeekPlan {
   createdAt: string;
   isManualOnly?: boolean;
   isApproved?: boolean;
+  hasManualEdits?: boolean;
+  lastEditedAt?: string;
 }
 
 // Default Data
@@ -6753,17 +6756,6 @@ export const db = {
       if (existingIdx === -1) {
         list.push(defT);
         updated = true;
-      } else if (isOutdated) {
-        list[existingIdx].name = defT.name;
-        list[existingIdx].rules = defT.rules;
-        list[existingIdx].specialties = defT.specialties;
-        list[existingIdx].roleType = defT.roleType;
-        list[existingIdx].availabilityMode = defT.availabilityMode;
-        list[existingIdx].isYogaTeacher = defT.isYogaTeacher;
-        list[existingIdx].stayStartDate = defT.stayStartDate;
-        list[existingIdx].stayEndDate = defT.stayEndDate;
-        list[existingIdx].stayNotes = defT.stayNotes;
-        updated = true;
       }
     }
     // Ensure all entries have the isYogaTeacher property (defaults to true)
@@ -7000,12 +6992,6 @@ export const db = {
       if (idx === -1) {
         list.push(defPlan);
         updated = true;
-      } else if (isOutdated) {
-        // Always force update all default plans on DB version mismatch to prevent stale state
-        if (!list[idx].isManualOnly) {
-          list[idx] = defPlan;
-          updated = true;
-        }
       }
     }
     for (const p of list) {
@@ -7022,17 +7008,6 @@ export const db = {
       }
       if (p.seminarLeaderIds === undefined) {
         p.seminarLeaderIds = [];
-        updated = true;
-      }
-      // Migration: Rebuild auto-generated plans to match the new blank week template if DB version is outdated
-      if (isOutdated && p.id.startsWith('plan-auto-')) {
-        p.courses = DEFAULT_COURSES.map(c => ({
-          ...c,
-          id: 'course-' + Math.random().toString(36).substr(2, 9),
-          teacherId: c.teacherId,
-          isAiPlanned: false,
-          status: 'draft'
-        }));
         updated = true;
       }
       // Migration: Remove Ankommensmed. from any day other than Friday (5) and Sunday (0)
@@ -7062,20 +7037,20 @@ export const db = {
 
           if (isDateInYlaRange(courseDate)) {
             // Om Namo Narayanaya takes place in Devi room (room-1) during YLA
-            if ((nameLower.includes('om namo') || nameLower.includes('narayanaya')) && c.roomId !== 'room-1') {
+            if ((nameLower.includes('om namo') || nameLower.includes('narayanaya')) && c.roomId !== 'room-1' && !c.isManuallyEdited && !p.isManualOnly) {
               c.roomId = 'room-1';
               updated = true;
             }
 
-            // Abha does not teach regular courses during the 4-week YLA
-            if (c.teacherId === 'teacher-gen-abha-morkoetter' || c.teacherId === 'abha') {
+            // Abha does not teach regular courses during the 4-week YLA (unless manually assigned by admin)
+            if (!c.isManuallyEdited && !p.isManualOnly && (c.teacherId === 'teacher-gen-abha-morkoetter' || c.teacherId === 'abha')) {
               c.teacherId = null;
               c.isAiPlanned = false;
               updated = true;
             }
 
-            // Morning 7:00 Satsang during 1st week of YLA matches the YLA morning teacher
-            if (nameLower === 'satsang' && c.startTime === '07:00') {
+            // Morning 7:00 Satsang during 1st week of YLA matches the YLA morning teacher if not manually overridden
+            if (!c.isManuallyEdited && !p.isManualOnly && nameLower === 'satsang' && c.startTime === '07:00') {
               const ylaMorningMap: Record<string, string> = {
                 '2026-08-31': 'teacher-gen-anjali-gelzleichter',
                 '2026-09-01': 'teacher-gen-karuna-wapke',
@@ -7192,7 +7167,12 @@ export const db = {
     const id = planId || plans.find(p => p.status === 'approved')?.id || plans[0]?.id || '';
     const plan = db.getWeekPlan(id);
     if (plan) {
+      course.isManuallyEdited = true;
+      course.isAiPlanned = false;
       plan.courses.push(course);
+      plan.isManualOnly = true;
+      plan.hasManualEdits = true;
+      plan.lastEditedAt = new Date().toISOString();
       db.updateWeekPlan(plan);
     }
   },
@@ -7203,7 +7183,12 @@ export const db = {
     if (plan) {
       const index = plan.courses.findIndex(c => c.id === course.id);
       if (index !== -1) {
+        course.isManuallyEdited = true;
+        course.isAiPlanned = false;
         plan.courses[index] = course;
+        plan.isManualOnly = true;
+        plan.hasManualEdits = true;
+        plan.lastEditedAt = new Date().toISOString();
         db.updateWeekPlan(plan);
       }
     }
@@ -7214,6 +7199,9 @@ export const db = {
     const plan = db.getWeekPlan(pId);
     if (plan) {
       plan.courses = plan.courses.filter(c => c.id !== id);
+      plan.isManualOnly = true;
+      plan.hasManualEdits = true;
+      plan.lastEditedAt = new Date().toISOString();
       db.updateWeekPlan(plan);
     }
   },
@@ -7224,17 +7212,89 @@ export const db = {
     const pId = planId || plans.find(p => p.status === 'approved')?.id || plans[0]?.id || '';
     const plan = db.getWeekPlan(pId);
     if (plan) {
-      plan.courses = plan.courses.map(c => ({ ...c, teacherId: null, isAiPlanned: false, status: 'draft' }));
+      plan.courses = plan.courses.map(c => ({ ...c, teacherId: null, isAiPlanned: false, isManuallyEdited: false, status: 'draft' }));
+      plan.isManualOnly = false;
+      plan.hasManualEdits = false;
+      plan.lastEditedAt = new Date().toISOString();
       db.updateWeekPlan(plan);
     }
   },
 
+  syncWithServerAndCloud: async (): Promise<{ success: boolean; message: string }> => {
+    if (typeof window === 'undefined') return { success: false, message: 'Nicht im Browser' };
+    try {
+      // 1. Sync wishes from server JSON to localStorage & teachers
+      try {
+        const wishesRes = await fetch('/api/sevakas-wishes');
+        if (wishesRes.ok) {
+          const wishes = await wishesRes.json();
+          if (wishes && wishes.length > 0) {
+            const teachers = db.getTeachers();
+            let updated = false;
+            for (const wish of wishes) {
+              const idx = teachers.findIndex((t: any) => t.id === wish.id || t.name === wish.name);
+              if (idx !== -1) {
+                teachers[idx].rules = { ...teachers[idx].rules, ...wish.rules };
+                if (wish.availabilityMode) teachers[idx].availabilityMode = wish.availabilityMode;
+                if (wish.specialties) teachers[idx].specialties = wish.specialties;
+                teachers[idx].customWishes = wish.customWishes;
+                updated = true;
+              }
+            }
+            if (updated) {
+              db.saveTeachers(teachers);
+            }
+          }
+        }
+      } catch (e) {
+        console.error('Failed to sync wishes in db.syncWithServerAndCloud:', e);
+      }
+
+      // 2. Sync absences from server JSON to localStorage & sevafrei
+      try {
+        const absencesRes = await fetch('/api/sevafrei');
+        if (absencesRes.ok) {
+          const serverAbsences = await absencesRes.json();
+          if (serverAbsences && serverAbsences.length > 0) {
+            const localAbsences = db.getSevafrei();
+            let updated = false;
+            for (const sAbs of serverAbsences) {
+              const idx = localAbsences.findIndex((a: any) => a.id === sAbs.id);
+              if (idx !== -1) {
+                localAbsences[idx] = sAbs;
+                updated = true;
+              } else {
+                localAbsences.push(sAbs);
+                updated = true;
+              }
+            }
+            if (updated) {
+              db.saveSevafrei(localAbsences);
+            }
+          }
+        }
+      } catch (e) {
+        console.error('Failed to sync absences in db.syncWithServerAndCloud:', e);
+      }
+
+      // 3. Sync Supabase cloud state
+      await db.initializeCloudSync();
+
+      // 4. Dispatch event so all components update immediately
+      window.dispatchEvent(new CustomEvent('rapla-data-synced'));
+      return { success: true, message: 'Daten erfolgreich synchronisiert' };
+    } catch (err: any) {
+      console.error('Sync error:', err);
+      return { success: false, message: err?.message || 'Fehler bei der Synchronisation' };
+    }
+  },
+
   syncDatabase: (): void => {
+    // Safe sync without deleting user edits
     if (typeof window !== 'undefined') {
-      localStorage.removeItem('rapla_teachers');
-      // Do not clear rapla_week_plans entirely to preserve isManualOnly flags
-      localStorage.removeItem('rapla_db_version');
-      window.location.reload();
+      db.syncWithServerAndCloud().then(() => {
+        window.dispatchEvent(new CustomEvent('rapla-data-synced'));
+      });
     }
   },
 

@@ -510,12 +510,18 @@
       endTime: formEndTime,
       roomId: formRoomId,
       teacherId: formTeacherId,
-      isAiPlanned: editingCourse ? editingCourse.isAiPlanned && editingCourse.teacherId === formTeacherId : false,
+      isAiPlanned: false,
+      isManuallyEdited: true,
       status: editingCourse?.status || 'draft'
     };
 
-    if (currentPlan && !db.getWeekPlan(currentPlan.id)) {
-      db.addWeekPlan(currentPlan);
+    if (currentPlan) {
+      currentPlan.isManualOnly = true;
+      currentPlan.hasManualEdits = true;
+      currentPlan.lastEditedAt = new Date().toISOString();
+      if (!db.getWeekPlan(currentPlan.id)) {
+        db.addWeekPlan(currentPlan);
+      }
     }
 
     if (editingCourse) {
@@ -530,6 +536,11 @@
 
   function handleDelete(id: string) {
     if (confirm('Möchten Sie diesen Kurs wirklich löschen?')) {
+      if (currentPlan) {
+        currentPlan.isManualOnly = true;
+        currentPlan.hasManualEdits = true;
+        currentPlan.lastEditedAt = new Date().toISOString();
+      }
       db.deleteCourse(id, currentPlan?.id);
       isModalOpen = false;
       loadData();
@@ -601,9 +612,22 @@
     loadData();
   }
 
-  function handleSync() {
-    if (confirm('Möchtest du den Wochenplan mit dem Server synchronisieren? Eigene ungespeicherte Änderungen am Plan werden zurückgesetzt.')) {
-      db.syncDatabase();
+  let isSyncing = $state(false);
+  let syncFeedback = $state<string | null>(null);
+
+  async function handleSync() {
+    if (isSyncing) return;
+    isSyncing = true;
+    try {
+      await db.syncWithServerAndCloud();
+      loadData();
+      syncFeedback = '✅ Daten erfolgreich synchronisiert! Alle manuellen Änderungen bleiben erhalten.';
+      setTimeout(() => { syncFeedback = null; }, 3500);
+    } catch (e: any) {
+      syncFeedback = '❌ Fehler beim Synchronisieren: ' + (e?.message || '');
+      setTimeout(() => { syncFeedback = null; }, 4000);
+    } finally {
+      isSyncing = false;
     }
   }
 </script>
@@ -646,14 +670,21 @@
     <a href="/yla" class="btn btn-secondary" title="Zur Yogalehrer-Ausbildungsplanung (YLA)">
       <span>🧘‍♂️</span> 4-Wochen YLA
     </a>
-    <button class="btn btn-secondary" onclick={handleSync} title="Lädt den neuesten Stand aus dem System">
-      <span>🔄</span> Synchronisieren
+    <button class="btn btn-secondary" onclick={handleSync} disabled={isSyncing} title="Lädt den neuesten Stand aus dem System">
+      <span class:icon-spin={isSyncing}>🔄</span> {isSyncing ? 'Synchronisiere...' : 'Synchronisieren'}
     </button>
     <button class="btn btn-primary" onclick={openAddModal}>
       <span>➕</span> Kurs hinzufügen
     </button>
   </div>
 </div>
+
+{#if syncFeedback}
+  <div class="sync-toast-alert" style="margin-bottom: 1rem; padding: 0.75rem 1.25rem; background: #ecfdf5; border: 1px solid #6ee7b7; color: #065f46; border-radius: 8px; font-weight: 500; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 4px rgba(0,0,0,0.05); animation: fadeIn 0.3s ease;">
+    <span>{syncFeedback}</span>
+    <button type="button" onclick={() => { syncFeedback = null; }} style="background: none; border: none; font-size: 1.1rem; cursor: pointer; color: #065f46;">✕</button>
+  </div>
+{/if}
 
 <!-- Filters Toolbar on top of Calendar -->
 <div class="filters-bar glass-card">

@@ -68,65 +68,17 @@
 	async function syncData() {
 		if (isSyncing) return;
 		isSyncing = true;
-		// Sync wishes from server JSON to localStorage & cloud
 		try {
-			const wishesRes = await fetch('/api/sevakas-wishes');
-			if (wishesRes.ok) {
-				const wishes = await wishesRes.json();
-				if (wishes && wishes.length > 0) {
-					const teachers = db.getTeachers();
-					let updated = false;
-					for (const wish of wishes) {
-						const idx = teachers.findIndex((t: any) => t.id === wish.id || t.name === wish.name);
-						if (idx !== -1) {
-							teachers[idx].rules = { ...teachers[idx].rules, ...wish.rules };
-							if (wish.availabilityMode) teachers[idx].availabilityMode = wish.availabilityMode;
-							if (wish.specialties) teachers[idx].specialties = wish.specialties;
-							teachers[idx].customWishes = wish.customWishes; // sync custom wishes field
-							updated = true;
-						}
-					}
-					if (updated) {
-						db.saveTeachers(teachers);
-					}
-				}
-			}
+			await db.syncWithServerAndCloud();
 		} catch (e) {
-			console.error('Failed to sync wishes:', e);
+			console.error('Failed to sync data:', e);
+		} finally {
+			// Small delay to make the sync animation visible
+			setTimeout(() => {
+				isSyncing = false;
+				window.dispatchEvent(new CustomEvent('rapla-data-synced'));
+			}, 600);
 		}
-
-		// Sync absences from server JSON to localStorage & cloud
-		try {
-			const absencesRes = await fetch('/api/sevafrei');
-			if (absencesRes.ok) {
-				const serverAbsences = await absencesRes.json();
-				if (serverAbsences && serverAbsences.length > 0) {
-					const localAbsences = db.getSevafrei();
-					let updated = false;
-					for (const sAbs of serverAbsences) {
-						const idx = localAbsences.findIndex((a: any) => a.id === sAbs.id);
-						if (idx !== -1) {
-							localAbsences[idx] = sAbs;
-							updated = true;
-						} else {
-							localAbsences.push(sAbs);
-							updated = true;
-						}
-					}
-					if (updated) {
-						db.saveSevafrei(localAbsences);
-					}
-				}
-			}
-		} catch (e) {
-			console.error('Failed to sync absences:', e);
-		}
-		
-		// Small delay to make the sync animation visible
-		setTimeout(() => {
-			isSyncing = false;
-			window.dispatchEvent(new CustomEvent('rapla-data-synced'));
-		}, 600);
 	}
 
 	onMount(() => {
