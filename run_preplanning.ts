@@ -355,7 +355,7 @@ const standardCoursesDefs = [
   { name: 'Anfänger Yin Yoga', style: 'Hatha', dayOfWeek: 2, startTime: '16:15', endTime: '18:00', roomId: 'room-2', teacherName: 'Abha' },
   { name: 'Mittelstufe', style: 'Hatha', dayOfWeek: 2, startTime: '16:15', endTime: '18:00', roomId: 'room-5', teacherName: 'Narayani' },
   { name: 'Om Namo Narayanaya', style: 'Meditation', dayOfWeek: 2, startTime: '19:30', endTime: '20:00', roomId: 'room-2', teacherName: 'Christopher' },
-  { name: 'Meditativer Spaziergang', style: 'Entspannung', dayOfWeek: 2, startTime: '19:30', endTime: '20:30', roomId: 'room-7', teacherName: 'Pranava' },
+  { name: 'Meditativer Spaziergang', style: 'Entspannung', dayOfWeek: 2, startTime: '09:30', endTime: '10:30', roomId: 'room-7', teacherName: 'Pranava' },
 
   // Wednesday (dayOfWeek: 3)
   { name: 'Geführte Meditation', style: 'Meditation', dayOfWeek: 3, startTime: '07:00', endTime: '07:30', roomId: 'room-5', teacherName: '' },
