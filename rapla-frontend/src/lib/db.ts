@@ -1646,8 +1646,9 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "07:00",
         "endTime": "08:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-abha-morkoetter",
+        "teacherId": "teacher-gen-harishakti",
         "isAiPlanned": false,
+        "isManuallyEdited": true,
         "status": "approved"
       },
       {
@@ -1670,8 +1671,9 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "09:15",
         "endTime": "11:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-abha-morkoetter",
+        "teacherId": "teacher-gen-yl",
         "isAiPlanned": false,
+        "isManuallyEdited": true,
         "status": "approved"
       },
       {
@@ -7087,15 +7089,22 @@ export const db = {
       if (idx === -1) {
         list.push(defPlan);
         updated = true;
-      } else if (defPlan.targetWeekCode === '2026-W36') {
-        // Always ensure approved 2026-W36 plan matches the correct schedule
-        if (isOutdated || list[idx].courses.some(c => c.name === 'Anfänger Ankommensstunde' && c.dayOfWeek === 5 && c.teacherId !== 'teacher-karma-marlene')) {
-          list[idx] = { ...defPlan, isApproved: true, status: 'approved', isManualOnly: true, hasManualEdits: true };
-          updated = true;
-        }
       } else if (isOutdated && !list[idx].isManualOnly && !list[idx].hasManualEdits) {
         list[idx] = defPlan;
         updated = true;
+      } else if (isOutdated && defPlan.targetWeekCode === '2026-W36') {
+        for (const c of list[idx].courses) {
+          if (c.dayOfWeek === 6 && c.startTime === '07:00' && c.name.toLowerCase().includes('satsang') && (c.teacherId === 'teacher-gen-abha-morkoetter' || c.teacherId === 'abha')) {
+            c.teacherId = 'teacher-gen-harishakti';
+            c.isManuallyEdited = true;
+            updated = true;
+          }
+          if (c.dayOfWeek === 6 && c.startTime === '09:15' && c.name.toLowerCase().includes('mittelstufe') && (c.teacherId === 'teacher-gen-abha-morkoetter' || c.teacherId === 'abha')) {
+            c.teacherId = 'teacher-gen-yl';
+            c.isManuallyEdited = true;
+            updated = true;
+          }
+        }
       }
     }
     for (const p of list) {
