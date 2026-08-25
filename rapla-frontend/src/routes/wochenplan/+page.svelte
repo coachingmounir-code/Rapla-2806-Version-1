@@ -212,7 +212,9 @@
       nameLower.includes('klangreise') || 
       nameLower.includes('yogageschichten am kamin') || 
       nameLower.includes('peziebälle') || 
-      nameLower.includes('fantasiereise');
+      nameLower.includes('fantasiereise') ||
+      nameLower.includes('spaziergang') ||
+      styleLower.includes('entspannung');
       
     if (isEntspannung) {
       return {
@@ -476,11 +478,6 @@
           <button type="button" class="btn btn-secondary btn-small" onclick={() => navigateWeek(-1)}>◀ Letzte Woche</button>
           <span class="week-title-badge">
             KW {currentPlan?.targetWeekCode ? parseInt(currentPlan.targetWeekCode.split('-W')[1], 10) : getWeekNumber(getMondayOfCurrentWeek())} ({currentPlan?.targetWeekCode || getWeekCode(getMondayOfCurrentWeek())})
-            {#if isWeekApproved}
-              <span class="badge-approved-tag">✅ Genehmigt</span>
-            {:else}
-              <span class="badge-draft-tag">🔒 Nicht freigegeben</span>
-            {/if}
           </span>
           <button type="button" class="btn btn-secondary btn-small" onclick={() => navigateWeek(1)}>Nächste Woche ▶</button>
         </div>
@@ -575,11 +572,6 @@
       <button type="button" class="btn btn-secondary btn-small" onclick={() => navigateWeek(-1)}>◀</button>
       <span class="week-title-badge-mobile">
         KW {currentPlan?.targetWeekCode ? parseInt(currentPlan.targetWeekCode.split('-W')[1], 10) : getWeekNumber(getMondayOfCurrentWeek())} ({currentPlan?.targetWeekCode || getWeekCode(getMondayOfCurrentWeek())})
-        {#if isWeekApproved}
-          <span class="badge-approved-tag">✅</span>
-        {:else}
-          <span class="badge-draft-tag">🔒</span>
-        {/if}
       </span>
       <button type="button" class="btn btn-secondary btn-small" onclick={() => navigateWeek(1)}>▶</button>
     </div>
@@ -1411,25 +1403,5 @@
     display: flex;
     justify-content: center;
     gap: 1rem;
-  }
-
-  .badge-approved-tag {
-    font-size: 0.75rem;
-    font-weight: 600;
-    background: #dcfce7;
-    color: #15803d;
-    padding: 2px 6px;
-    border-radius: 4px;
-    margin-left: 6px;
-  }
-
-  .badge-draft-tag {
-    font-size: 0.75rem;
-    font-weight: 600;
-    background: #fef3c7;
-    color: #b45309;
-    padding: 2px 6px;
-    border-radius: 4px;
-    margin-left: 6px;
   }
 </style>

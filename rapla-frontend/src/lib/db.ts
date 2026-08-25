@@ -155,7 +155,8 @@ const DEFAULT_ROOMS: Room[] = [
   { id: 'room-3', name: 'Hanuman', color: '#388e3c' },
   { id: 'room-4', name: 'Sitaram', color: '#1976d2' },
   { id: 'room-5', name: 'Tripura', color: '#7b1fa2' },
-  { id: 'room-6', name: 'am Kamin', color: '#ea580c' }
+  { id: 'room-6', name: 'am Kamin', color: '#ea580c' },
+  { id: 'room-7', name: 'vor dem Eingang', color: '#0d9488' }
 ];
 
 const NEW_TEACHER_NAMES = [
@@ -661,6 +662,7 @@ const generateDefaultCourses = (): Course[] => {
     { name: 'Anfänger Yin Yoga', style: 'Hatha', dayOfWeek: 2, startTime: '16:15', endTime: '18:00', roomId: 'room-2', teacherName: 'Abha' },
     { name: 'Mittelstufe', style: 'Hatha', dayOfWeek: 2, startTime: '16:15', endTime: '18:00', roomId: 'room-5', teacherName: 'Narayani' },
     { name: 'Om Namo Narayanaya', style: 'Meditation', dayOfWeek: 2, startTime: '19:30', endTime: '20:00', roomId: 'room-2', teacherName: 'Mounir' },
+    { name: 'Meditativer Spaziergang', style: 'Entspannung', dayOfWeek: 2, startTime: '19:30', endTime: '20:30', roomId: 'room-7', teacherName: 'Pranava' },
 
     // Wednesday (dayOfWeek: 3)
     { name: 'Geführte Meditation', style: 'Meditation', dayOfWeek: 3, startTime: '07:00', endTime: '07:30', roomId: 'room-5', teacherName: '' },
@@ -716,11 +718,10 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
     createdAt: new Date().toISOString()
   },
   // --- PREPLANNED WEEKS ---
-                                                                                                {
+                                                                                                    {
     id: "plan-pre-2026-W35",
     name: "Vorplanung 2026-W35 (Automatisch)",
     status: "approved",
-    isApproved: true,
     targetWeekCode: "2026-W35",
     courses: [
       {
@@ -1277,6 +1278,18 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W35-47",
+        "name": "Meditativer Spaziergang",
+        "style": "Entspannung",
+        "dayOfWeek": 2,
+        "startTime": "19:30",
+        "endTime": "20:30",
+        "roomId": "room-7",
+        "teacherId": "teacher-gen-pranava-pauly",
+        "isAiPlanned": false,
+        "status": "approved"
+      },
+      {
+        "id": "course-2026-W35-48",
         "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 3,
@@ -1288,7 +1301,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W35-48",
+        "id": "course-2026-W35-49",
         "name": "Satsang",
         "style": "Meditation",
         "dayOfWeek": 3,
@@ -1300,7 +1313,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W35-49",
+        "id": "course-2026-W35-50",
         "name": "Anfänger",
         "style": "Hatha",
         "dayOfWeek": 3,
@@ -1312,7 +1325,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W35-50",
+        "id": "course-2026-W35-51",
         "name": "Mittelstufe",
         "style": "Hatha",
         "dayOfWeek": 3,
@@ -1324,7 +1337,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W35-51",
+        "id": "course-2026-W35-52",
         "name": "Om Namo Narayanaya",
         "style": "Meditation",
         "dayOfWeek": 3,
@@ -1336,7 +1349,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W35-52",
+        "id": "course-2026-W35-53",
         "name": "Satsang",
         "style": "Meditation",
         "dayOfWeek": 3,
@@ -1348,7 +1361,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W35-53",
+        "id": "course-2026-W35-54",
         "name": "Entspannungsangebot: Yogageschichten am Kamin",
         "style": "Entspannung",
         "dayOfWeek": 3,
@@ -1360,7 +1373,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W35-54",
+        "id": "course-2026-W35-55",
         "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 4,
@@ -1372,7 +1385,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W35-55",
+        "id": "course-2026-W35-56",
         "name": "Satsang",
         "style": "Meditation",
         "dayOfWeek": 4,
@@ -1384,7 +1397,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W35-56",
+        "id": "course-2026-W35-57",
         "name": "Anfänger",
         "style": "Hatha",
         "dayOfWeek": 4,
@@ -1396,7 +1409,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W35-57",
+        "id": "course-2026-W35-58",
         "name": "Mittelstufe",
         "style": "Hatha",
         "dayOfWeek": 4,
@@ -1408,7 +1421,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W35-58",
+        "id": "course-2026-W35-59",
         "name": "Anfänger",
         "style": "Hatha",
         "dayOfWeek": 4,
@@ -1420,7 +1433,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W35-59",
+        "id": "course-2026-W35-60",
         "name": "Mittelstufe",
         "style": "Hatha",
         "dayOfWeek": 4,
@@ -1432,7 +1445,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W35-60",
+        "id": "course-2026-W35-61",
         "name": "Om Namo Narayanaya",
         "style": "Meditation",
         "dayOfWeek": 4,
@@ -1444,7 +1457,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W35-61",
+        "id": "course-2026-W35-62",
         "name": "Satsang",
         "style": "Meditation",
         "dayOfWeek": 4,
@@ -1456,7 +1469,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W35-62",
+        "id": "course-2026-W35-63",
         "name": "Entspannungsangebot: Peziebälle / Fantasiereise",
         "style": "Entspannung",
         "dayOfWeek": 4,
@@ -1473,8 +1486,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
   {
     id: "plan-pre-2026-W36",
     name: "Vorplanung 2026-W36 (Automatisch)",
-    status: "draft",
-    isApproved: false,
+    status: "approved",
     targetWeekCode: "2026-W36",
     courses: [
       {
@@ -2019,6 +2031,18 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W36-46",
+        "name": "Meditativer Spaziergang",
+        "style": "Entspannung",
+        "dayOfWeek": 2,
+        "startTime": "19:30",
+        "endTime": "20:30",
+        "roomId": "room-7",
+        "teacherId": "teacher-gen-pranava-pauly",
+        "isAiPlanned": false,
+        "status": "approved"
+      },
+      {
+        "id": "course-2026-W36-47",
         "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 3,
@@ -2030,7 +2054,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W36-47",
+        "id": "course-2026-W36-48",
         "name": "Satsang",
         "style": "Meditation",
         "dayOfWeek": 3,
@@ -2042,7 +2066,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W36-48",
+        "id": "course-2026-W36-49",
         "name": "Anfänger",
         "style": "Hatha",
         "dayOfWeek": 3,
@@ -2054,7 +2078,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W36-49",
+        "id": "course-2026-W36-50",
         "name": "Mittelstufe",
         "style": "Hatha",
         "dayOfWeek": 3,
@@ -2066,7 +2090,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W36-50",
+        "id": "course-2026-W36-51",
         "name": "Om Namo Narayanaya",
         "style": "Meditation",
         "dayOfWeek": 3,
@@ -2078,7 +2102,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W36-51",
+        "id": "course-2026-W36-52",
         "name": "Satsang",
         "style": "Meditation",
         "dayOfWeek": 3,
@@ -2090,7 +2114,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W36-52",
+        "id": "course-2026-W36-53",
         "name": "Entspannungsangebot: Yogageschichten am Kamin",
         "style": "Entspannung",
         "dayOfWeek": 3,
@@ -2102,7 +2126,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W36-53",
+        "id": "course-2026-W36-54",
         "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 4,
@@ -2114,7 +2138,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W36-54",
+        "id": "course-2026-W36-55",
         "name": "Satsang",
         "style": "Meditation",
         "dayOfWeek": 4,
@@ -2126,7 +2150,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W36-55",
+        "id": "course-2026-W36-56",
         "name": "Anfänger",
         "style": "Hatha",
         "dayOfWeek": 4,
@@ -2138,7 +2162,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W36-56",
+        "id": "course-2026-W36-57",
         "name": "Mittelstufe",
         "style": "Hatha",
         "dayOfWeek": 4,
@@ -2150,7 +2174,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W36-57",
+        "id": "course-2026-W36-58",
         "name": "Anfänger",
         "style": "Hatha",
         "dayOfWeek": 4,
@@ -2162,7 +2186,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W36-58",
+        "id": "course-2026-W36-59",
         "name": "Mittelstufe",
         "style": "Hatha",
         "dayOfWeek": 4,
@@ -2174,7 +2198,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W36-59",
+        "id": "course-2026-W36-60",
         "name": "Om Namo Narayanaya",
         "style": "Meditation",
         "dayOfWeek": 4,
@@ -2186,7 +2210,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W36-60",
+        "id": "course-2026-W36-61",
         "name": "Satsang",
         "style": "Meditation",
         "dayOfWeek": 4,
@@ -2198,7 +2222,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W36-61",
+        "id": "course-2026-W36-62",
         "name": "Entspannungsangebot: Peziebälle / Fantasiereise",
         "style": "Entspannung",
         "dayOfWeek": 4,
@@ -2215,8 +2239,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
   {
     id: "plan-pre-2026-W37",
     name: "Vorplanung 2026-W37 (Automatisch)",
-    status: "draft",
-    isApproved: false,
+    status: "approved",
     targetWeekCode: "2026-W37",
     courses: [
       {
@@ -2749,6 +2772,18 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W37-45",
+        "name": "Meditativer Spaziergang",
+        "style": "Entspannung",
+        "dayOfWeek": 2,
+        "startTime": "19:30",
+        "endTime": "20:30",
+        "roomId": "room-7",
+        "teacherId": "teacher-gen-pranava-pauly",
+        "isAiPlanned": false,
+        "status": "approved"
+      },
+      {
+        "id": "course-2026-W37-46",
         "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 3,
@@ -2760,7 +2795,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W37-46",
+        "id": "course-2026-W37-47",
         "name": "Satsang",
         "style": "Meditation",
         "dayOfWeek": 3,
@@ -2772,7 +2807,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W37-47",
+        "id": "course-2026-W37-48",
         "name": "Anfänger",
         "style": "Hatha",
         "dayOfWeek": 3,
@@ -2784,7 +2819,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W37-48",
+        "id": "course-2026-W37-49",
         "name": "Mittelstufe",
         "style": "Hatha",
         "dayOfWeek": 3,
@@ -2796,7 +2831,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W37-49",
+        "id": "course-2026-W37-50",
         "name": "Om Namo Narayanaya",
         "style": "Meditation",
         "dayOfWeek": 3,
@@ -2808,7 +2843,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W37-50",
+        "id": "course-2026-W37-51",
         "name": "Satsang",
         "style": "Meditation",
         "dayOfWeek": 3,
@@ -2820,7 +2855,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W37-51",
+        "id": "course-2026-W37-52",
         "name": "Entspannungsangebot: Yogageschichten am Kamin",
         "style": "Entspannung",
         "dayOfWeek": 3,
@@ -2832,7 +2867,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W37-52",
+        "id": "course-2026-W37-53",
         "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 4,
@@ -2844,7 +2879,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W37-53",
+        "id": "course-2026-W37-54",
         "name": "Satsang",
         "style": "Meditation",
         "dayOfWeek": 4,
@@ -2856,7 +2891,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W37-54",
+        "id": "course-2026-W37-55",
         "name": "Anfänger",
         "style": "Hatha",
         "dayOfWeek": 4,
@@ -2868,7 +2903,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W37-55",
+        "id": "course-2026-W37-56",
         "name": "Mittelstufe",
         "style": "Hatha",
         "dayOfWeek": 4,
@@ -2880,7 +2915,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W37-56",
+        "id": "course-2026-W37-57",
         "name": "Anfänger",
         "style": "Hatha",
         "dayOfWeek": 4,
@@ -2892,7 +2927,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W37-57",
+        "id": "course-2026-W37-58",
         "name": "Mittelstufe",
         "style": "Hatha",
         "dayOfWeek": 4,
@@ -2904,7 +2939,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W37-58",
+        "id": "course-2026-W37-59",
         "name": "Om Namo Narayanaya",
         "style": "Meditation",
         "dayOfWeek": 4,
@@ -2916,7 +2951,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W37-59",
+        "id": "course-2026-W37-60",
         "name": "Satsang",
         "style": "Meditation",
         "dayOfWeek": 4,
@@ -2928,7 +2963,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W37-60",
+        "id": "course-2026-W37-61",
         "name": "Entspannungsangebot: Peziebälle / Fantasiereise",
         "style": "Entspannung",
         "dayOfWeek": 4,
@@ -2945,8 +2980,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
   {
     id: "plan-pre-2026-W38",
     name: "Vorplanung 2026-W38 (Automatisch)",
-    status: "draft",
-    isApproved: false,
+    status: "approved",
     targetWeekCode: "2026-W38",
     courses: [
       {
@@ -3479,6 +3513,18 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W38-45",
+        "name": "Meditativer Spaziergang",
+        "style": "Entspannung",
+        "dayOfWeek": 2,
+        "startTime": "19:30",
+        "endTime": "20:30",
+        "roomId": "room-7",
+        "teacherId": "teacher-gen-pranava-pauly",
+        "isAiPlanned": false,
+        "status": "approved"
+      },
+      {
+        "id": "course-2026-W38-46",
         "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 3,
@@ -3490,7 +3536,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W38-46",
+        "id": "course-2026-W38-47",
         "name": "Satsang",
         "style": "Meditation",
         "dayOfWeek": 3,
@@ -3502,7 +3548,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W38-47",
+        "id": "course-2026-W38-48",
         "name": "Anfänger",
         "style": "Hatha",
         "dayOfWeek": 3,
@@ -3514,7 +3560,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W38-48",
+        "id": "course-2026-W38-49",
         "name": "Mittelstufe",
         "style": "Hatha",
         "dayOfWeek": 3,
@@ -3526,7 +3572,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W38-49",
+        "id": "course-2026-W38-50",
         "name": "Om Namo Narayanaya",
         "style": "Meditation",
         "dayOfWeek": 3,
@@ -3538,7 +3584,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W38-50",
+        "id": "course-2026-W38-51",
         "name": "Satsang",
         "style": "Meditation",
         "dayOfWeek": 3,
@@ -3550,7 +3596,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W38-51",
+        "id": "course-2026-W38-52",
         "name": "Entspannungsangebot: Yogageschichten am Kamin",
         "style": "Entspannung",
         "dayOfWeek": 3,
@@ -3562,7 +3608,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W38-52",
+        "id": "course-2026-W38-53",
         "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 4,
@@ -3574,7 +3620,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W38-53",
+        "id": "course-2026-W38-54",
         "name": "Satsang",
         "style": "Meditation",
         "dayOfWeek": 4,
@@ -3586,7 +3632,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W38-54",
+        "id": "course-2026-W38-55",
         "name": "Anfänger",
         "style": "Hatha",
         "dayOfWeek": 4,
@@ -3598,7 +3644,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W38-55",
+        "id": "course-2026-W38-56",
         "name": "Mittelstufe",
         "style": "Hatha",
         "dayOfWeek": 4,
@@ -3610,7 +3656,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W38-56",
+        "id": "course-2026-W38-57",
         "name": "Anfänger",
         "style": "Hatha",
         "dayOfWeek": 4,
@@ -3622,7 +3668,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W38-57",
+        "id": "course-2026-W38-58",
         "name": "Mittelstufe",
         "style": "Hatha",
         "dayOfWeek": 4,
@@ -3634,7 +3680,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W38-58",
+        "id": "course-2026-W38-59",
         "name": "Om Namo Narayanaya",
         "style": "Meditation",
         "dayOfWeek": 4,
@@ -3646,7 +3692,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W38-59",
+        "id": "course-2026-W38-60",
         "name": "Satsang",
         "style": "Meditation",
         "dayOfWeek": 4,
@@ -3658,7 +3704,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W38-60",
+        "id": "course-2026-W38-61",
         "name": "Entspannungsangebot: Peziebälle / Fantasiereise",
         "style": "Entspannung",
         "dayOfWeek": 4,
@@ -3675,8 +3721,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
   {
     id: "plan-pre-2026-W39",
     name: "Vorplanung 2026-W39 (Automatisch)",
-    status: "draft",
-    isApproved: false,
+    status: "approved",
     targetWeekCode: "2026-W39",
     courses: [
       {
@@ -4209,6 +4254,18 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W39-45",
+        "name": "Meditativer Spaziergang",
+        "style": "Entspannung",
+        "dayOfWeek": 2,
+        "startTime": "19:30",
+        "endTime": "20:30",
+        "roomId": "room-7",
+        "teacherId": "teacher-gen-pranava-pauly",
+        "isAiPlanned": false,
+        "status": "approved"
+      },
+      {
+        "id": "course-2026-W39-46",
         "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 3,
@@ -4220,7 +4277,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W39-46",
+        "id": "course-2026-W39-47",
         "name": "Satsang",
         "style": "Meditation",
         "dayOfWeek": 3,
@@ -4232,7 +4289,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W39-47",
+        "id": "course-2026-W39-48",
         "name": "Anfänger",
         "style": "Hatha",
         "dayOfWeek": 3,
@@ -4244,7 +4301,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W39-48",
+        "id": "course-2026-W39-49",
         "name": "Mittelstufe",
         "style": "Hatha",
         "dayOfWeek": 3,
@@ -4256,7 +4313,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W39-49",
+        "id": "course-2026-W39-50",
         "name": "Om Namo Narayanaya",
         "style": "Meditation",
         "dayOfWeek": 3,
@@ -4268,7 +4325,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W39-50",
+        "id": "course-2026-W39-51",
         "name": "Satsang",
         "style": "Meditation",
         "dayOfWeek": 3,
@@ -4280,7 +4337,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W39-51",
+        "id": "course-2026-W39-52",
         "name": "Entspannungsangebot: Yogageschichten am Kamin",
         "style": "Entspannung",
         "dayOfWeek": 3,
@@ -4292,7 +4349,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W39-52",
+        "id": "course-2026-W39-53",
         "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 4,
@@ -4304,7 +4361,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W39-53",
+        "id": "course-2026-W39-54",
         "name": "Satsang",
         "style": "Meditation",
         "dayOfWeek": 4,
@@ -4316,7 +4373,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W39-54",
+        "id": "course-2026-W39-55",
         "name": "Anfänger",
         "style": "Hatha",
         "dayOfWeek": 4,
@@ -4328,7 +4385,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W39-55",
+        "id": "course-2026-W39-56",
         "name": "Mittelstufe",
         "style": "Hatha",
         "dayOfWeek": 4,
@@ -4340,7 +4397,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W39-56",
+        "id": "course-2026-W39-57",
         "name": "Anfänger",
         "style": "Hatha",
         "dayOfWeek": 4,
@@ -4352,7 +4409,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W39-57",
+        "id": "course-2026-W39-58",
         "name": "Mittelstufe",
         "style": "Hatha",
         "dayOfWeek": 4,
@@ -4364,7 +4421,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W39-58",
+        "id": "course-2026-W39-59",
         "name": "Om Namo Narayanaya",
         "style": "Meditation",
         "dayOfWeek": 4,
@@ -4376,7 +4433,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W39-59",
+        "id": "course-2026-W39-60",
         "name": "Satsang",
         "style": "Meditation",
         "dayOfWeek": 4,
@@ -4388,7 +4445,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W39-60",
+        "id": "course-2026-W39-61",
         "name": "Entspannungsangebot: Peziebälle / Fantasiereise",
         "style": "Entspannung",
         "dayOfWeek": 4,
@@ -4405,8 +4462,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
   {
     id: "plan-pre-2026-W40",
     name: "Vorplanung 2026-W40 (Automatisch)",
-    status: "draft",
-    isApproved: false,
+    status: "approved",
     targetWeekCode: "2026-W40",
     courses: [
       {
@@ -4939,6 +4995,18 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W40-45",
+        "name": "Meditativer Spaziergang",
+        "style": "Entspannung",
+        "dayOfWeek": 2,
+        "startTime": "19:30",
+        "endTime": "20:30",
+        "roomId": "room-7",
+        "teacherId": "teacher-gen-pranava-pauly",
+        "isAiPlanned": false,
+        "status": "approved"
+      },
+      {
+        "id": "course-2026-W40-46",
         "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 3,
@@ -4950,7 +5018,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W40-46",
+        "id": "course-2026-W40-47",
         "name": "Satsang",
         "style": "Meditation",
         "dayOfWeek": 3,
@@ -4962,7 +5030,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W40-47",
+        "id": "course-2026-W40-48",
         "name": "Anfänger",
         "style": "Hatha",
         "dayOfWeek": 3,
@@ -4974,7 +5042,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W40-48",
+        "id": "course-2026-W40-49",
         "name": "Mittelstufe",
         "style": "Hatha",
         "dayOfWeek": 3,
@@ -4986,7 +5054,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W40-49",
+        "id": "course-2026-W40-50",
         "name": "Om Namo Narayanaya",
         "style": "Meditation",
         "dayOfWeek": 3,
@@ -4998,7 +5066,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W40-50",
+        "id": "course-2026-W40-51",
         "name": "Satsang",
         "style": "Meditation",
         "dayOfWeek": 3,
@@ -5010,7 +5078,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W40-51",
+        "id": "course-2026-W40-52",
         "name": "Entspannungsangebot: Yogageschichten am Kamin",
         "style": "Entspannung",
         "dayOfWeek": 3,
@@ -5022,7 +5090,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W40-52",
+        "id": "course-2026-W40-53",
         "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 4,
@@ -5034,7 +5102,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W40-53",
+        "id": "course-2026-W40-54",
         "name": "Satsang",
         "style": "Meditation",
         "dayOfWeek": 4,
@@ -5046,7 +5114,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W40-54",
+        "id": "course-2026-W40-55",
         "name": "Anfänger",
         "style": "Hatha",
         "dayOfWeek": 4,
@@ -5058,7 +5126,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W40-55",
+        "id": "course-2026-W40-56",
         "name": "Mittelstufe",
         "style": "Hatha",
         "dayOfWeek": 4,
@@ -5070,7 +5138,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W40-56",
+        "id": "course-2026-W40-57",
         "name": "Anfänger",
         "style": "Hatha",
         "dayOfWeek": 4,
@@ -5082,7 +5150,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W40-57",
+        "id": "course-2026-W40-58",
         "name": "Mittelstufe",
         "style": "Hatha",
         "dayOfWeek": 4,
@@ -5094,7 +5162,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W40-58",
+        "id": "course-2026-W40-59",
         "name": "Om Namo Narayanaya",
         "style": "Meditation",
         "dayOfWeek": 4,
@@ -5106,7 +5174,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W40-59",
+        "id": "course-2026-W40-60",
         "name": "Satsang",
         "style": "Meditation",
         "dayOfWeek": 4,
@@ -5118,7 +5186,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W40-60",
+        "id": "course-2026-W40-61",
         "name": "Entspannungsangebot: Peziebälle / Fantasiereise",
         "style": "Entspannung",
         "dayOfWeek": 4,
@@ -5135,8 +5203,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
   {
     id: "plan-pre-2026-W41",
     name: "Vorplanung 2026-W41 (Automatisch)",
-    status: "draft",
-    isApproved: false,
+    status: "approved",
     targetWeekCode: "2026-W41",
     courses: [
       {
@@ -5693,6 +5760,18 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W41-47",
+        "name": "Meditativer Spaziergang",
+        "style": "Entspannung",
+        "dayOfWeek": 2,
+        "startTime": "19:30",
+        "endTime": "20:30",
+        "roomId": "room-7",
+        "teacherId": "teacher-gen-pranava-pauly",
+        "isAiPlanned": false,
+        "status": "approved"
+      },
+      {
+        "id": "course-2026-W41-48",
         "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 3,
@@ -5704,7 +5783,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W41-48",
+        "id": "course-2026-W41-49",
         "name": "Satsang",
         "style": "Meditation",
         "dayOfWeek": 3,
@@ -5716,7 +5795,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W41-49",
+        "id": "course-2026-W41-50",
         "name": "Anfänger",
         "style": "Hatha",
         "dayOfWeek": 3,
@@ -5728,7 +5807,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W41-50",
+        "id": "course-2026-W41-51",
         "name": "Mittelstufe",
         "style": "Hatha",
         "dayOfWeek": 3,
@@ -5740,7 +5819,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W41-51",
+        "id": "course-2026-W41-52",
         "name": "Om Namo Narayanaya",
         "style": "Meditation",
         "dayOfWeek": 3,
@@ -5752,7 +5831,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W41-52",
+        "id": "course-2026-W41-53",
         "name": "Satsang",
         "style": "Meditation",
         "dayOfWeek": 3,
@@ -5764,7 +5843,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W41-53",
+        "id": "course-2026-W41-54",
         "name": "Entspannungsangebot: Yogageschichten am Kamin",
         "style": "Entspannung",
         "dayOfWeek": 3,
@@ -5776,7 +5855,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W41-54",
+        "id": "course-2026-W41-55",
         "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 4,
@@ -5788,7 +5867,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W41-55",
+        "id": "course-2026-W41-56",
         "name": "Satsang",
         "style": "Meditation",
         "dayOfWeek": 4,
@@ -5800,7 +5879,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W41-56",
+        "id": "course-2026-W41-57",
         "name": "Anfänger",
         "style": "Hatha",
         "dayOfWeek": 4,
@@ -5812,7 +5891,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W41-57",
+        "id": "course-2026-W41-58",
         "name": "Mittelstufe",
         "style": "Hatha",
         "dayOfWeek": 4,
@@ -5824,7 +5903,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W41-58",
+        "id": "course-2026-W41-59",
         "name": "Anfänger",
         "style": "Hatha",
         "dayOfWeek": 4,
@@ -5836,7 +5915,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W41-59",
+        "id": "course-2026-W41-60",
         "name": "Mittelstufe",
         "style": "Hatha",
         "dayOfWeek": 4,
@@ -5848,7 +5927,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W41-60",
+        "id": "course-2026-W41-61",
         "name": "Om Namo Narayanaya",
         "style": "Meditation",
         "dayOfWeek": 4,
@@ -5860,7 +5939,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W41-61",
+        "id": "course-2026-W41-62",
         "name": "Satsang",
         "style": "Meditation",
         "dayOfWeek": 4,
@@ -5872,7 +5951,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W41-62",
+        "id": "course-2026-W41-63",
         "name": "Entspannungsangebot: Peziebälle / Fantasiereise",
         "style": "Entspannung",
         "dayOfWeek": 4,
@@ -5889,8 +5968,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
   {
     id: "plan-pre-2026-W42",
     name: "Vorplanung 2026-W42 (Automatisch)",
-    status: "draft",
-    isApproved: false,
+    status: "approved",
     targetWeekCode: "2026-W42",
     courses: [
       {
@@ -6447,6 +6525,18 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W42-47",
+        "name": "Meditativer Spaziergang",
+        "style": "Entspannung",
+        "dayOfWeek": 2,
+        "startTime": "19:30",
+        "endTime": "20:30",
+        "roomId": "room-7",
+        "teacherId": "teacher-gen-pranava-pauly",
+        "isAiPlanned": false,
+        "status": "approved"
+      },
+      {
+        "id": "course-2026-W42-48",
         "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 3,
@@ -6458,7 +6548,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W42-48",
+        "id": "course-2026-W42-49",
         "name": "Satsang",
         "style": "Meditation",
         "dayOfWeek": 3,
@@ -6470,7 +6560,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W42-49",
+        "id": "course-2026-W42-50",
         "name": "Anfänger",
         "style": "Hatha",
         "dayOfWeek": 3,
@@ -6482,7 +6572,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W42-50",
+        "id": "course-2026-W42-51",
         "name": "Mittelstufe",
         "style": "Hatha",
         "dayOfWeek": 3,
@@ -6494,7 +6584,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W42-51",
+        "id": "course-2026-W42-52",
         "name": "Om Namo Narayanaya",
         "style": "Meditation",
         "dayOfWeek": 3,
@@ -6506,7 +6596,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W42-52",
+        "id": "course-2026-W42-53",
         "name": "Satsang",
         "style": "Meditation",
         "dayOfWeek": 3,
@@ -6518,7 +6608,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W42-53",
+        "id": "course-2026-W42-54",
         "name": "Entspannungsangebot: Yogageschichten am Kamin",
         "style": "Entspannung",
         "dayOfWeek": 3,
@@ -6530,7 +6620,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W42-54",
+        "id": "course-2026-W42-55",
         "name": "Geführte Meditation",
         "style": "Meditation",
         "dayOfWeek": 4,
@@ -6542,7 +6632,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W42-55",
+        "id": "course-2026-W42-56",
         "name": "Satsang",
         "style": "Meditation",
         "dayOfWeek": 4,
@@ -6554,7 +6644,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W42-56",
+        "id": "course-2026-W42-57",
         "name": "Anfänger",
         "style": "Hatha",
         "dayOfWeek": 4,
@@ -6566,7 +6656,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W42-57",
+        "id": "course-2026-W42-58",
         "name": "Mittelstufe",
         "style": "Hatha",
         "dayOfWeek": 4,
@@ -6578,7 +6668,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W42-58",
+        "id": "course-2026-W42-59",
         "name": "Anfänger",
         "style": "Hatha",
         "dayOfWeek": 4,
@@ -6590,7 +6680,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W42-59",
+        "id": "course-2026-W42-60",
         "name": "Mittelstufe",
         "style": "Hatha",
         "dayOfWeek": 4,
@@ -6602,7 +6692,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W42-60",
+        "id": "course-2026-W42-61",
         "name": "Om Namo Narayanaya",
         "style": "Meditation",
         "dayOfWeek": 4,
@@ -6614,7 +6704,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W42-61",
+        "id": "course-2026-W42-62",
         "name": "Satsang",
         "style": "Meditation",
         "dayOfWeek": 4,
@@ -6626,7 +6716,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W42-62",
+        "id": "course-2026-W42-63",
         "name": "Entspannungsangebot: Peziebälle / Fantasiereise",
         "style": "Entspannung",
         "dayOfWeek": 4,
@@ -6687,7 +6777,7 @@ function setStored<T>(key: string, value: T): void {
   }
 }
 
-const CURRENT_DB_VERSION = 81;
+const CURRENT_DB_VERSION = 83;
 
 // Database Actions
 export const db = {
@@ -6965,7 +7055,7 @@ export const db = {
   
   getRooms: (): Room[] => {
     const stored = getStored<Room[]>('rapla_rooms', DEFAULT_ROOMS);
-    const isOld = stored.length !== DEFAULT_ROOMS.length || stored.some(r => r.name === 'Sivananda Saal') || !stored.some(r => r.name === 'am Kamin');
+    const isOld = stored.length !== DEFAULT_ROOMS.length || stored.some(r => r.name === 'Sivananda Saal') || !stored.some(r => r.name === 'am Kamin') || !stored.some(r => r.name === 'vor dem Eingang');
     if (isOld) {
       db.saveRooms(DEFAULT_ROOMS);
       return DEFAULT_ROOMS;

@@ -164,6 +164,10 @@ ${filesText}
       "primary": "pranava",
       "name": "Klangreise"
     },
+    "dienstag": {
+      "primary": "pranava",
+      "name": "Meditativer Spaziergang"
+    },
     "mittwoch": {
       "primary": "hu",
       "name": "Yogageschichten am Kamin"

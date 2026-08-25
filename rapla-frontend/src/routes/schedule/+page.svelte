@@ -209,7 +209,7 @@
       };
     }
 
-    if (nameLower.includes('entspannungsangebot') && [1, 3, 4].includes(course.dayOfWeek)) {
+    if (nameLower.includes('entspannung') || nameLower.includes('klangreise') || nameLower.includes('yogageschichten') || nameLower.includes('peziebälle') || nameLower.includes('fantasiereise') || nameLower.includes('spaziergang') || styleLower.includes('entspannung')) {
       return {
         bg: '#ffb347',
         border: '#e69900'

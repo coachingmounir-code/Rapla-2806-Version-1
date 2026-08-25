@@ -126,6 +126,9 @@ export function validateAssignment(
   absences?: any[]
 ): ConflictMessage[] {
   const conflicts: ConflictMessage[] = [];
+  const teacherNameLower = teacher.name.toLowerCase();
+  const courseNameLower = course.name.toLowerCase();
+  const courseStyleLower = course.style.toLowerCase();
 
   // 0a. Check active Sevafrei / Abwesenheiten (Hard)
   if (targetWeekCode) {
@@ -142,8 +145,14 @@ export function validateAssignment(
       if (activeAbsence) {
         const isSatsang = course.name.toLowerCase().includes('satsang');
         const isBypassedType = ['seminartage'].includes(activeAbsence.type.toLowerCase());
+        const isWalk = courseNameLower.includes('spaziergang');
+        const isPranava = teacherNameLower.includes('pranava');
+        const isRegularFreeDay = activeAbsence.type.toLowerCase() === 'frei' || (activeAbsence.note && activeAbsence.note.toLowerCase().includes('regulärer freier wochentag'));
+
         if (isSatsang && isBypassedType) {
           // Bypassed for Satsangs
+        } else if (isWalk && isPranava && isRegularFreeDay) {
+          // Pranava standardmäßig für meditativen Spaziergang eingeteilt
         } else {
           conflicts.push({
             type: 'hard',
@@ -154,10 +163,6 @@ export function validateAssignment(
       }
     }
   }
-
-  const teacherNameLower = teacher.name.toLowerCase();
-  const courseNameLower = course.name.toLowerCase();
-  const courseStyleLower = course.style.toLowerCase();
 
   // 0b. Check stay window for Karma-Yogis and Guest Teachers (Hard)
   if (targetWeekCode && (teacher.stayStartDate || teacher.stayEndDate)) {
@@ -182,7 +187,7 @@ export function validateAssignment(
   const isOnnForSevaka = courseNameLower.includes('om namo') || courseNameLower.includes('narayanaya');
   const isMeditationForSevaka = (courseNameLower.includes('meditation') || courseNameLower.includes('medi.') || (courseStyleLower.includes('meditation') && !isOnnForSevaka)) && !courseNameLower.includes('satsang') && !isOnnForSevaka;
   const isSatsangForSevaka = courseNameLower.includes('satsang') && !courseNameLower.includes('einführung') && !courseNameLower.includes('einfuehrung');
-  const isEntspannungForSevaka = courseStyleLower.includes('entspannung') || courseNameLower.includes('entspannung');
+  const isEntspannungForSevaka = courseStyleLower.includes('entspannung') || courseNameLower.includes('entspannung') || courseNameLower.includes('spaziergang');
   const isSonstigesForSevaka = courseStyleLower.includes('sonstiges') || courseNameLower.includes('hausführung') || courseNameLower.includes('hausfuehrung');
   const isYogaClassForSevaka = !isMeditationForSevaka && !isSatsangForSevaka && !isOnnForSevaka && !isEntspannungForSevaka && !isSonstigesForSevaka;
 
@@ -334,9 +339,15 @@ export function validateAssignment(
             return isMatch && courseDate >= entry.startDate && courseDate <= entry.endDate;
           });
           if (activeAbsence) {
+            const isWalk = courseNameLower.includes('spaziergang');
+            const isPranava = teacherNameLower.includes('pranava');
+            const isRegularFreeDay = activeAbsence.type.toLowerCase() === 'frei' || (activeAbsence.note && activeAbsence.note.toLowerCase().includes('regulärer freier wochentag'));
+
             // Check if this is a composite teacher or if they are bypassed
             if (activeAbsence.type.toLowerCase() === 'seminartage' && isSatsangForSevaka) {
               // Bypassed for Satsangs
+            } else if (isWalk && isPranava && isRegularFreeDay) {
+              // Pranava standardmäßig für meditativen Spaziergang eingeteilt
             } else {
               conflicts.push({
                 type: 'hard',
@@ -1134,13 +1145,19 @@ export function runAiPlanning(
         course.name.toLowerCase().includes('klangreise') ||
         course.name.toLowerCase().includes('yogageschichten am kamin') ||
         course.name.toLowerCase().includes('peziebälle') ||
-        course.name.toLowerCase().includes('fantasiereise');
+        course.name.toLowerCase().includes('fantasiereise') ||
+        course.name.toLowerCase().includes('spaziergang');
         
       if (isEntspannungsangebot && wochenplanRules.entspannungsangebot) {
         const erules = wochenplanRules.entspannungsangebot;
         let isDesignatedTeacher = false;
         if (course.dayOfWeek === 1 && erules.montag?.primary) {
           if (teacherNameLower.includes(erules.montag.primary.toLowerCase())) {
+            score += 10000;
+            isDesignatedTeacher = true;
+          }
+        } else if (course.dayOfWeek === 2 && (erules as any).dienstag?.primary) {
+          if (teacherNameLower.includes((erules as any).dienstag.primary.toLowerCase())) {
             score += 10000;
             isDesignatedTeacher = true;
           }
@@ -1585,6 +1602,16 @@ export function validateRoomRules(
     }
   }
 
+  // 5. Meditativer Spaziergang rule: always vor dem Eingang (room-7)
+  if (nameLower.includes('spaziergang')) {
+    if (course.roomId !== 'room-7') {
+      conflicts.push({
+        type: 'soft',
+        message: `Der meditative Spaziergang findet standardmäßig vor dem Eingang statt.`
+      });
+    }
+  }
+
   return conflicts;
 }
 
@@ -1597,6 +1624,12 @@ export function adjustRoomsForRules(courses: Course[], teachers: Teacher[], targ
     // 0. Yogageschichten am Kamin rule
     if (nameLower.includes('yogageschichten am kamin') || nameLower.includes('am kamin')) {
       course.roomId = 'room-6'; // am Kamin
+      return;
+    }
+
+    // 0b. Meditativer Spaziergang rule
+    if (nameLower.includes('spaziergang')) {
+      course.roomId = 'room-7'; // vor dem Eingang
       return;
     }
 
