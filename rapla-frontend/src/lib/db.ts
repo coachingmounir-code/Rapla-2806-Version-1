@@ -664,7 +664,7 @@ const generateDefaultCourses = (): Course[] => {
     { name: 'Anfänger Yin Yoga', style: 'Hatha', dayOfWeek: 2, startTime: '16:15', endTime: '18:00', roomId: 'room-2', teacherName: 'Abha' },
     { name: 'Mittelstufe', style: 'Hatha', dayOfWeek: 2, startTime: '16:15', endTime: '18:00', roomId: 'room-5', teacherName: 'Narayani' },
     { name: 'Om Namo Narayanaya', style: 'Meditation', dayOfWeek: 2, startTime: '19:30', endTime: '20:00', roomId: 'room-2', teacherName: 'Mounir' },
-    { name: 'Meditativer Spaziergang', style: 'Entspannung', dayOfWeek: 2, startTime: '09:30', endTime: '10:30', roomId: 'room-7', teacherName: 'Pranava' },
+    { name: 'Meditativer Spaziergang', style: 'Entspannung', dayOfWeek: 2, startTime: '19:30', endTime: '20:30', roomId: 'room-7', teacherName: 'Pranava' },
 
     // Wednesday (dayOfWeek: 3)
     { name: 'Geführte Meditation', style: 'Meditation', dayOfWeek: 3, startTime: '07:00', endTime: '07:30', roomId: 'room-5', teacherName: '' },
@@ -720,7 +720,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
     createdAt: new Date().toISOString()
   },
   // --- PREPLANNED WEEKS ---
-                                                                                                      {
+                                                                                                        {
     id: "plan-pre-2026-W35",
     name: "Vorplanung 2026-W35 (Automatisch)",
     status: "approved",
@@ -1283,8 +1283,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "name": "Meditativer Spaziergang",
         "style": "Entspannung",
         "dayOfWeek": 2,
-        "startTime": "09:30",
-        "endTime": "10:30",
+        "startTime": "19:30",
+        "endTime": "20:30",
         "roomId": "room-7",
         "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": false,
@@ -2036,8 +2036,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "name": "Meditativer Spaziergang",
         "style": "Entspannung",
         "dayOfWeek": 2,
-        "startTime": "09:30",
-        "endTime": "10:30",
+        "startTime": "19:30",
+        "endTime": "20:30",
         "roomId": "room-7",
         "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": false,
@@ -2777,8 +2777,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "name": "Meditativer Spaziergang",
         "style": "Entspannung",
         "dayOfWeek": 2,
-        "startTime": "09:30",
-        "endTime": "10:30",
+        "startTime": "19:30",
+        "endTime": "20:30",
         "roomId": "room-7",
         "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": false,
@@ -3518,8 +3518,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "name": "Meditativer Spaziergang",
         "style": "Entspannung",
         "dayOfWeek": 2,
-        "startTime": "09:30",
-        "endTime": "10:30",
+        "startTime": "19:30",
+        "endTime": "20:30",
         "roomId": "room-7",
         "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": false,
@@ -4259,8 +4259,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "name": "Meditativer Spaziergang",
         "style": "Entspannung",
         "dayOfWeek": 2,
-        "startTime": "09:30",
-        "endTime": "10:30",
+        "startTime": "19:30",
+        "endTime": "20:30",
         "roomId": "room-7",
         "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": false,
@@ -5000,8 +5000,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "name": "Meditativer Spaziergang",
         "style": "Entspannung",
         "dayOfWeek": 2,
-        "startTime": "09:30",
-        "endTime": "10:30",
+        "startTime": "19:30",
+        "endTime": "20:30",
         "roomId": "room-7",
         "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": false,
@@ -5765,8 +5765,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "name": "Meditativer Spaziergang",
         "style": "Entspannung",
         "dayOfWeek": 2,
-        "startTime": "09:30",
-        "endTime": "10:30",
+        "startTime": "19:30",
+        "endTime": "20:30",
         "roomId": "room-7",
         "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": false,
@@ -6530,8 +6530,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "name": "Meditativer Spaziergang",
         "style": "Entspannung",
         "dayOfWeek": 2,
-        "startTime": "09:30",
-        "endTime": "10:30",
+        "startTime": "19:30",
+        "endTime": "20:30",
         "roomId": "room-7",
         "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": false,
@@ -6779,7 +6779,7 @@ function setStored<T>(key: string, value: T): void {
   }
 }
 
-const CURRENT_DB_VERSION = 87;
+const CURRENT_DB_VERSION = 89;
 
 // Database Actions
 export const db = {
@@ -7177,7 +7177,7 @@ export const db = {
         }
       }
 
-      // Migration: Ensure Tuesday 09:30 Meditativer Spaziergang is present in every week plan
+      // Migration: Ensure Tuesday 19:30 Meditativer Spaziergang is present in every week plan
       const walkCourse = p.courses.find(c => c.dayOfWeek === 2 && (c.name.toLowerCase().includes('spaziergang') || c.roomId === 'room-7'));
       if (!walkCourse) {
         p.courses.push({
@@ -7185,8 +7185,8 @@ export const db = {
           name: 'Meditativer Spaziergang',
           style: 'Entspannung',
           dayOfWeek: 2,
-          startTime: '09:30',
-          endTime: '10:30',
+          startTime: '19:30',
+          endTime: '20:30',
           roomId: 'room-7',
           teacherId: 'teacher-gen-pranava-pauly',
           isAiPlanned: false,
@@ -7198,9 +7198,12 @@ export const db = {
         });
         updated = true;
       } else {
-        if (walkCourse.startTime !== '09:30' || walkCourse.endTime !== '10:30') {
-          walkCourse.startTime = '09:30';
-          walkCourse.endTime = '10:30';
+        if (walkCourse.startTime !== '19:30' || walkCourse.endTime !== '20:30' || walkCourse.roomId !== 'room-7' || walkCourse.name !== 'Meditativer Spaziergang') {
+          walkCourse.name = 'Meditativer Spaziergang';
+          walkCourse.startTime = '19:30';
+          walkCourse.endTime = '20:30';
+          walkCourse.roomId = 'room-7';
+          if (!walkCourse.teacherId) walkCourse.teacherId = 'teacher-gen-pranava-pauly';
           p.courses.sort((a, b) => {
             if (a.dayOfWeek !== b.dayOfWeek) return a.dayOfWeek - b.dayOfWeek;
             return a.startTime.localeCompare(b.startTime);
