@@ -10,8 +10,8 @@ const getEnv = (key: string) => {
   return '';
 };
 
-const supabaseUrl = getEnv('VITE_SUPABASE_URL');
-const supabaseKey = getEnv('VITE_SUPABASE_ANON_KEY');
+const supabaseUrl = getEnv('VITE_SUPABASE_URL') || 'https://aogwygeeapwsjgvppnpz.supabase.co';
+const supabaseKey = getEnv('VITE_SUPABASE_ANON_KEY') || 'sb_publishable_zy3vmo9BttNohbAjzHprSQ_v2oRliyR';
 
 // Only initialize Supabase if keys are provided and look somewhat valid
 export const supabase = supabaseUrl && supabaseKey && supabaseUrl.includes('supabase.co')

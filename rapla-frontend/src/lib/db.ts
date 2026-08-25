@@ -2200,8 +2200,9 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "16:15",
         "endTime": "18:00",
         "roomId": "room-3",
-        "teacherId": "teacher-gen-ulrich-nebel",
+        "teacherId": null,
         "isAiPlanned": false,
+        "isManuallyEdited": true,
         "status": "approved"
       },
       {
@@ -6782,9 +6783,11 @@ function setStored<T>(key: string, value: T): void {
         if (error) console.error('Failed to sync to cloud', error);
       });
   }
+
+  window.dispatchEvent(new CustomEvent('rapla-data-synced'));
 }
 
-const CURRENT_DB_VERSION = 91;
+const CURRENT_DB_VERSION = 93;
 
 // Database Actions
 export const db = {
@@ -6796,15 +6799,69 @@ export const db = {
       const { data, error } = await supabase.from('app_state').select('*');
       if (!error && data && data.length > 0) {
         let changed = false;
+        let needsCloudPush = false;
         for (const row of data) {
           try {
-            const currentStr = localStorage.getItem(row.key);
-            if (currentStr !== row.value) {
-              changed = true;
-              localStorage.setItem(row.key, row.value);
+            if (row.key === 'rapla_week_plans') {
+              const remotePlans: WeekPlan[] = JSON.parse(row.value);
+              const localPlans = getStored<WeekPlan[]>('rapla_week_plans', DEFAULT_WEEK_PLANS);
+              
+              const merged: WeekPlan[] = remotePlans.map(remPlan => {
+                const locPlan = localPlans.find(lp => lp.id === remPlan.id || lp.targetWeekCode === remPlan.targetWeekCode);
+                if (!locPlan) return remPlan;
+
+                // If local has manual edits or is locked manual, check if local edits should be preserved
+                if (locPlan.hasManualEdits || locPlan.isManualOnly) {
+                  const locTime = locPlan.lastEditedAt ? new Date(locPlan.lastEditedAt).getTime() : 0;
+                  const remTime = remPlan.lastEditedAt ? new Date(remPlan.lastEditedAt).getTime() : 0;
+                  if (locTime >= remTime) {
+                    needsCloudPush = true;
+                    return locPlan;
+                  }
+                  // Even if remote timestamp is newer, preserve individually manually edited slots if remote hasn't touched them
+                  const mergedCourses = remPlan.courses.map(rc => {
+                    const lc = locPlan.courses.find(c => c.id === rc.id || (c.dayOfWeek === rc.dayOfWeek && c.startTime === rc.startTime && c.roomId === rc.roomId));
+                    if (lc && lc.isManuallyEdited && !rc.isManuallyEdited) {
+                      needsCloudPush = true;
+                      return lc;
+                    }
+                    return rc;
+                  });
+                  return { ...remPlan, courses: mergedCourses };
+                }
+                return remPlan;
+              });
+
+              // Keep any local plans not present in remote
+              for (const lp of localPlans) {
+                if (!merged.some(mp => mp.id === lp.id || mp.targetWeekCode === lp.targetWeekCode)) {
+                  merged.push(lp);
+                  needsCloudPush = true;
+                }
+              }
+
+              const mergedStr = JSON.stringify(merged);
+              const currentStr = localStorage.getItem('rapla_week_plans');
+              if (currentStr !== mergedStr) {
+                changed = true;
+                localStorage.setItem('rapla_week_plans', mergedStr);
+              }
+              inMemoryStore['rapla_week_plans'] = merged;
+
+              if (needsCloudPush && supabase) {
+                supabase.from('app_state').upsert({ key: 'rapla_week_plans', value: mergedStr }).then(() => {});
+              }
+            } else {
+              const currentStr = localStorage.getItem(row.key);
+              if (currentStr !== row.value) {
+                changed = true;
+                localStorage.setItem(row.key, row.value);
+              }
+              inMemoryStore[row.key] = JSON.parse(row.value);
             }
-            inMemoryStore[row.key] = JSON.parse(row.value);
-          } catch(e) {}
+          } catch(e) {
+            console.error('Error processing row in initializeCloudSync:', row.key, e);
+          }
         }
         cloudInitialized = true;
         if (changed) {
@@ -7103,6 +7160,13 @@ export const db = {
             c.teacherId = 'teacher-gen-yl';
             c.isManuallyEdited = true;
             updated = true;
+          }
+          if (c.id === 'course-2026-W36-59' || (c.dayOfWeek === 4 && c.startTime === '16:15' && c.name.toLowerCase().includes('mittelstufe'))) {
+            if (c.teacherId === 'teacher-gen-ulrich-nebel' || c.teacherId === 'ulrich') {
+              c.teacherId = null;
+              c.isManuallyEdited = true;
+              updated = true;
+            }
           }
         }
       }

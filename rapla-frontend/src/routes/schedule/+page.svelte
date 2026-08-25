@@ -527,6 +527,8 @@
       currentPlan.lastEditedAt = new Date().toISOString();
       if (!db.getWeekPlan(currentPlan.id)) {
         db.addWeekPlan(currentPlan);
+      } else {
+        db.updateWeekPlan(currentPlan);
       }
     }
 
@@ -537,6 +539,7 @@
     }
 
     isModalOpen = false;
+    window.dispatchEvent(new CustomEvent('rapla-data-synced'));
     loadData();
   }
 
@@ -546,9 +549,15 @@
         currentPlan.isManualOnly = true;
         currentPlan.hasManualEdits = true;
         currentPlan.lastEditedAt = new Date().toISOString();
+        if (!db.getWeekPlan(currentPlan.id)) {
+          db.addWeekPlan(currentPlan);
+        } else {
+          db.updateWeekPlan(currentPlan);
+        }
       }
       db.deleteCourse(id, currentPlan?.id);
       isModalOpen = false;
+      window.dispatchEvent(new CustomEvent('rapla-data-synced'));
       loadData();
     }
   }
