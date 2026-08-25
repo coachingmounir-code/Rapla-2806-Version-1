@@ -134,17 +134,17 @@
 							<span class="nav-label">Kommende Seminare</span>
 						</a>
 
-						<!-- Admin-only Seminar To-Do List (Tagesübersicht) - Darth Vader / Sith Edition -->
+						<!-- Admin-only Seminar To-Do List (Tagesübersicht) -->
 						{#if userRole === 'admin'}
 							<a 
 								href="/admin-todos" 
-								class="nav-item admin-nav-item vader-nav-item" 
+								class="nav-item admin-nav-item" 
 								class:active={page.url.pathname.startsWith('/admin-todos')}
 							>
-								<span class="nav-icon">💀</span>
-								<span class="nav-label">Seminar & Orga To-Dos</span>
+								<span class="nav-icon">📋</span>
+								<span class="nav-label">Seminar To-Dos</span>
 								{#if adminTodoStore.pendingCount > 0}
-									<span class="admin-todo-badge vader-badge">{adminTodoStore.pendingCount}</span>
+									<span class="admin-todo-badge">{adminTodoStore.pendingCount}</span>
 								{/if}
 							</a>
 						{/if}
@@ -162,7 +162,7 @@
 						<!-- 4-Wöchige Yogalehrer-Ausbildung (YLA) -->
 						<a 
 							href="/yla" 
-							class="nav-item yla-nav-item" 
+							class="nav-item" 
 							class:active={page.url.pathname.startsWith('/yla')}
 						>
 							<span class="nav-icon">🧘‍♂️</span>
@@ -503,50 +503,6 @@
 	.nav-item.active .admin-todo-badge {
 		background: #ffffff;
 		color: var(--primary);
-	}
-
-	.nav-item.vader-nav-item {
-		border: 1px solid rgba(220, 38, 38, 0.2);
-		background: rgba(15, 15, 20, 0.04);
-	}
-
-	.nav-item.vader-nav-item:hover {
-		background: rgba(15, 15, 20, 0.08);
-		border-color: rgba(220, 38, 38, 0.4);
-		box-shadow: 0 0 12px rgba(220, 38, 38, 0.15);
-	}
-
-	.nav-item.vader-nav-item.active {
-		background: linear-gradient(135deg, #111118 0%, #1f080e 100%);
-		color: #ffffff;
-		border-color: #dc2626;
-		box-shadow: 0 4px 15px rgba(220, 38, 38, 0.3), 0 0 8px rgba(220, 38, 38, 0.2);
-	}
-
-	.nav-item.vader-nav-item.active .vader-badge {
-		background: #dc2626;
-		color: #ffffff;
-		box-shadow: 0 0 8px rgba(220, 38, 38, 0.6);
-	}
-
-	.nav-item.yla-nav-item {
-		color: #db2777;
-		background: rgba(244, 114, 182, 0.12);
-		border: 1px solid rgba(244, 114, 182, 0.35);
-	}
-
-	.nav-item.yla-nav-item:hover {
-		color: #be185d;
-		background: rgba(244, 114, 182, 0.22);
-		border-color: rgba(236, 72, 153, 0.6);
-		box-shadow: 0 0 12px rgba(244, 114, 182, 0.25);
-	}
-
-	.nav-item.yla-nav-item.active {
-		background: linear-gradient(135deg, #f43f5e 0%, #ec4899 50%, #db2777 100%);
-		color: #ffffff;
-		border-color: #ec4899;
-		box-shadow: 0 4px 14px rgba(236, 72, 153, 0.4), 0 0 10px rgba(244, 63, 94, 0.25);
 	}
 
 	.sidebar-footer {
