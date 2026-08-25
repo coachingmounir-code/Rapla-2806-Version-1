@@ -579,6 +579,28 @@
     return teachers.filter(t => (t.roleType === 'karma_yogi' || t.roleType === 'guest_teacher' || t.stayStartDate || t.stayEndDate) && !isTeacherInHouseForCourse(t));
   }
 
+  function togglePublishPlan(approved: boolean) {
+    if (!currentPlan) return;
+    const monday = getMondayOfCurrentWeek();
+    const weekCode = currentPlan.targetWeekCode || getWeekCode(monday);
+    
+    currentPlan.isApproved = approved;
+    currentPlan.status = approved ? 'approved' : 'draft';
+    
+    if (approved) {
+      currentPlan.courses = currentPlan.courses.map(c => ({ ...c, status: 'approved' }));
+    }
+    
+    if (!db.getWeekPlan(currentPlan.id)) {
+      db.addWeekPlan(currentPlan);
+    } else {
+      db.updateWeekPlan(currentPlan);
+    }
+    
+    window.dispatchEvent(new CustomEvent('rapla-data-synced'));
+    loadData();
+  }
+
   function handleSync() {
     if (confirm('Möchtest du den Wochenplan mit dem Server synchronisieren? Eigene ungespeicherte Änderungen am Plan werden zurückgesetzt.')) {
       db.syncDatabase();
@@ -588,11 +610,23 @@
 
 <div class="page-header">
   <div class="title-section">
-    <span class="badge badge-primary">Terminkalender</span>
-    <h1>Wochenplan <span style="font-size: 1.2rem; font-weight: 500; color: var(--text-secondary); margin-left: 0.5rem;">({currentPlan?.name || 'Aktiv'}) {currentPlan?.isManualOnly ? '🔒' : ''}</span></h1>
-    <p>Aktuelle Yoga-Kurse und Lehrerzuweisungen der laufenden Woche.</p>
+    <span class="badge badge-primary">Terminkalender (Admin-Ansicht)</span>
+    <h1 style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+      <span>Wochenplan</span>
+      <span style="font-size: 1.2rem; font-weight: 500; color: var(--text-secondary);">({currentPlan?.name || 'Aktiv'}) {currentPlan?.isManualOnly ? '🔒' : ''}</span>
+      {#if currentPlan?.isApproved || currentPlan?.status === 'approved'}
+        <span class="approval-status-pill approved" title="Diese Woche ist genehmigt und in der Team-Ansicht sichtbar">
+          ✅ Genehmigt & Freigegeben
+        </span>
+      {:else}
+        <span class="approval-status-pill draft" title="Diese Woche ist ein Entwurf und im Team-Plan noch verborgen">
+          ⏳ Entwurf (Nur Admin)
+        </span>
+      {/if}
+    </h1>
+    <p>Yoga-Kurse und Lehrerzuweisungen planen, genehmigen und für das Team veröffentlichen.</p>
   </div>
-  <div style="display: flex; gap: 0.75rem; align-items: center;">
+  <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
     {#if currentPlan}
       <label class="manual-lock-label" style="display: flex; align-items: center; gap: 0.5rem; font-weight: 500; color: {currentPlan.isManualOnly ? '#ea580c' : 'var(--text-secondary)'}; background: {currentPlan.isManualOnly ? '#ffedd5' : 'var(--bg-secondary)'}; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; border: 1px solid {currentPlan.isManualOnly ? '#fdba74' : 'transparent'}; transition: all 0.2s;">
         <input 
@@ -677,6 +711,33 @@
       </span>
       <button type="button" class="btn btn-secondary btn-small" onclick={() => navigateWeek(1)}>Nächste Woche ▶</button>
     </div>
+
+    <!-- Häkchen / Genehmigungs-Tool für die Team-Ansicht -->
+    {#if currentPlan}
+      <label 
+        class="approval-toggle-tool"
+        class:is-approved={currentPlan.isApproved || currentPlan.status === 'approved'}
+        title={currentPlan.isApproved || currentPlan.status === 'approved' 
+          ? 'Diese Woche ist für die Team-Ansicht genehmigt und veröffentlicht. Klicken, um Freigabe aufzuheben.' 
+          : 'Diese Woche ist als Entwurf nur in der Admin-Ansicht sichtbar. Häkchen setzen, um sie für das Team freizugeben.'}
+      >
+        <input 
+          type="checkbox" 
+          checked={currentPlan.isApproved ?? (currentPlan.status === 'approved')} 
+          onchange={(e) => togglePublishPlan(e.currentTarget.checked)}
+        />
+        <span class="approval-label">
+          {#if currentPlan.isApproved ?? (currentPlan.status === 'approved')}
+            <span class="approval-icon">✅</span>
+            <span class="approval-text"><strong>Genehmigt & Veröffentlicht</strong> <small>(Team-Ansicht: Sichtbar)</small></span>
+          {:else}
+            <span class="approval-icon">⏳</span>
+            <span class="approval-text"><strong>Entwurf / Vorbereitung</strong> <small>(Team-Ansicht: Verborgen)</small></span>
+          {/if}
+        </span>
+      </label>
+    {/if}
+
     {#if isFullscreen}
       <span class="fullscreen-title">🧘 Wochenplan (Vollbild)</span>
     {/if}
@@ -1633,6 +1694,75 @@
       background-color: #fecdd3; /* rose-200 - strong alert red/rose */
       box-shadow: 0 0 12px rgba(225, 29, 72, 0.4);
     }
+  }
+
+  .approval-status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 0.25rem 0.65rem;
+    border-radius: 9999px;
+    letter-spacing: 0.01em;
+  }
+
+  .approval-status-pill.approved {
+    background: #ecfdf5;
+    color: #047857;
+    border: 1px solid #a7f3d0;
+  }
+
+  .approval-status-pill.draft {
+    background: #fffbeb;
+    color: #b45309;
+    border: 1px solid #fde68a;
+  }
+
+  .approval-toggle-tool {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.35rem 0.85rem;
+    border-radius: 8px;
+    font-size: 0.825rem;
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.2s ease-in-out;
+    background: #f8fafc;
+    border: 1.5px solid #cbd5e1;
+    color: #475569;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  }
+
+  .approval-toggle-tool:hover {
+    filter: brightness(0.97);
+    border-color: #94a3b8;
+  }
+
+  .approval-toggle-tool.is-approved {
+    background: #ecfdf5;
+    border-color: #10b981;
+    color: #065f46;
+  }
+
+  .approval-toggle-tool input[type="checkbox"] {
+    width: 1.15rem;
+    height: 1.15rem;
+    accent-color: #059669;
+    cursor: pointer;
+  }
+
+  .approval-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .approval-text small {
+    opacity: 0.85;
+    font-size: 0.75rem;
+    margin-left: 0.25rem;
   }
 
   @media (max-width: 768px) {

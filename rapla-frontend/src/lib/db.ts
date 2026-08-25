@@ -142,6 +142,7 @@ export interface WeekPlan {
   targetWeekCode?: string;
   createdAt: string;
   isManualOnly?: boolean;
+  isApproved?: boolean;
 }
 
 // Default Data
@@ -707,6 +708,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
     id: 'plan-active-1',
     name: 'Kursplan (Genehmigt & Aktiv)',
     status: 'approved',
+    isApproved: true,
     courses: DEFAULT_COURSES.map(c => ({ ...c, status: 'approved' })),
     createdAt: new Date().toISOString()
   },
@@ -715,6 +717,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
     id: "plan-pre-2026-W35",
     name: "Vorplanung 2026-W35 (Automatisch)",
     status: "approved",
+    isApproved: true,
     targetWeekCode: "2026-W35",
     courses: [
       {
@@ -1467,7 +1470,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
   {
     id: "plan-pre-2026-W36",
     name: "Vorplanung 2026-W36 (Automatisch)",
-    status: "approved",
+    status: "draft",
+    isApproved: false,
     targetWeekCode: "2026-W36",
     courses: [
       {
@@ -2208,7 +2212,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
   {
     id: "plan-pre-2026-W37",
     name: "Vorplanung 2026-W37 (Automatisch)",
-    status: "approved",
+    status: "draft",
+    isApproved: false,
     targetWeekCode: "2026-W37",
     courses: [
       {
@@ -2937,7 +2942,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
   {
     id: "plan-pre-2026-W38",
     name: "Vorplanung 2026-W38 (Automatisch)",
-    status: "approved",
+    status: "draft",
+    isApproved: false,
     targetWeekCode: "2026-W38",
     courses: [
       {
@@ -3666,7 +3672,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
   {
     id: "plan-pre-2026-W39",
     name: "Vorplanung 2026-W39 (Automatisch)",
-    status: "approved",
+    status: "draft",
+    isApproved: false,
     targetWeekCode: "2026-W39",
     courses: [
       {
@@ -4395,7 +4402,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
   {
     id: "plan-pre-2026-W40",
     name: "Vorplanung 2026-W40 (Automatisch)",
-    status: "approved",
+    status: "draft",
+    isApproved: false,
     targetWeekCode: "2026-W40",
     courses: [
       {
@@ -5124,7 +5132,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
   {
     id: "plan-pre-2026-W41",
     name: "Vorplanung 2026-W41 (Automatisch)",
-    status: "approved",
+    status: "draft",
+    isApproved: false,
     targetWeekCode: "2026-W41",
     courses: [
       {
@@ -5877,7 +5886,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
   {
     id: "plan-pre-2026-W42",
     name: "Vorplanung 2026-W42 (Automatisch)",
-    status: "approved",
+    status: "draft",
+    isApproved: false,
     targetWeekCode: "2026-W42",
     courses: [
       {
@@ -6674,7 +6684,7 @@ function setStored<T>(key: string, value: T): void {
   }
 }
 
-const CURRENT_DB_VERSION = 80;
+const CURRENT_DB_VERSION = 81;
 
 // Database Actions
 export const db = {
@@ -6999,6 +7009,17 @@ export const db = {
       }
     }
     for (const p of list) {
+      if (p.isApproved === undefined) {
+        if (p.targetWeekCode && p.targetWeekCode > '2026-W35') {
+          p.isApproved = false;
+          p.status = 'draft';
+        } else if (p.status === 'approved') {
+          p.isApproved = true;
+        } else {
+          p.isApproved = false;
+        }
+        updated = true;
+      }
       if (p.seminarLeaderIds === undefined) {
         p.seminarLeaderIds = [];
         updated = true;
@@ -7112,6 +7133,42 @@ export const db = {
   deleteWeekPlan: (id: string): void => {
     const list = db.getWeekPlans();
     db.saveWeekPlans(list.filter(p => p.id !== id));
+  },
+  setWeekPlanApproval: (weekCodeOrPlanId: string, isApproved: boolean): WeekPlan | undefined => {
+    const list = db.getWeekPlans();
+    let plan = list.find(p => p.id === weekCodeOrPlanId || p.targetWeekCode === weekCodeOrPlanId);
+    if (!plan) {
+      const template = list.find(p => p.id === 'plan-template-1') || list[0];
+      plan = {
+        ...template,
+        id: `plan-auto-${weekCodeOrPlanId}`,
+        targetWeekCode: weekCodeOrPlanId,
+        status: isApproved ? 'approved' : 'draft',
+        isApproved,
+        courses: template ? template.courses.map(c => ({
+          ...c,
+          id: 'course-' + Math.random().toString(36).substr(2, 9),
+          teacherId: null,
+          isAiPlanned: false,
+          status: isApproved ? 'approved' : 'draft'
+        })) : [],
+        createdAt: new Date().toISOString()
+      };
+      list.push(plan);
+    } else {
+      plan.isApproved = isApproved;
+      plan.status = isApproved ? 'approved' : 'draft';
+      if (isApproved) {
+        plan.courses = plan.courses.map(c => ({ ...c, status: 'approved' }));
+      }
+    }
+    db.saveWeekPlans(list);
+    return plan;
+  },
+  isWeekPlanApproved: (weekCodeOrPlanId: string): boolean => {
+    const list = db.getWeekPlans();
+    const plan = list.find(p => p.id === weekCodeOrPlanId || p.targetWeekCode === weekCodeOrPlanId);
+    return !!plan && (plan.isApproved === true || (plan.status === 'approved' && plan.isApproved !== false));
   },
 
   // Courses API - maps to specific plan (defaults to first approved plan if no planId provided)
