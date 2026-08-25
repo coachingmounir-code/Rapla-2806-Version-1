@@ -57,7 +57,14 @@
     { value: 4, label: 'Donnerstag' }
   ];
 
+  let hasSetInitialWeek = false;
+
   onMount(() => {
+    weekPlans = db.getWeekPlans();
+    if (!hasSetInitialWeek) {
+      currentWeekOffset = findDefaultApprovedWeekOffset(weekPlans);
+      hasSetInitialWeek = true;
+    }
     loadData();
     
     // Set active mobile day to today if today is within our calendar cycle
@@ -139,7 +146,7 @@
     return `${year}-W${week.toString().padStart(2, '0')}`;
   }
 
-  function getMondayOfCurrentWeek(): Date {
+  function getMondayForOffset(offset: number): Date {
     const today = new Date();
     const currentDay = today.getDay(); // 0 = Sun, 1 = Mon, ..., 6 = Sat
     let daysToMonday = 0;
@@ -152,8 +159,33 @@
     else if (currentDay === 4) daysToMonday = -3; // Thursday -> past Monday (-3)
     
     const monday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-    monday.setDate(today.getDate() + daysToMonday + (currentWeekOffset * 7));
+    monday.setDate(today.getDate() + daysToMonday + (offset * 7));
     return monday;
+  }
+
+  function getMondayOfCurrentWeek(): Date {
+    return getMondayForOffset(currentWeekOffset);
+  }
+
+  function findDefaultApprovedWeekOffset(plans: WeekPlan[]): number {
+    // 1. If current calendar week (offset 0) is approved, show current week
+    const currentWeekCode = getWeekCode(getMondayForOffset(0));
+    const curPlan = plans.find(p => p.targetWeekCode === currentWeekCode);
+    const isCurrentApproved = !!curPlan && (curPlan.isApproved === true || (curPlan.status === 'approved' && curPlan.isApproved !== false));
+    if (isCurrentApproved) {
+      return 0;
+    }
+
+    // 2. Otherwise start with the first upcoming approved week (e.g. KW 36)
+    for (let offset = 1; offset <= 26; offset++) {
+      const code = getWeekCode(getMondayForOffset(offset));
+      const plan = plans.find(p => p.targetWeekCode === code);
+      if (plan && (plan.isApproved === true || (plan.status === 'approved' && plan.isApproved !== false))) {
+        return offset;
+      }
+    }
+
+    return 0;
   }
 
   // ISO-8601 week number
@@ -282,9 +314,7 @@
     const monday = getMondayOfCurrentWeek();
     const weekCode = getWeekCode(monday);
     
-    let foundPlan = weekPlans.find(p => p.targetWeekCode === weekCode)
-                 || weekPlans.find(p => p.id === 'plan-active-1')
-                 || weekPlans.find(p => p.isApproved === true || p.status === 'approved');
+    let foundPlan = weekPlans.find(p => p.targetWeekCode === weekCode);
     const approved = !!foundPlan && (foundPlan.isApproved === true || (foundPlan.status === 'approved' && foundPlan.isApproved !== false));
     
     isWeekApproved = approved;
@@ -507,14 +537,23 @@
           <p class="notice-sub-text">
             Sobald die Freigabe erteilt wird, werden alle Kurse, Zeiten und Zuweisungen hier automatisch für das gesamte Team sichtbar.
           </p>
-          <div class="notice-action-row">
+          <div class="notice-action-row" style="display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap;">
             <button 
               type="button" 
               class="btn btn-primary btn-small" 
-              onclick={() => { currentWeekOffset = 0; loadData(); }}
+              onclick={() => { currentWeekOffset = findDefaultApprovedWeekOffset(weekPlans); loadData(); }}
             >
-              📅 Zurück zur aktuellen Woche
+              📅 Zur freigegebenen Woche
             </button>
+            {#if currentWeekOffset !== 0}
+              <button 
+                type="button" 
+                class="btn btn-secondary btn-small" 
+                onclick={() => { currentWeekOffset = 0; loadData(); }}
+              >
+                Aktuelle Woche (KW {getWeekNumber(getMondayForOffset(0))})
+              </button>
+            {/if}
           </div>
         </div>
       {:else}
@@ -594,14 +633,23 @@
         <p class="notice-sub-text">
           Sobald die Freigabe erfolgt ist, erscheint der Plan hier automatisch.
         </p>
-        <div class="notice-action-row">
+        <div class="notice-action-row" style="display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap;">
           <button 
             type="button" 
             class="btn btn-primary btn-small" 
-            onclick={() => { currentWeekOffset = 0; loadData(); }}
+            onclick={() => { currentWeekOffset = findDefaultApprovedWeekOffset(weekPlans); loadData(); }}
           >
-            📅 Zurück zur aktuellen Woche
+            📅 Zur freigegebenen Woche
           </button>
+          {#if currentWeekOffset !== 0}
+            <button 
+              type="button" 
+              class="btn btn-secondary btn-small" 
+              onclick={() => { currentWeekOffset = 0; loadData(); }}
+            >
+              Aktuelle Woche
+            </button>
+          {/if}
         </div>
       </div>
     {:else}

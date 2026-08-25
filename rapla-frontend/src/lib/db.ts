@@ -723,7 +723,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
                                                                                                         {
     id: "plan-pre-2026-W35",
     name: "Vorplanung 2026-W35 (Automatisch)",
-    status: "approved",
+    status: "draft",
     targetWeekCode: "2026-W35",
     courses: [
       {
@@ -2241,7 +2241,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
   {
     id: "plan-pre-2026-W37",
     name: "Vorplanung 2026-W37 (Automatisch)",
-    status: "approved",
+    status: "draft",
     targetWeekCode: "2026-W37",
     courses: [
       {
@@ -2982,7 +2982,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
   {
     id: "plan-pre-2026-W38",
     name: "Vorplanung 2026-W38 (Automatisch)",
-    status: "approved",
+    status: "draft",
     targetWeekCode: "2026-W38",
     courses: [
       {
@@ -3723,7 +3723,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
   {
     id: "plan-pre-2026-W39",
     name: "Vorplanung 2026-W39 (Automatisch)",
-    status: "approved",
+    status: "draft",
     targetWeekCode: "2026-W39",
     courses: [
       {
@@ -4464,7 +4464,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
   {
     id: "plan-pre-2026-W40",
     name: "Vorplanung 2026-W40 (Automatisch)",
-    status: "approved",
+    status: "draft",
     targetWeekCode: "2026-W40",
     courses: [
       {
@@ -5205,7 +5205,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
   {
     id: "plan-pre-2026-W41",
     name: "Vorplanung 2026-W41 (Automatisch)",
-    status: "approved",
+    status: "draft",
     targetWeekCode: "2026-W41",
     courses: [
       {
@@ -5970,7 +5970,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
   {
     id: "plan-pre-2026-W42",
     name: "Vorplanung 2026-W42 (Automatisch)",
-    status: "approved",
+    status: "draft",
     targetWeekCode: "2026-W42",
     courses: [
       {
@@ -6779,7 +6779,7 @@ function setStored<T>(key: string, value: T): void {
   }
 }
 
-const CURRENT_DB_VERSION = 89;
+const CURRENT_DB_VERSION = 90;
 
 // Database Actions
 export const db = {
@@ -7090,14 +7090,18 @@ export const db = {
       }
     }
     for (const p of list) {
-      if (p.isApproved === undefined) {
-        if (p.targetWeekCode && p.targetWeekCode > '2026-W35') {
+      if (p.isApproved === undefined || (isOutdated && !p.hasManualEdits && !p.isManualOnly)) {
+        if (p.targetWeekCode === '2026-W36') {
+          p.isApproved = true;
+          p.status = 'approved';
+        } else if (p.targetWeekCode === '2026-W35' || (p.targetWeekCode && p.targetWeekCode > '2026-W36')) {
           p.isApproved = false;
           p.status = 'draft';
-        } else if (p.status === 'approved') {
+        } else if (p.status === 'approved' && p.targetWeekCode !== '2026-W35') {
           p.isApproved = true;
         } else {
           p.isApproved = false;
+          p.status = 'draft';
         }
         updated = true;
       }
