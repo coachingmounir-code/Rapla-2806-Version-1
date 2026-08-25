@@ -1489,6 +1489,9 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
     id: "plan-pre-2026-W36",
     name: "Vorplanung 2026-W36 (Automatisch)",
     status: "approved",
+    isApproved: true,
+    isManualOnly: true,
+    hasManualEdits: true,
     targetWeekCode: "2026-W36",
     courses: [
       {
@@ -1500,7 +1503,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "endTime": "19:30",
         "roomId": "Rezeption",
         "teacherId": "teacher-gen-pranava-pauly",
-        "isAiPlanned": true,
+        "isAiPlanned": false,
         "status": "approved"
       },
       {
@@ -1559,7 +1562,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "16:30",
         "endTime": "18:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-abha-morkoetter",
+        "teacherId": "teacher-karma-marlene",
         "isAiPlanned": false,
         "status": "approved"
       },
@@ -1572,7 +1575,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "endTime": "18:00",
         "roomId": "room-5",
         "teacherId": "teacher-gen-pranava-pauly",
-        "isAiPlanned": true,
+        "isAiPlanned": false,
         "status": "approved"
       },
       {
@@ -1583,7 +1586,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-adam-anjali",
+        "teacherId": "teacher-gen-christopher",
         "isAiPlanned": false,
         "status": "approved"
       },
@@ -1607,8 +1610,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "20:00",
         "endTime": "21:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-abha-morkoetter",
-        "isAiPlanned": true,
+        "teacherId": "teacher-gen-anjali-gelzleichter",
+        "isAiPlanned": false,
         "status": "approved"
       },
       {
@@ -1620,7 +1623,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "endTime": "06:50",
         "roomId": "room-2",
         "teacherId": "teacher-gen-karuna-wapke",
-        "isAiPlanned": true,
+        "isAiPlanned": false,
         "status": "approved"
       },
       {
@@ -1679,7 +1682,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "16:15",
         "endTime": "18:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-yl",
+        "teacherId": "teacher-karma-marlene",
         "isAiPlanned": false,
         "status": "approved"
       },
@@ -1713,7 +1716,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "style": "Meditation",
         "dayOfWeek": 6,
         "startTime": "20:00",
-        "endTime": "21:00",
+        "endTime": "22:00",
         "roomId": "room-2",
         "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
@@ -1728,7 +1731,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "endTime": "19:30",
         "roomId": "Rezeption",
         "teacherId": "teacher-gen-ulrich-nebel",
-        "isAiPlanned": true,
+        "isAiPlanned": false,
         "status": "approved"
       },
       {
@@ -1762,7 +1765,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 0,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-4",
+        "roomId": "room-2",
         "teacherId": "teacher-gen-burnie-bansemer",
         "isAiPlanned": false,
         "status": "approved"
@@ -1799,7 +1802,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "16:30",
         "endTime": "18:00",
         "roomId": "room-3",
-        "teacherId": "teacher-gen-karuna-wapke",
+        "teacherId": "teacher-karma-marlene",
         "isAiPlanned": false,
         "status": "approved"
       },
@@ -1810,8 +1813,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 0,
         "startTime": "19:30",
         "endTime": "20:00",
-        "roomId": "room-1",
-        "teacherId": "teacher-gen-burnie-narayani",
+        "roomId": "room-5",
+        "teacherId": "teacher-gen-hu-buerkle",
         "isAiPlanned": false,
         "status": "approved"
       },
@@ -1822,9 +1825,9 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 0,
         "startTime": "20:00",
         "endTime": "20:35",
-        "roomId": "room-5",
-        "teacherId": "teacher-gen-burnie-bansemer",
-        "isAiPlanned": true,
+        "roomId": "room-1",
+        "teacherId": "teacher-gen-pranava-pauly",
+        "isAiPlanned": false,
         "status": "approved"
       },
       {
@@ -1834,8 +1837,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 0,
         "startTime": "20:00",
         "endTime": "21:00",
-        "roomId": "room-2",
-        "teacherId": "teacher-gen-karuna-wapke",
+        "roomId": "room-5",
+        "teacherId": "teacher-gen-burnie-bansemer",
         "isAiPlanned": false,
         "status": "approved"
       },
@@ -1865,13 +1868,13 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W36-32",
-        "name": "Anfänger",
+        "name": "Anfänger Yin Yoga",
         "style": "Hatha",
         "dayOfWeek": 1,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-4",
-        "teacherId": "teacher-gen-burnie-bansemer",
+        "roomId": "room-5",
+        "teacherId": "teacher-gen-beate-menkarski",
         "isAiPlanned": false,
         "status": "approved"
       },
@@ -1942,9 +1945,9 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 1,
         "startTime": "21:10",
         "endTime": "22:00",
-        "roomId": "room-5",
+        "roomId": "room-2",
         "teacherId": "teacher-gen-pranava-pauly",
-        "isAiPlanned": true,
+        "isAiPlanned": false,
         "status": "approved"
       },
       {
@@ -1967,7 +1970,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "07:00",
         "endTime": "08:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-harishakti",
+        "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
         "status": "approved"
       },
@@ -1991,20 +1994,20 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "09:15",
         "endTime": "11:00",
         "roomId": "room-3",
-        "teacherId": "teacher-gen-anjali-gelzleichter",
+        "teacherId": "teacher-karma-marlene",
         "isAiPlanned": false,
         "status": "approved"
       },
       {
         "id": "course-2026-W36-43",
-        "name": "Anfänger",
+        "name": "Anfänger Yin Yoga",
         "style": "Hatha",
         "dayOfWeek": 2,
         "startTime": "16:15",
         "endTime": "18:00",
         "roomId": "room-4",
-        "teacherId": "teacher-gen-christopher",
-        "isAiPlanned": true,
+        "teacherId": "teacher-gen-beate-menkarski",
+        "isAiPlanned": false,
         "status": "approved"
       },
       {
@@ -2052,7 +2055,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "endTime": "07:30",
         "roomId": "room-5",
         "teacherId": "teacher-gen-mouniir-jaber",
-        "isAiPlanned": true,
+        "isAiPlanned": false,
         "status": "approved"
       },
       {
@@ -2063,7 +2066,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "07:00",
         "endTime": "08:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-narayani-kedenburg",
+        "teacherId": "teacher-gen-anjali-gelzleichter",
         "isAiPlanned": false,
         "status": "approved"
       },
@@ -2075,7 +2078,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "09:15",
         "endTime": "11:00",
         "roomId": "room-4",
-        "teacherId": "teacher-gen-alexander-melior",
+        "teacherId": "teacher-karma-marlene",
         "isAiPlanned": false,
         "status": "approved"
       },
@@ -2100,7 +2103,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "endTime": "20:00",
         "roomId": "room-1",
         "teacherId": "teacher-gen-adam-zmuda",
-        "isAiPlanned": true,
+        "isAiPlanned": false,
         "status": "approved"
       },
       {
@@ -2124,7 +2127,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "endTime": "22:00",
         "roomId": "room-6",
         "teacherId": "teacher-gen-hu-buerkle",
-        "isAiPlanned": true,
+        "isAiPlanned": false,
         "status": "approved"
       },
       {
@@ -2147,7 +2150,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "07:00",
         "endTime": "08:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-anjali-gelzleichter",
+        "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
         "status": "approved"
       },
@@ -2171,19 +2174,19 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "09:15",
         "endTime": "11:00",
         "roomId": "room-3",
-        "teacherId": "teacher-gen-narayani-kedenburg",
-        "isAiPlanned": true,
+        "teacherId": "teacher-gen-pranava-pauly",
+        "isAiPlanned": false,
         "status": "approved"
       },
       {
         "id": "course-2026-W36-58",
-        "name": "Anfänger",
+        "name": "Anfänger Yin Yoga",
         "style": "Hatha",
         "dayOfWeek": 4,
         "startTime": "16:15",
         "endTime": "18:00",
         "roomId": "room-4",
-        "teacherId": "teacher-gen-ulrich-nebel",
+        "teacherId": "teacher-gen-beate-menkarski",
         "isAiPlanned": false,
         "status": "approved"
       },
@@ -2195,7 +2198,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "16:15",
         "endTime": "18:00",
         "roomId": "room-3",
-        "teacherId": "teacher-gen-nirmaya-fodor",
+        "teacherId": "teacher-gen-ulrich-nebel",
         "isAiPlanned": false,
         "status": "approved"
       },
@@ -2230,9 +2233,9 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 4,
         "startTime": "21:10",
         "endTime": "22:00",
-        "roomId": "room-5",
+        "roomId": "room-2",
         "teacherId": "teacher-gen-burnie-bansemer",
-        "isAiPlanned": true,
+        "isAiPlanned": false,
         "status": "approved"
       }
     ],
@@ -6779,7 +6782,7 @@ function setStored<T>(key: string, value: T): void {
   }
 }
 
-const CURRENT_DB_VERSION = 90;
+const CURRENT_DB_VERSION = 91;
 
 // Database Actions
 export const db = {
@@ -7080,21 +7083,29 @@ export const db = {
     let updated = false;
     const list = [...stored];
     for (const defPlan of DEFAULT_WEEK_PLANS) {
-      const idx = list.findIndex(p => p.id === defPlan.id);
+      const idx = list.findIndex(p => p.id === defPlan.id || p.targetWeekCode === defPlan.targetWeekCode);
       if (idx === -1) {
         list.push(defPlan);
         updated = true;
+      } else if (defPlan.targetWeekCode === '2026-W36') {
+        // Always ensure approved 2026-W36 plan matches the correct schedule
+        if (isOutdated || list[idx].courses.some(c => c.name === 'Anfänger Ankommensstunde' && c.dayOfWeek === 5 && c.teacherId !== 'teacher-karma-marlene')) {
+          list[idx] = { ...defPlan, isApproved: true, status: 'approved', isManualOnly: true, hasManualEdits: true };
+          updated = true;
+        }
       } else if (isOutdated && !list[idx].isManualOnly && !list[idx].hasManualEdits) {
         list[idx] = defPlan;
         updated = true;
       }
     }
     for (const p of list) {
-      if (p.isApproved === undefined || (isOutdated && !p.hasManualEdits && !p.isManualOnly)) {
-        if (p.targetWeekCode === '2026-W36') {
-          p.isApproved = true;
-          p.status = 'approved';
-        } else if (p.targetWeekCode === '2026-W35' || (p.targetWeekCode && p.targetWeekCode > '2026-W36')) {
+      if (p.targetWeekCode === '2026-W36') {
+        p.isApproved = true;
+        p.status = 'approved';
+        p.isManualOnly = true;
+        p.hasManualEdits = true;
+      } else if (p.isApproved === undefined || (isOutdated && !p.hasManualEdits && !p.isManualOnly)) {
+        if (p.targetWeekCode === '2026-W35' || (p.targetWeekCode && p.targetWeekCode > '2026-W36')) {
           p.isApproved = false;
           p.status = 'draft';
         } else if (p.status === 'approved' && p.targetWeekCode !== '2026-W35') {
@@ -7134,15 +7145,15 @@ export const db = {
             updated = true;
           }
 
-          if (isDateInYlaRange(courseDate)) {
-            // Om Namo Narayanaya takes place in Devi room (room-1) during YLA
-            if ((nameLower.includes('om namo') || nameLower.includes('narayanaya')) && c.roomId !== 'room-1' && !c.isManuallyEdited && !p.isManualOnly) {
+          if (isDateInYlaRange(courseDate) && !p.isManualOnly && !p.hasManualEdits) {
+            // Om Namo Narayanaya takes place in Devi room (room-1) during YLA (except Sunday start in Tripura)
+            if (c.dayOfWeek !== 0 && (nameLower.includes('om namo') || nameLower.includes('narayanaya')) && c.roomId !== 'room-1' && !c.isManuallyEdited) {
               c.roomId = 'room-1';
               updated = true;
             }
 
             // Abha does not teach regular courses during the 4-week YLA (unless manually assigned by admin)
-            if (!c.isManuallyEdited && !p.isManualOnly && (c.teacherId === 'teacher-gen-abha-morkoetter' || c.teacherId === 'abha')) {
+            if (!c.isManuallyEdited && (c.teacherId === 'teacher-gen-abha-morkoetter' || c.teacherId === 'abha')) {
               c.teacherId = null;
               c.isAiPlanned = false;
               updated = true;
@@ -7413,8 +7424,11 @@ export const db = {
 
       // 3. Sync Supabase cloud state
       await db.initializeCloudSync();
+      
+      // 4. Ensure week plans are verified and latest migrations applied
+      db.getWeekPlans();
 
-      // 4. Dispatch event so all components update immediately
+      // 5. Dispatch event so all components update immediately
       window.dispatchEvent(new CustomEvent('rapla-data-synced'));
       return { success: true, message: 'Daten erfolgreich synchronisiert' };
     } catch (err: any) {
