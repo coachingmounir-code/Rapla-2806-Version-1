@@ -111,7 +111,7 @@
     if (!dateStr) return { text: 'Keine Frist', isOverdue: false, isToday: false };
     const today = getTodayStr();
     if (dateStr === today) return { text: 'Heute', isOverdue: false, isToday: true };
-    if (dateStr < today) return { text: 'Überfällig', isOverdue: true, isToday: false };
+    if (dateStr < today) return { text: 'Überfällig (Exekution)', isOverdue: true, isToday: false };
     
     const [y, m, d] = dateStr.split('-');
     const target = new Date(parseInt(y, 10), parseInt(m, 10) - 1, parseInt(d, 10));
@@ -206,7 +206,7 @@
     });
     quickTitle = '';
     quickAssignee = '';
-    showToast('Aufgabe erfolgreich hinzugefügt! ✨');
+    showToast('Befehl ausgeführt: Aufgabe im imperialen Archiv erfasst! ⚔️');
   }
 
   // Open Edit Modal
@@ -275,10 +275,10 @@
 
     if (editingTodoId) {
       adminTodoStore.updateTodo(editingTodoId, payload);
-      showToast('Aufgabe aktualisiert! ✏️');
+      showToast('Imperiales Dekret aktualisiert! ✏️');
     } else {
       adminTodoStore.addTodo(payload);
-      showToast('Neue Aufgabe erstellt! ✨');
+      showToast('Neuer imperialer Einsatzbefehl erstellt! ⚔️');
     }
 
     isModalOpen = false;
@@ -306,14 +306,14 @@
     if (!text || !text.trim()) return;
     adminTodoStore.addSubtask(todoId, text.trim());
     inlineSubtaskInputs[todoId] = '';
-    showToast('Teilaufgabe hinzugefügt! 📋');
+    showToast('Teiloperation protokolliert! 📋');
   }
 
   // Reset Confirmation
   function confirmReset() {
     if (confirm('Möchtest du alle Aufgaben auf die Standardliste (aus "Yoga Vidya Aufgaben") zurücksetzen? Eigene Änderungen werden dabei überschrieben.')) {
       adminTodoStore.resetToDefaults();
-      showToast('Aufgabenliste aus PDF-Vorlage neu geladen! 🪷');
+      showToast('Protokolle aus dem Sith-Archiv wiederhergestellt! 💀');
     }
   }
 
@@ -321,18 +321,19 @@
   function copyDaySummary() {
     const dateLabel = formatDisplayDate(selectedDate);
     const todos = dayViewTodos;
-    let text = `📋 YOGA VIDYA NORDSEE – TAGES-TO-DOS (${dateLabel})\n\n`;
+    let text = `⚔️ LORD VADER IMPERIAL COMMAND – TAGES-TO-DOS (${dateLabel})\n`;
+    text += `========================================================\n\n`;
     
     if (todos.length === 0) {
-      text += `Keine anstehenden Aufgaben für diesen Tag.\n`;
+      text += `Keine anstehenden Aufgaben für diesen Tag. Die Galaxis ist unter Kontrolle.\n`;
     } else {
       todos.forEach((t, i) => {
-        const check = t.completed ? '[x]' : '[ ]';
-        const prio = t.priority === 'urgent' || t.priority === 'high' ? '🔥 ' : '';
+        const check = t.completed ? '[X]' : '[ ]';
+        const prio = t.priority === 'urgent' ? '💀 DRINGEND: ' : (t.priority === 'high' ? '⚡ ' : '');
         const cat = CATEGORY_CONFIG[t.category]?.label || '';
         text += `${i + 1}. ${check} ${prio}${t.title} (${cat})\n`;
         if (t.assignee) text += `   👤 Zuständig: ${t.assignee}\n`;
-        if (t.notes) text += `   📝 Info: ${t.notes}\n`;
+        if (t.notes) text += `   📝 Befehl: ${t.notes}\n`;
         if (t.subtasks && t.subtasks.length > 0) {
           t.subtasks.forEach(s => {
             text += `      ${s.completed ? '✓' : '-'} ${s.text}\n`;
@@ -342,94 +343,105 @@
     }
 
     navigator.clipboard.writeText(text);
-    showToast('Tagesplan in die Zwischenablage kopiert! 📋');
+    showToast('Imperialer Einsatzplan in die Zwischenablage transferiert! 💀');
   }
 </script>
 
 {#if isAuthorized}
-  <div class="admin-todos-page animate-fade-in">
+  <div class="vader-command-page animate-fade-in">
+    <!-- Starfield & Red Glow Atmospheric Elements -->
+    <div class="vader-ambient-glow"></div>
+    <div class="vader-grid-overlay"></div>
+
     <!-- Toast Notification -->
     {#if toastMessage}
-      <div class="toast-popup animate-fade-in">
-        {toastMessage}
+      <div class="vader-toast-popup animate-fade-in">
+        <span class="toast-skull">💀</span>
+        <span>{toastMessage}</span>
       </div>
     {/if}
 
-    <!-- Hero Header Card -->
-    <div class="hero-card">
-      <div class="hero-content">
-        <div class="hero-badge">
-          <span>🔒 ADMIN-BEREICH</span>
+    <!-- Hero Header Card: Darth Vader Command Bridge -->
+    <div class="vader-hero-card">
+      <div class="vader-hero-content">
+        <div class="vader-hero-badge">
+          <span class="vader-badge-icon">⚔️</span>
+          <span>IMPERIALES OBERKOMMANDO</span>
           <span class="badge-dot">•</span>
-          <span>YOGA VIDYA NORDSEE</span>
+          <span>SITH-ARCHIV YOGA VIDYA NORDSEE</span>
         </div>
-        <h1>📋 Seminar- & Orga-To-Dos</h1>
-        <p class="hero-desc">
-          Zentrale Tagesübersicht aller anstehenden Aufgaben rund um Seminarvorbereitung, Dozentenabstimmung, Abrechnung und Sevaka-Planung.
+        <h1 class="vader-main-title">
+          <span class="title-skull">💀</span> Seminar- & Orga-To-Dos
+        </h1>
+        <p class="vader-hero-quote">
+          „Ich finde Ihren Mangel an erledigten To-Dos beklagenswert...“
+        </p>
+        <p class="vader-hero-desc">
+          Zentrale Gefechtsstation aller Missionen: Seminarvorbereitung, Dozentenabstimmung, Sevaka-Einsätze und organisatorische Direktiven.
         </p>
       </div>
 
-      <div class="hero-actions">
-        <button type="button" class="btn btn-hero-secondary" onclick={confirmReset} title="Setzt die Liste auf die Original-Aufgaben aus dem PDF zurück">
-          🔄 Vorlage neu laden
+      <div class="vader-hero-actions">
+        <button type="button" class="btn-vader-secondary" onclick={confirmReset} title="Setzt die Liste auf die Original-Aufgaben zurück">
+          🔄 Sith-Vorlage laden
         </button>
-        <button type="button" class="btn btn-hero-primary" onclick={openCreateModal}>
-          ＋ Neue Aufgabe
+        <button type="button" class="btn-vader-primary" onclick={openCreateModal}>
+          ⚡ Neue Mission befehlen
         </button>
       </div>
     </div>
 
     <!-- KPI Statistics Grid -->
-    <div class="kpi-grid">
+    <div class="vader-kpi-grid">
       <button 
         type="button" 
-        class="kpi-card glass-card" 
+        class="vader-kpi-card" 
         class:active-kpi={viewMode === 'day' && selectedDate === getTodayStr()}
         onclick={() => { viewMode = 'day'; setDateToToday(); }}
       >
         <div class="kpi-icon-box kpi-today">📅</div>
         <div class="kpi-info">
-          <span class="kpi-label">Heute anstehend</span>
+          <span class="kpi-label">Heute im Visier</span>
           <strong class="kpi-val">{adminTodoStore.todayCount}</strong>
         </div>
       </button>
 
       <button 
         type="button" 
-        class="kpi-card glass-card" 
+        class="vader-kpi-card kpi-urgent-card" 
         class:active-kpi={selectedPriority === 'urgent'}
         onclick={() => { selectedPriority = selectedPriority === 'urgent' ? 'all' : 'urgent'; viewMode = 'all'; }}
       >
-        <div class="kpi-icon-box kpi-urgent">🔥</div>
+        <div class="kpi-icon-box kpi-urgent">💀</div>
         <div class="kpi-info">
-          <span class="kpi-label">Dringend / Wichtig</span>
-          <strong class="kpi-val">{adminTodoStore.urgentCount}</strong>
+          <span class="kpi-label text-urgent">💀 Dringend / Kritisch</span>
+          <strong class="kpi-val val-urgent">{adminTodoStore.urgentCount}</strong>
         </div>
       </button>
 
       <button 
         type="button" 
-        class="kpi-card glass-card" 
+        class="vader-kpi-card" 
         class:active-kpi={viewMode === 'all' && selectedCategory === 'all' && selectedPriority === 'all'}
         onclick={() => { viewMode = 'all'; selectedCategory = 'all'; selectedPriority = 'all'; }}
       >
         <div class="kpi-icon-box kpi-pending">⏳</div>
         <div class="kpi-info">
-          <span class="kpi-label">Offen gesamt</span>
+          <span class="kpi-label">Offene Direktiven</span>
           <strong class="kpi-val">{adminTodoStore.pendingCount}</strong>
         </div>
       </button>
 
-      <div class="kpi-card glass-card kpi-card-progress">
-        <div class="kpi-icon-box kpi-done">✅</div>
+      <div class="vader-kpi-card kpi-card-progress">
+        <div class="kpi-icon-box kpi-done">⚔️</div>
         <div class="kpi-info" style="flex-grow: 1;">
           <div class="progress-label-row">
-            <span class="kpi-label">Erledigt</span>
+            <span class="kpi-label">Exekutiert / Erledigt</span>
             <strong class="kpi-val-sm">{adminTodoStore.completedCount} / {adminTodoStore.totalCount}</strong>
           </div>
-          <div class="progress-bar-bg">
+          <div class="lightsaber-track">
             <div 
-              class="progress-bar-fill" 
+              class="lightsaber-beam" 
               style="width: {adminTodoStore.totalCount > 0 ? (adminTodoStore.completedCount / adminTodoStore.totalCount) * 100 : 0}%;"
             ></div>
           </div>
@@ -437,28 +449,28 @@
       </div>
     </div>
 
-    <!-- Quick Add Bar -->
-    <div class="quick-add-bar glass-card">
+    <!-- Quick Add Bar: Imperial Command Line -->
+    <div class="vader-quick-add-bar">
       <div class="quick-add-input-wrap">
-        <span class="quick-icon">✍️</span>
+        <span class="quick-icon">⚔️</span>
         <input 
           type="text" 
-          placeholder="Schnelle Aufgabe eingeben... (z. B. Dozent X anrufen, Skripte prüfen...)" 
+          placeholder="Einsatzbefehl eingeben... (z. B. Dozent kontaktieren, Skripte requirieren...)" 
           bind:value={quickTitle}
           onkeydown={(e) => e.key === 'Enter' && handleQuickAdd()}
-          class="quick-input"
+          class="vader-quick-input"
         />
       </div>
 
       <div class="quick-add-controls">
-        <select bind:value={quickCategory} class="quick-select" aria-label="Kategorie">
+        <select bind:value={quickCategory} class="vader-select" aria-label="Kategorie">
           {#each Object.entries(CATEGORY_CONFIG) as [key, conf]}
             <option value={key}>{conf.icon} {conf.label}</option>
           {/each}
         </select>
 
-        <select bind:value={quickPriority} class="quick-select" aria-label="Priorität">
-          <option value="urgent">🔥 Dringend</option>
+        <select bind:value={quickPriority} class="vader-select prio-select-box" aria-label="Priorität">
+          <option value="urgent">💀 Dringend (Totenkopf)</option>
           <option value="high">⚡ Hoch</option>
           <option value="normal">🟡 Normal</option>
           <option value="low">🟢 Niedrig</option>
@@ -466,23 +478,23 @@
 
         <input 
           type="text" 
-          placeholder="👤 Zuständig..." 
+          placeholder="👤 Zuständiger Offizier..." 
           bind:value={quickAssignee} 
-          class="quick-input-sm"
+          class="vader-quick-input-sm"
         />
 
-        <button type="button" class="btn btn-primary btn-quick-add" onclick={handleQuickAdd}>
-          ＋ Hinzufügen
+        <button type="button" class="btn-vader-primary btn-quick-add" onclick={handleQuickAdd}>
+          ⚡ Befehl erteilen
         </button>
       </div>
     </div>
 
     <!-- Main Toolbar & View Switcher -->
-    <div class="toolbar-section glass-card">
+    <div class="vader-toolbar-section">
       <div class="view-mode-tabs">
         <button 
           type="button" 
-          class="view-tab-btn" 
+          class="vader-tab-btn" 
           class:active={viewMode === 'day'} 
           onclick={() => viewMode = 'day'}
         >
@@ -490,7 +502,7 @@
         </button>
         <button 
           type="button" 
-          class="view-tab-btn" 
+          class="vader-tab-btn" 
           class:active={viewMode === 'grouped'} 
           onclick={() => viewMode = 'grouped'}
         >
@@ -498,30 +510,30 @@
         </button>
         <button 
           type="button" 
-          class="view-tab-btn" 
+          class="vader-tab-btn" 
           class:active={viewMode === 'all'} 
           onclick={() => viewMode = 'all'}
         >
-          📑 Alle ({baseFilteredTodos.length})
+          📑 Alle Direktiven ({baseFilteredTodos.length})
         </button>
       </div>
 
       <!-- Search and filters in toolbar -->
       <div class="search-filter-row">
-        <div class="search-box">
+        <div class="vader-search-box">
           <span class="search-icon">🔍</span>
           <input 
             type="text" 
-            placeholder="Aufgaben, Namen, Notizen durchsuchen..." 
+            placeholder="Sith-Archive & Direktiven durchsuchen..." 
             bind:value={searchQuery}
-            class="search-input"
+            class="vader-search-input"
           />
           {#if searchQuery}
             <button class="clear-search" onclick={() => searchQuery = ''}>✕</button>
           {/if}
         </div>
 
-        <label class="checkbox-label hide-done-toggle">
+        <label class="vader-checkbox-toggle">
           <input type="checkbox" bind:checked={showCompleted} />
           <span>Erledigte anzeigen</span>
         </label>
@@ -531,23 +543,23 @@
       <div class="category-chips-row">
         <button 
           type="button" 
-          class="chip" 
+          class="vader-chip" 
           class:chip-active={selectedCategory === 'all'}
           onclick={() => selectedCategory = 'all'}
         >
-          ✨ Alle Kategorien
+          ✨ Alle Sektoren
         </button>
         {#each Object.entries(CATEGORY_CONFIG) as [catKey, conf]}
           {@const count = adminTodoStore.todos.filter(t => t.category === catKey && (!t.completed || showCompleted)).length}
           <button 
             type="button" 
-            class="chip" 
+            class="vader-chip" 
             class:chip-active={selectedCategory === catKey}
             onclick={() => selectedCategory = selectedCategory === catKey ? 'all' : catKey as AdminTodoCategory}
           >
             <span>{conf.icon}</span>
             <span>{conf.label}</span>
-            <span class="chip-badge">{count}</span>
+            <span class="vader-chip-badge">{count}</span>
           </button>
         {/each}
       </div>
@@ -555,10 +567,10 @@
 
     <!-- DAY-BY-DAY VIEW -->
     {#if viewMode === 'day'}
-      <div class="day-navigator-card glass-card">
+      <div class="vader-day-nav-card">
         <div class="day-nav-controls">
-          <button type="button" class="btn-day-nav" onclick={() => shiftDate(-1)}>
-            ◀ Vorheriger Tag
+          <button type="button" class="btn-vader-nav" onclick={() => shiftDate(-1)}>
+            ◀ Vorheriger Zyklus
           </button>
           
           <div class="date-picker-center">
@@ -566,45 +578,45 @@
             <input 
               type="date" 
               bind:value={selectedDate} 
-              class="day-date-input"
+              class="vader-date-input"
             />
             <span class="day-label-formatted">({formatDisplayDate(selectedDate)})</span>
             {#if selectedDate === getTodayStr()}
-              <span class="tag-today-badge">HEUTE</span>
+              <span class="vader-today-badge">HEUTE / JETZT</span>
             {:else}
-              <button type="button" class="btn-goto-today" onclick={setDateToToday}>
+              <button type="button" class="btn-vader-today" onclick={setDateToToday}>
                 Zu Heute springen
               </button>
             {/if}
           </div>
 
-          <button type="button" class="btn-day-nav" onclick={() => shiftDate(1)}>
-            Nächster Tag ▶
+          <button type="button" class="btn-vader-nav" onclick={() => shiftDate(1)}>
+            Nächster Zyklus ▶
           </button>
         </div>
 
         <div class="day-actions-row">
           <span class="day-stats-text">
-            <strong>{dayViewTodos.filter(t => !t.completed).length} offene</strong> von {dayViewTodos.length} Aufgaben für diesen Tag
+            <strong class="text-red-glow">{dayViewTodos.filter(t => !t.completed).length} offene</strong> von {dayViewTodos.length} Direktiven für diesen Tag
           </span>
-          <button type="button" class="btn btn-secondary btn-sm" onclick={copyDaySummary}>
-            📋 Tagesplan kopieren
+          <button type="button" class="btn-vader-secondary btn-sm" onclick={copyDaySummary}>
+            📋 Einsatzplan kopieren
           </button>
         </div>
       </div>
 
       <!-- Day Tasks List -->
       {#if dayViewTodos.length === 0}
-        <div class="empty-state-card glass-card">
-          <span class="empty-icon">🪷</span>
-          <h3>Keine Aufgaben für diesen Tag</h3>
-          <p>Für den {formatDisplayDate(selectedDate)} sind aktuell keine To-Dos hinterlegt.</p>
-          <button type="button" class="btn btn-primary" onclick={openCreateModal} style="margin-top: 1rem;">
-            ＋ Aufgabe für diesen Tag anlegen
+        <div class="vader-empty-state">
+          <span class="empty-icon">⚔️</span>
+          <h3>Keine Direktiven für diesen Zyklus</h3>
+          <p>Für den {formatDisplayDate(selectedDate)} sind aktuell keine Befehle hinterlegt.</p>
+          <button type="button" class="btn-vader-primary" onclick={openCreateModal} style="margin-top: 1rem;">
+            ⚡ Einsatzbefehl erteilen
           </button>
         </div>
       {:else}
-        <div class="todos-grid">
+        <div class="vader-todos-grid">
           {#each dayViewTodos as todo (todo.id)}
             {@render renderTodoCard(todo)}
           {/each}
@@ -619,10 +631,10 @@
         {#if groupedTodos.overdue.length > 0}
           <div class="group-section overdue-section">
             <div class="group-header">
-              <span class="group-icon">⚠️</span>
-              <h3>Überfällige Aufgaben ({groupedTodos.overdue.length})</h3>
+              <span class="group-icon">💀</span>
+              <h3>Kritisch & Überfällig ({groupedTodos.overdue.length})</h3>
             </div>
-            <div class="todos-grid">
+            <div class="vader-todos-grid">
               {#each groupedTodos.overdue as todo (todo.id)}
                 {@render renderTodoCard(todo)}
               {/each}
@@ -637,9 +649,9 @@
             <h3>Heute fällig ({groupedTodos.forToday.length})</h3>
           </div>
           {#if groupedTodos.forToday.length === 0}
-            <p class="empty-group-msg">Keine offenen Aufgaben für heute fällig.</p>
+            <p class="empty-group-msg">Keine offenen Direktiven für heute fällig.</p>
           {:else}
-            <div class="todos-grid">
+            <div class="vader-todos-grid">
               {#each groupedTodos.forToday as todo (todo.id)}
                 {@render renderTodoCard(todo)}
               {/each}
@@ -651,12 +663,12 @@
         <div class="group-section upcoming-section">
           <div class="group-header">
             <span class="group-icon">🗓️</span>
-            <h3>Anstehende Termine & Aufgaben ({groupedTodos.upcoming.length})</h3>
+            <h3>Anstehende Termine & Missionen ({groupedTodos.upcoming.length})</h3>
           </div>
           {#if groupedTodos.upcoming.length === 0}
-            <p class="empty-group-msg">Keine weiteren anstehenden Aufgaben gefunden.</p>
+            <p class="empty-group-msg">Keine weiteren anstehenden Aufgaben im System.</p>
           {:else}
-            <div class="todos-grid">
+            <div class="vader-todos-grid">
               {#each groupedTodos.upcoming as todo (todo.id)}
                 {@render renderTodoCard(todo)}
               {/each}
@@ -669,9 +681,9 @@
           <div class="group-section undated-section">
             <div class="group-header">
               <span class="group-icon">📌</span>
-              <h3>Ohne festes Datum / Kontinuierlich ({groupedTodos.undated.length})</h3>
+              <h3>Kontinuierliche Operationen ({groupedTodos.undated.length})</h3>
             </div>
-            <div class="todos-grid">
+            <div class="vader-todos-grid">
               {#each groupedTodos.undated as todo (todo.id)}
                 {@render renderTodoCard(todo)}
               {/each}
@@ -684,13 +696,13 @@
     <!-- ALL TASKS VIEW -->
     {#if viewMode === 'all'}
       {#if baseFilteredTodos.length === 0}
-        <div class="empty-state-card glass-card">
+        <div class="vader-empty-state">
           <span class="empty-icon">🔍</span>
-          <h3>Keine Aufgaben gefunden</h3>
-          <p>Passe deine Filterkriterien an oder erstelle eine neue Aufgabe.</p>
+          <h3>Keine Direktiven gefunden</h3>
+          <p>Passe deine Filterkriterien an oder erteile einen neuen Befehl.</p>
         </div>
       {:else}
-        <div class="todos-grid">
+        <div class="vader-todos-grid">
           {#each baseFilteredTodos as todo (todo.id)}
             {@render renderTodoCard(todo)}
           {/each}
@@ -707,33 +719,42 @@
   {@const relDate = getRelativeDateLabel(todo.dueDate)}
   {@const completedSubtasks = (todo.subtasks || []).filter(s => s.completed).length}
   {@const totalSubtasks = (todo.subtasks || []).length}
+  {@const isUrgent = todo.priority === 'urgent' && !todo.completed}
 
   <div 
-    class="todo-card glass-card" 
+    class="vader-todo-card" 
     class:completed-card={todo.completed}
-    class:urgent-card={todo.priority === 'urgent' && !todo.completed}
+    class:urgent-card={isUrgent}
   >
     <!-- Top Header: Category & Priority Badges -->
     <div class="card-top-row">
       <div class="badges-left">
-        <span class="cat-badge" style="background-color: {catConf.bg}; color: {catConf.color};">
+        <span class="vader-cat-badge">
           {catConf.icon} {catConf.label}
         </span>
-        <span class="prio-badge {prioConf.badgeClass}">
-          {prioConf.icon} {prioConf.label}
-        </span>
+        
+        {#if todo.priority === 'urgent'}
+          <span class="vader-prio-badge prio-urgent-skull">
+            💀 DRINGEND
+          </span>
+        {:else}
+          <span class="vader-prio-badge {prioConf.badgeClass}">
+            {prioConf.icon} {prioConf.label}
+          </span>
+        {/if}
+
         {#if todo.recurringRule}
-          <span class="recurring-badge">
+          <span class="vader-recurring-badge">
             🔄 {todo.recurringRule}
           </span>
         {/if}
       </div>
 
       <div class="card-actions-menu">
-        <button type="button" class="btn-card-action" onclick={() => openEditModal(todo)} title="Bearbeiten">
+        <button type="button" class="btn-card-action" onclick={() => openEditModal(todo)} title="Modifizieren">
           ✏️
         </button>
-        <button type="button" class="btn-card-action delete" onclick={() => adminTodoStore.deleteTodo(todo.id)} title="Löschen">
+        <button type="button" class="btn-card-action delete" onclick={() => adminTodoStore.deleteTodo(todo.id)} title="Exekutieren / Löschen">
           🗑️
         </button>
       </div>
@@ -741,18 +762,21 @@
 
     <!-- Main Title & Checkbox -->
     <div class="card-main-row">
-      <label class="todo-checkbox-wrapper">
+      <label class="vader-checkbox-wrapper" title={todo.completed ? 'Wieder öffnen' : 'Als erledigt markieren'}>
         <input 
           type="checkbox" 
           checked={todo.completed} 
           onchange={() => adminTodoStore.toggleTodo(todo.id)}
-          class="main-checkbox"
+          class="vader-main-checkbox"
         />
-        <span class="custom-checkbox"></span>
+        <span class="vader-custom-checkmark"></span>
       </label>
 
       <div class="card-text-content">
-        <h4 class="todo-title" class:strike={todo.completed}>
+        <h4 class="todo-title" class:strike={todo.completed} class:urgent-title={isUrgent}>
+          {#if isUrgent}
+            <span class="inline-skull-glow" title="Dringende Aufgabe">💀</span>
+          {/if}
           {todo.title}
         </h4>
         {#if todo.notes}
@@ -771,7 +795,7 @@
             <span class="time-tag">⏰ {todo.dueTime} Uhr</span>
           {/if}
           <span class="relative-time-pill" class:pill-overdue={relDate.isOverdue} class:pill-today={relDate.isToday}>
-            {relDate.text}
+            {#if relDate.isOverdue}💀 {/if}{relDate.text}
           </span>
         </div>
       {/if}
@@ -793,10 +817,10 @@
       {#if todo.linkUrl}
         <div class="meta-item link-meta">
           <a href={todo.linkUrl} target="_blank" rel="noopener noreferrer" class="link-btn">
-            🔗 Link öffnen
+            🔗 Hyperlink öffnen
           </a>
           {#if todo.linkPassword}
-            <span class="password-badge" title="Passwort für Umfrage / Seite">
+            <span class="password-badge" title="Sicherheitscode / Passwort">
               🔑 {todo.linkPassword}
             </span>
           {/if}
@@ -808,7 +832,7 @@
     {#if todo.subtasks && todo.subtasks.length > 0}
       <div class="subtasks-container">
         <div class="subtasks-header">
-          <span class="subtasks-title">Teilaufgaben ({completedSubtasks}/{totalSubtasks})</span>
+          <span class="subtasks-title">Teiloperationen ({completedSubtasks}/{totalSubtasks})</span>
           <div class="subtask-progress-mini">
             <div class="subtask-progress-fill" style="width: {(completedSubtasks / totalSubtasks) * 100}%;"></div>
           </div>
@@ -829,7 +853,7 @@
                 type="button" 
                 class="btn-del-sub" 
                 onclick={() => adminTodoStore.deleteSubtask(todo.id, sub.id)}
-                title="Teilaufgabe entfernen"
+                title="Teiloperation entfernen"
               >
                 ✕
               </button>
@@ -843,7 +867,7 @@
     <div class="inline-subtask-row">
       <input 
         type="text" 
-        placeholder="＋ Teilaufgabe / Checkpunkt hinzufügen..." 
+        placeholder="＋ Teiloperation / Checkpunkt hinzufügen..." 
         bind:value={inlineSubtaskInputs[todo.id]}
         onkeydown={(e) => e.key === 'Enter' && handleAddInlineSubtask(todo.id)}
         class="inline-sub-input"
@@ -866,25 +890,28 @@
   </div>
 {/snippet}
 
-<!-- Create / Edit Full Modal -->
+<!-- Create / Edit Full Modal: Imperial Command Terminal -->
 {#if isModalOpen}
   <!-- svelte-ignore a11y_click_events_have_key_events -->
   <!-- svelte-ignore a11y_no_static_element_interactions -->
-  <div class="modal-backdrop" onclick={() => isModalOpen = false}>
-    <div class="modal-card glass-card" onclick={(e) => e.stopPropagation()}>
-      <div class="modal-header">
-        <h2>{editingTodoId ? '✏️ Aufgabe bearbeiten' : '＋ Neue Seminar- & Orga-Aufgabe'}</h2>
+  <div class="vader-modal-backdrop" onclick={() => isModalOpen = false}>
+    <div class="vader-modal-card" onclick={(e) => e.stopPropagation()}>
+      <div class="vader-modal-header">
+        <h2>
+          <span class="header-skull">⚔️</span>
+          {editingTodoId ? 'Direktive modifizieren' : 'Neuen imperialen Einsatzbefehl verfassen'}
+        </h2>
         <button class="modal-close-btn" onclick={() => isModalOpen = false}>✕</button>
       </div>
 
       <div class="modal-body">
         <div class="form-group">
-          <label for="modal-title">Aufgabentitel *</label>
+          <label for="modal-title">Aufgabentitel / Befehl *</label>
           <input 
             id="modal-title" 
             type="text" 
-            class="form-input" 
-            placeholder="z. B. Teilnehmer für Weiterbildung kontaktieren..." 
+            class="vader-form-input" 
+            placeholder="z. B. Dozent kontaktieren, Yin ÜL AB absagen..." 
             bind:value={modalTitle}
             required
           />
@@ -892,8 +919,8 @@
 
         <div class="grid-2">
           <div class="form-group">
-            <label for="modal-category">Kategorie</label>
-            <select id="modal-category" class="form-select" bind:value={modalCategory}>
+            <label for="modal-category">Sektor / Kategorie</label>
+            <select id="modal-category" class="vader-form-select" bind:value={modalCategory}>
               {#each Object.entries(CATEGORY_CONFIG) as [key, conf]}
                 <option value={key}>{conf.icon} {conf.label}</option>
               {/each}
@@ -901,9 +928,9 @@
           </div>
 
           <div class="form-group">
-            <label for="modal-priority">Priorität</label>
-            <select id="modal-priority" class="form-select" bind:value={modalPriority}>
-              <option value="urgent">🔥 Dringend</option>
+            <label for="modal-priority">Dringlichkeitsstufe</label>
+            <select id="modal-priority" class="vader-form-select prio-select-modal" bind:value={modalPriority}>
+              <option value="urgent">💀 Dringend (Totenkopf)</option>
               <option value="high">⚡ Hoch</option>
               <option value="normal">🟡 Normal</option>
               <option value="low">🟢 Niedrig</option>
@@ -913,11 +940,11 @@
 
         <div class="grid-2">
           <div class="form-group">
-            <label for="modal-due-date">Fälligkeitsdatum (Tag)</label>
+            <label for="modal-due-date">Fälligkeitsdatum (Zyklus)</label>
             <input 
               id="modal-due-date" 
               type="date" 
-              class="form-input" 
+              class="vader-form-input" 
               bind:value={modalDueDate}
             />
           </div>
@@ -927,7 +954,7 @@
             <input 
               id="modal-due-time" 
               type="time" 
-              class="form-input" 
+              class="vader-form-input" 
               bind:value={modalDueTime}
             />
           </div>
@@ -935,22 +962,22 @@
 
         <div class="grid-2">
           <div class="form-group">
-            <label for="modal-assignee">Zuständige Person (Sevaka / Dozent)</label>
+            <label for="modal-assignee">Zuständiger Sevaka / Offizier</label>
             <input 
               id="modal-assignee" 
               type="text" 
-              class="form-input" 
+              class="vader-form-input" 
               placeholder="z. B. Karuna, Susan, Christian..." 
               bind:value={modalAssignee}
             />
           </div>
 
           <div class="form-group">
-            <label for="modal-contact">Kontakt-Email</label>
+            <label for="modal-contact">Holonet / Kontakt-Email</label>
             <input 
               id="modal-contact" 
               type="email" 
-              class="form-input" 
+              class="vader-form-input" 
               placeholder="z. B. name@gmx.de" 
               bind:value={modalContactEmail}
             />
@@ -959,22 +986,22 @@
 
         <div class="grid-2">
           <div class="form-group">
-            <label for="modal-link">Web-Link (URL)</label>
+            <label for="modal-link">Hyperlink (URL)</label>
             <input 
               id="modal-link" 
               type="url" 
-              class="form-input" 
+              class="vader-form-input" 
               placeholder="https://..." 
               bind:value={modalLinkUrl}
             />
           </div>
 
           <div class="form-group">
-            <label for="modal-password">Passwort / Code (Optional)</label>
+            <label for="modal-password">Sicherheitscode / Passwort</label>
             <input 
               id="modal-password" 
               type="text" 
-              class="form-input" 
+              class="vader-form-input" 
               placeholder="z. B. Ganga108" 
               bind:value={modalLinkPassword}
             />
@@ -982,40 +1009,40 @@
         </div>
 
         <div class="form-group">
-          <label for="modal-recurring">Wiederholungsregel</label>
+          <label for="modal-recurring">Wiederholungsrhythmus</label>
           <input 
             id="modal-recurring" 
             type="text" 
-            class="form-input" 
+            class="vader-form-input" 
             placeholder="z. B. Jeden Mittwoch & Samstag, Wöchentlich montags..." 
             bind:value={modalRecurringRule}
           />
         </div>
 
         <div class="form-group">
-          <label for="modal-notes">Notizen & Beschreibung</label>
+          <label for="modal-notes">Befehlsdetails & Notizen</label>
           <textarea 
             id="modal-notes" 
-            class="form-textarea" 
+            class="vader-form-textarea" 
             rows="3" 
-            placeholder="Zusätzliche Details, Raumangaben, Telefonnummern oder Anweisungen..."
+            placeholder="Zusätzliche Direktiven, Raumangaben, Telefonnummern oder Anweisungen..."
             bind:value={modalNotes}
           ></textarea>
         </div>
 
         <!-- Subtasks in Modal -->
         <div class="form-group">
-          <label for="modal-subtask-in">Checkliste / Teilaufgaben</label>
+          <label for="modal-subtask-in">Checkliste / Teiloperationen</label>
           <div class="modal-subtask-add-row">
             <input 
               id="modal-subtask-in"
               type="text" 
-              class="form-input" 
+              class="vader-form-input" 
               placeholder="Neuen Checkpunkt hinzufügen..." 
               bind:value={modalNewSubtaskText}
               onkeydown={(e) => e.key === 'Enter' && handleModalAddSubtask()}
             />
-            <button type="button" class="btn btn-secondary" onclick={handleModalAddSubtask}>
+            <button type="button" class="btn-vader-secondary" onclick={handleModalAddSubtask}>
               ＋ Punkt
             </button>
           </div>
@@ -1037,19 +1064,19 @@
           <input 
             id="modal-tags" 
             type="text" 
-            class="form-input" 
+            class="vader-form-input" 
             placeholder="z. B. Ausbildung, Susan, YLA, Rezi" 
             bind:value={modalTags}
           />
         </div>
       </div>
 
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" onclick={() => isModalOpen = false}>
+      <div class="vader-modal-footer">
+        <button type="button" class="btn-vader-secondary" onclick={() => isModalOpen = false}>
           Abbrechen
         </button>
-        <button type="button" class="btn btn-primary" onclick={handleSaveModal}>
-          💾 {editingTodoId ? 'Änderungen speichern' : 'Aufgabe erstellen'}
+        <button type="button" class="btn-vader-primary" onclick={handleSaveModal}>
+          ⚡ {editingTodoId ? 'Befehl aktualisieren' : 'Direktive erteilen'}
         </button>
       </div>
     </div>
@@ -1057,154 +1084,250 @@
 {/if}
 
 <style>
-  .admin-todos-page {
+  /* Darth Vader / Galactic Empire Aesthetic Theme */
+  .vader-command-page {
     display: flex;
     flex-direction: column;
     gap: 1.75rem;
-    font-family: 'Outfit', sans-serif;
-    color: var(--text-primary);
+    font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    color: #e2e8f0;
+    background: #090a0f;
+    min-height: calc(100vh - 100px);
+    padding: 1.5rem;
+    border-radius: 24px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: inset 0 0 100px rgba(0, 0, 0, 0.9), 0 10px 40px rgba(0, 0, 0, 0.7);
+    border: 1px solid rgba(220, 38, 38, 0.25);
   }
 
-  /* Toast notification */
-  .toast-popup {
+  /* Atmospheric Sith Red Ambient Glow */
+  .vader-ambient-glow {
+    position: absolute;
+    top: -150px;
+    right: -100px;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(220, 38, 38, 0.15) 0%, rgba(0, 0, 0, 0) 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .vader-grid-overlay {
+    position: absolute;
+    inset: 0;
+    background-image: 
+      linear-gradient(rgba(220, 38, 38, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(220, 38, 38, 0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Toast Notification */
+  .vader-toast-popup {
     position: fixed;
     bottom: 2rem;
     right: 2rem;
-    background: #1f2937;
+    background: #12131c;
     color: #ffffff;
-    padding: 0.85rem 1.5rem;
+    padding: 0.9rem 1.6rem;
     border-radius: 12px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), 0 0 15px rgba(220, 38, 38, 0.4);
+    border: 1px solid #dc2626;
     z-index: 1000;
-    font-weight: 600;
+    font-weight: 700;
     font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
   }
 
-  /* Hero Header */
-  .hero-card {
+  .toast-skull {
+    font-size: 1.2rem;
+    animation: sith-pulse 1.5s infinite;
+  }
+
+  /* Darth Vader Hero Card */
+  .vader-hero-card {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: linear-gradient(135deg, rgba(150, 0, 64, 0.92) 0%, rgba(217, 119, 36, 0.88) 100%);
+    background: linear-gradient(135deg, #111219 0%, #1e0910 50%, #0c0d14 100%);
     border-radius: 20px;
     padding: 2.25rem 2.5rem;
     color: #ffffff;
-    box-shadow: 0 10px 30px rgba(150, 0, 64, 0.15);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6), 0 0 25px rgba(220, 38, 38, 0.2);
+    border: 1px solid rgba(220, 38, 38, 0.4);
     position: relative;
     overflow: hidden;
+    z-index: 1;
   }
 
-  .hero-content {
-    max-width: 680px;
+  .vader-hero-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, #ff0037, #dc2626, transparent);
+    box-shadow: 0 0 12px #ff0037;
+  }
+
+  .vader-hero-content {
+    max-width: 720px;
     z-index: 2;
   }
 
-  .hero-badge {
+  .vader-hero-badge {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    font-size: 0.75rem;
-    font-weight: 800;
-    letter-spacing: 0.08em;
-    background: rgba(255, 255, 255, 0.2);
-    padding: 0.25rem 0.75rem;
+    font-size: 0.72rem;
+    font-weight: 900;
+    letter-spacing: 0.12em;
+    background: rgba(220, 38, 38, 0.18);
+    border: 1px solid rgba(220, 38, 38, 0.5);
+    color: #ff6b81;
+    padding: 0.3rem 0.85rem;
     border-radius: 999px;
     width: fit-content;
-    margin-bottom: 0.75rem;
-    backdrop-filter: blur(4px);
+    margin-bottom: 0.85rem;
+    text-transform: uppercase;
+    box-shadow: 0 0 10px rgba(220, 38, 38, 0.2);
+  }
+
+  .vader-badge-icon {
+    font-size: 0.85rem;
   }
 
   .badge-dot {
-    opacity: 0.7;
+    opacity: 0.5;
   }
 
-  .hero-content h1 {
-    font-family: 'Playfair Display', serif;
-    font-size: 2.2rem;
-    font-weight: 800;
+  .vader-main-title {
+    font-size: 2.3rem;
+    font-weight: 900;
+    letter-spacing: -0.02em;
     margin: 0 0 0.5rem 0;
     line-height: 1.2;
     color: #ffffff;
+    text-shadow: 0 0 20px rgba(220, 38, 38, 0.5);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
   }
 
-  .hero-desc {
-    font-size: 0.95rem;
-    opacity: 0.95;
-    line-height: 1.45;
+  .title-skull {
+    font-size: 2rem;
+    filter: drop-shadow(0 0 8px #ff0037);
+  }
+
+  .vader-hero-quote {
+    font-size: 1.05rem;
+    font-style: italic;
+    font-weight: 600;
+    color: #ff8597;
+    margin: 0 0 0.5rem 0;
+    letter-spacing: 0.02em;
+    text-shadow: 0 0 10px rgba(220, 38, 38, 0.3);
+  }
+
+  .vader-hero-desc {
+    font-size: 0.92rem;
+    color: #94a3b8;
+    line-height: 1.5;
     margin: 0;
   }
 
-  .hero-actions {
+  .vader-hero-actions {
     display: flex;
-    gap: 0.75rem;
+    gap: 0.85rem;
     align-items: center;
     z-index: 2;
   }
 
-  .btn-hero-primary {
-    background: #ffffff;
-    color: var(--primary);
+  /* Vader Buttons */
+  .btn-vader-primary {
+    background: linear-gradient(135deg, #dc2626 0%, #990000 100%);
+    color: #ffffff;
+    font-weight: 800;
+    padding: 0.75rem 1.35rem;
+    border-radius: 12px;
+    border: 1px solid #ff4d6d;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(220, 38, 38, 0.4), 0 0 10px rgba(255, 0, 55, 0.3);
+    transition: all 0.25s ease;
+    font-size: 0.9rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .btn-vader-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 22px rgba(220, 38, 38, 0.7), 0 0 18px rgba(255, 0, 55, 0.6);
+    background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
+  }
+
+  .btn-vader-secondary {
+    background: rgba(26, 27, 38, 0.8);
+    color: #e2e8f0;
     font-weight: 700;
     padding: 0.75rem 1.25rem;
     border-radius: 12px;
-    border: none;
+    border: 1px solid rgba(220, 38, 38, 0.3);
     cursor: pointer;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    transition: var(--transition-smooth);
+    backdrop-filter: blur(6px);
+    transition: all 0.25s ease;
+    font-size: 0.9rem;
   }
 
-  .btn-hero-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
-  }
-
-  .btn-hero-secondary {
-    background: rgba(255, 255, 255, 0.15);
+  .btn-vader-secondary:hover {
+    background: rgba(36, 38, 54, 0.9);
+    border-color: #dc2626;
     color: #ffffff;
-    font-weight: 600;
-    padding: 0.75rem 1.15rem;
-    border-radius: 12px;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    cursor: pointer;
-    backdrop-filter: blur(4px);
-    transition: var(--transition-smooth);
-  }
-
-  .btn-hero-secondary:hover {
-    background: rgba(255, 255, 255, 0.25);
+    box-shadow: 0 0 12px rgba(220, 38, 38, 0.3);
   }
 
   /* KPI Grid */
-  .kpi-grid {
+  .vader-kpi-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 1.25rem;
+    z-index: 1;
   }
 
-  .kpi-card {
+  .vader-kpi-card {
     display: flex;
     align-items: center;
     gap: 1rem;
     padding: 1.25rem 1.5rem;
-    background: #ffffff;
+    background: #11121a;
     border-radius: 16px;
-    border: 1px solid var(--border-color);
+    border: 1px solid rgba(255, 255, 255, 0.08);
     cursor: pointer;
     text-align: left;
-    transition: var(--transition-smooth);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+    transition: all 0.25s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
   }
 
-  .kpi-card:hover {
+  .vader-kpi-card:hover {
     transform: translateY(-2px);
-    box-shadow: var(--shadow-main);
-    border-color: var(--primary);
+    border-color: rgba(220, 38, 38, 0.5);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5), 0 0 12px rgba(220, 38, 38, 0.2);
   }
 
-  .kpi-card.active-kpi {
-    border-color: var(--primary);
-    background: #fff7ed;
-    box-shadow: 0 0 0 2px rgba(150, 0, 64, 0.15);
+  .vader-kpi-card.active-kpi {
+    border-color: #dc2626;
+    background: #1a0d13;
+    box-shadow: 0 0 18px rgba(220, 38, 38, 0.4);
+  }
+
+  .vader-kpi-card.kpi-urgent-card {
+    border-color: rgba(220, 38, 38, 0.4);
+    background: linear-gradient(145deg, #160c12 0%, #11121a 100%);
   }
 
   .kpi-icon-box {
@@ -1216,12 +1339,13 @@
     justify-content: center;
     font-size: 1.4rem;
     flex-shrink: 0;
+    border: 1px solid rgba(255, 255, 255, 0.1);
   }
 
-  .kpi-today { background: #eff6ff; }
-  .kpi-urgent { background: #fef2f2; }
-  .kpi-pending { background: #fefce8; }
-  .kpi-done { background: #f0fdf4; }
+  .kpi-today { background: #0f1d2e; border-color: #1e3a8a; }
+  .kpi-urgent { background: #2b0c11; border-color: #dc2626; box-shadow: 0 0 10px rgba(220, 38, 38, 0.4); }
+  .kpi-pending { background: #261c0c; border-color: #b45309; }
+  .kpi-done { background: #0c2417; border-color: #15803d; }
 
   .kpi-info {
     display: flex;
@@ -1230,23 +1354,32 @@
   }
 
   .kpi-label {
-    font-size: 0.78rem;
-    font-weight: 700;
-    color: var(--text-secondary);
+    font-size: 0.76rem;
+    font-weight: 800;
+    color: #94a3b8;
     text-transform: uppercase;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.06em;
+  }
+
+  .kpi-label.text-urgent {
+    color: #ff6b81;
   }
 
   .kpi-val {
-    font-size: 1.5rem;
-    font-weight: 800;
-    color: var(--text-primary);
+    font-size: 1.6rem;
+    font-weight: 900;
+    color: #ffffff;
+  }
+
+  .kpi-val.val-urgent {
+    color: #ff4d6d;
+    text-shadow: 0 0 10px rgba(255, 77, 109, 0.6);
   }
 
   .kpi-val-sm {
     font-size: 0.95rem;
-    font-weight: 700;
-    color: var(--text-primary);
+    font-weight: 800;
+    color: #ffffff;
   }
 
   .kpi-card-progress {
@@ -1254,65 +1387,73 @@
   }
   .kpi-card-progress:hover {
     transform: none;
-    border-color: var(--border-color);
+    border-color: rgba(255, 255, 255, 0.08);
   }
 
   .progress-label-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 0.35rem;
+    margin-bottom: 0.45rem;
   }
 
-  .progress-bar-bg {
+  .lightsaber-track {
     width: 100%;
-    height: 8px;
-    background: #e5e7eb;
+    height: 9px;
+    background: #1f202e;
     border-radius: 999px;
     overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.05);
   }
 
-  .progress-bar-fill {
+  .lightsaber-beam {
     height: 100%;
-    background: linear-gradient(90deg, #10b981 0%, #059669 100%);
+    background: linear-gradient(90deg, #ff0055 0%, #ff2a2a 50%, #ff6b81 100%);
     border-radius: 999px;
+    box-shadow: 0 0 10px #ff0055;
     transition: width 0.4s ease;
   }
 
-  /* Quick Add Bar */
-  .quick-add-bar {
+  /* Quick Add Bar: Imperial Command Terminal */
+  .vader-quick-add-bar {
     display: flex;
     align-items: center;
     gap: 1rem;
-    padding: 1rem 1.25rem;
-    background: #ffffff;
+    padding: 1rem 1.35rem;
+    background: #11121a;
     border-radius: 16px;
-    border: 1px solid var(--border-color);
-    box-shadow: 0 4px 12px rgba(150, 0, 64, 0.03);
+    border: 1px solid rgba(220, 38, 38, 0.3);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), inset 0 0 15px rgba(0, 0, 0, 0.5);
+    z-index: 1;
   }
 
   .quick-add-input-wrap {
     display: flex;
     align-items: center;
-    gap: 0.65rem;
+    gap: 0.75rem;
     flex-grow: 1;
     min-width: 280px;
   }
 
   .quick-icon {
     font-size: 1.2rem;
-    opacity: 0.8;
+    color: #dc2626;
+    filter: drop-shadow(0 0 5px #dc2626);
   }
 
-  .quick-input {
+  .vader-quick-input {
     width: 100%;
     border: none;
     outline: none;
     font-family: inherit;
     font-size: 0.95rem;
-    font-weight: 500;
-    color: var(--text-primary);
+    font-weight: 600;
+    color: #ffffff;
     background: transparent;
+  }
+
+  .vader-quick-input::placeholder {
+    color: #64748b;
   }
 
   .quick-add-controls {
@@ -1321,19 +1462,30 @@
     gap: 0.65rem;
   }
 
-  .quick-select, .quick-input-sm {
-    padding: 0.5rem 0.75rem;
+  .vader-select, .vader-quick-input-sm {
+    padding: 0.55rem 0.85rem;
     border-radius: 8px;
-    border: 1px solid var(--border-color);
-    background: #fafaf9;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: #191a26;
     font-family: inherit;
     font-size: 0.85rem;
-    font-weight: 600;
-    color: var(--text-primary);
+    font-weight: 700;
+    color: #e2e8f0;
+    outline: none;
   }
 
-  .quick-input-sm {
-    width: 130px;
+  .vader-select:focus, .vader-quick-input-sm:focus {
+    border-color: #dc2626;
+    box-shadow: 0 0 8px rgba(220, 38, 38, 0.4);
+  }
+
+  .prio-select-box {
+    border-color: rgba(220, 38, 38, 0.4);
+    color: #ff8597;
+  }
+
+  .vader-quick-input-sm {
+    width: 150px;
   }
 
   .btn-quick-add {
@@ -1342,46 +1494,49 @@
     white-space: nowrap;
   }
 
-  /* Toolbar Section */
-  .toolbar-section {
+  /* Main Toolbar Section */
+  .vader-toolbar-section {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 1.1rem;
     padding: 1.25rem 1.5rem;
-    background: #ffffff;
+    background: #11121a;
     border-radius: 16px;
-    border: 1px solid var(--border-color);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    z-index: 1;
   }
 
   .view-mode-tabs {
     display: flex;
-    gap: 0.5rem;
-    border-bottom: 1px solid var(--border-color);
-    padding-bottom: 0.75rem;
+    gap: 0.65rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding-bottom: 0.85rem;
   }
 
-  .view-tab-btn {
-    padding: 0.55rem 1.15rem;
+  .vader-tab-btn {
+    padding: 0.6rem 1.2rem;
     border-radius: 10px;
     border: 1px solid transparent;
-    background: transparent;
-    color: var(--text-secondary);
+    background: rgba(255, 255, 255, 0.03);
+    color: #94a3b8;
     font-family: inherit;
     font-weight: 700;
     font-size: 0.9rem;
     cursor: pointer;
-    transition: var(--transition-smooth);
+    transition: all 0.2s ease;
   }
 
-  .view-tab-btn:hover {
-    background: #fafaf9;
-    color: var(--text-primary);
-  }
-
-  .view-tab-btn.active {
-    background: var(--primary);
+  .vader-tab-btn:hover {
+    background: rgba(220, 38, 38, 0.1);
     color: #ffffff;
-    box-shadow: 0 4px 10px rgba(150, 0, 64, 0.2);
+    border-color: rgba(220, 38, 38, 0.3);
+  }
+
+  .vader-tab-btn.active {
+    background: linear-gradient(135deg, #dc2626 0%, #990000 100%);
+    color: #ffffff;
+    border-color: #ff4d6d;
+    box-shadow: 0 4px 15px rgba(220, 38, 38, 0.4), 0 0 10px rgba(255, 0, 55, 0.3);
   }
 
   .search-filter-row {
@@ -1391,115 +1546,116 @@
     gap: 1.5rem;
   }
 
-  .search-box {
+  .vader-search-box {
     position: relative;
     display: flex;
     align-items: center;
     flex-grow: 1;
-    max-width: 500px;
+    max-width: 520px;
   }
 
   .search-icon {
     position: absolute;
-    left: 0.85rem;
+    left: 0.95rem;
     font-size: 0.95rem;
-    opacity: 0.6;
+    color: #dc2626;
   }
 
-  .search-input {
+  .vader-search-input {
     width: 100%;
-    padding: 0.55rem 0.85rem 0.55rem 2.35rem;
+    padding: 0.6rem 0.9rem 0.6rem 2.45rem;
     border-radius: 10px;
-    border: 1px solid var(--border-color);
-    background: #fafaf9;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: #171824;
     font-family: inherit;
-    font-size: 0.88rem;
-    color: var(--text-primary);
+    font-size: 0.9rem;
+    color: #ffffff;
+    outline: none;
   }
 
-  .search-input:focus {
-    outline: none;
-    border-color: var(--primary);
-    background: #ffffff;
-    box-shadow: 0 0 0 3px rgba(150, 0, 64, 0.08);
+  .vader-search-input:focus {
+    border-color: #dc2626;
+    box-shadow: 0 0 10px rgba(220, 38, 38, 0.3);
   }
 
   .clear-search {
     position: absolute;
-    right: 0.65rem;
+    right: 0.75rem;
     background: none;
     border: none;
     cursor: pointer;
-    font-size: 0.8rem;
-    opacity: 0.6;
+    font-size: 0.85rem;
+    color: #94a3b8;
   }
 
-  .hide-done-toggle {
+  .vader-checkbox-toggle {
     display: flex;
     align-items: center;
-    gap: 0.45rem;
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: var(--text-secondary);
+    gap: 0.5rem;
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: #94a3b8;
     cursor: pointer;
   }
 
   .category-chips-row {
     display: flex;
-    gap: 0.5rem;
+    gap: 0.55rem;
     flex-wrap: wrap;
   }
 
-  .chip {
+  .vader-chip {
     display: flex;
     align-items: center;
-    gap: 0.35rem;
-    padding: 0.4rem 0.75rem;
+    gap: 0.4rem;
+    padding: 0.45rem 0.85rem;
     border-radius: 999px;
-    border: 1px solid var(--border-color);
-    background: #fafaf9;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: #171824;
     font-family: inherit;
-    font-size: 0.8rem;
-    font-weight: 600;
-    color: var(--text-secondary);
-    cursor: pointer;
-    transition: var(--transition-smooth);
-  }
-
-  .chip:hover {
-    background: #fff9e6;
-    color: var(--text-primary);
-    border-color: #ffe082;
-  }
-
-  .chip.chip-active {
-    background: #960040;
-    color: #ffffff;
-    border-color: #960040;
-  }
-
-  .chip-badge {
-    font-size: 0.7rem;
-    padding: 0.05rem 0.4rem;
-    border-radius: 999px;
-    background: rgba(0, 0, 0, 0.08);
+    font-size: 0.82rem;
     font-weight: 700;
+    color: #94a3b8;
+    cursor: pointer;
+    transition: all 0.2s ease;
   }
 
-  .chip.chip-active .chip-badge {
-    background: rgba(255, 255, 255, 0.25);
+  .vader-chip:hover {
+    background: rgba(220, 38, 38, 0.12);
+    color: #ffffff;
+    border-color: rgba(220, 38, 38, 0.4);
+  }
+
+  .vader-chip.chip-active {
+    background: #dc2626;
+    color: #ffffff;
+    border-color: #ff4d6d;
+    box-shadow: 0 0 12px rgba(220, 38, 38, 0.5);
+  }
+
+  .vader-chip-badge {
+    font-size: 0.72rem;
+    padding: 0.05rem 0.45rem;
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.4);
+    font-weight: 800;
+  }
+
+  .vader-chip.chip-active .vader-chip-badge {
+    background: rgba(255, 255, 255, 0.3);
     color: #ffffff;
   }
 
   /* Day Navigator */
-  .day-navigator-card {
+  .vader-day-nav-card {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 1.1rem;
     padding: 1.25rem 1.5rem;
-    background: #ffffff;
+    background: #11121a;
     border-radius: 16px;
-    border: 1px solid var(--border-color);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    z-index: 1;
   }
 
   .day-nav-controls {
@@ -1509,118 +1665,158 @@
     gap: 1rem;
   }
 
-  .btn-day-nav {
-    padding: 0.5rem 1rem;
+  .btn-vader-nav {
+    padding: 0.55rem 1.1rem;
     border-radius: 8px;
-    border: 1px solid var(--border-color);
-    background: #fafaf9;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: #181926;
     font-family: inherit;
-    font-size: 0.85rem;
+    font-size: 0.88rem;
     font-weight: 700;
-    color: var(--text-primary);
+    color: #e2e8f0;
     cursor: pointer;
-    transition: var(--transition-smooth);
+    transition: all 0.2s ease;
   }
 
-  .btn-day-nav:hover {
-    background: #f4ece1;
-    border-color: var(--accent);
+  .btn-vader-nav:hover {
+    background: rgba(220, 38, 38, 0.15);
+    border-color: #dc2626;
+    color: #ffffff;
   }
 
   .date-picker-center {
     display: flex;
     align-items: center;
-    gap: 0.65rem;
+    gap: 0.75rem;
   }
 
   .cal-big-icon {
     font-size: 1.3rem;
   }
 
-  .day-date-input {
-    padding: 0.45rem 0.75rem;
+  .vader-date-input {
+    padding: 0.45rem 0.85rem;
     border-radius: 8px;
-    border: 1.5px solid var(--primary);
+    border: 1.5px solid #dc2626;
     font-family: inherit;
     font-size: 1rem;
-    font-weight: 700;
-    color: var(--primary);
-    background: #fff7ed;
+    font-weight: 800;
+    color: #ff6b81;
+    background: #1b0e14;
+    outline: none;
+    box-shadow: 0 0 10px rgba(220, 38, 38, 0.25);
   }
 
   .day-label-formatted {
-    font-weight: 700;
-    font-size: 1rem;
-    color: var(--text-primary);
-  }
-
-  .tag-today-badge {
-    font-size: 0.72rem;
     font-weight: 800;
-    padding: 0.2rem 0.5rem;
-    border-radius: 6px;
-    background: #10b981;
+    font-size: 1rem;
     color: #ffffff;
-    letter-spacing: 0.05em;
   }
 
-  .btn-goto-today {
-    font-size: 0.75rem;
-    font-weight: 700;
+  .vader-today-badge {
+    font-size: 0.72rem;
+    font-weight: 900;
     padding: 0.25rem 0.6rem;
     border-radius: 6px;
-    border: 1px solid var(--border-color);
-    background: #ffffff;
-    color: var(--primary);
+    background: #dc2626;
+    color: #ffffff;
+    letter-spacing: 0.08em;
+    box-shadow: 0 0 10px rgba(220, 38, 38, 0.6);
+  }
+
+  .btn-vader-today {
+    font-size: 0.78rem;
+    font-weight: 800;
+    padding: 0.3rem 0.7rem;
+    border-radius: 6px;
+    border: 1px solid rgba(220, 38, 38, 0.4);
+    background: #1e0d14;
+    color: #ff8597;
     cursor: pointer;
+  }
+
+  .btn-vader-today:hover {
+    background: #dc2626;
+    color: #ffffff;
   }
 
   .day-actions-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-top: 1px dashed var(--border-color);
-    padding-top: 0.75rem;
+    border-top: 1px dashed rgba(255, 255, 255, 0.1);
+    padding-top: 0.85rem;
   }
 
   .day-stats-text {
-    font-size: 0.85rem;
-    color: var(--text-secondary);
+    font-size: 0.88rem;
+    color: #94a3b8;
   }
 
-  /* Todos Grid & Card Styling */
-  .todos-grid {
+  .text-red-glow {
+    color: #ff4d6d;
+    text-shadow: 0 0 8px rgba(255, 77, 109, 0.5);
+  }
+
+  .btn-sm {
+    padding: 0.45rem 0.95rem;
+    font-size: 0.82rem;
+  }
+
+  /* Todos Grid */
+  .vader-todos-grid {
     display: grid;
     grid-template-columns: 1fr;
     gap: 1rem;
+    z-index: 1;
   }
 
-  .todo-card {
+  /* Darth Vader Todo Card */
+  .vader-todo-card {
     display: flex;
     flex-direction: column;
-    gap: 0.85rem;
-    padding: 1.25rem 1.5rem;
-    background: #ffffff;
+    gap: 0.95rem;
+    padding: 1.35rem 1.6rem;
+    background: #11121a;
     border-radius: 16px;
-    border: 1px solid var(--border-color);
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
-    transition: var(--transition-smooth);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+    transition: all 0.25s ease;
     position: relative;
   }
 
-  .todo-card:hover {
-    box-shadow: var(--shadow-main);
-    border-color: #ffd299;
+  .vader-todo-card:hover {
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6), 0 0 12px rgba(220, 38, 38, 0.2);
+    border-color: rgba(220, 38, 38, 0.4);
   }
 
-  .todo-card.urgent-card {
-    border-left: 6px solid #ef4444;
-    background: #fffdfd;
+  /* URGENT / SKULL CARD STYLING (Totenkopf & Red Lightsaber Pulse) */
+  .vader-todo-card.urgent-card {
+    border-left: 6px solid #ff0037;
+    border-color: rgba(255, 0, 55, 0.5);
+    background: linear-gradient(135deg, #1b0a11 0%, #11121a 100%);
+    box-shadow: 0 0 20px rgba(255, 0, 55, 0.25), inset 0 0 15px rgba(255, 0, 55, 0.08);
+    animation: sith-border-glow 2.5s infinite alternate;
   }
 
-  .todo-card.completed-card {
-    opacity: 0.65;
-    background: #f9fafb;
+  @keyframes sith-border-glow {
+    0% {
+      box-shadow: 0 0 15px rgba(255, 0, 55, 0.2), inset 0 0 10px rgba(255, 0, 55, 0.05);
+    }
+    100% {
+      box-shadow: 0 0 28px rgba(255, 0, 55, 0.5), inset 0 0 20px rgba(255, 0, 55, 0.15);
+    }
+  }
+
+  @keyframes sith-pulse {
+    0%, 100% { transform: scale(1); filter: drop-shadow(0 0 4px #ff0037); }
+    50% { transform: scale(1.15); filter: drop-shadow(0 0 10px #ff0037); }
+  }
+
+  .vader-todo-card.completed-card {
+    opacity: 0.5;
+    background: #0d0e14;
+    border-color: rgba(255, 255, 255, 0.03);
   }
 
   .card-top-row {
@@ -1632,40 +1828,54 @@
   .badges-left {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.55rem;
     flex-wrap: wrap;
   }
 
-  .cat-badge {
+  .vader-cat-badge {
     font-size: 0.75rem;
-    font-weight: 700;
-    padding: 0.25rem 0.65rem;
+    font-weight: 800;
+    padding: 0.25rem 0.7rem;
     border-radius: 8px;
+    background: #1a1b28;
+    color: #cbd5e1;
+    border: 1px solid rgba(255, 255, 255, 0.1);
     display: flex;
     align-items: center;
-    gap: 0.3rem;
+    gap: 0.35rem;
   }
 
-  .prio-badge {
+  .vader-prio-badge {
     font-size: 0.72rem;
-    font-weight: 800;
-    padding: 0.2rem 0.55rem;
+    font-weight: 900;
+    padding: 0.22rem 0.6rem;
     border-radius: 6px;
     text-transform: uppercase;
+    letter-spacing: 0.04em;
   }
 
-  .prio-urgent { background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; }
-  .prio-high { background: #fff7ed; color: #c2410c; border: 1px solid #fed7aa; }
-  .prio-normal { background: #fefce8; color: #854d0e; border: 1px solid #fef08a; }
-  .prio-low { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
+  /* Skull badge for urgent */
+  .prio-urgent-skull {
+    background: #3b0d14;
+    color: #ff4d6d;
+    border: 1px solid #ff0037;
+    box-shadow: 0 0 10px rgba(255, 0, 55, 0.5);
+    font-weight: 900;
+    animation: sith-pulse 2s infinite;
+  }
 
-  .recurring-badge {
+  .prio-high { background: #2e1708; color: #fb923c; border: 1px solid #f97316; }
+  .prio-normal { background: #241d08; color: #facc15; border: 1px solid #eab308; }
+  .prio-low { background: #0c2417; color: #4ade80; border: 1px solid #22c55e; }
+
+  .vader-recurring-badge {
     font-size: 0.72rem;
     font-weight: 700;
-    padding: 0.2rem 0.5rem;
+    padding: 0.2rem 0.55rem;
     border-radius: 6px;
-    background: #f3f4f6;
-    color: #4b5563;
+    background: #181926;
+    color: #94a3b8;
+    border: 1px solid rgba(255, 255, 255, 0.08);
   }
 
   .card-actions-menu {
@@ -1677,40 +1887,79 @@
     background: none;
     border: none;
     cursor: pointer;
-    font-size: 0.9rem;
+    font-size: 0.95rem;
     padding: 0.25rem 0.45rem;
     border-radius: 6px;
     opacity: 0.6;
-    transition: var(--transition-smooth);
+    transition: all 0.2s ease;
+    color: #94a3b8;
   }
 
   .btn-card-action:hover {
     opacity: 1;
-    background: #f4ece1;
+    background: rgba(220, 38, 38, 0.15);
+    color: #ffffff;
   }
 
   .btn-card-action.delete:hover {
-    background: #fee2e2;
+    background: rgba(220, 38, 38, 0.3);
+    color: #ff4d6d;
   }
 
-  /* Main Row */
+  /* Card Main Row & Custom Checkbox */
   .card-main-row {
     display: flex;
     align-items: flex-start;
     gap: 1rem;
   }
 
-  .todo-checkbox-wrapper {
+  .vader-checkbox-wrapper {
     position: relative;
-    cursor: pointer;
-    margin-top: 0.15rem;
-  }
-
-  .main-checkbox {
+    display: inline-block;
     width: 22px;
     height: 22px;
-    accent-color: var(--primary);
+    margin-top: 0.2rem;
     cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  .vader-main-checkbox {
+    opacity: 0;
+    width: 0;
+    height: 0;
+    position: absolute;
+  }
+
+  .vader-custom-checkmark {
+    position: absolute;
+    inset: 0;
+    background: #181926;
+    border: 2px solid rgba(220, 38, 38, 0.5);
+    border-radius: 6px;
+    transition: all 0.2s ease;
+  }
+
+  .vader-checkbox-wrapper:hover .vader-custom-checkmark {
+    border-color: #ff0037;
+    box-shadow: 0 0 8px rgba(255, 0, 55, 0.5);
+  }
+
+  .vader-main-checkbox:checked ~ .vader-custom-checkmark {
+    background: #dc2626;
+    border-color: #ff4d6d;
+    box-shadow: 0 0 10px #dc2626;
+  }
+
+  .vader-main-checkbox:checked ~ .vader-custom-checkmark::after {
+    content: '';
+    position: absolute;
+    left: 6px;
+    top: 2px;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
   }
 
   .card-text-content {
@@ -1721,35 +1970,50 @@
   }
 
   .todo-title {
-    font-size: 1.05rem;
-    font-weight: 700;
-    color: var(--text-primary);
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: #ffffff;
     margin: 0;
     line-height: 1.35;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .todo-title.urgent-title {
+    color: #ffffff;
+    text-shadow: 0 0 8px rgba(255, 0, 55, 0.4);
+  }
+
+  .inline-skull-glow {
+    font-size: 1.25rem;
+    filter: drop-shadow(0 0 6px #ff0037);
+    animation: sith-pulse 1.8s infinite;
   }
 
   .todo-title.strike {
     text-decoration: line-through;
-    color: var(--text-muted);
+    color: #64748b;
   }
 
   .todo-notes {
     font-size: 0.88rem;
-    color: var(--text-secondary);
-    line-height: 1.4;
+    color: #94a3b8;
+    line-height: 1.45;
     margin: 0;
   }
 
-  /* Meta Row */
+  /* Card Meta Row */
   .card-meta-row {
     display: flex;
     align-items: center;
     gap: 1.25rem;
     flex-wrap: wrap;
     font-size: 0.82rem;
-    color: var(--text-secondary);
-    border-top: 1px solid rgba(234, 217, 201, 0.5);
-    padding-top: 0.65rem;
+    color: #94a3b8;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    padding-top: 0.75rem;
   }
 
   .meta-item {
@@ -1759,49 +2023,53 @@
   }
 
   .date-meta.overdue-meta {
-    color: #b91c1c;
-    font-weight: 700;
+    color: #ff4d6d;
+    font-weight: 800;
   }
 
   .date-meta.today-meta {
-    color: #d97724;
-    font-weight: 700;
+    color: #f97316;
+    font-weight: 800;
   }
 
   .relative-time-pill {
     font-size: 0.7rem;
     font-weight: 800;
-    padding: 0.1rem 0.4rem;
+    padding: 0.12rem 0.45rem;
     border-radius: 4px;
-    background: #f3f4f6;
-    color: #4b5563;
+    background: #181926;
+    color: #cbd5e1;
     margin-left: 0.25rem;
+    border: 1px solid rgba(255, 255, 255, 0.08);
   }
 
   .pill-overdue {
-    background: #fee2e2;
-    color: #b91c1c;
+    background: #3b0d14;
+    color: #ff4d6d;
+    border-color: #ff0037;
+    box-shadow: 0 0 6px rgba(255, 0, 55, 0.4);
   }
 
   .pill-today {
-    background: #ffedd5;
-    color: #c2410c;
+    background: #2e1708;
+    color: #fb923c;
+    border-color: #f97316;
   }
 
   .time-tag {
-    font-weight: 700;
-    color: var(--primary);
+    font-weight: 800;
+    color: #ff6b81;
   }
 
   .assignee-meta {
-    font-weight: 600;
-    color: var(--text-primary);
+    font-weight: 700;
+    color: #e2e8f0;
   }
 
   .email-meta {
-    color: #2563eb;
+    color: #60a5fa;
     text-decoration: none;
-    font-weight: 600;
+    font-weight: 700;
   }
   .email-meta:hover {
     text-decoration: underline;
@@ -1814,22 +2082,27 @@
   }
 
   .link-btn {
-    color: #960040;
-    font-weight: 700;
+    color: #ff6b81;
+    font-weight: 800;
     text-decoration: none;
-    background: rgba(150, 0, 64, 0.08);
-    padding: 0.2rem 0.5rem;
+    background: rgba(220, 38, 38, 0.15);
+    border: 1px solid rgba(220, 38, 38, 0.3);
+    padding: 0.2rem 0.55rem;
     border-radius: 6px;
+    transition: all 0.2s ease;
   }
 
   .link-btn:hover {
-    background: rgba(150, 0, 64, 0.15);
+    background: #dc2626;
+    color: #ffffff;
+    box-shadow: 0 0 10px rgba(220, 38, 38, 0.5);
   }
 
   .password-badge {
-    background: #fef08a;
-    color: #854d0e;
-    font-weight: 700;
+    background: #241d08;
+    color: #facc15;
+    border: 1px solid #eab308;
+    font-weight: 800;
     padding: 0.15rem 0.45rem;
     border-radius: 6px;
     font-size: 0.75rem;
@@ -1837,13 +2110,13 @@
 
   /* Subtasks */
   .subtasks-container {
-    background: #fafaf9;
-    border: 1px solid var(--border-color);
+    background: #141520;
+    border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 10px;
-    padding: 0.75rem 1rem;
+    padding: 0.85rem 1.1rem;
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 0.55rem;
   }
 
   .subtasks-header {
@@ -1854,28 +2127,30 @@
 
   .subtasks-title {
     font-size: 0.78rem;
-    font-weight: 700;
-    color: var(--text-secondary);
+    font-weight: 800;
+    color: #94a3b8;
     text-transform: uppercase;
+    letter-spacing: 0.05em;
   }
 
   .subtask-progress-mini {
-    width: 60px;
-    height: 5px;
-    background: #e5e7eb;
+    width: 65px;
+    height: 6px;
+    background: #1f202e;
     border-radius: 999px;
     overflow: hidden;
   }
 
   .subtask-progress-fill {
     height: 100%;
-    background: #10b981;
+    background: #dc2626;
+    box-shadow: 0 0 6px #dc2626;
   }
 
   .subtasks-list {
     display: flex;
     flex-direction: column;
-    gap: 0.35rem;
+    gap: 0.4rem;
   }
 
   .subtask-row {
@@ -1888,13 +2163,14 @@
   .subtask-check-wrap {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.55rem;
     cursor: pointer;
+    color: #e2e8f0;
   }
 
   .subtask-row.sub-completed .subtask-text {
     text-decoration: line-through;
-    color: var(--text-muted);
+    color: #64748b;
   }
 
   .btn-del-sub {
@@ -1902,11 +2178,10 @@
     border: none;
     cursor: pointer;
     font-size: 0.75rem;
-    opacity: 0.4;
+    color: #64748b;
   }
   .btn-del-sub:hover {
-    opacity: 1;
-    color: #ef4444;
+    color: #ff4d6d;
   }
 
   .inline-subtask-row {
@@ -1917,44 +2192,46 @@
 
   .inline-sub-input {
     width: 100%;
-    padding: 0.35rem 0.65rem;
-    border: 1px dashed var(--border-color);
+    padding: 0.4rem 0.75rem;
+    border: 1px dashed rgba(255, 255, 255, 0.15);
     border-radius: 6px;
-    background: transparent;
+    background: #161723;
     font-family: inherit;
-    font-size: 0.8rem;
+    font-size: 0.82rem;
+    color: #ffffff;
+    outline: none;
   }
   .inline-sub-input:focus {
-    outline: none;
-    border-color: var(--primary);
-    background: #ffffff;
+    border-color: #dc2626;
+    box-shadow: 0 0 6px rgba(220, 38, 38, 0.3);
   }
 
   .btn-sub-add {
-    background: var(--primary);
+    background: #dc2626;
     color: white;
     border: none;
     border-radius: 6px;
-    width: 24px;
-    height: 24px;
+    width: 26px;
+    height: 26px;
     cursor: pointer;
-    font-weight: 700;
+    font-weight: 800;
   }
 
   /* Tags */
   .card-tags-row {
     display: flex;
-    gap: 0.35rem;
+    gap: 0.4rem;
     flex-wrap: wrap;
   }
 
   .tag-pill {
     font-size: 0.72rem;
-    color: var(--text-secondary);
-    background: rgba(0, 0, 0, 0.04);
-    padding: 0.15rem 0.45rem;
+    color: #94a3b8;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 0.18rem 0.5rem;
     border-radius: 4px;
-    font-weight: 600;
+    font-weight: 700;
   }
 
   /* Grouped View Styles */
@@ -1962,67 +2239,72 @@
     display: flex;
     flex-direction: column;
     gap: 2rem;
+    z-index: 1;
   }
 
   .group-section {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 1.1rem;
   }
 
   .group-header {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    border-bottom: 2px solid var(--border-color);
-    padding-bottom: 0.5rem;
+    gap: 0.65rem;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.08);
+    padding-bottom: 0.65rem;
   }
 
   .group-header h3 {
-    font-size: 1.25rem;
-    font-weight: 800;
+    font-size: 1.3rem;
+    font-weight: 900;
     margin: 0;
+    letter-spacing: -0.01em;
   }
 
   .overdue-section .group-header {
-    border-color: #fca5a5;
-    color: #b91c1c;
+    border-color: #dc2626;
+    color: #ff4d6d;
+    text-shadow: 0 0 10px rgba(220, 38, 38, 0.4);
   }
 
   .today-section .group-header {
-    border-color: var(--primary);
-    color: var(--primary);
+    border-color: #dc2626;
+    color: #ffffff;
   }
 
   .empty-group-msg {
     font-size: 0.88rem;
-    color: var(--text-secondary);
+    color: #64748b;
     font-style: italic;
   }
 
-  .empty-state-card {
+  .vader-empty-state {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 4rem 2rem;
+    padding: 4.5rem 2rem;
     text-align: center;
-    background: #ffffff;
+    background: #11121a;
     border-radius: 20px;
-    border: 1px solid var(--border-color);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    z-index: 1;
   }
 
   .empty-icon {
-    font-size: 3rem;
-    margin-bottom: 0.75rem;
+    font-size: 3.5rem;
+    margin-bottom: 0.85rem;
+    filter: drop-shadow(0 0 10px #dc2626);
   }
 
-  /* Modal Styles */
-  .modal-backdrop {
+  /* Modal Styles: Imperial Holocron Console */
+  .vader-modal-backdrop {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(4px);
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(8px);
     z-index: 999;
     display: flex;
     align-items: center;
@@ -2030,42 +2312,51 @@
     padding: 1.5rem;
   }
 
-  .modal-card {
-    background: #ffffff;
+  .vader-modal-card {
+    background: #11121a;
     border-radius: 20px;
     max-width: 680px;
     width: 100%;
     max-height: 90vh;
     display: flex;
     flex-direction: column;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.9), 0 0 30px rgba(220, 38, 38, 0.3);
+    border: 1px solid rgba(220, 38, 38, 0.4);
     overflow: hidden;
   }
 
-  .modal-header {
+  .vader-modal-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 1.5rem 1.75rem;
-    border-bottom: 1px solid var(--border-color);
-    background: #fafaf9;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    background: linear-gradient(135deg, #181926 0%, #1e0910 100%);
   }
 
-  .modal-header h2 {
+  .vader-modal-header h2 {
     font-size: 1.35rem;
     margin: 0;
-    font-weight: 800;
+    font-weight: 900;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .header-skull {
+    color: #dc2626;
   }
 
   .modal-close-btn {
     background: none;
     border: none;
-    font-size: 1.25rem;
+    font-size: 1.3rem;
     cursor: pointer;
-    opacity: 0.6;
+    color: #94a3b8;
   }
   .modal-close-btn:hover {
-    opacity: 1;
+    color: #ff4d6d;
   }
 
   .modal-body {
@@ -2074,15 +2365,16 @@
     display: flex;
     flex-direction: column;
     gap: 1.25rem;
+    background: #11121a;
   }
 
-  .modal-footer {
+  .vader-modal-footer {
     display: flex;
     justify-content: flex-end;
     gap: 0.75rem;
     padding: 1.25rem 1.75rem;
-    border-top: 1px solid var(--border-color);
-    background: #fafaf9;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    background: #141520;
   }
 
   .grid-2 {
@@ -2094,30 +2386,35 @@
   .form-group {
     display: flex;
     flex-direction: column;
-    gap: 0.4rem;
+    gap: 0.45rem;
   }
 
   .form-group label {
     font-size: 0.85rem;
-    font-weight: 700;
-    color: var(--text-primary);
+    font-weight: 800;
+    color: #cbd5e1;
   }
 
-  .form-input, .form-select, .form-textarea {
-    padding: 0.65rem 0.85rem;
+  .vader-form-input, .vader-form-select, .vader-form-textarea {
+    padding: 0.7rem 0.95rem;
     border-radius: 10px;
-    border: 1px solid var(--border-color);
-    background: #fafaf9;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: #181926;
     font-family: inherit;
     font-size: 0.9rem;
-    color: var(--text-primary);
+    color: #ffffff;
+    outline: none;
   }
 
-  .form-input:focus, .form-select:focus, .form-textarea:focus {
-    outline: none;
-    border-color: var(--primary);
-    background: #ffffff;
-    box-shadow: 0 0 0 3px rgba(150, 0, 64, 0.08);
+  .vader-form-input:focus, .vader-form-select:focus, .vader-form-textarea:focus {
+    border-color: #dc2626;
+    box-shadow: 0 0 10px rgba(220, 38, 38, 0.4);
+    background: #1d1e2e;
+  }
+
+  .prio-select-modal {
+    border-color: rgba(220, 38, 38, 0.5);
+    color: #ff8597;
   }
 
   .modal-subtask-add-row {
@@ -2130,10 +2427,10 @@
     flex-direction: column;
     gap: 0.35rem;
     margin-top: 0.5rem;
-    background: #fafaf9;
-    padding: 0.5rem 0.75rem;
+    background: #181926;
+    padding: 0.6rem 0.85rem;
     border-radius: 8px;
-    border: 1px solid var(--border-color);
+    border: 1px solid rgba(255, 255, 255, 0.08);
   }
 
   .modal-subtask-item {
@@ -2141,25 +2438,26 @@
     justify-content: space-between;
     align-items: center;
     font-size: 0.85rem;
+    color: #e2e8f0;
   }
 
   .btn-del-mini {
     background: none;
     border: none;
     cursor: pointer;
-    color: #ef4444;
+    color: #ff4d6d;
   }
 
   @media (max-width: 1024px) {
-    .kpi-grid {
+    .vader-kpi-grid {
       grid-template-columns: 1fr 1fr;
     }
-    .hero-card {
+    .vader-hero-card {
       flex-direction: column;
       align-items: flex-start;
       gap: 1.5rem;
     }
-    .quick-add-bar {
+    .vader-quick-add-bar {
       flex-direction: column;
       align-items: stretch;
     }
@@ -2169,7 +2467,7 @@
   }
 
   @media (max-width: 640px) {
-    .kpi-grid {
+    .vader-kpi-grid {
       grid-template-columns: 1fr;
     }
     .grid-2 {

@@ -97,7 +97,7 @@ export const PRIORITY_CONFIG: Record<
   AdminTodoPriority,
   { label: string; icon: string; badgeClass: string }
 > = {
-  urgent: { label: 'Dringend', icon: '🔥', badgeClass: 'prio-urgent' },
+  urgent: { label: 'Dringend', icon: '💀', badgeClass: 'prio-urgent' },
   high: { label: 'Hoch', icon: '⚡', badgeClass: 'prio-high' },
   normal: { label: 'Normal', icon: '🟡', badgeClass: 'prio-normal' },
   low: { label: 'Niedrig', icon: '🟢', badgeClass: 'prio-low' }
