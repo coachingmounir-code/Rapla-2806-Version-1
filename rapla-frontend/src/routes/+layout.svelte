@@ -73,18 +73,12 @@
 		} catch (e) {
 			console.error('Failed to sync data:', e);
 		} finally {
-			// Small delay to make the sync animation visible
-			setTimeout(() => {
-				isSyncing = false;
-				window.dispatchEvent(new CustomEvent('rapla-data-synced'));
-			}, 600);
+			isSyncing = false;
 		}
 	}
 
 	onMount(() => {
-		db.initializeCloudSync().then(() => {
-			syncData();
-		});
+		syncData();
 		
 		todoManager.checkReminders();
 		const interval = setInterval(() => {

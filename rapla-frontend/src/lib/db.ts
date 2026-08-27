@@ -6770,21 +6770,43 @@ function getStored<T>(key: string, defaultValue: T): T {
   }
 }
 
-function setStored<T>(key: string, value: T): void {
+let syncDebounceTimer: any = null;
+let eventDebounceTimer: any = null;
+
+function setStored<T>(key: string, value: T, immediate = false): void {
   if (typeof window === 'undefined') return;
   
   inMemoryStore[key] = value;
-  localStorage.setItem(key, JSON.stringify(value));
-
-  if (supabase) {
-    // Asynchronously push to cloud
-    supabase.from('app_state').upsert({ key, value: JSON.stringify(value) })
-      .then(({ error }) => {
-        if (error) console.error('Failed to sync to cloud', error);
-      });
+  try {
+    localStorage.setItem(key, JSON.stringify(value));
+  } catch (e) {
+    console.error('Failed to save to localStorage', e);
   }
 
-  window.dispatchEvent(new CustomEvent('rapla-data-synced'));
+  if (supabase) {
+    const client = supabase;
+    if (immediate) {
+      client.from('app_state').upsert({ key, value: JSON.stringify(value) })
+        .then(({ error }) => {
+          if (error) console.error('Failed to sync to cloud', error);
+        });
+    } else {
+      if (syncDebounceTimer) clearTimeout(syncDebounceTimer);
+      syncDebounceTimer = setTimeout(() => {
+        if (client) {
+          client.from('app_state').upsert({ key, value: JSON.stringify(value) })
+            .then(({ error }) => {
+              if (error) console.error('Failed to sync to cloud', error);
+            });
+        }
+      }, 300);
+    }
+  }
+
+  if (eventDebounceTimer) clearTimeout(eventDebounceTimer);
+  eventDebounceTimer = setTimeout(() => {
+    window.dispatchEvent(new CustomEvent('rapla-data-synced'));
+  }, 50);
 }
 
 const CURRENT_DB_VERSION = 93;
@@ -7483,12 +7505,26 @@ export const db = {
         'Expires': '0'
       };
 
+      const fetchWithTimeout = async (url: string, timeoutMs = 4000) => {
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), timeoutMs);
+        try {
+          const res = await fetch(url, {
+            signal: controller.signal,
+            cache: 'no-store',
+            headers: noCacheHeaders
+          });
+          clearTimeout(timer);
+          return res;
+        } catch (err) {
+          clearTimeout(timer);
+          throw err;
+        }
+      };
+
       // 1. Sync wishes from server JSON to localStorage & teachers (bypassing any browser HTTP cache)
       try {
-        const wishesRes = await fetch(`/api/sevakas-wishes?t=${timestamp}`, {
-          cache: 'no-store',
-          headers: noCacheHeaders
-        });
+        const wishesRes = await fetchWithTimeout(`/api/sevakas-wishes?t=${timestamp}`);
         if (wishesRes.ok) {
           const wishes = await wishesRes.json();
           if (wishes && wishes.length > 0) {
@@ -7510,15 +7546,12 @@ export const db = {
           }
         }
       } catch (e) {
-        console.error('Failed to sync wishes in db.syncWithServerAndCloud:', e);
+        console.warn('Wishes sync skipped or timed out:', e);
       }
 
       // 2. Sync absences from server JSON to localStorage & sevafrei (bypassing any browser HTTP cache)
       try {
-        const absencesRes = await fetch(`/api/sevafrei?t=${timestamp}`, {
-          cache: 'no-store',
-          headers: noCacheHeaders
-        });
+        const absencesRes = await fetchWithTimeout(`/api/sevafrei?t=${timestamp}`);
         if (absencesRes.ok) {
           const serverAbsences = await absencesRes.json();
           if (serverAbsences && serverAbsences.length > 0) {
@@ -7540,7 +7573,7 @@ export const db = {
           }
         }
       } catch (e) {
-        console.error('Failed to sync absences in db.syncWithServerAndCloud:', e);
+        console.warn('Absences sync skipped or timed out:', e);
       }
 
       // 3. Sync Supabase cloud state (Week plans, YLA assignments, teachers, rooms, etc.)

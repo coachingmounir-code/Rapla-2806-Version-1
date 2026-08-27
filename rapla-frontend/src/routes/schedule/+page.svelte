@@ -272,10 +272,13 @@
     });
   });
 
+  let cachedAbsences = $state<any[]>([]);
+
   function loadData() {
     weekPlans = db.getWeekPlans();
     teachers = db.getTeachers();
     rooms = db.getRooms();
+    cachedAbsences = db.getSevafrei();
     
     if (planId) {
       currentPlan = db.getWeekPlan(planId) || null;
@@ -318,8 +321,7 @@
     
     if (currentPlan) {
       const weekCode = currentPlan.targetWeekCode || getWeekCode(getMondayOfCurrentWeek());
-      const saved = typeof window !== 'undefined' ? localStorage.getItem('rapla_sevafrei') : null;
-      const sevafreiList = saved ? JSON.parse(saved) : [];
+      const sevafreiList = cachedAbsences;
       
       courses = currentPlan.courses
         .filter(c => {
@@ -422,7 +424,7 @@
     if (!course.teacherId) return [];
     const teacher = teachers.find(t => t.id === course.teacherId);
     if (!teacher) return [];
-    return validateAssignment(teacher, course, courses, currentPlan?.seminarLeaderIds || [], currentPlan?.targetWeekCode);
+    return validateAssignment(teacher, course, courses, currentPlan?.seminarLeaderIds || [], currentPlan?.targetWeekCode, teachers, cachedAbsences);
   }
 
   // Reactively validate the form selection
@@ -451,7 +453,7 @@
       status: 'draft'
     };
 
-    activeConflicts = validateAssignment(selectedTeacher, tempCourse, courses, currentPlan?.seminarLeaderIds || [], currentPlan?.targetWeekCode);
+    activeConflicts = validateAssignment(selectedTeacher, tempCourse, courses, currentPlan?.seminarLeaderIds || [], currentPlan?.targetWeekCode, teachers, cachedAbsences);
   });
 
   function toggleSeminarLeader(teacherId: string) {
@@ -525,21 +527,28 @@
       currentPlan.isManualOnly = true;
       currentPlan.hasManualEdits = true;
       currentPlan.lastEditedAt = new Date().toISOString();
+      
+      const courseIndex = currentPlan.courses.findIndex(c => c.id === courseData.id);
+      if (courseIndex !== -1) {
+        currentPlan.courses[courseIndex] = courseData;
+      } else {
+        currentPlan.courses.push(courseData);
+      }
+
       if (!db.getWeekPlan(currentPlan.id)) {
         db.addWeekPlan(currentPlan);
       } else {
         db.updateWeekPlan(currentPlan);
       }
-    }
-
-    if (editingCourse) {
-      db.updateCourse(courseData, currentPlan?.id);
     } else {
-      db.addCourse(courseData, currentPlan?.id);
+      if (editingCourse) {
+        db.updateCourse(courseData);
+      } else {
+        db.addCourse(courseData);
+      }
     }
 
     isModalOpen = false;
-    window.dispatchEvent(new CustomEvent('rapla-data-synced'));
     loadData();
   }
 
@@ -549,15 +558,16 @@
         currentPlan.isManualOnly = true;
         currentPlan.hasManualEdits = true;
         currentPlan.lastEditedAt = new Date().toISOString();
+        currentPlan.courses = currentPlan.courses.filter(c => c.id !== id);
         if (!db.getWeekPlan(currentPlan.id)) {
           db.addWeekPlan(currentPlan);
         } else {
           db.updateWeekPlan(currentPlan);
         }
+      } else {
+        db.deleteCourse(id);
       }
-      db.deleteCourse(id, currentPlan?.id);
       isModalOpen = false;
-      window.dispatchEvent(new CustomEvent('rapla-data-synced'));
       loadData();
     }
   }

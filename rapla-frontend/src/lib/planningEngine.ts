@@ -81,32 +81,15 @@ export function getAbsenceDetails(teacherName: string, dayOfWeek: number, target
     };
   }
   
-  if (absences && absences.length > 0) {
-    const entry = absences.find((entry: any) => {
+  const checkList = absences || (typeof window !== 'undefined' ? db.getSevafrei() : []);
+  if (checkList && checkList.length > 0) {
+    const entry = checkList.find((entry: any) => {
       if (!entry) return false;
       const entryName = entry.teacherName.toLowerCase().trim();
       const isMatch = entryName.includes(teacherName) || teacherName.includes(entryName.split(' ')[0]);
       return isMatch && courseDate >= entry.startDate && courseDate <= entry.endDate;
     });
     if (entry) return entry;
-  }
-  
-  if (typeof window !== 'undefined') {
-    try {
-      const saved = localStorage.getItem('rapla_sevafrei');
-      if (saved) {
-        const sevafreiList = JSON.parse(saved);
-        const entry = sevafreiList.find((entry: any) => {
-          if (!entry) return false;
-          const entryName = entry.teacherName.toLowerCase().trim();
-          const isMatch = entryName.includes(teacherName) || teacherName.includes(entryName.split(' ')[0]);
-          return isMatch && courseDate >= entry.startDate && courseDate <= entry.endDate;
-        });
-        if (entry) return entry;
-      }
-    } catch (e) {
-      console.error(e);
-    }
   }
   return null;
 }
@@ -314,54 +297,6 @@ export function validateAssignment(
     });
   }
 
-  // Check absence
-  if (targetWeekCode) {
-    try {
-      const courseDate = getLocalDateForDay(targetWeekCode, course.dayOfWeek);
-      const saved = typeof window !== 'undefined' ? localStorage.getItem('rapla_sevafrei') : null;
-      let activeAbsence = null;
-      
-      const checkList = absences || (saved ? JSON.parse(saved) : []);
-      if (checkList && checkList.length > 0) {
-        // Handle composite names
-        const namesToCheck: string[] = [];
-        if (teacher.name.includes(',')) {
-          teacher.name.split(',').forEach(n => namesToCheck.push(n.trim().toLowerCase()));
-        } else {
-          namesToCheck.push(teacher.name.toLowerCase().trim());
-        }
-
-        for (const name of namesToCheck) {
-          activeAbsence = checkList.find((entry: any) => {
-            if (!entry) return false;
-            const entryName = entry.teacherName.toLowerCase().trim();
-            const isMatch = entryName.includes(name) || name.includes(entryName.split(' ')[0]);
-            return isMatch && courseDate >= entry.startDate && courseDate <= entry.endDate;
-          });
-          if (activeAbsence) {
-            const isWalk = courseNameLower.includes('spaziergang');
-            const isPranava = teacherNameLower.includes('pranava');
-            const isRegularFreeDay = activeAbsence.type.toLowerCase() === 'frei' || (activeAbsence.note && activeAbsence.note.toLowerCase().includes('regulärer freier wochentag'));
-
-            // Check if this is a composite teacher or if they are bypassed
-            if (activeAbsence.type.toLowerCase() === 'seminartage' && isSatsangForSevaka) {
-              // Bypassed for Satsangs
-            } else if (isWalk && isPranava && isRegularFreeDay) {
-              // Pranava standardmäßig für meditativen Spaziergang eingeteilt
-            } else {
-              conflicts.push({
-                type: 'hard',
-                message: `${teacher.name} ist an diesem Datum (${courseDate}) abwesend (${activeAbsence.type}: ${activeAbsence.note || 'Keine Angabe'}).`
-              });
-              break;
-            }
-          }
-        }
-      }
-    } catch (e) {
-      console.error('Error during Sevafrei validation', e);
-    }
-  }
 
   // 3. Pranayama constraints
   const isPranayama = courseNameLower.includes('pranayama') || courseStyleLower.includes('pranayama');

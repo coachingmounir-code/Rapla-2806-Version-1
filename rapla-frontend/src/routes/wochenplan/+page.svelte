@@ -3,6 +3,7 @@
   import { db, type Course, type Teacher, type Room, type WeekPlan } from '$lib/db';
   import { getLocalDateForDay } from '$lib/planningEngine';
   import { isDateInYlaRange, getYlaSlotsForTeacherAndWeek, type YlaTeacherWeekSlot } from '$lib/ylaData';
+  import nataraja from '$lib/assets/nataraja.jpg';
   import { page } from '$app/state';
   import { goto } from '$app/navigation';
 
@@ -358,8 +359,7 @@
     
     if (approved && currentPlan) {
       // Dynamically filter out absent teachers & remove Pranayama during YLA
-      const saved = typeof window !== 'undefined' ? localStorage.getItem('rapla_sevafrei') : null;
-      const sevafreiList = saved ? JSON.parse(saved) : [];
+      const sevafreiList = db.getSevafrei();
       
       courses = currentPlan.courses
         .filter(c => {
@@ -467,7 +467,7 @@
   <!-- Minimalist Header -->
   <header class="view-header">
     <div class="logo-area">
-      <img src="/_app/immutable/assets/nataraja.Iks9i83A.jpg" alt="Yoga Vidya Logo" class="logo-img"/>
+      <img src={nataraja} alt="Yoga Vidya Logo" class="logo-img"/>
       <div>
         <h2>YOGA VIDYA NORDSEE</h2>
         <h1>Wochenplan</h1>
