@@ -6828,7 +6828,7 @@ function setStored<T>(key: string, value: T, immediate = false): void {
   }, 50);
 }
 
-const CURRENT_DB_VERSION = 96;
+const CURRENT_DB_VERSION = 97;
 
 // Database Actions
 export const db = {
@@ -6873,11 +6873,44 @@ export const db = {
                 return remPlan;
               });
 
-              // Keep any local plans not present in remote
-              for (const lp of localPlans) {
-                if (!merged.some(mp => mp.id === lp.id || mp.targetWeekCode === lp.targetWeekCode)) {
-                  merged.push(lp);
-                  needsCloudPush = true;
+              // Ensure default courses from DEFAULT_WEEK_PLANS (such as Sevaka-Schulung and additionalVisibilityTeacherIds) are merged in
+              for (const defPlan of DEFAULT_WEEK_PLANS) {
+                const targetPlan = merged.find(mp => mp.id === defPlan.id || mp.targetWeekCode === defPlan.targetWeekCode);
+                if (targetPlan) {
+                  for (const defC of defPlan.courses) {
+                    const existingC = targetPlan.courses.find(c => c.id === defC.id || (c.dayOfWeek === defC.dayOfWeek && c.startTime === defC.startTime && c.name === defC.name));
+                    if (!existingC) {
+                      targetPlan.courses.push({ ...defC });
+                      needsCloudPush = true;
+                      changed = true;
+                    } else {
+                      if (defC.additionalVisibilityTeacherIds && (!existingC.additionalVisibilityTeacherIds || JSON.stringify(existingC.additionalVisibilityTeacherIds) !== JSON.stringify(defC.additionalVisibilityTeacherIds))) {
+                        existingC.additionalVisibilityTeacherIds = [...defC.additionalVisibilityTeacherIds];
+                        needsCloudPush = true;
+                        changed = true;
+                      }
+                      if (defC.id === 'course-2026-W36-sevaka-schulung') {
+                        if (existingC.roomId !== defC.roomId || existingC.teacherId !== defC.teacherId || existingC.startTime !== defC.startTime || existingC.endTime !== defC.endTime) {
+                          existingC.roomId = defC.roomId;
+                          existingC.teacherId = defC.teacherId;
+                          existingC.startTime = defC.startTime;
+                          existingC.endTime = defC.endTime;
+                          needsCloudPush = true;
+                          changed = true;
+                        }
+                      }
+                    }
+                  }
+                  const beforeLen = targetPlan.courses.length;
+                  targetPlan.courses = targetPlan.courses.filter(c => c.id !== 'course-2026-W36-mittelstufe-pflicht');
+                  if (targetPlan.courses.length !== beforeLen) {
+                    needsCloudPush = true;
+                    changed = true;
+                  }
+                  targetPlan.courses.sort((a, b) => {
+                    if (a.dayOfWeek !== b.dayOfWeek) return a.dayOfWeek - b.dayOfWeek;
+                    return a.startTime.localeCompare(b.startTime);
+                  });
                 }
               }
 
@@ -7222,28 +7255,63 @@ export const db = {
       if (idx === -1) {
         list.push(defPlan);
         updated = true;
-      } else if (isOutdated && !list[idx].isManualOnly && !list[idx].hasManualEdits) {
-        list[idx] = defPlan;
-        updated = true;
-      } else if (isOutdated && defPlan.targetWeekCode === '2026-W36') {
-        for (const c of list[idx].courses) {
-          if (c.dayOfWeek === 6 && c.startTime === '07:00' && c.name.toLowerCase().includes('satsang') && (c.teacherId === 'teacher-gen-abha-morkoetter' || c.teacherId === 'abha')) {
-            c.teacherId = 'teacher-gen-harishakti';
-            c.isManuallyEdited = true;
-            updated = true;
-          }
-          if (c.dayOfWeek === 6 && c.startTime === '09:15' && c.name.toLowerCase().includes('mittelstufe') && (c.teacherId === 'teacher-gen-abha-morkoetter' || c.teacherId === 'abha')) {
-            c.teacherId = 'teacher-gen-yl';
-            c.isManuallyEdited = true;
-            updated = true;
-          }
-          if (c.id === 'course-2026-W36-59' || (c.dayOfWeek === 4 && c.startTime === '16:15' && c.name.toLowerCase().includes('mittelstufe'))) {
-            if (c.teacherId === 'teacher-gen-ulrich-nebel' || c.teacherId === 'ulrich') {
-              c.teacherId = null;
-              c.isManuallyEdited = true;
+      } else {
+        if (isOutdated && !list[idx].isManualOnly && !list[idx].hasManualEdits) {
+          list[idx] = defPlan;
+          updated = true;
+        } else {
+          // Always ensure all courses from defPlan are present and up to date
+          for (const defC of defPlan.courses) {
+            const existingC = list[idx].courses.find(c => c.id === defC.id || (c.dayOfWeek === defC.dayOfWeek && c.startTime === defC.startTime && c.name === defC.name));
+            if (!existingC) {
+              list[idx].courses.push({ ...defC });
               updated = true;
+            } else {
+              if (defC.additionalVisibilityTeacherIds && (!existingC.additionalVisibilityTeacherIds || JSON.stringify(existingC.additionalVisibilityTeacherIds) !== JSON.stringify(defC.additionalVisibilityTeacherIds))) {
+                existingC.additionalVisibilityTeacherIds = [...defC.additionalVisibilityTeacherIds];
+                updated = true;
+              }
+              if (defC.id === 'course-2026-W36-sevaka-schulung') {
+                if (existingC.roomId !== defC.roomId || existingC.teacherId !== defC.teacherId || existingC.startTime !== defC.startTime || existingC.endTime !== defC.endTime) {
+                  existingC.roomId = defC.roomId;
+                  existingC.teacherId = defC.teacherId;
+                  existingC.startTime = defC.startTime;
+                  existingC.endTime = defC.endTime;
+                  updated = true;
+                }
+              }
             }
           }
+          const beforeLen = list[idx].courses.length;
+          list[idx].courses = list[idx].courses.filter(c => c.id !== 'course-2026-W36-mittelstufe-pflicht');
+          if (list[idx].courses.length !== beforeLen) {
+            updated = true;
+          }
+          if (defPlan.targetWeekCode === '2026-W36' && isOutdated) {
+            for (const c of list[idx].courses) {
+              if (c.dayOfWeek === 6 && c.startTime === '07:00' && c.name.toLowerCase().includes('satsang') && (c.teacherId === 'teacher-gen-abha-morkoetter' || c.teacherId === 'abha')) {
+                c.teacherId = 'teacher-gen-harishakti';
+                c.isManuallyEdited = true;
+                updated = true;
+              }
+              if (c.dayOfWeek === 6 && c.startTime === '09:15' && c.name.toLowerCase().includes('mittelstufe') && (c.teacherId === 'teacher-gen-abha-morkoetter' || c.teacherId === 'abha')) {
+                c.teacherId = 'teacher-gen-yl';
+                c.isManuallyEdited = true;
+                updated = true;
+              }
+              if (c.id === 'course-2026-W36-59' || (c.dayOfWeek === 4 && c.startTime === '16:15' && c.name.toLowerCase().includes('mittelstufe'))) {
+                if (c.teacherId === 'teacher-gen-ulrich-nebel' || c.teacherId === 'ulrich') {
+                  c.teacherId = null;
+                  c.isManuallyEdited = true;
+                  updated = true;
+                }
+              }
+            }
+          }
+          list[idx].courses.sort((a, b) => {
+            if (a.dayOfWeek !== b.dayOfWeek) return a.dayOfWeek - b.dayOfWeek;
+            return a.startTime.localeCompare(b.startTime);
+          });
         }
       }
     }
