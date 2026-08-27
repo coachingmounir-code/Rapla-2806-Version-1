@@ -180,8 +180,9 @@ const NEW_TEACHER_NAMES = [
   "Aziza Lena Alemi",
   "Beate Menkarski",
   "Bhavani Jannausch",
-  "burnie",
+  "Burnie",
   "Carina van Anken",
+  "Chandrashekara",
   "Christel Smaluhn",
   "Christopher",
   "Darshanie Sukhu",
@@ -257,7 +258,8 @@ const SEVAKA_NAMES = [
   "Adam",
   "Alexander",
   "Anjali",
-  "burnie",
+  "Burnie",
+  "Chandrashekara",
   "Christopher",
   "Harishakti",
   "Hu",
@@ -374,6 +376,7 @@ const GENERATED_TEACHERS: Teacher[] = NEW_TEACHER_NAMES.map((name, index) => {
   else if (name === "Alexander") id = "teacher-gen-alexander-melior";
   else if (name === "Anjali") id = "teacher-gen-anjali-gelzleichter";
   else if (name === "burnie" || name === "Burnie") id = "teacher-gen-burnie-bansemer";
+  else if (name === "Chandrashekara") id = "teacher-gen-chandrashekara";
   else if (name === "Hu") id = "teacher-gen-hu-buerkle";
   else if (name === "Karuna") id = "teacher-gen-karuna-wapke";
   else if (name === "Mounir") id = "teacher-gen-mouniir-jaber";
@@ -6894,7 +6897,7 @@ export function reconcilePlansWithDefaults(plans: WeekPlan[]): { plans: WeekPlan
   return { plans: list, hasChanges };
 }
 
-const CURRENT_DB_VERSION = 98;
+const CURRENT_DB_VERSION = 99;
 
 // Database Actions
 export const db = {
@@ -7044,6 +7047,7 @@ export const db = {
       else if (t.id === "teacher-gen-alexander-melior" && t.name !== "Alexander") { t.name = "Alexander"; updated = true; }
       else if (t.id === "teacher-gen-anjali-gelzleichter" && t.name !== "Anjali") { t.name = "Anjali"; updated = true; }
       else if ((t.id === "teacher-gen-burnie-bansemer" || t.name === "Burnie") && t.name !== "burnie") { t.name = "burnie"; updated = true; }
+      else if (t.id === "teacher-gen-chandrashekara" && t.name !== "Chandrashekara") { t.name = "Chandrashekara"; updated = true; }
       else if (t.id === "teacher-gen-hu-buerkle" && t.name !== "Hu") { t.name = "Hu"; updated = true; }
       else if (t.id === "teacher-gen-karuna-wapke" && t.name !== "Karuna") { t.name = "Karuna"; updated = true; }
       else if (t.id === "teacher-gen-mouniir-jaber" && t.name !== "Mounir") { t.name = "Mounir"; updated = true; }
