@@ -59,7 +59,7 @@
   let filteredMobileCourses = $derived.by<(Course | YlaTeacherWeekSlot)[]>(() => {
     const regular = courses
       .filter(c => c.dayOfWeek === activeMobileDay)
-      .filter(c => !onlyMySlotsParam || !selectedTeacher || c.teacherId === selectedTeacher.id);
+      .filter(c => !onlyMySlotsParam || !selectedTeacher || isTeacherVisibleForCourse(c, selectedTeacher.id));
 
     const yla = (selectedTeacher ? selectedTeacherYlaSlots : [])
       .filter(s => s.dayOfWeek === activeMobileDay);
@@ -242,6 +242,26 @@
     return targetDate.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit' });
   }
 
+  function isTeacherAssigned(courseTeacherId: string | null | undefined, targetTeacherId: string): boolean {
+    if (!courseTeacherId) return false;
+    const ids = courseTeacherId.split(',').map(s => s.trim());
+    return ids.includes(targetTeacherId);
+  }
+
+  function isTeacherVisibleForCourse(course: Course | YlaTeacherWeekSlot, targetTeacherId: string): boolean {
+    if (!course) return false;
+    if (course.teacherId && isTeacherAssigned(course.teacherId, targetTeacherId)) return true;
+    if ((course as Course).additionalVisibilityTeacherIds?.includes(targetTeacherId)) return true;
+    return false;
+  }
+
+  function getTeacherDisplayName(courseTeacherId: string | null | undefined): string {
+    if (!courseTeacherId || courseTeacherId === 'teacher-gen-yl') return 'Unbesetzt';
+    const ids = courseTeacherId.split(',').map(s => s.trim());
+    const names = ids.map(id => teachers.find(t => t.id === id)?.name || id);
+    return names.join(', ');
+  }
+
   function getCourseColor(course: Course | YlaTeacherWeekSlot): { bg: string; border: string } {
     if ((course as any).isYla || course.style === 'YLA') {
       return {
@@ -265,6 +285,13 @@
       return {
         bg: '#ecfeff', // cyan/teal (peacock/krishna vibe)
         border: '#06b6d4'
+      };
+    }
+
+    if (nameLower.includes('schulung')) {
+      return {
+        bg: '#eff6ff', // light blue
+        border: '#3b82f6'
       };
     }
 
@@ -326,9 +353,9 @@
         return startHour === hour;
       })
       .filter(c => {
-        // If onlyMySlots is active, only show courses assigned to the selected teacher
+        // If onlyMySlots is active, only show courses assigned or visible to the selected teacher
         if (onlyMySlotsParam && selectedTeacher) {
-          return c.teacherId === selectedTeacher.id;
+          return isTeacherVisibleForCourse(c, selectedTeacher.id);
         }
         return true;
       });
@@ -670,9 +697,9 @@
               <div class="grid-content-cell">
                 {#each getFilteredCoursesForHour(day.value, hour) as course}
                   {@const isYla = (course as any).isYla === true}
-                  {@const isHighlighted = selectedTeacher && (course.teacherId === selectedTeacher.id || isYla)}
+                  {@const isHighlighted = selectedTeacher && (isTeacherVisibleForCourse(course, selectedTeacher.id) || isYla)}
                   {@const colors = getCourseColor(course)}
-                  {@const teacherName = isYla ? (course as any).teacherName : (teachers.find(t => t.id === course.teacherId)?.name || 'Unbesetzt')}
+                  {@const teacherName = isYla ? (course as any).teacherName : getTeacherDisplayName(course.teacherId)}
                   {@const roomName = isYla ? ((course as any).roomName || 'Sivananda Saal (YLA)') : (rooms.find(r => r.id === course.roomId)?.name || course.roomId || 'Raum?')}
                   
                   {#if isYla}
@@ -808,9 +835,9 @@
         {:else}
           {#each filteredMobileCourses as course}
             {@const isYla = (course as any).isYla === true}
-            {@const isHighlighted = selectedTeacher && (course.teacherId === selectedTeacher.id || isYla)}
+            {@const isHighlighted = selectedTeacher && (isTeacherVisibleForCourse(course, selectedTeacher.id) || isYla)}
             {@const colors = getCourseColor(course)}
-            {@const teacherName = isYla ? (course as any).teacherName : (teachers.find(t => t.id === course.teacherId)?.name || 'Unbesetzt')}
+            {@const teacherName = isYla ? (course as any).teacherName : getTeacherDisplayName(course.teacherId)}
             {@const roomName = isYla ? ((course as any).roomName || 'Sivananda Saal (YLA)') : (rooms.find(r => r.id === course.roomId)?.name || course.roomId || 'Raum?')}
 
             {#if isYla}

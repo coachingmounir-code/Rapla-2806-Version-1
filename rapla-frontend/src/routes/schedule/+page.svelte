@@ -251,6 +251,26 @@
     return Array.from(combined).sort((a, b) => a - b);
   }
 
+  function isTeacherAssigned(courseTeacherId: string | null | undefined, targetTeacherId: string): boolean {
+    if (!courseTeacherId) return false;
+    const ids = courseTeacherId.split(',').map(s => s.trim());
+    return ids.includes(targetTeacherId);
+  }
+
+  function isTeacherVisibleForCourse(course: Course, targetTeacherId: string): boolean {
+    if (!course) return false;
+    if (course.teacherId && isTeacherAssigned(course.teacherId, targetTeacherId)) return true;
+    if (course.additionalVisibilityTeacherIds?.includes(targetTeacherId)) return true;
+    return false;
+  }
+
+  function getTeacherDisplayName(courseTeacherId: string | null | undefined): string {
+    if (!courseTeacherId || courseTeacherId === 'teacher-gen-yl') return 'Offen';
+    const ids = courseTeacherId.split(',').map(s => s.trim());
+    const names = ids.map(id => teachers.find(t => t.id === id)?.name || id);
+    return names.join(', ');
+  }
+
   // Get filtered courses for a specific day and hour
   function getFilteredCoursesForHour(day: number, hour: number): Course[] {
     return courses
@@ -260,7 +280,7 @@
         return startHour === hour;
       })
       .filter(c => selectedRoomFilter === 'all' || c.roomId === selectedRoomFilter)
-      .filter(c => selectedTeacherFilter === 'all' || c.teacherId === selectedTeacherFilter)
+      .filter(c => selectedTeacherFilter === 'all' || isTeacherVisibleForCourse(c, selectedTeacherFilter))
       .sort((a, b) => a.startTime.localeCompare(b.startTime));
   }
 
@@ -883,7 +903,7 @@
               
               <!-- Bottom line: Teacher Name -->
               <div class="card-teacher-line" class:conflict-text={hasHard} title={hasHard ? courseConflicts.find(c => c.type === 'hard')?.message : ''}>
-                {teacherObj ? teacherObj.name : 'Offen'}
+                {getTeacherDisplayName(course.teacherId)}
               </div>
             </div>
           {/each}

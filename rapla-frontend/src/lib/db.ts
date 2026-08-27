@@ -129,6 +129,7 @@ export interface Course {
   endTime: string; // "HH:MM"
   roomId: string;
   teacherId: string | null; // assigned teacher
+  additionalVisibilityTeacherIds?: string[]; // teachers for whom this course is additionally visible (e.g. mandatory participation / Schulung)
   isAiPlanned: boolean;
   status: 'draft' | 'approved';
   isManuallyEdited?: boolean;
@@ -1677,6 +1678,19 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
+        "id": "course-2026-W36-sevaka-schulung",
+        "name": "Sevaka-Schulung",
+        "style": "Sonstiges",
+        "dayOfWeek": 6,
+        "startTime": "14:00",
+        "endTime": "16:00",
+        "roomId": "room-3",
+        "teacherId": "teacher-gen-mouniir-jaber, teacher-gen-harishakti, teacher-gen-adam-zmuda",
+        "isAiPlanned": false,
+        "isManuallyEdited": true,
+        "status": "approved"
+      },
+      {
         "id": "course-2026-W36-16",
         "name": "Anfänger",
         "style": "Hatha",
@@ -1697,6 +1711,11 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "endTime": "18:00",
         "roomId": "room-5",
         "teacherId": "teacher-gen-anjali-gelzleichter",
+        "additionalVisibilityTeacherIds": [
+          "teacher-gen-mouniir-jaber",
+          "teacher-gen-harishakti",
+          "teacher-gen-adam-zmuda"
+        ],
         "isAiPlanned": false,
         "status": "approved"
       },
@@ -6809,7 +6828,7 @@ function setStored<T>(key: string, value: T, immediate = false): void {
   }, 50);
 }
 
-const CURRENT_DB_VERSION = 93;
+const CURRENT_DB_VERSION = 96;
 
 // Database Actions
 export const db = {
