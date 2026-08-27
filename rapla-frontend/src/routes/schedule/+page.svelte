@@ -239,7 +239,7 @@
 
   // Retrieve displaying hours dynamically to hide empty hours but show scheduled and core ones
   function getDisplayedHours(currentCourses: Course[]): number[] {
-    const defaultHours = [6, 7, 8, 9, 16, 19, 20, 21];
+    const defaultHours = [6, 7, 9, 16, 19, 20, 21];
     const activeHours = new Set<number>();
     currentCourses.forEach(c => {
       const h = parseInt(c.startTime.split(':')[0], 10);
@@ -838,11 +838,7 @@
       {@const isMiddayGap = prevHour !== null && prevHour <= 10 && hour >= 15}
 
       {#if isMiddayGap}
-        <div class="grid-midday-gap">
-          <div class="gap-divider-line"></div>
-          <span class="gap-divider-label">☀️ Mittagspause (12:00 – 16:00)</span>
-          <div class="gap-divider-line"></div>
-        </div>
+        <div class="grid-midday-gap" aria-hidden="true"></div>
       {/if}
 
       <div class="grid-time-cell">
@@ -1402,35 +1398,10 @@
 
   .grid-midday-gap {
     grid-column: 1 / -1;
-    background: linear-gradient(90deg, #f5f5f5 0%, #ebebeb 50%, #f5f5f5 100%);
-    padding: 2px 14px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-    height: 22px;
-    min-height: 22px;
-    box-sizing: border-box;
-    border-top: 1px solid #c8c8c8;
-    border-bottom: 1px solid #c8c8c8;
-  }
-
-  .gap-divider-line {
-    flex: 1;
-    height: 1px;
     background: #c8c8c8;
-  }
-
-  .gap-divider-label {
-    font-size: 0.68rem;
-    font-weight: 700;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: #555;
-    white-space: nowrap;
-    display: flex;
-    align-items: center;
-    gap: 4px;
+    height: 8px;
+    min-height: 8px;
+    box-sizing: border-box;
   }
 
   .grid-time-cell {

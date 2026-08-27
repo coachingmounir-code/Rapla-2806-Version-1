@@ -63,10 +63,31 @@
   } | null>(null);
 
   let isAdmin = $derived(!readOnly && userRole === 'admin');
+  let isSyncing = $state(false);
+  let syncFeedback = $state<string | null>(null);
 
   // Load and subscribe to assignments
   function refreshAssignments() {
     assignmentsMap = getYlaAssignments();
+  }
+
+  async function handleYlaSync() {
+    if (isSyncing) return;
+    isSyncing = true;
+    try {
+      await db.syncWithServerAndCloud();
+      refreshAssignments();
+      try {
+        allTeachersList = db.getTeachers();
+      } catch (e) {}
+      syncFeedback = '✅ Daten & Zuweisungen synchronisiert!';
+      setTimeout(() => { syncFeedback = null; }, 3000);
+    } catch (e: any) {
+      syncFeedback = '❌ Sync-Fehler: ' + (e?.message || '');
+      setTimeout(() => { syncFeedback = null; }, 3500);
+    } finally {
+      isSyncing = false;
+    }
   }
 
   onMount(() => {
@@ -412,6 +433,18 @@
           </button>
         </div>
 
+        <!-- Sync Button -->
+        <button 
+          type="button" 
+          class="btn yla-btn-action btn-sync-main" 
+          onclick={handleYlaSync}
+          disabled={isSyncing}
+          title="Aktuelle YLA-Plandaten und Zuweisungen aus der Cloud synchronisieren"
+        >
+          <span class:icon-spin={isSyncing}>🔄</span>
+          <span>{isSyncing ? 'Synchronisiere...' : 'Synchronisieren'}</span>
+        </button>
+
         <!-- Fullscreen Button -->
         <button 
           type="button" 
@@ -423,6 +456,12 @@
         </button>
       </div>
     </div>
+
+    {#if syncFeedback}
+      <div class="yla-sync-feedback-toast" class:is-error={syncFeedback.includes('❌')}>
+        {syncFeedback}
+      </div>
+    {/if}
 
     <!-- Active Week Summary Banner in Standard View -->
     <div class="week-summary-banner glass-card">
@@ -2745,5 +2784,55 @@
       min-width: 100% !important;
       font-size: 8.5pt !important;
     }
+  }
+
+  .btn-sync-main {
+    background: #f8fafc;
+    border: 1px solid #cbd5e1;
+    color: #334155;
+    font-weight: 600;
+    transition: all 0.2s ease;
+  }
+
+  .btn-sync-main:hover:not(:disabled) {
+    background: #f1f5f9;
+    border-color: #94a3b8;
+    transform: translateY(-1px);
+  }
+
+  .icon-spin {
+    display: inline-block;
+    animation: spin 1s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  }
+
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  .yla-sync-feedback-toast {
+    margin: 0.5rem 0 1rem 0;
+    padding: 0.6rem 1rem;
+    background: #ecfdf5;
+    color: #065f46;
+    border: 1px solid #a7f3d0;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    animation: fadeIn 0.2s ease;
+  }
+
+  .yla-sync-feedback-toast.is-error {
+    background: #fef2f2;
+    color: #991b1b;
+    border-color: #fecaca;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-4px); }
+    to { opacity: 1; transform: translateY(0); }
   }
 </style>

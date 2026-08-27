@@ -1,5 +1,6 @@
 // 4-wöchige Yogalehrerausbildung (YLA) Data Store & Types
 import ylaCurriculumData from './data/yla_curriculum.json' with { type: 'json' };
+import { supabase } from './supabaseClient';
 
 export const YLA_TEACHERS = [
   'Abba',
@@ -254,8 +255,19 @@ export function setYlaAssignment(weekNumber: number, dayCol: string, rowNumber: 
     } else {
       custom[key] = '__NONE__';
     }
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(custom));
+    const jsonStr = JSON.stringify(custom);
+    localStorage.setItem(STORAGE_KEY, jsonStr);
+
+    // Asynchronously push to Supabase Cloud so all users & devices get this assignment
+    if (supabase) {
+      supabase.from('app_state').upsert({ key: STORAGE_KEY, value: jsonStr })
+        .then(({ error }) => {
+          if (error) console.error('Failed to sync YLA assignment to cloud:', error);
+        });
+    }
+
     window.dispatchEvent(new CustomEvent('yla-assignment-changed', { detail: { weekNumber, dayCol, rowNumber, teacherName: normalized } }));
+    window.dispatchEvent(new CustomEvent('rapla-data-synced'));
   } catch (e) {
     console.error('Error saving YLA assignment to localStorage', e);
   }

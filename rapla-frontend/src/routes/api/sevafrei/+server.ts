@@ -11,12 +11,24 @@ export const GET: RequestHandler = async () => {
   try {
     if (fs.existsSync(FILE_PATH)) {
       const data = fs.readFileSync(FILE_PATH, 'utf-8');
-      return json(JSON.parse(data));
+      return json(JSON.parse(data), {
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0'
+        }
+      });
     }
   } catch (e) {
     console.error('Error reading sevafrei absences:', e);
   }
-  return json([]);
+  return json([], {
+    headers: {
+      'Cache-Control': 'no-cache, no-store, must-revalidate',
+      'Pragma': 'no-cache',
+      'Expires': '0'
+    }
+  });
 };
 
 export const POST: RequestHandler = async ({ request }) => {

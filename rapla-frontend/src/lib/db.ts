@@ -6858,6 +6858,9 @@ export const db = {
                 localStorage.setItem(row.key, row.value);
               }
               inMemoryStore[row.key] = JSON.parse(row.value);
+              if (row.key === 'rapla_yla_assignments') {
+                window.dispatchEvent(new CustomEvent('yla-assignment-changed'));
+              }
             }
           } catch(e) {
             console.error('Error processing row in initializeCloudSync:', row.key, e);
@@ -6867,9 +6870,41 @@ export const db = {
         if (changed) {
           // Dispatch event so active components refresh their state smoothly without reloading the window
           window.dispatchEvent(new CustomEvent('rapla-data-synced'));
+          window.dispatchEvent(new CustomEvent('yla-assignment-changed'));
         }
       } else {
         cloudInitialized = true;
+      }
+
+      // Setup Realtime sync so updates across all connected team/admin devices reflect immediately
+      if (supabase && typeof window !== 'undefined' && !(window as any).__rapla_realtime_initialized) {
+        (window as any).__rapla_realtime_initialized = true;
+        try {
+          supabase
+            .channel('app_state_realtime_channel')
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'app_state' }, (payload: any) => {
+              if (payload?.new?.key && payload?.new?.value) {
+                try {
+                  const key = payload.new.key;
+                  const val = payload.new.value;
+                  const current = localStorage.getItem(key);
+                  if (current !== val) {
+                    localStorage.setItem(key, val);
+                    inMemoryStore[key] = JSON.parse(val);
+                    if (key === 'rapla_yla_assignments') {
+                      window.dispatchEvent(new CustomEvent('yla-assignment-changed'));
+                    }
+                    window.dispatchEvent(new CustomEvent('rapla-data-synced'));
+                  }
+                } catch (err) {
+                  console.error('Error handling realtime app_state update:', err);
+                }
+              }
+            })
+            .subscribe();
+        } catch (subErr) {
+          console.error('Failed to subscribe to realtime app_state changes:', subErr);
+        }
       }
     } catch (e) {
       console.error('Failed to initialize cloud sync', e);
@@ -7441,9 +7476,19 @@ export const db = {
   syncWithServerAndCloud: async (): Promise<{ success: boolean; message: string }> => {
     if (typeof window === 'undefined') return { success: false, message: 'Nicht im Browser' };
     try {
-      // 1. Sync wishes from server JSON to localStorage & teachers
+      const timestamp = Date.now();
+      const noCacheHeaders = {
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0'
+      };
+
+      // 1. Sync wishes from server JSON to localStorage & teachers (bypassing any browser HTTP cache)
       try {
-        const wishesRes = await fetch('/api/sevakas-wishes');
+        const wishesRes = await fetch(`/api/sevakas-wishes?t=${timestamp}`, {
+          cache: 'no-store',
+          headers: noCacheHeaders
+        });
         if (wishesRes.ok) {
           const wishes = await wishesRes.json();
           if (wishes && wishes.length > 0) {
@@ -7468,9 +7513,12 @@ export const db = {
         console.error('Failed to sync wishes in db.syncWithServerAndCloud:', e);
       }
 
-      // 2. Sync absences from server JSON to localStorage & sevafrei
+      // 2. Sync absences from server JSON to localStorage & sevafrei (bypassing any browser HTTP cache)
       try {
-        const absencesRes = await fetch('/api/sevafrei');
+        const absencesRes = await fetch(`/api/sevafrei?t=${timestamp}`, {
+          cache: 'no-store',
+          headers: noCacheHeaders
+        });
         if (absencesRes.ok) {
           const serverAbsences = await absencesRes.json();
           if (serverAbsences && serverAbsences.length > 0) {
@@ -7495,14 +7543,16 @@ export const db = {
         console.error('Failed to sync absences in db.syncWithServerAndCloud:', e);
       }
 
-      // 3. Sync Supabase cloud state
+      // 3. Sync Supabase cloud state (Week plans, YLA assignments, teachers, rooms, etc.)
       await db.initializeCloudSync();
       
       // 4. Ensure week plans are verified and latest migrations applied
       db.getWeekPlans();
 
-      // 5. Dispatch event so all components update immediately
+      // 5. Dispatch events so all active components (Wochenplan, YLA, Team views, Teachers) update immediately
       window.dispatchEvent(new CustomEvent('rapla-data-synced'));
+      window.dispatchEvent(new CustomEvent('yla-assignment-changed'));
+      window.dispatchEvent(new Event('storage'));
       return { success: true, message: 'Daten erfolgreich synchronisiert' };
     } catch (err: any) {
       console.error('Sync error:', err);
