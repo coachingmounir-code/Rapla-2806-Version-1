@@ -305,7 +305,7 @@
   }
 
   function getDisplayedHours(currentCourses: (Course | YlaTeacherWeekSlot)[]): number[] {
-    const defaultHours = [5, 6, 7, 8, 9, 12, 14, 16, 19, 20, 21];
+    const defaultHours = [6, 7, 8, 9, 16, 19, 20, 21];
     const activeHours = new Set<number>();
     currentCourses.forEach(c => {
       const h = parseInt(c.startTime.split(':')[0], 10);
@@ -653,7 +653,19 @@
           {/each}
 
           <!-- Grid Rows by Hour -->
-          {#each getDisplayedHours(allDisplayCourses) as hour}
+          {#each getDisplayedHours(allDisplayCourses) as hour, idx}
+            {@const hoursList = getDisplayedHours(allDisplayCourses)}
+            {@const prevHour = idx > 0 ? hoursList[idx - 1] : null}
+            {@const isMiddayGap = prevHour !== null && prevHour <= 10 && hour >= 15}
+
+            {#if isMiddayGap}
+              <div class="grid-midday-gap">
+                <div class="gap-divider-line"></div>
+                <span class="gap-divider-label">☀️ Mittagspause (12:00 – 16:00)</span>
+                <div class="gap-divider-line"></div>
+              </div>
+            {/if}
+
             <div class="grid-time-cell">
               <span>{hour.toString().padStart(2, '0')}:00</span>
             </div>
@@ -1055,7 +1067,7 @@
   .calendar-grid {
     display: grid;
     grid-template-columns: 80px repeat(7, minmax(140px, 1fr));
-    grid-auto-rows: minmax(85px, auto);
+    grid-auto-rows: auto;
     background-color: #cbd5e1;
     gap: 1px;
     width: 100%;
@@ -1141,6 +1153,39 @@
     color: #64748b;
   }
 
+  .grid-midday-gap {
+    grid-column: 1 / -1;
+    background: linear-gradient(90deg, #f8fafc 0%, #f1f5f9 50%, #f8fafc 100%);
+    padding: 2px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    height: 22px;
+    min-height: 22px;
+    box-sizing: border-box;
+    border-top: 1px solid #cbd5e1;
+    border-bottom: 1px solid #cbd5e1;
+  }
+
+  .gap-divider-line {
+    flex: 1;
+    height: 1px;
+    background: #cbd5e1;
+  }
+
+  .gap-divider-label {
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #64748b;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
   .grid-time-cell {
     background: #f1f5f9;
     padding: 6px;
@@ -1150,6 +1195,8 @@
     display: flex;
     justify-content: center;
     align-items: flex-start;
+    min-height: 80px;
+    box-sizing: border-box;
   }
 
   .grid-content-cell {
@@ -1158,7 +1205,8 @@
     display: flex;
     flex-direction: column;
     gap: 4px;
-    min-height: 70px;
+    min-height: 80px;
+    box-sizing: border-box;
   }
 
   .course-card-rapla {
@@ -1263,11 +1311,17 @@
   .calendar-grid-container:fullscreen .calendar-grid {
     height: auto !important;
     min-height: fit-content !important;
-    grid-auto-rows: minmax(75px, auto) !important;
+    grid-auto-rows: auto !important;
     min-width: 1060px !important;
     overflow: visible !important;
     flex: none !important;
     width: 100% !important;
+  }
+
+  .calendar-grid-container.fullscreen-mode .grid-time-cell,
+  .calendar-grid-container:fullscreen .grid-time-cell {
+    min-height: 75px !important;
+    height: auto !important;
   }
 
   .calendar-grid-container.fullscreen-mode .grid-content-cell,

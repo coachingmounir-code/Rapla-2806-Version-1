@@ -239,7 +239,7 @@
 
   // Retrieve displaying hours dynamically to hide empty hours but show scheduled and core ones
   function getDisplayedHours(currentCourses: Course[]): number[] {
-    const defaultHours = [5, 6, 7, 8, 9, 12, 14, 16, 19, 20, 21];
+    const defaultHours = [6, 7, 8, 9, 16, 19, 20, 21];
     const activeHours = new Set<number>();
     currentCourses.forEach(c => {
       const h = parseInt(c.startTime.split(':')[0], 10);
@@ -832,7 +832,19 @@
     {/each}
 
     <!-- Time rows -->
-    {#each getDisplayedHours(courses) as hour}
+    {#each getDisplayedHours(courses) as hour, idx}
+      {@const hoursList = getDisplayedHours(courses)}
+      {@const prevHour = idx > 0 ? hoursList[idx - 1] : null}
+      {@const isMiddayGap = prevHour !== null && prevHour <= 10 && hour >= 15}
+
+      {#if isMiddayGap}
+        <div class="grid-midday-gap">
+          <div class="gap-divider-line"></div>
+          <span class="gap-divider-label">☀️ Mittagspause (12:00 – 16:00)</span>
+          <div class="gap-divider-line"></div>
+        </div>
+      {/if}
+
       <div class="grid-time-cell">
         <span>{hour.toString().padStart(2, '0')}:00</span>
       </div>
@@ -1303,7 +1315,7 @@
   .calendar-grid {
     display: grid;
     grid-template-columns: 80px repeat(7, minmax(130px, 1fr));
-    grid-auto-rows: minmax(70px, auto); /* Prevent squishing and allow rows with parallel classes to expand naturally */
+    grid-auto-rows: auto;
     background-color: #c8c8c8; /* border color between cells */
     gap: 1px; /* grid line gap */
     width: 100%;
@@ -1388,6 +1400,39 @@
     color: #555;
   }
 
+  .grid-midday-gap {
+    grid-column: 1 / -1;
+    background: linear-gradient(90deg, #f5f5f5 0%, #ebebeb 50%, #f5f5f5 100%);
+    padding: 2px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    height: 22px;
+    min-height: 22px;
+    box-sizing: border-box;
+    border-top: 1px solid #c8c8c8;
+    border-bottom: 1px solid #c8c8c8;
+  }
+
+  .gap-divider-line {
+    flex: 1;
+    height: 1px;
+    background: #c8c8c8;
+  }
+
+  .gap-divider-label {
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #555;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
   .grid-time-cell {
     background: #f0f0f0;
     padding: 6px;
@@ -1397,7 +1442,8 @@
     display: flex;
     justify-content: center;
     align-items: flex-start;
-    min-height: 50px;
+    min-height: 65px;
+    box-sizing: border-box;
   }
 
   .grid-content-cell {
@@ -1406,7 +1452,8 @@
     display: flex;
     flex-direction: column;
     gap: 4px;
-    min-height: 50px;
+    min-height: 65px;
+    box-sizing: border-box;
   }
 
   /* Rapla Course Card Styling */
