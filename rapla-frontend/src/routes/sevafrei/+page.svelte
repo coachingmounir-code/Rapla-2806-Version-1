@@ -66,7 +66,7 @@
     { spiritualName: "Adinatha", firstName: "Matthias", lastName: "Lang", team: "Vishnu/Shop", seminarSoll: 18, seminarIst: 18, sevafreiSoll: 24, sevafreiIst: 5 },
     { spiritualName: "Marlen", firstName: "Marlen", lastName: "Posnien", team: "ZV", seminarSoll: 0, seminarIst: 0, sevafreiSoll: 25, sevafreiIst: 0 },
     { spiritualName: "Melanie", firstName: "Melanie", lastName: "Vagt", team: "Jaya", seminarSoll: 0, seminarIst: 0, sevafreiSoll: 0, sevafreiIst: 0 },
-    { spiritualName: "Burnie", firstName: "Bernhard", lastName: "Bansemer", team: "Vishnu", seminarSoll: 18, seminarIst: 0, sevafreiSoll: 24, sevafreiIst: 12 },
+    { spiritualName: "burnie", firstName: "Bernhard", lastName: "Bansemer", team: "Vishnu", seminarSoll: 18, seminarIst: 0, sevafreiSoll: 24, sevafreiIst: 12 },
     { spiritualName: "Nirmaya", firstName: "Karin", lastName: "Fodor", team: "Sattva", seminarSoll: 18, seminarIst: 18, sevafreiSoll: 24, sevafreiIst: 19 },
     { spiritualName: "Maitri", firstName: "Martina", lastName: "Schloms", team: "SPL", seminarSoll: 0, seminarIst: 0, sevafreiSoll: 25, sevafreiIst: 21 },
     { spiritualName: "Alexander", firstName: "Alexander", lastName: "Melior", team: "Küche", seminarSoll: 16, seminarIst: 18, sevafreiSoll: 24, sevafreiIst: 0 },

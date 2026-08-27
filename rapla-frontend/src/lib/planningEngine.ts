@@ -327,7 +327,7 @@ export function validateAssignment(
         if (!teacherNameLower.includes('burnie')) {
           conflicts.push({
             type: 'hard',
-            message: `Burnie steht am Sonntag zur Verfügung und muss für Pranayama eingeteilt werden.`
+            message: `burnie steht am Sonntag zur Verfügung und muss für Pranayama eingeteilt werden.`
           });
         }
       }

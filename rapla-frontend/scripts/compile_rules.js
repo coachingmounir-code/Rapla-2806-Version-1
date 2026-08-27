@@ -75,7 +75,7 @@ ${filesText}
 {
   "teachers": {
     "lehrer_id_kleingeschrieben_ohne_sonderzeichen": {
-      "name": "Name des Lehrers (exakt aus der Datei, z.B. 'Burnie', 'Karuna', 'Hu', 'Mounir', 'Nirmaya', 'Narayani', 'Pranava', 'Alexander', 'Adam', 'Harishakti', 'Ulrich')",
+      "name": "Name des Lehrers (exakt aus der Datei, z.B. 'burnie', 'Karuna', 'Hu', 'Mounir', 'Nirmaya', 'Narayani', 'Pranava', 'Alexander', 'Adam', 'Harishakti', 'Ulrich')",
       "freeDays": [Wochentage an denen frei ist als Zahlen: 0=Sonntag, 1=Montag, 2=Dienstag, 3=Mittwoch, 4=Donnerstag, 5=Freitag, 6=Samstag],
       "maxMeditationPerWeek": Max. geführte Meditationen pro Woche (Zahl oder null),
       "maxSatsangsPerWeek": Max. Satsangs pro Woche gesamt (Zahl oder null),
@@ -95,7 +95,7 @@ ${filesText}
       "prefersMittelstufe": true oder false (wenn Mittelstufe bevorzugt wird),
       "customCourseNames": [
         { "originalName": "Mittelstufe", "customName": "Yoga Flow Mittelstufe" }
-      ] (Liste von generellen Umbenennungen für alle Yogastunden dieses Lehrers. WICHTIG: Burnies Pavanmukt Asana Regel darf hier NICHT eingetragen werden, da diese nur einmal pro Woche gilt!),
+      ] (Liste von generellen Umbenennungen für alle Yogastunden dieses Lehrers. WICHTIG: burnies Pavanmukt Asana Regel darf hier NICHT eingetragen werden, da diese nur einmal pro Woche gilt!),
       "availabilityRestrictions": [
         { "day": 2, "timeAfter": "12:00", "allowed": false },
         { "day": 4, "timeBefore": "11:00", "allowed": false }

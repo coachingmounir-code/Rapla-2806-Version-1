@@ -4,7 +4,7 @@ import ylaCurriculumData from './data/yla_curriculum.json' with { type: 'json' }
 export const YLA_TEACHERS = [
   'Abba',
   'Anjali',
-  'Burnie',
+  'burnie',
   'Hu',
   'Karuna',
   'Narayani',
@@ -36,8 +36,8 @@ export const YLA_TEACHERS_META: Record<YlaTeacherName, YlaTeacherMeta> = {
     color: '#c2185b',
     badgeBg: '#fce4ec'
   },
-  Burnie: {
-    name: 'Burnie',
+  burnie: {
+    name: 'burnie',
     alias: ['burnie', 'bernie', 'bintje'],
     avatar: '🧘‍♂️',
     color: '#1976d2',
@@ -150,12 +150,12 @@ export interface YlaConflictDetail {
 const STORAGE_KEY = 'rapla_yla_assignments';
 
 /**
- * Normalizes teacher display name (e.g. Bintje/Bernie -> Burnie, Kamuna -> Karuna, Abha -> Abba)
+ * Normalizes teacher display name (e.g. Bintje/Bernie -> burnie, Kamuna -> Karuna, Abha -> Abba)
  */
 export function normalizeTeacherDisplayName(name: string | null | undefined): string | null {
   if (!name) return null;
   const n = name.toLowerCase().trim();
-  if (n === 'bintje' || n === 'bernie' || n === 'burnie') return 'Burnie';
+  if (n === 'bintje' || n === 'bernie' || n === 'burnie') return 'burnie';
   if (n === 'abba' || n === 'abha') return 'Abba';
   if (n === 'kamuna' || n === 'karuna') return 'Karuna';
   if (n === 'anjali') return 'Anjali';
