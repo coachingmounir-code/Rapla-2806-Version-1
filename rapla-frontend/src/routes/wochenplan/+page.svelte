@@ -566,7 +566,16 @@
           <!-- Week Days Headers starting from Friday -->
           {#each DAYS as day}
             {@const isToday = new Date().getDay() === day.value && currentWeekOffset === 0}
-            <div class="grid-header-cell day-header" class:header-today={isToday}>
+            {@const currentWeekCode = currentPlan?.targetWeekCode || getWeekCode(getMondayOfCurrentWeek())}
+            {@const dayDateStr = getLocalDateForDay(currentWeekCode, day.value)}
+            {@const isYlaWednesday = day.value === 3 && isDateInYlaRange(dayDateStr)}
+            <div class="grid-header-cell day-header" class:header-today={isToday} class:header-schweigetag={isYlaWednesday}>
+              {#if isYlaWednesday}
+                <div class="schweigetag-pill" title="Schweigen bis 12 Uhr wegen YLA">
+                  <div class="schweigetag-pill-title">🤫 Schweigetag</div>
+                  <div class="schweigetag-pill-sub">Schweigen bis 12 Uhr wegen YLA</div>
+                </div>
+              {/if}
               <span class="day-label-short">{day.label}</span>
               <span class="day-date">{getDayDateString(day.value)}</span>
             </div>
@@ -657,13 +666,20 @@
       <div class="mobile-day-tabs">
         {#each DAYS as day}
           {@const isToday = new Date().getDay() === day.value && currentWeekOffset === 0}
+          {@const currentWeekCode = currentPlan?.targetWeekCode || getWeekCode(getMondayOfCurrentWeek())}
+          {@const dayDateStr = getLocalDateForDay(currentWeekCode, day.value)}
+          {@const isYlaWednesday = day.value === 3 && isDateInYlaRange(dayDateStr)}
           <button 
             type="button" 
             class="day-tab-btn" 
             class:active={activeMobileDay === day.value}
             class:is-today={isToday}
+            class:tab-schweigetag={isYlaWednesday}
             onclick={() => activeMobileDay = day.value}
           >
+            {#if isYlaWednesday}
+              <span class="schweigetag-tab-pill">🤫 Schweigetag</span>
+            {/if}
             <span class="day-tab-name">{day.label.substring(0, 2)}</span>
             <span class="day-tab-date">{getDayDateString(day.value)}</span>
           </button>
@@ -672,6 +688,16 @@
 
       <!-- Timeline of Courses -->
       <div class="mobile-agenda-list">
+        {#if activeMobileDay === 3 && isDateInYlaRange(getLocalDateForDay(currentPlan?.targetWeekCode || getWeekCode(getMondayOfCurrentWeek()), 3))}
+          <div class="mobile-schweigetag-banner">
+            <span class="banner-icon">🤫</span>
+            <div class="banner-text">
+              <span class="banner-title">Schweigetag</span>
+              <span class="banner-sub">Schweigen bis 12 Uhr wegen YLA</span>
+            </div>
+          </div>
+        {/if}
+
         {#if filteredMobileCourses.length === 0}
           <div class="empty-agenda-state">
             📭 Keine Stunden für diesen Tag eingetragen.
@@ -944,6 +970,43 @@
 
   .day-header {
     color: #334155;
+  }
+
+  .header-schweigetag {
+    background: #fdf4ff;
+    border-top: 3px solid #c026d3;
+  }
+
+  .header-today.header-schweigetag {
+    background: #faf5ff;
+    border-top: 3px solid #9333ea;
+  }
+
+  .schweigetag-pill {
+    background: #f3e8ff;
+    border: 1px solid #d8b4fe;
+    border-radius: 6px;
+    padding: 3px 4px;
+    margin-bottom: 4px;
+    text-align: center;
+    width: 95%;
+    box-shadow: 0 1px 2px rgba(147, 51, 234, 0.1);
+  }
+
+  .schweigetag-pill-title {
+    font-size: 0.72rem;
+    font-weight: 800;
+    color: #7e22ce;
+    letter-spacing: 0.01em;
+    line-height: 1.1;
+  }
+
+  .schweigetag-pill-sub {
+    font-size: 0.62rem;
+    font-weight: 600;
+    color: #9333ea;
+    line-height: 1.15;
+    margin-top: 1px;
   }
 
   .header-today {
@@ -1314,6 +1377,76 @@
 
   .day-tab-btn.is-today:not(.active) .day-tab-date {
     color: #2563eb;
+  }
+
+  .tab-schweigetag {
+    border-color: #d8b4fe !important;
+  }
+
+  .tab-schweigetag.active {
+    background: #7e22ce !important;
+    border-color: #7e22ce !important;
+    color: white !important;
+  }
+
+  .tab-schweigetag.active .day-tab-date,
+  .tab-schweigetag.active .day-tab-name {
+    color: white !important;
+  }
+
+  .schweigetag-tab-pill {
+    font-size: 0.52rem;
+    font-weight: 800;
+    color: #7e22ce;
+    background: #fae8ff;
+    border: 1px solid #e9d5ff;
+    padding: 1px 3px;
+    border-radius: 4px;
+    margin-bottom: 2px;
+    display: inline-block;
+    white-space: nowrap;
+    line-height: 1.1;
+  }
+
+  .tab-schweigetag.active .schweigetag-tab-pill {
+    background: #ffffff;
+    color: #7e22ce;
+    border-color: #ffffff;
+  }
+
+  .mobile-schweigetag-banner {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: #fdf4ff;
+    border: 1.5px solid #d8b4fe;
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 2px 6px rgba(147, 51, 234, 0.1);
+  }
+
+  .mobile-schweigetag-banner .banner-icon {
+    font-size: 1.6rem;
+    line-height: 1;
+  }
+
+  .mobile-schweigetag-banner .banner-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+
+  .mobile-schweigetag-banner .banner-title {
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: #6b21a8;
+  }
+
+  .mobile-schweigetag-banner .banner-sub {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #7e22ce;
   }
 
   .mobile-agenda-list {

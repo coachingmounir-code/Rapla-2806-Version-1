@@ -816,7 +816,16 @@
     </div>
     {#each DAYS as day}
       {@const isToday = new Date().getDay() === day.value && currentWeekOffset === 0 && !planId}
-      <div class="grid-header-cell day-header" class:header-today={isToday}>
+      {@const currentWeekCode = currentPlan?.targetWeekCode || getWeekCode(getMondayOfCurrentWeek())}
+      {@const dayDateStr = getLocalDateForDay(currentWeekCode, day.value)}
+      {@const isYlaWednesday = day.value === 3 && isDateInYlaRange(dayDateStr)}
+      <div class="grid-header-cell day-header" class:header-today={isToday} class:header-schweigetag={isYlaWednesday}>
+        {#if isYlaWednesday}
+          <div class="schweigetag-pill" title="Schweigen bis 12 Uhr wegen YLA">
+            <div class="schweigetag-pill-title">🤫 Schweigetag</div>
+            <div class="schweigetag-pill-sub">Schweigen bis 12 Uhr wegen YLA</div>
+          </div>
+        {/if}
         <span class="day-label-short">{day.label.substring(0, 2)}</span>
         <span class="day-date">{getDayDateString(day.value)}</span>
       </div>
@@ -1324,6 +1333,43 @@
 
   .day-header {
     color: #333;
+  }
+
+  .header-schweigetag {
+    background: #fdf4ff;
+    border-top: 3px solid #c026d3;
+  }
+
+  .header-today.header-schweigetag {
+    background: #faf5ff;
+    border-top: 3px solid #9333ea;
+  }
+
+  .schweigetag-pill {
+    background: #f3e8ff;
+    border: 1px solid #d8b4fe;
+    border-radius: 6px;
+    padding: 3px 4px;
+    margin-bottom: 4px;
+    text-align: center;
+    width: 95%;
+    box-shadow: 0 1px 2px rgba(147, 51, 234, 0.1);
+  }
+
+  .schweigetag-pill-title {
+    font-size: 0.72rem;
+    font-weight: 800;
+    color: #7e22ce;
+    letter-spacing: 0.01em;
+    line-height: 1.1;
+  }
+
+  .schweigetag-pill-sub {
+    font-size: 0.62rem;
+    font-weight: 600;
+    color: #9333ea;
+    line-height: 1.15;
+    margin-top: 1px;
   }
 
   .header-today {
