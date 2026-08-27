@@ -180,7 +180,7 @@ const NEW_TEACHER_NAMES = [
   "Aziza Lena Alemi",
   "Beate Menkarski",
   "Bhavani Jannausch",
-  "Burnie",
+  "burnie",
   "Carina van Anken",
   "Christel Smaluhn",
   "Christopher",
@@ -257,7 +257,7 @@ const SEVAKA_NAMES = [
   "Adam",
   "Alexander",
   "Anjali",
-  "Burnie",
+  "burnie",
   "Christopher",
   "Harishakti",
   "Hu",
@@ -373,7 +373,7 @@ const GENERATED_TEACHERS: Teacher[] = NEW_TEACHER_NAMES.map((name, index) => {
   else if (name === "Adam") id = "teacher-gen-adam-zmuda";
   else if (name === "Alexander") id = "teacher-gen-alexander-melior";
   else if (name === "Anjali") id = "teacher-gen-anjali-gelzleichter";
-  else if (name === "Burnie") id = "teacher-gen-burnie-bansemer";
+  else if (name === "burnie" || name === "Burnie") id = "teacher-gen-burnie-bansemer";
   else if (name === "Hu") id = "teacher-gen-hu-buerkle";
   else if (name === "Karuna") id = "teacher-gen-karuna-wapke";
   else if (name === "Mounir") id = "teacher-gen-mouniir-jaber";
@@ -649,7 +649,7 @@ const generateDefaultCourses = (): Course[] => {
     // Monday (dayOfWeek: 1)
     { name: 'Geführte Meditation', style: 'Meditation', dayOfWeek: 1, startTime: '07:00', endTime: '07:30', roomId: 'room-5', teacherName: 'Hu' },
     { name: 'Satsang', style: 'Meditation', dayOfWeek: 1, startTime: '07:00', endTime: '08:00', roomId: 'room-2', teacherName: 'Anjali' },
-    { name: 'Anfänger', style: 'Hatha', dayOfWeek: 1, startTime: '09:15', endTime: '11:00', roomId: 'room-2', teacherName: 'Burnie' },
+    { name: 'Anfänger', style: 'Hatha', dayOfWeek: 1, startTime: '09:15', endTime: '11:00', roomId: 'room-2', teacherName: 'burnie' },
     { name: 'Mittelstufe', style: 'Hatha', dayOfWeek: 1, startTime: '09:15', endTime: '11:00', roomId: 'room-5', teacherName: 'Harishakti' },
     { name: 'Anfänger Rückenstunde', style: 'Hatha', dayOfWeek: 1, startTime: '16:15', endTime: '18:00', roomId: 'room-2', teacherName: 'Pranava' },
     { name: 'Mittelstufe', style: 'Hatha', dayOfWeek: 1, startTime: '16:15', endTime: '18:00', roomId: 'room-5', teacherName: 'Ulrich' },
@@ -7043,7 +7043,7 @@ export const db = {
       else if (t.id === "teacher-gen-adam-zmuda" && t.name !== "Adam") { t.name = "Adam"; updated = true; }
       else if (t.id === "teacher-gen-alexander-melior" && t.name !== "Alexander") { t.name = "Alexander"; updated = true; }
       else if (t.id === "teacher-gen-anjali-gelzleichter" && t.name !== "Anjali") { t.name = "Anjali"; updated = true; }
-      else if (t.id === "teacher-gen-burnie-bansemer" && t.name !== "Burnie") { t.name = "Burnie"; updated = true; }
+      else if ((t.id === "teacher-gen-burnie-bansemer" || t.name === "Burnie") && t.name !== "burnie") { t.name = "burnie"; updated = true; }
       else if (t.id === "teacher-gen-hu-buerkle" && t.name !== "Hu") { t.name = "Hu"; updated = true; }
       else if (t.id === "teacher-gen-karuna-wapke" && t.name !== "Karuna") { t.name = "Karuna"; updated = true; }
       else if (t.id === "teacher-gen-mouniir-jaber" && t.name !== "Mounir") { t.name = "Mounir"; updated = true; }
