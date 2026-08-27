@@ -6828,7 +6828,73 @@ function setStored<T>(key: string, value: T, immediate = false): void {
   }, 50);
 }
 
-const CURRENT_DB_VERSION = 97;
+// Comprehensive Reconciliation Function to guarantee default week plans & courses are ALWAYS preserved and merged
+export function reconcilePlansWithDefaults(plans: WeekPlan[]): { plans: WeekPlan[]; hasChanges: boolean } {
+  let hasChanges = false;
+  const list = [...(plans || [])];
+
+  for (const defPlan of DEFAULT_WEEK_PLANS) {
+    const idx = list.findIndex(p => p.id === defPlan.id || p.targetWeekCode === defPlan.targetWeekCode);
+    if (idx === -1) {
+      list.push(JSON.parse(JSON.stringify(defPlan)));
+      hasChanges = true;
+    } else {
+      const plan = list[idx];
+      if (defPlan.targetWeekCode && plan.targetWeekCode !== defPlan.targetWeekCode) {
+        plan.targetWeekCode = defPlan.targetWeekCode;
+        hasChanges = true;
+      }
+      if (defPlan.isApproved && plan.isApproved !== true) {
+        plan.isApproved = true;
+        plan.status = 'approved';
+        hasChanges = true;
+      }
+
+      for (const defC of defPlan.courses) {
+        const existingC = plan.courses.find(c => 
+          c.id === defC.id || 
+          (c.dayOfWeek === defC.dayOfWeek && c.startTime === defC.startTime && c.name === defC.name)
+        );
+
+        if (!existingC) {
+          plan.courses.push(JSON.parse(JSON.stringify(defC)));
+          hasChanges = true;
+        } else {
+          if (defC.additionalVisibilityTeacherIds && defC.additionalVisibilityTeacherIds.length > 0) {
+            if (!existingC.additionalVisibilityTeacherIds || JSON.stringify(existingC.additionalVisibilityTeacherIds) !== JSON.stringify(defC.additionalVisibilityTeacherIds)) {
+              existingC.additionalVisibilityTeacherIds = [...defC.additionalVisibilityTeacherIds];
+              hasChanges = true;
+            }
+          }
+          if (defC.id === 'course-2026-W36-sevaka-schulung') {
+            if (existingC.roomId !== defC.roomId || existingC.teacherId !== defC.teacherId || existingC.startTime !== defC.startTime || existingC.endTime !== defC.endTime) {
+              existingC.roomId = defC.roomId;
+              existingC.teacherId = defC.teacherId;
+              existingC.startTime = defC.startTime;
+              existingC.endTime = defC.endTime;
+              hasChanges = true;
+            }
+          }
+        }
+      }
+
+      const beforeLen = plan.courses.length;
+      plan.courses = plan.courses.filter(c => c.id !== 'course-2026-W36-mittelstufe-pflicht');
+      if (plan.courses.length !== beforeLen) {
+        hasChanges = true;
+      }
+
+      plan.courses.sort((a, b) => {
+        if (a.dayOfWeek !== b.dayOfWeek) return a.dayOfWeek - b.dayOfWeek;
+        return a.startTime.localeCompare(b.startTime);
+      });
+    }
+  }
+
+  return { plans: list, hasChanges };
+}
+
+const CURRENT_DB_VERSION = 98;
 
 // Database Actions
 export const db = {
@@ -6873,54 +6939,20 @@ export const db = {
                 return remPlan;
               });
 
-              // Ensure default courses from DEFAULT_WEEK_PLANS (such as Sevaka-Schulung and additionalVisibilityTeacherIds) are merged in
-              for (const defPlan of DEFAULT_WEEK_PLANS) {
-                const targetPlan = merged.find(mp => mp.id === defPlan.id || mp.targetWeekCode === defPlan.targetWeekCode);
-                if (targetPlan) {
-                  for (const defC of defPlan.courses) {
-                    const existingC = targetPlan.courses.find(c => c.id === defC.id || (c.dayOfWeek === defC.dayOfWeek && c.startTime === defC.startTime && c.name === defC.name));
-                    if (!existingC) {
-                      targetPlan.courses.push({ ...defC });
-                      needsCloudPush = true;
-                      changed = true;
-                    } else {
-                      if (defC.additionalVisibilityTeacherIds && (!existingC.additionalVisibilityTeacherIds || JSON.stringify(existingC.additionalVisibilityTeacherIds) !== JSON.stringify(defC.additionalVisibilityTeacherIds))) {
-                        existingC.additionalVisibilityTeacherIds = [...defC.additionalVisibilityTeacherIds];
-                        needsCloudPush = true;
-                        changed = true;
-                      }
-                      if (defC.id === 'course-2026-W36-sevaka-schulung') {
-                        if (existingC.roomId !== defC.roomId || existingC.teacherId !== defC.teacherId || existingC.startTime !== defC.startTime || existingC.endTime !== defC.endTime) {
-                          existingC.roomId = defC.roomId;
-                          existingC.teacherId = defC.teacherId;
-                          existingC.startTime = defC.startTime;
-                          existingC.endTime = defC.endTime;
-                          needsCloudPush = true;
-                          changed = true;
-                        }
-                      }
-                    }
-                  }
-                  const beforeLen = targetPlan.courses.length;
-                  targetPlan.courses = targetPlan.courses.filter(c => c.id !== 'course-2026-W36-mittelstufe-pflicht');
-                  if (targetPlan.courses.length !== beforeLen) {
-                    needsCloudPush = true;
-                    changed = true;
-                  }
-                  targetPlan.courses.sort((a, b) => {
-                    if (a.dayOfWeek !== b.dayOfWeek) return a.dayOfWeek - b.dayOfWeek;
-                    return a.startTime.localeCompare(b.startTime);
-                  });
-                }
+              // Apply universal reconciliation with codebase defaults
+              const { plans: reconciled, hasChanges: reconciledChanged } = reconcilePlansWithDefaults(merged);
+              if (reconciledChanged) {
+                needsCloudPush = true;
+                changed = true;
               }
 
-              const mergedStr = JSON.stringify(merged);
+              const mergedStr = JSON.stringify(reconciled);
               const currentStr = localStorage.getItem('rapla_week_plans');
               if (currentStr !== mergedStr) {
                 changed = true;
                 localStorage.setItem('rapla_week_plans', mergedStr);
               }
-              inMemoryStore['rapla_week_plans'] = merged;
+              inMemoryStore['rapla_week_plans'] = reconciled;
 
               if (needsCloudPush && supabase) {
                 supabase.from('app_state').upsert({ key: 'rapla_week_plans', value: mergedStr }).then(() => {});
@@ -6963,8 +6995,16 @@ export const db = {
                   const val = payload.new.value;
                   const current = localStorage.getItem(key);
                   if (current !== val) {
-                    localStorage.setItem(key, val);
-                    inMemoryStore[key] = JSON.parse(val);
+                    if (key === 'rapla_week_plans') {
+                      const remotePlans: WeekPlan[] = JSON.parse(val);
+                      const { plans: reconciled } = reconcilePlansWithDefaults(remotePlans);
+                      const reconciledStr = JSON.stringify(reconciled);
+                      localStorage.setItem(key, reconciledStr);
+                      inMemoryStore[key] = reconciled;
+                    } else {
+                      localStorage.setItem(key, val);
+                      inMemoryStore[key] = JSON.parse(val);
+                    }
                     if (key === 'rapla_yla_assignments') {
                       window.dispatchEvent(new CustomEvent('yla-assignment-changed'));
                     }
@@ -7248,72 +7288,13 @@ export const db = {
       db.saveWeekPlans(DEFAULT_WEEK_PLANS);
       return DEFAULT_WEEK_PLANS;
     }
-    let updated = false;
-    const list = [...stored];
-    for (const defPlan of DEFAULT_WEEK_PLANS) {
-      const idx = list.findIndex(p => p.id === defPlan.id || p.targetWeekCode === defPlan.targetWeekCode);
-      if (idx === -1) {
-        list.push(defPlan);
-        updated = true;
-      } else {
-        if (isOutdated && !list[idx].isManualOnly && !list[idx].hasManualEdits) {
-          list[idx] = defPlan;
-          updated = true;
-        } else {
-          // Always ensure all courses from defPlan are present and up to date
-          for (const defC of defPlan.courses) {
-            const existingC = list[idx].courses.find(c => c.id === defC.id || (c.dayOfWeek === defC.dayOfWeek && c.startTime === defC.startTime && c.name === defC.name));
-            if (!existingC) {
-              list[idx].courses.push({ ...defC });
-              updated = true;
-            } else {
-              if (defC.additionalVisibilityTeacherIds && (!existingC.additionalVisibilityTeacherIds || JSON.stringify(existingC.additionalVisibilityTeacherIds) !== JSON.stringify(defC.additionalVisibilityTeacherIds))) {
-                existingC.additionalVisibilityTeacherIds = [...defC.additionalVisibilityTeacherIds];
-                updated = true;
-              }
-              if (defC.id === 'course-2026-W36-sevaka-schulung') {
-                if (existingC.roomId !== defC.roomId || existingC.teacherId !== defC.teacherId || existingC.startTime !== defC.startTime || existingC.endTime !== defC.endTime) {
-                  existingC.roomId = defC.roomId;
-                  existingC.teacherId = defC.teacherId;
-                  existingC.startTime = defC.startTime;
-                  existingC.endTime = defC.endTime;
-                  updated = true;
-                }
-              }
-            }
-          }
-          const beforeLen = list[idx].courses.length;
-          list[idx].courses = list[idx].courses.filter(c => c.id !== 'course-2026-W36-mittelstufe-pflicht');
-          if (list[idx].courses.length !== beforeLen) {
-            updated = true;
-          }
-          if (defPlan.targetWeekCode === '2026-W36' && isOutdated) {
-            for (const c of list[idx].courses) {
-              if (c.dayOfWeek === 6 && c.startTime === '07:00' && c.name.toLowerCase().includes('satsang') && (c.teacherId === 'teacher-gen-abha-morkoetter' || c.teacherId === 'abha')) {
-                c.teacherId = 'teacher-gen-harishakti';
-                c.isManuallyEdited = true;
-                updated = true;
-              }
-              if (c.dayOfWeek === 6 && c.startTime === '09:15' && c.name.toLowerCase().includes('mittelstufe') && (c.teacherId === 'teacher-gen-abha-morkoetter' || c.teacherId === 'abha')) {
-                c.teacherId = 'teacher-gen-yl';
-                c.isManuallyEdited = true;
-                updated = true;
-              }
-              if (c.id === 'course-2026-W36-59' || (c.dayOfWeek === 4 && c.startTime === '16:15' && c.name.toLowerCase().includes('mittelstufe'))) {
-                if (c.teacherId === 'teacher-gen-ulrich-nebel' || c.teacherId === 'ulrich') {
-                  c.teacherId = null;
-                  c.isManuallyEdited = true;
-                  updated = true;
-                }
-              }
-            }
-          }
-          list[idx].courses.sort((a, b) => {
-            if (a.dayOfWeek !== b.dayOfWeek) return a.dayOfWeek - b.dayOfWeek;
-            return a.startTime.localeCompare(b.startTime);
-          });
-        }
-      }
+
+    const { plans: list, hasChanges } = reconcilePlansWithDefaults(stored);
+    let updated = hasChanges;
+
+    if (isOutdated && typeof window !== 'undefined') {
+      localStorage.setItem('rapla_db_version', CURRENT_DB_VERSION.toString());
+      updated = true;
     }
     for (const p of list) {
       if (p.targetWeekCode === '2026-W36') {
