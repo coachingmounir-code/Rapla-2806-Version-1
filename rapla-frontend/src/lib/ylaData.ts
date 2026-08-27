@@ -686,3 +686,162 @@ export function getYlaCleanShortTitle(entry?: YlaDayEntry | null, slotLabel?: st
   }
   return slotLabel || '—';
 }
+
+export interface YlaTeacherWeekSlot {
+  id: string;
+  name: string;
+  style: string;
+  dayOfWeek: number; // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+  startTime: string; // HH:MM
+  endTime: string;   // HH:MM
+  roomId: string;
+  roomName: string;
+  teacherId: string;
+  teacherName: string;
+  isAiPlanned: boolean;
+  status: 'approved';
+  isYla: true;
+  weekNumber: number;
+  weekSubtitle: string;
+  slotLabel: string;
+  badge: string;
+  topic: string;
+  rawText: string;
+  isoDate: string;
+  dateStr: string;
+  dayName: string;
+}
+
+/**
+ * Calculates ISO date (YYYY-MM-DD) for a day of week within a weekCode (Friday-to-Thursday cycle)
+ */
+export function getYlaLocalDateForDay(weekCode: string, dayOfWeek: number): string {
+  if (!weekCode || !weekCode.includes('-W')) return '';
+  const [yearStr, weekStr] = weekCode.split('-W');
+  const year = parseInt(yearStr, 10);
+  const week = parseInt(weekStr, 10);
+  if (isNaN(year) || isNaN(week)) return '';
+
+  const jan4 = new Date(year, 0, 4);
+  const daysToMonday = jan4.getDay() === 0 ? 6 : jan4.getDay() - 1;
+  const mondayOfW1 = new Date(jan4.getTime());
+  mondayOfW1.setDate(jan4.getDate() - daysToMonday);
+
+  const targetMonday = new Date(mondayOfW1.getTime());
+  targetMonday.setDate(mondayOfW1.getDate() + (week - 1) * 7);
+
+  const targetFriday = new Date(targetMonday.getTime());
+  targetFriday.setDate(targetMonday.getDate() - 3);
+
+  let offset = 0;
+  if (dayOfWeek === 5) offset = 0;
+  else if (dayOfWeek === 6) offset = 1;
+  else if (dayOfWeek === 0) offset = 2;
+  else if (dayOfWeek === 1) offset = 3;
+  else if (dayOfWeek === 2) offset = 4;
+  else if (dayOfWeek === 3) offset = 5;
+  else if (dayOfWeek === 4) offset = 6;
+
+  const targetDate = new Date(targetFriday.getTime());
+  targetDate.setDate(targetFriday.getDate() + offset);
+
+  const yyyy = targetDate.getFullYear();
+  const mm = (targetDate.getMonth() + 1).toString().padStart(2, '0');
+  const dd = targetDate.getDate().toString().padStart(2, '0');
+  return `${yyyy}-${mm}-${dd}`;
+}
+
+/**
+ * Resolves all YLA teaching slots for a specific teacher within a target Wochenplan week (Friday to Thursday cycle).
+ */
+export function getYlaSlotsForTeacherAndWeek(
+  teacherNameOrId: string,
+  targetWeekCode: string,
+  teacherId?: string
+): YlaTeacherWeekSlot[] {
+  if (!teacherNameOrId || !targetWeekCode) return [];
+
+  const normTeacher = normalizeTeacherName(teacherNameOrId);
+  const weeks = getYlaWeeks();
+  const result: YlaTeacherWeekSlot[] = [];
+
+  // Friday through Thursday in the standard Rapla schedule cycle
+  const DAYS_ORDER = [5, 6, 0, 1, 2, 3, 4];
+
+  for (const dayVal of DAYS_ORDER) {
+    const isoDate = getYlaLocalDateForDay(targetWeekCode, dayVal);
+    if (!isDateInYlaRange(isoDate)) continue;
+
+    // Find matching day in YLA weeks
+    for (const week of weeks) {
+      const ylaDay = week.days.find(d => d.isoDate === isoDate);
+      if (!ylaDay) continue;
+
+      for (let slotIdx = 0; slotIdx < week.slots.length; slotIdx++) {
+        const slot = week.slots[slotIdx];
+        const cellInfo = getYlaCellRenderInfo(week, ylaDay.col, slotIdx);
+        if (!cellInfo.shouldRender) continue; // Skip merged duplicates
+
+        const entry = cellInfo.entry;
+        if (!entry || !entry.assignedTeacher) continue;
+
+        // Support co-teaching (e.g. "Abba, Anjali")
+        const assignedTeachers = entry.assignedTeacher.includes(',')
+          ? entry.assignedTeacher.split(',').map(n => normalizeTeacherName(n))
+          : [normalizeTeacherName(entry.assignedTeacher)];
+
+        const isMatch = assignedTeachers.some(
+          at => at === normTeacher || normTeacher.includes(at) || at.includes(normTeacher)
+        );
+
+        if (isMatch) {
+          const timeRange = getYlaSlotTimeRange(
+            slot.type,
+            slot.time,
+            entry.time,
+            ylaDay.dayOfWeek,
+            slot.label
+          );
+
+          const cleanTitle = getYlaCleanShortTitle(entry, slot.label);
+
+          result.push({
+            id: `yla-slot-${week.weekNumber}-${ylaDay.col}-${slot.rowNumber}`,
+            name: `4-Wochen YLA: ${cleanTitle}`,
+            style: 'YLA',
+            dayOfWeek: ylaDay.dayOfWeek,
+            startTime: timeRange.start,
+            endTime: timeRange.end,
+            roomId: 'room-yla',
+            roomName: 'Sivananda Saal (YLA)',
+            teacherId: teacherId || teacherNameOrId,
+            teacherName: entry.assignedTeacher,
+            isAiPlanned: false,
+            status: 'approved',
+            isYla: true,
+            weekNumber: week.weekNumber,
+            weekSubtitle: week.weekSubtitle,
+            slotLabel: slot.label,
+            badge: slot.badge || '4-Wochen YLA',
+            topic: entry.text || entry.shortTitle || slot.label,
+            rawText: entry.rawText || entry.text || '',
+            isoDate: ylaDay.isoDate,
+            dateStr: ylaDay.dateStr,
+            dayName: ylaDay.dayName
+          });
+        }
+      }
+    }
+  }
+
+  return result.sort((a, b) => {
+    if (a.dayOfWeek !== b.dayOfWeek) {
+      // Sort according to Friday-first week order
+      const orderA = (a.dayOfWeek + 2) % 7;
+      const orderB = (b.dayOfWeek + 2) % 7;
+      return orderA - orderB;
+    }
+    return a.startTime.localeCompare(b.startTime);
+  });
+}
+

@@ -2,7 +2,7 @@
   import { onMount, untrack } from 'svelte';
   import { db, type Course, type Teacher, type Room, type WeekPlan } from '$lib/db';
   import { getLocalDateForDay } from '$lib/planningEngine';
-  import { isDateInYlaRange } from '$lib/ylaData';
+  import { isDateInYlaRange, getYlaSlotsForTeacherAndWeek, type YlaTeacherWeekSlot } from '$lib/ylaData';
   import { page } from '$app/state';
   import { goto } from '$app/navigation';
 
@@ -39,13 +39,32 @@
     teachers.filter(t => t.roleType === 'sevaka')
   );
 
-  // Derived filtered courses for the mobile agenda view
-  let filteredMobileCourses = $derived(
-    courses
-      .filter(c => c.dayOfWeek === activeMobileDay)
-      .filter(c => !onlyMySlotsParam || !selectedTeacher || c.teacherId === selectedTeacher.id)
-      .sort((a, b) => a.startTime.localeCompare(b.startTime))
+  let activeWeekCode = $derived(
+    currentPlan?.targetWeekCode || getWeekCode(getMondayForOffset(currentWeekOffset))
   );
+
+  // Resolved 4-Week YLA slots for the selected teacher in this week
+  let selectedTeacherYlaSlots = $derived.by<YlaTeacherWeekSlot[]>(() => {
+    if (!selectedTeacher) return [];
+    return getYlaSlotsForTeacherAndWeek(selectedTeacher.name, activeWeekCode, selectedTeacher.id);
+  });
+
+  // Derived combined courses for total displayed hours and counting
+  let allDisplayCourses = $derived<(Course | YlaTeacherWeekSlot)[]>(
+    selectedTeacher ? [...courses, ...selectedTeacherYlaSlots] : courses
+  );
+
+  // Derived filtered courses for the mobile agenda view
+  let filteredMobileCourses = $derived.by<(Course | YlaTeacherWeekSlot)[]>(() => {
+    const regular = courses
+      .filter(c => c.dayOfWeek === activeMobileDay)
+      .filter(c => !onlyMySlotsParam || !selectedTeacher || c.teacherId === selectedTeacher.id);
+
+    const yla = (selectedTeacher ? selectedTeacherYlaSlots : [])
+      .filter(s => s.dayOfWeek === activeMobileDay);
+
+    return [...regular, ...yla].sort((a, b) => a.startTime.localeCompare(b.startTime));
+  });
 
   const DAYS = [
     { value: 5, label: 'Freitag' },
@@ -91,6 +110,7 @@
     window.addEventListener('keydown', handleKeydown);
     window.addEventListener('storage', handleSync);
     window.addEventListener('rapla-data-synced', handleSync);
+    window.addEventListener('yla-assignment-changed', handleSync);
     document.addEventListener('fullscreenchange', handleFullscreenChange);
     document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
     document.addEventListener('mozfullscreenchange', handleFullscreenChange);
@@ -100,6 +120,7 @@
       window.removeEventListener('keydown', handleKeydown);
       window.removeEventListener('storage', handleSync);
       window.removeEventListener('rapla-data-synced', handleSync);
+      window.removeEventListener('yla-assignment-changed', handleSync);
       document.removeEventListener('fullscreenchange', handleFullscreenChange);
       document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
       document.removeEventListener('mozfullscreenchange', handleFullscreenChange);
@@ -220,7 +241,14 @@
     return targetDate.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit' });
   }
 
-  function getCourseColor(course: Course): { bg: string; border: string } {
+  function getCourseColor(course: Course | YlaTeacherWeekSlot): { bg: string; border: string } {
+    if ((course as any).isYla || course.style === 'YLA') {
+      return {
+        bg: '#faf5ff', // gentle lavender / light purple
+        border: '#9333ea' // deep vibrant purple
+      };
+    }
+
     const isUnassigned = !course.teacherId || course.teacherId === 'teacher-gen-yl';
     if (isUnassigned) {
       return {
@@ -276,7 +304,7 @@
     }
   }
 
-  function getDisplayedHours(currentCourses: Course[]): number[] {
+  function getDisplayedHours(currentCourses: (Course | YlaTeacherWeekSlot)[]): number[] {
     const defaultHours = [5, 6, 7, 8, 9, 12, 14, 16, 19, 20, 21];
     const activeHours = new Set<number>();
     currentCourses.forEach(c => {
@@ -289,8 +317,8 @@
     return Array.from(combined).sort((a, b) => a - b);
   }
 
-  function getFilteredCoursesForHour(day: number, hour: number): Course[] {
-    return courses
+  function getFilteredCoursesForHour(day: number, hour: number): (Course | YlaTeacherWeekSlot)[] {
+    const regular = courses
       .filter(c => c.dayOfWeek === day)
       .filter(c => {
         const startHour = parseInt(c.startTime.split(':')[0], 10);
@@ -302,8 +330,16 @@
           return c.teacherId === selectedTeacher.id;
         }
         return true;
-      })
-      .sort((a, b) => a.startTime.localeCompare(b.startTime));
+      });
+
+    const yla = (selectedTeacher ? selectedTeacherYlaSlots : [])
+      .filter(s => s.dayOfWeek === day)
+      .filter(s => {
+        const startHour = parseInt(s.startTime.split(':')[0], 10);
+        return startHour === hour;
+      });
+
+    return [...regular, ...yla].sort((a, b) => a.startTime.localeCompare(b.startTime));
   }
 
   function loadData() {
@@ -507,6 +543,41 @@
     </div>
   {/if}
 
+  {#if selectedTeacher}
+    <div class="personal-teacher-header-banner animate-fade-in">
+      <div class="teacher-avatar-badge" style="background-color: {selectedTeacher.avatarColor || '#ea580c'};">
+        {selectedTeacher.name.charAt(0)}
+      </div>
+      <div class="teacher-info-col">
+        <div class="teacher-name-row">
+          <h2>Persönlicher Wochenplan: <strong>{selectedTeacher.name}</strong></h2>
+          {#if selectedTeacherYlaSlots.length > 0}
+            <span class="yla-counter-pill">
+              🧘‍♂️ {selectedTeacherYlaSlots.length}x 4-Wochen YLA eingeteilt
+            </span>
+          {/if}
+        </div>
+        <div class="teacher-details-row">
+          <span>Rolle: <strong>{selectedTeacher.roleType === 'sevaka' ? 'Sevaka (Team)' : selectedTeacher.roleType === 'karma_yogi' ? 'Karma-Yogi' : selectedTeacher.roleType === 'guest_teacher' ? 'Gast-Seminarleiter' : 'Unterrichtende/r'}</strong></span>
+          {#if selectedTeacherYlaSlots.length > 0}
+            <span class="dot-separator">•</span>
+            <span class="yla-active-notice">
+              ✨ Deine Einteilungen für die 4-wöchige Yogalehrerausbildung sind im Plan hervorgehoben!
+            </span>
+          {/if}
+        </div>
+      </div>
+      <button 
+        type="button" 
+        class="btn btn-secondary btn-small reset-filter-btn" 
+        onclick={() => selectTeacher('')}
+        title="Zurück zur Gesamtübersicht"
+      >
+        ✕ Gesamtübersicht
+      </button>
+    </div>
+  {/if}
+
   <!-- Calendar Roster Grid (Desktop Only) -->
   <div class="desktop-only-grid">
     <div id="view-calendar-container" class="calendar-grid-container animate-fade-in" class:fullscreen-mode={isFullscreen}>
@@ -582,7 +653,7 @@
           {/each}
 
           <!-- Grid Rows by Hour -->
-          {#each getDisplayedHours(courses) as hour}
+          {#each getDisplayedHours(allDisplayCourses) as hour}
             <div class="grid-time-cell">
               <span>{hour.toString().padStart(2, '0')}:00</span>
             </div>
@@ -590,27 +661,51 @@
             {#each DAYS as day}
               <div class="grid-content-cell">
                 {#each getFilteredCoursesForHour(day.value, hour) as course}
-                  {@const isHighlighted = selectedTeacher && course.teacherId === selectedTeacher.id}
+                  {@const isYla = (course as any).isYla === true}
+                  {@const isHighlighted = selectedTeacher && (course.teacherId === selectedTeacher.id || isYla)}
                   {@const colors = getCourseColor(course)}
-                  {@const teacherName = teachers.find(t => t.id === course.teacherId)?.name || 'Unbesetzt'}
-                  {@const roomName = rooms.find(r => r.id === course.roomId)?.name || course.roomId || 'Raum?'}
+                  {@const teacherName = isYla ? (course as any).teacherName : (teachers.find(t => t.id === course.teacherId)?.name || 'Unbesetzt')}
+                  {@const roomName = isYla ? ((course as any).roomName || 'Sivananda Saal (YLA)') : (rooms.find(r => r.id === course.roomId)?.name || course.roomId || 'Raum?')}
                   
-                  <div 
-                    class="course-card-rapla" 
-                    class:highlighted-card={isHighlighted}
-                    class:dimmed-card={selectedTeacher && !isHighlighted && !onlyMySlotsParam}
-                    class:unassigned-card={!course.teacherId || course.teacherId === 'teacher-gen-yl'}
-                    style="background-color: {colors.bg}; border-left: 4px solid {isHighlighted ? '#ea580c' : colors.border};"
-                  >
-                    <div class="card-top-line">
-                      <span class="card-time">{course.startTime} - {course.endTime}</span>
-                      <span class="card-room">{roomName}</span>
+                  {#if isYla}
+                    {@const yla = course as any}
+                    <div 
+                      class="course-card-rapla yla-course-card highlighted-card"
+                      style="background: linear-gradient(135deg, #fdf4ff 0%, #faf5ff 100%); border-left: 5px solid #9333ea; box-shadow: 0 3px 8px rgba(147, 51, 234, 0.18);"
+                      title="{yla.slotLabel}: {yla.topic}"
+                    >
+                      <div class="card-top-line">
+                        <span class="card-time" style="color: #7e22ce; font-weight: 800;">⏰ {yla.startTime} - {yla.endTime}</span>
+                        <span class="yla-badge-pill">🧘‍♂️ 4-Wochen YLA</span>
+                      </div>
+                      <div class="card-title-line" style="color: #581c87; font-weight: 800;">
+                        {yla.name.replace('4-Wochen YLA: ', '')}
+                      </div>
+                      <div class="card-subtitle-line">
+                        📍 {yla.roomName} • {yla.badge}
+                      </div>
+                      <div class="card-teacher-line" style="color: #6b21a8; font-weight: 700;">
+                        👤 {yla.teacherName}
+                      </div>
                     </div>
-                    <div class="card-title-line">{course.name}</div>
-                    <div class="card-teacher-line">
-                      👤 {teacherName}
+                  {:else}
+                    <div 
+                      class="course-card-rapla" 
+                      class:highlighted-card={isHighlighted}
+                      class:dimmed-card={selectedTeacher && !isHighlighted && !onlyMySlotsParam}
+                      class:unassigned-card={!course.teacherId || course.teacherId === 'teacher-gen-yl'}
+                      style="background-color: {colors.bg}; border-left: 4px solid {isHighlighted ? '#ea580c' : colors.border};"
+                    >
+                      <div class="card-top-line">
+                        <span class="card-time">{course.startTime} - {course.endTime}</span>
+                        <span class="card-room">{roomName}</span>
+                      </div>
+                      <div class="card-title-line">{course.name}</div>
+                      <div class="card-teacher-line">
+                        👤 {teacherName}
+                      </div>
                     </div>
-                  </div>
+                  {/if}
                 {/each}
               </div>
             {/each}
@@ -704,27 +799,48 @@
           </div>
         {:else}
           {#each filteredMobileCourses as course}
-            {@const isHighlighted = selectedTeacher && course.teacherId === selectedTeacher.id}
+            {@const isYla = (course as any).isYla === true}
+            {@const isHighlighted = selectedTeacher && (course.teacherId === selectedTeacher.id || isYla)}
             {@const colors = getCourseColor(course)}
-            {@const teacherName = teachers.find(t => t.id === course.teacherId)?.name || 'Unbesetzt'}
-            {@const roomName = rooms.find(r => r.id === course.roomId)?.name || 'Raum?'}
+            {@const teacherName = isYla ? (course as any).teacherName : (teachers.find(t => t.id === course.teacherId)?.name || 'Unbesetzt')}
+            {@const roomName = isYla ? ((course as any).roomName || 'Sivananda Saal (YLA)') : (rooms.find(r => r.id === course.roomId)?.name || course.roomId || 'Raum?')}
 
-            <div 
-              class="mobile-agenda-card"
-              class:highlighted-card={isHighlighted}
-              class:dimmed-card={selectedTeacher && !isHighlighted && !onlyMySlotsParam}
-              class:unassigned-card={!course.teacherId || course.teacherId === 'teacher-gen-yl'}
-              style="background-color: {colors.bg}; border-left: 5px solid {isHighlighted ? '#ea580c' : colors.border};"
-            >
-              <div class="agenda-time-room">
-                <span class="agenda-time">⏰ {course.startTime} - {course.endTime}</span>
-                <span class="agenda-room">{roomName}</span>
+            {#if isYla}
+              {@const yla = course as any}
+              <div 
+                class="mobile-agenda-card yla-mobile-card highlighted-card"
+                style="background: linear-gradient(135deg, #fdf4ff 0%, #faf5ff 100%); border-left: 6px solid #9333ea; box-shadow: 0 4px 10px rgba(147, 51, 234, 0.15);"
+              >
+                <div class="agenda-time-room">
+                  <span class="agenda-time" style="color: #7e22ce; font-weight: 800;">⏰ {yla.startTime} - {yla.endTime}</span>
+                  <span class="yla-badge-pill">🧘‍♂️ 4-Wochen YLA</span>
+                </div>
+                <h3 class="agenda-title" style="color: #581c87; font-weight: 800;">{yla.name.replace('4-Wochen YLA: ', '')}</h3>
+                <div style="font-size: 0.75rem; color: #7e22ce; margin-bottom: 0.25rem; font-weight: 600;">
+                  📍 {yla.roomName} • {yla.badge}
+                </div>
+                <div class="agenda-teacher" style="color: #6b21a8; font-weight: 700;">
+                  👤 {yla.teacherName}
+                </div>
               </div>
-              <h3 class="agenda-title">{course.name}</h3>
-              <div class="agenda-teacher">
-                👤 {teacherName}
+            {:else}
+              <div 
+                class="mobile-agenda-card"
+                class:highlighted-card={isHighlighted}
+                class:dimmed-card={selectedTeacher && !isHighlighted && !onlyMySlotsParam}
+                class:unassigned-card={!course.teacherId || course.teacherId === 'teacher-gen-yl'}
+                style="background-color: {colors.bg}; border-left: 5px solid {isHighlighted ? '#ea580c' : colors.border};"
+              >
+                <div class="agenda-time-room">
+                  <span class="agenda-time">⏰ {course.startTime} - {course.endTime}</span>
+                  <span class="agenda-room">{roomName}</span>
+                </div>
+                <h3 class="agenda-title">{course.name}</h3>
+                <div class="agenda-teacher">
+                  👤 {teacherName}
+                </div>
               </div>
-            </div>
+            {/if}
           {/each}
         {/if}
       </div>
@@ -1592,5 +1708,122 @@
     display: flex;
     justify-content: center;
     gap: 1rem;
+  }
+
+  /* Personal Teacher Banner & YLA Styling */
+  .personal-teacher-header-banner {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    background: linear-gradient(135deg, #ffffff 0%, #fff7ed 100%);
+    border: 2px solid #fed7aa;
+    border-radius: 14px;
+    padding: 1rem 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 4px 12px rgba(234, 88, 12, 0.08);
+  }
+
+  .teacher-avatar-badge {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    color: white;
+    font-size: 1.4rem;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+  }
+
+  .teacher-info-col {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    flex-grow: 1;
+  }
+
+  .teacher-name-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .teacher-name-row h2 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 0;
+  }
+
+  .teacher-name-row h2 strong {
+    color: #ea580c;
+  }
+
+  .yla-counter-pill {
+    background: #f3e8ff;
+    color: #7e22ce;
+    font-size: 0.78rem;
+    font-weight: 800;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    border: 1px solid #d8b4fe;
+    box-shadow: 0 2px 4px rgba(126, 34, 206, 0.1);
+  }
+
+  .teacher-details-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    color: #64748b;
+    flex-wrap: wrap;
+  }
+
+  .yla-active-notice {
+    color: #7e22ce;
+    font-weight: 600;
+  }
+
+  .dot-separator {
+    color: #cbd5e1;
+  }
+
+  .reset-filter-btn {
+    flex-shrink: 0;
+  }
+
+  .yla-badge-pill {
+    background: #f3e8ff;
+    color: #7e22ce;
+    font-size: 0.65rem;
+    font-weight: 800;
+    padding: 2px 6px;
+    border-radius: 4px;
+    border: 1px solid #d8b4fe;
+    white-space: nowrap;
+  }
+
+  .yla-course-card {
+    border-left: 5px solid #9333ea !important;
+  }
+
+  .yla-course-card:hover {
+    box-shadow: 0 6px 14px rgba(147, 51, 234, 0.25) !important;
+    transform: translateY(-1px);
+  }
+
+  .yla-mobile-card {
+    border-left: 6px solid #9333ea !important;
+  }
+
+  .card-subtitle-line {
+    font-size: 0.68rem;
+    color: #7e22ce;
+    font-weight: 600;
+    line-height: 1.2;
+    margin-top: 1px;
   }
 </style>
