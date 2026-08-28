@@ -499,6 +499,38 @@ const DEFAULT_TEACHERS: Teacher[] = [
     }
   },
   {
+    id: 'teacher-karma-swantje',
+    name: 'Swantje',
+    email: 'swantje@yoga.de',
+    phone: '',
+    avatarColor: 'from-emerald-400 to-teal-600',
+    specialties: ['Hatha', 'Anfänger', 'Mittelstufe', 'Meditation'],
+    isYogaTeacher: true,
+    availabilityMode: 'always',
+    roleType: 'karma_yogi',
+    stayStartDate: '2026-09-01',
+    stayEndDate: '2026-09-10',
+    stayNotes: 'Swantje – Karma Yogini als Yogalehrerin (01.09. bis 10.09.2026).',
+    customWishes: 'Unterrichtet als Yogalehrerin vom 01.09. bis 10.09.2026.',
+    rules: {
+      preferredRooms: [],
+      preferredDays: [],
+      canLeadMeditation: true,
+      canLeadSatsang: false,
+      canLeadHausfuehrung: false,
+      prefersMittelstufe: false,
+      availability: [
+        { day: 1, start: '06:30', end: '22:00' },
+        { day: 2, start: '06:30', end: '22:00' },
+        { day: 3, start: '06:30', end: '22:00' },
+        { day: 4, start: '06:30', end: '22:00' },
+        { day: 5, start: '06:30', end: '22:00' },
+        { day: 6, start: '06:30', end: '22:00' },
+        { day: 0, start: '06:30', end: '22:00' }
+      ]
+    }
+  },
+  {
     id: 'teacher-1',
     name: 'Sarah Schmidt',
     email: 'sarah.schmidt@yoga.de',
@@ -601,6 +633,8 @@ const generateDefaultCourses = (): Course[] => {
     if (nameLower === 'mouniir' || nameLower === 'mounir') return 'teacher-gen-mouniir-jaber';
     if (nameLower === 'christopher') return 'teacher-gen-christopher';
     if (nameLower === 'marlen' || nameLower === 'marlene') return 'teacher-karma-marlene';
+    if (nameLower === 'tanja' || nameLower === 'tanja eichenmüller' || nameLower === 'tanja eichenmueller') return 'teacher-karma-tanja-eichenmueller';
+    if (nameLower === 'swantje' || nameLower === 'karma yogini' || nameLower === 'karma-yogini' || nameLower === 'neue karma yogini') return 'teacher-karma-swantje';
     return null;
   };
 
@@ -6897,7 +6931,7 @@ export function reconcilePlansWithDefaults(plans: WeekPlan[]): { plans: WeekPlan
   return { plans: list, hasChanges };
 }
 
-const CURRENT_DB_VERSION = 99;
+const CURRENT_DB_VERSION = 101;
 
 // Database Actions
 export const db = {
@@ -7200,6 +7234,57 @@ export const db = {
         }
         if (!t.stayNotes) {
           t.stayNotes = 'Karma Yogini als Yogalehrerin (06.09. bis 20.09.2026).';
+          updated = true;
+        }
+        if (t.availabilityMode !== 'always') {
+          t.availabilityMode = 'always';
+          updated = true;
+        }
+        if (!t.rules.availability || t.rules.availability.length === 0 || t.rules.availability.some(s => s.start === '08:00')) {
+          t.rules.availability = [
+            { day: 1, start: '06:30', end: '22:00' },
+            { day: 2, start: '06:30', end: '22:00' },
+            { day: 3, start: '06:30', end: '22:00' },
+            { day: 4, start: '06:30', end: '22:00' },
+            { day: 5, start: '06:30', end: '22:00' },
+            { day: 6, start: '06:30', end: '22:00' },
+            { day: 0, start: '06:30', end: '22:00' }
+          ];
+          updated = true;
+        }
+      }
+
+      if (t.id === 'teacher-karma-swantje' || t.id === 'teacher-karma-neu-september' || nameLower === 'swantje' || (t.roleType === 'karma_yogi' && (nameLower === 'karma yogini' || nameLower === 'neue karma yogini'))) {
+        if (t.id !== 'teacher-karma-swantje') {
+          t.id = 'teacher-karma-swantje';
+          updated = true;
+        }
+        if (t.name !== 'Swantje') {
+          t.name = 'Swantje';
+          updated = true;
+        }
+        if (t.email !== 'swantje@yoga.de') {
+          t.email = 'swantje@yoga.de';
+          updated = true;
+        }
+        if (t.roleType !== 'karma_yogi') {
+          t.roleType = 'karma_yogi';
+          updated = true;
+        }
+        if (t.isYogaTeacher !== true) {
+          t.isYogaTeacher = true;
+          updated = true;
+        }
+        if (t.stayStartDate !== '2026-09-01') {
+          t.stayStartDate = '2026-09-01';
+          updated = true;
+        }
+        if (t.stayEndDate !== '2026-09-10') {
+          t.stayEndDate = '2026-09-10';
+          updated = true;
+        }
+        if (!t.stayNotes || t.stayNotes.includes('Karma Yogini – unterrichtet')) {
+          t.stayNotes = 'Swantje – Karma Yogini als Yogalehrerin (01.09. bis 10.09.2026).';
           updated = true;
         }
         if (t.availabilityMode !== 'always') {

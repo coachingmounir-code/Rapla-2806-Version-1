@@ -519,6 +519,30 @@
       "availabilityRestrictions": [],
       "preferredAvailability": [],
       "maxClassesPerDay": 2
+    },
+    "swantje": {
+      "name": "Swantje",
+      "freeDays": [],
+      "maxMeditationPerWeek": null,
+      "maxSatsangsPerWeek": 0,
+      "maxMorningSatsangsPerWeek": 0,
+      "maxYogaClassesPerWeek": null,
+      "maxOnnPerWeek": 0,
+      "maxAnfaengerYogaPerWeek": null,
+      "isYogaTeacher": true,
+      "canLeadSatsang": false,
+      "canLeadPranayama": false,
+      "canLeadSatsangEinfuehrung": false,
+      "canLeadOnn": false,
+      "noYogaOnWeekend": false,
+      "noTwoYogaSameDay": false,
+      "weekendAfternoonOnly": false,
+      "weekendAsBackupOnly": false,
+      "prefersMittelstufe": false,
+      "customCourseNames": [],
+      "availabilityRestrictions": [],
+      "preferredAvailability": [],
+      "maxClassesPerDay": 2
     }
   },
   "meditation": {
