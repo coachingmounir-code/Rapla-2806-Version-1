@@ -267,7 +267,13 @@
   function getTeacherDisplayName(courseTeacherId: string | null | undefined): string {
     if (!courseTeacherId || courseTeacherId === 'teacher-gen-yl') return 'Offen';
     const ids = courseTeacherId.split(',').map(s => s.trim());
-    const names = ids.map(id => teachers.find(t => t.id === id)?.name || id);
+    const names = ids.map(id => {
+      const found = teachers.find(t => t.id === id || (id.includes('tanja') && (t.id.includes('tanja') || t.name.toLowerCase().includes('tanja'))) || (id.includes('swantje') && (t.id.includes('swantje') || t.name.toLowerCase().includes('swantje'))));
+      if (found) return found.name;
+      if (id.toLowerCase().includes('tanja')) return 'Tanja';
+      if (id.toLowerCase().includes('swantje')) return 'Swantje';
+      return id;
+    });
     return names.join(', ');
   }
 

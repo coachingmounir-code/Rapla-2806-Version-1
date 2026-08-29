@@ -470,7 +470,7 @@ const DEFAULT_TEACHERS: Teacher[] = [
   },
   {
     id: 'teacher-karma-tanja-eichenmueller',
-    name: 'Tanja Eichenmüller',
+    name: 'Tanja',
     email: 'tanja.eichenmueller@yoga.de',
     phone: '',
     avatarColor: 'from-pink-500 to-rose-500',
@@ -7219,6 +7219,14 @@ export const db = {
       }
 
       if (nameLower.includes('tanja') || t.id.includes('tanja')) {
+        if (t.id !== 'teacher-karma-tanja-eichenmueller') {
+          t.id = 'teacher-karma-tanja-eichenmueller';
+          updated = true;
+        }
+        if (t.name !== 'Tanja') {
+          t.name = 'Tanja';
+          updated = true;
+        }
         if (t.roleType !== 'karma_yogi') {
           t.roleType = 'karma_yogi';
           updated = true;
