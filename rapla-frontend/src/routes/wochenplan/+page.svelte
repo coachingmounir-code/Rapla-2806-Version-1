@@ -619,6 +619,9 @@
         </div>
 
         <div class="action-buttons-group">
+          <button type="button" class="btn btn-secondary btn-small" onclick={() => window.print()}>
+            🖨️ Drucken
+          </button>
           <button type="button" class="btn btn-secondary btn-small fullscreen-toggle-btn" onclick={toggleFullscreen}>
             {isFullscreen ? '🗗 Beenden' : '🖥️ Vollbild'}
           </button>
@@ -1877,5 +1880,116 @@
     font-weight: 600;
     line-height: 1.2;
     margin-top: 1px;
+  }
+
+  @media print {
+    @page {
+      size: A4 landscape;
+      margin: 5mm;
+    }
+
+    :global(body) {
+      background: white !important;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+
+    /* Hide UI elements that shouldn't be printed */
+    .view-header, 
+    .grid-controls-row, 
+    .mobile-only-agenda, 
+    .personal-teacher-header-banner,
+    .unapproved-week-notice {
+      display: none !important;
+    }
+
+    /* Ensure the grid shows and occupies the full width/page */
+    .desktop-only-grid,
+    .calendar-grid-container {
+      display: block !important;
+      width: 100% !important;
+      max-width: none !important;
+      border: none !important;
+      box-shadow: none !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      overflow: visible !important;
+      background: transparent !important;
+    }
+
+    /* Make grid responsive to the page */
+    .calendar-grid {
+      display: grid !important;
+      width: 100% !important;
+      min-width: 100% !important;
+      border-radius: 0 !important;
+      background: #cbd5e1 !important; /* to keep the grid gap visible */
+      gap: 1px !important;
+      page-break-inside: avoid;
+    }
+
+    /* Compact cells to save space */
+    .grid-header-cell {
+      padding: 2px !important;
+      min-height: auto !important;
+    }
+    
+    .week-header {
+      font-size: 0.6rem !important;
+    }
+    .day-label-short {
+      font-size: 0.7rem !important;
+    }
+    .day-date {
+      font-size: 0.65rem !important;
+    }
+
+    .grid-time-cell {
+      padding: 2px !important;
+      font-size: 0.65rem !important;
+      min-height: 30px !important;
+    }
+
+    .grid-content-cell {
+      padding: 2px !important;
+      gap: 2px !important;
+      min-height: 30px !important;
+    }
+
+    /* Compact course cards */
+    .course-card-rapla {
+      padding: 2px 3px !important;
+      gap: 1px !important;
+      box-shadow: none !important;
+      border-left-width: 3px !important;
+    }
+
+    .card-top-line {
+      font-size: 0.55rem !important;
+    }
+    .card-title-line {
+      font-size: 0.65rem !important;
+      line-height: 1.1 !important;
+    }
+    .card-teacher-line {
+      font-size: 0.55rem !important;
+    }
+
+    /* Compact YLA cards specifically */
+    .yla-badge-pill {
+      font-size: 0.5rem !important;
+      padding: 1px 3px !important;
+    }
+    .card-subtitle-line {
+      font-size: 0.55rem !important;
+    }
+
+    /* Remove big gaps */
+    .grid-midday-gap {
+      height: 2px !important;
+      min-height: 2px !important;
+    }
   }
 </style>
