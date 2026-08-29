@@ -2,7 +2,7 @@
 import ylaCurriculumData from './data/yla_curriculum.json' with { type: 'json' };
 
 export const YLA_TEACHERS = [
-  'Abba',
+  'Abha',
   'Anjali',
   'burnie',
   'Hu',
@@ -22,9 +22,9 @@ export interface YlaTeacherMeta {
 }
 
 export const YLA_TEACHERS_META: Record<YlaTeacherName, YlaTeacherMeta> = {
-  Abba: {
-    name: 'Abba',
-    alias: ['abba', 'abha'],
+  Abha: {
+    name: 'Abha',
+    alias: ['abha', 'abba'],
     avatar: '🧘',
     color: '#8e24aa',
     badgeBg: '#f3e5f5'
@@ -150,13 +150,13 @@ export interface YlaConflictDetail {
 const STORAGE_KEY = 'rapla_yla_assignments';
 
 /**
- * Normalizes teacher display name (e.g. Bintje/Bernie -> burnie, Kamuna -> Karuna, Abha -> Abba)
+ * Normalizes teacher display name (e.g. Bintje/Bernie -> burnie, Kamuna -> Karuna, Abba -> Abha)
  */
 export function normalizeTeacherDisplayName(name: string | null | undefined): string | null {
   if (!name) return null;
   const n = name.toLowerCase().trim();
   if (n === 'bintje' || n === 'bernie' || n === 'burnie') return 'burnie';
-  if (n === 'abba' || n === 'abha') return 'Abba';
+  if (n === 'abba' || n === 'abha') return 'Abha';
   if (n === 'kamuna' || n === 'karuna') return 'Karuna';
   if (n === 'anjali') return 'Anjali';
   if (n === 'hu') return 'Hu';
@@ -262,7 +262,7 @@ export function setYlaAssignment(weekNumber: number, dayCol: string, rowNumber: 
 }
 
 /**
- * Normalizes teacher name for alias comparisons (e.g. Abba/Abha, Bernie/Burnie/Bintje, Karuna/Kamuna)
+ * Normalizes teacher name for alias comparisons (e.g. Abha/Abba, Bernie/Burnie/Bintje, Karuna/Kamuna)
  */
 export function normalizeTeacherName(name: string): string {
   const n = name.toLowerCase().trim();
