@@ -404,13 +404,14 @@ const GENERATED_TEACHERS: Teacher[] = NEW_TEACHER_NAMES.map((name, index) => {
     'from-cyan-400 to-blue-500'
   ];
   const avatarColor = colors[index % colors.length];
-  const isSevaka = SEVAKA_NAMES.includes(name);
+  const isSevaka = SEVAKA_NAMES.some(s => s.toLowerCase() === name.toLowerCase());
   const isYogaTeacher = isSevaka ? !(
     name.toLowerCase().includes('teresa') || 
     name.toLowerCase().includes('hu') || 
     name.toLowerCase().includes('mounir') || 
     name.toLowerCase().includes('adam') ||
-    name.toLowerCase().includes('satyam')
+    name.toLowerCase().includes('satyam') ||
+    name.toLowerCase().includes('christopher')
   ) : true;
 
   const tRules = getTeacherRules(name, isSevaka);
@@ -2301,7 +2302,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
     ],
     createdAt: new Date().toISOString()
   },
-    {
+      {
     id: "plan-pre-2026-W37",
     name: "Vorplanung 2026-W37 (Automatisch)",
     status: "draft",
@@ -2357,7 +2358,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W37-5",
-        "name": "Mittelstufe Klangyogastunde",
+        "name": "Mittelstufe",
         "style": "Hatha",
         "dayOfWeek": 5,
         "startTime": "09:15",
@@ -2375,7 +2376,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "16:30",
         "endTime": "18:00",
         "roomId": "room-4",
-        "teacherId": "teacher-gen-christopher",
+        "teacherId": "teacher-gen-ulrich-nebel",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -2483,7 +2484,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "16:15",
         "endTime": "18:00",
         "roomId": "room-4",
-        "teacherId": "teacher-gen-christopher",
+        "teacherId": "teacher-gen-alexander-melior",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -6888,6 +6889,13 @@ export function reconcilePlansWithDefaults(plans: WeekPlan[]): { plans: WeekPlan
         hasChanges = true;
       }
 
+      if (defPlan.targetWeekCode === '2026-W37' && !plan.hasManualEdits && !plan.isManualOnly) {
+        if (JSON.stringify(plan.courses) !== JSON.stringify(defPlan.courses)) {
+          plan.courses = JSON.parse(JSON.stringify(defPlan.courses));
+          hasChanges = true;
+        }
+      }
+
       for (const defC of defPlan.courses) {
         const existingC = plan.courses.find(c => 
           c.id === defC.id || 
@@ -6932,7 +6940,7 @@ export function reconcilePlansWithDefaults(plans: WeekPlan[]): { plans: WeekPlan
   return { plans: list, hasChanges };
 }
 
-const CURRENT_DB_VERSION = 102;
+const CURRENT_DB_VERSION = 103;
 
 // Database Actions
 export const db = {
@@ -7140,7 +7148,7 @@ export const db = {
       }
       const nameLower = t.name.toLowerCase();
       const correctYogaTeacher = correctRole === 'sevaka' 
-        ? !['teresa', 'hu', 'mounir', 'adam'].some(n => nameLower.includes(n)) 
+        ? !['teresa', 'hu', 'mounir', 'adam', 'satyam', 'christopher'].some(n => nameLower.includes(n)) 
         : (t.isYogaTeacher !== undefined ? t.isYogaTeacher : true);
       if (t.isYogaTeacher !== correctYogaTeacher) {
         t.isYogaTeacher = correctYogaTeacher;
