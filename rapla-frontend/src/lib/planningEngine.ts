@@ -170,9 +170,10 @@ export function validateAssignment(
   const isOnnForSevaka = courseNameLower.includes('om namo') || courseNameLower.includes('narayanaya');
   const isMeditationForSevaka = (courseNameLower.includes('meditation') || courseNameLower.includes('medi.') || (courseStyleLower.includes('meditation') && !isOnnForSevaka)) && !courseNameLower.includes('satsang') && !isOnnForSevaka;
   const isSatsangForSevaka = courseNameLower.includes('satsang') && !courseNameLower.includes('einführung') && !courseNameLower.includes('einfuehrung');
+  const isSatsangEinfuehrungForSevaka = courseNameLower.includes('satsang') && (courseNameLower.includes('einführung') || courseNameLower.includes('einfuehrung'));
   const isEntspannungForSevaka = courseStyleLower.includes('entspannung') || courseNameLower.includes('entspannung') || courseNameLower.includes('spaziergang');
   const isSonstigesForSevaka = courseStyleLower.includes('sonstiges') || courseNameLower.includes('hausführung') || courseNameLower.includes('hausfuehrung');
-  const isYogaClassForSevaka = !isMeditationForSevaka && !isSatsangForSevaka && !isOnnForSevaka && !isEntspannungForSevaka && !isSonstigesForSevaka;
+  const isYogaClassForSevaka = !isMeditationForSevaka && !isSatsangForSevaka && !isSatsangEinfuehrungForSevaka && !isOnnForSevaka && !isEntspannungForSevaka && !isSonstigesForSevaka;
 
   // Complete exclusion for Satyam
   if (teacherNameLower.includes('satyam')) {
@@ -219,11 +220,12 @@ export function validateAssignment(
       const cStyle = c.style.toLowerCase();
       const cIsOnn = cName.includes('om namo') || cName.includes('narayanaya');
       const cIsMed = (cName.includes('meditation') || cName.includes('medi.') || (cStyle.includes('meditation') && !cIsOnn)) && !cName.includes('satsang') && !cIsOnn;
-      const cIsSat = cName.includes('satsang');
+      const cIsSat = cName.includes('satsang') && !cName.includes('einführung') && !cName.includes('einfuehrung');
+      const cIsSatEinf = cName.includes('satsang') && (cName.includes('einführung') || cName.includes('einfuehrung'));
       const cIsEntspannung = cStyle.includes('entspannung') || cName.includes('entspannung');
       const cIsSonstiges = cStyle.includes('sonstiges') || cName.includes('hausführung') || cName.includes('hausfuehrung');
 
-      if (!cIsMed && !cIsSat && !cIsOnn && !cIsEntspannung && !cIsSonstiges) {
+      if (!cIsMed && !cIsSat && !cIsSatEinf && !cIsOnn && !cIsEntspannung && !cIsSonstiges) {
         yogaCount++;
       } else if (cIsMed) {
         meditationCount++;
