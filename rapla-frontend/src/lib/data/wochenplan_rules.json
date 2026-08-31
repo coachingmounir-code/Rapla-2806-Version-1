@@ -450,7 +450,9 @@
     },
     "christopher": {
       "name": "Christopher",
-      "freeDays": [],
+      "freeDays": [
+        3
+      ],
       "maxMeditationPerWeek": null,
       "maxSatsangsPerWeek": null,
       "maxMorningSatsangsPerWeek": null,

@@ -760,7 +760,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
     createdAt: new Date().toISOString()
   },
   // --- PREPLANNED WEEKS ---
-                                                                                                              {
+                                                                                                                {
     id: "plan-pre-2026-W37",
     name: "Vorplanung 2026-W37 (Automatisch)",
     status: "approved",
@@ -1645,7 +1645,7 @@ export function reconcilePlansWithDefaults(plans: WeekPlan[]): { plans: WeekPlan
   return { plans: list, hasChanges };
 }
 
-const CURRENT_DB_VERSION = 106;
+const CURRENT_DB_VERSION = 107;
 
 // Database Actions
 export const db = {
