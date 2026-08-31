@@ -648,6 +648,7 @@
     
     currentPlan.isApproved = approved;
     currentPlan.status = approved ? 'approved' : 'draft';
+    currentPlan.lastEditedAt = new Date().toISOString();
     
     if (approved) {
       currentPlan.courses = currentPlan.courses.map(c => ({ ...c, status: 'approved' }));

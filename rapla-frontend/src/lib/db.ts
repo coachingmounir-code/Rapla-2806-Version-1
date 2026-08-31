@@ -1672,7 +1672,7 @@ export const db = {
                 if (locPlan.hasManualEdits || locPlan.isManualOnly) {
                   const locTime = locPlan.lastEditedAt ? new Date(locPlan.lastEditedAt).getTime() : 0;
                   const remTime = remPlan.lastEditedAt ? new Date(remPlan.lastEditedAt).getTime() : 0;
-                  if (locTime >= remTime) {
+                  if (locTime > remTime) {
                     needsCloudPush = true;
                     return locPlan;
                   }
@@ -2242,6 +2242,7 @@ export const db = {
   getWeekPlan: (id: string): WeekPlan | undefined => db.getWeekPlans().find(p => p.id === id),
   addWeekPlan: (plan: WeekPlan): void => {
     const list = db.getWeekPlans();
+    plan.lastEditedAt = new Date().toISOString();
     list.push(plan);
     db.saveWeekPlans(list);
   },
@@ -2249,6 +2250,7 @@ export const db = {
     const list = db.getWeekPlans();
     const index = list.findIndex(p => p.id === plan.id);
     if (index !== -1) {
+      plan.lastEditedAt = new Date().toISOString();
       list[index] = plan;
       db.saveWeekPlans(list);
     }
@@ -2275,7 +2277,8 @@ export const db = {
           isAiPlanned: false,
           status: isApproved ? 'approved' : 'draft'
         })) : [],
-        createdAt: new Date().toISOString()
+        createdAt: new Date().toISOString(),
+        lastEditedAt: new Date().toISOString()
       };
       list.push(plan);
     } else {
@@ -2284,6 +2287,7 @@ export const db = {
       if (isApproved) {
         plan.courses = plan.courses.map(c => ({ ...c, status: 'approved' }));
       }
+      plan.lastEditedAt = new Date().toISOString();
     }
     db.saveWeekPlans(list);
     return plan;
