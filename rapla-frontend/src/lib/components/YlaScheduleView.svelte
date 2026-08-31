@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
+  import { onMount, untrack } from 'svelte';
   import { 
     getYlaWeeks, 
     getYlaWeek, 
@@ -40,7 +40,7 @@
 
   // Sync with initialWeek prop
   $effect(() => {
-    if (initialWeek && initialWeek !== selectedWeekNumber) {
+    if (initialWeek && initialWeek !== untrack(() => selectedWeekNumber)) {
       selectedWeekNumber = initialWeek;
     }
   });
