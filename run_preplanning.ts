@@ -14,7 +14,7 @@ import { runAiPlanning } from './rapla-frontend/src/lib/planningEngine.ts';
 import { EXCEL_ABSENCES } from './rapla-frontend/src/lib/excel_absences.ts';
 
 // Mock browser globals before any db functions are called
-global.window = {} as any;
+global.window = { dispatchEvent: () => {} } as any;
 const mockLocalStorage: Record<string, string> = {};
 global.localStorage = {
   getItem: (key: string) => mockLocalStorage[key] || null,
@@ -402,7 +402,7 @@ function getNext8WeekCodes(): string[] {
   return weeks;
 }
 
-const weeksToPlan = getNext8WeekCodes();
+const weeksToPlan = ["2026-W37"];
 console.log(`[PREPLANNING] Planning for the next 8 weeks: ${weeksToPlan.join(', ')}`);
 
 const results: Record<string, any[]> = {};

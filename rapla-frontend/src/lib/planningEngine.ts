@@ -764,11 +764,11 @@ export function runAiPlanning(
   const logs: string[] = [];
   logs.push('Starte automatischen KI-Planungsalgorithmus...');
   
-  // Only plan with Sevakas (Kernteam)
+  // Only plan with Sevakas (Kernteam) and prioritized Karma Yogis (Tanja, Swantje)
   const yogaTeachers = teachers.filter(t => 
-    t.roleType === 'sevaka'
+    t.roleType === 'sevaka' || t.name === 'Tanja' || t.name === 'Swantje'
   );
-  logs.push(`Berücksichtige ${yogaTeachers.length} Sevakas (Kernteam) für die KI-Vorplanung.`);
+  logs.push(`Berücksichtige ${yogaTeachers.length} Sevakas/Priorisierte Lehrer für die KI-Vorplanung.`);
   
   // Clone courses to avoid modifying original array until approved
   let workingCourses = courses.map(c => ({ ...c }));
@@ -916,6 +916,25 @@ export function runAiPlanning(
       let score = 100;
       if (customForced) {
         score += 100000;
+      }
+      
+      // PRIORITIES FOR SWANTJE AND TANJA
+      if (teacher.name === 'Swantje') {
+        const isMorning = timeToMinutes(course.startTime) < 12 * 60;
+        const isYoga = course.name.toLowerCase().includes('yoga') || course.name.toLowerCase().includes('asanas') || course.name.toLowerCase().includes('mittelstufe') || course.name.toLowerCase().includes('anfänger');
+        if (isMorning && isYoga) {
+          score += 50000; // Prioritize Swantje for morning yoga
+        } else {
+          score -= 50000; // Penalize her elsewhere to keep her exclusively to her priority where possible
+        }
+      }
+      if (teacher.name === 'Tanja') {
+        const isAfternoon = timeToMinutes(course.startTime) >= 12 * 60;
+        if (isAfternoon) {
+          score += 40000; // Prioritize Tanja for afternoon classes
+        } else {
+          score -= 40000;
+        }
       }
       
       // Preference: distribute hours evenly (favour teachers with fewer planned hours)
