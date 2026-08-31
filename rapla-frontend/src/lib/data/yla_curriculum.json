@@ -1063,7 +1063,8 @@
             ],
             "fullText": "Karma-Modell",
             "hasMore": false,
-            "time": ""
+            "time": "",
+            "assignedTeacher": "Hu"
           },
           "E": {
             "text": "Leben nach dem Tod, Geister und Astralwesen",
@@ -1075,7 +1076,8 @@
             ],
             "fullText": "Leben nach dem Tod, Geister und Astralwesen",
             "hasMore": true,
-            "time": ""
+            "time": "",
+            "assignedTeacher": "Karuna"
           },
           "F": {
             "text": "4 Wünsche und Ashramas",
@@ -1087,7 +1089,8 @@
             ],
             "fullText": "4 Wünsche und Ashramas",
             "hasMore": false,
-            "time": ""
+            "time": "",
+            "assignedTeacher": "Narayani"
           },
           "G": {
             "text": "Richtige Ernährung, Vegetarismus, 3 Gunas, Hauptnahrungsgruppen, Fasten",
@@ -1099,7 +1102,8 @@
             ],
             "fullText": "Richtige Ernährung, Vegetarismus, 3 Gunas, Hauptnahrungsgruppen, Fasten",
             "hasMore": true,
-            "time": ""
+            "time": "",
+            "assignedTeacher": "burnie"
           },
           "H": {
             "text": "Mantras für die Meditation, Mantras Teil 1",
@@ -1111,7 +1115,8 @@
             ],
             "fullText": "Mantras für die Meditation, Mantras Teil 1",
             "hasMore": true,
-            "time": ""
+            "time": "",
+            "assignedTeacher": "Karuna"
           },
           "I": {
             "text": "Die 6 Kriyas",
@@ -1123,7 +1128,8 @@
             ],
             "fullText": "Die 6 Kriyas",
             "hasMore": false,
-            "time": ""
+            "time": "",
+            "assignedTeacher": "Hu, burnie"
           },
           "J": {
             "text": "Frage & Antwort",
@@ -1135,7 +1141,8 @@
             ],
             "fullText": "Frage & Antwort",
             "hasMore": false,
-            "time": ""
+            "time": "",
+            "assignedTeacher": "Narayani"
           }
         }
       },
@@ -1158,7 +1165,8 @@
             ],
             "fullText": "Grundstunde, besonders exakt und genau: Skorpion, Drehsitz, Krähe, Pfau, Stehende Vorwärtsbeuge, Dreieck. Klassische Tiefenentspannung",
             "hasMore": true,
-            "time": ""
+            "time": "",
+            "assignedTeacher": "Abha"
           },
           "E": {
             "text": "Grundstunde. Besonders exakt und genau: Rückbeugen: Kobra, Heuschrecke, Bogen.Tiefenentspannung: Traumreise",
@@ -1172,7 +1180,8 @@
             ],
             "fullText": "Grundstunde. Besonders exakt und genau: Rückbeugen: Kobra, Heuschrecke, Bogen.Tiefenentspannung: Traumreise",
             "hasMore": true,
-            "time": ""
+            "time": "",
+            "assignedTeacher": "burnie"
           },
           "F": {
             "text": "Variationen:  Fordernde Asanas im Stehen (Vira Bhadrasana), Umkehrstellungen (Handstand, Skorpion, Kopfstand-Variationen). Tiefenentspannung: Traumreise",
@@ -1186,7 +1195,8 @@
             ],
             "fullText": "Variationen:  Fordernde Asanas im Stehen (Vira Bhadrasana), Umkehrstellungen (Handstand, Skorpion, Kopfstand-Variationen). Tiefenentspannung: Traumreise",
             "hasMore": true,
-            "time": ""
+            "time": "",
+            "assignedTeacher": "Abha"
           },
           "G": {
             "text": "Yoga für den Rücken. Tiefenentspannung über das Fühlen: Schwere,  Energie, Ausdehnung (Shavasana Nr. 3, YLH S. 111)",
@@ -1200,7 +1210,8 @@
             ],
             "fullText": "Yoga für den Rücken. Tiefenentspannung über das Fühlen: Schwere,  Energie, Ausdehnung (Shavasana Nr. 3, YLH S. 111)",
             "hasMore": true,
-            "time": ""
+            "time": "",
+            "assignedTeacher": "Narayani"
           },
           "H": {
             "text": "Yoga für den Rücken. Insbesondere auch  isometrische Halsübungen, Tiefenentspannung über das Fühlen: Schwere,  Energie, Ausdehnung (Shavasana Nr. 3, YLH S. 111)",
@@ -1214,7 +1225,8 @@
             ],
             "fullText": "Yoga für den Rücken. Insbesondere auch  isometrische Halsübungen, Tiefenentspannung über das Fühlen: Schwere,  Energie, Ausdehnung (Shavasana Nr. 3, YLH S. 111)",
             "hasMore": true,
-            "time": ""
+            "time": "",
+            "assignedTeacher": "Narayani"
           },
           "I": {
             "text": "Kriyas                        \n                              \n\n\n11:45 Uhr Mantra-Einweihung möglich",
@@ -1227,7 +1239,8 @@
             ],
             "fullText": "Kriyas                        \n                              \n\n\n11:45 Uhr Mantra-Einweihung möglich",
             "hasMore": true,
-            "time": "11:45 Uhr"
+            "time": "11:45 Uhr",
+            "assignedTeacher": "Hu, burnie, Karuna"
           },
           "J": {
             "text": "Für heute Abreisende Abreise ab ca. 11h (nach Feedbackrunde und Karma Yoga).",
@@ -1262,7 +1275,8 @@
             ],
             "fullText": "Übersetzung/Erklärung: Shadananam... ; Bhagavad Gita: II 11-20",
             "hasMore": true,
-            "time": ""
+            "time": "",
+            "assignedTeacher": "Narayani"
           },
           "E": {
             "text": "Bhagavad Gita II 39-50",
@@ -1275,7 +1289,8 @@
             ],
             "fullText": "Bhagavad Gita II 39-50",
             "hasMore": true,
-            "time": ""
+            "time": "",
+            "assignedTeacher": "Narayani"
           },
           "F": {
             "text": "Übersetzung/Erklärung: Ya Kundendu; Bhagavad Gita II 54-65",
@@ -1288,7 +1303,8 @@
             ],
             "fullText": "Übersetzung/Erklärung: Ya Kundendu; Bhagavad Gita II 54-65",
             "hasMore": true,
-            "time": ""
+            "time": "",
+            "assignedTeacher": "Narayani"
           },
           "G": {
             "text": "Bhagavad Gita III 1-13",
@@ -1301,7 +1317,8 @@
             ],
             "fullText": "Bhagavad Gita III 1-13",
             "hasMore": true,
-            "time": ""
+            "time": "",
+            "assignedTeacher": "Narayani"
           },
           "H": {
             "text": "Übersetzung 4. Strophe Dhyana Shlokas; Bhagavad Gita III 36-43",
@@ -1314,7 +1331,8 @@
             ],
             "fullText": "Übersetzung 4. Strophe Dhyana Shlokas; Bhagavad Gita III 36-43",
             "hasMore": true,
-            "time": ""
+            "time": "",
+            "assignedTeacher": "Narayani"
           },
           "I": {
             "text": "Bhagavad Gita IV 1-8",
@@ -1327,7 +1345,8 @@
             ],
             "fullText": "Bhagavad Gita IV 1-8",
             "hasMore": true,
-            "time": ""
+            "time": "",
+            "assignedTeacher": "Narayani"
           },
           "J": {
             "text": "Bitte auch heute die Karma Yogas machen. Ansonsten frei bis 20 Uhr.",
@@ -1361,7 +1380,8 @@
             ],
             "fullText": "Reinkarnation",
             "hasMore": false,
-            "time": ""
+            "time": "",
+            "assignedTeacher": "Karuna"
           },
           "E": {
             "text": "Sitali, Sitkari, Bhramari. Richtige Atmung: Anatomie, Physiologie",
@@ -1375,7 +1395,8 @@
             ],
             "fullText": "Sitali, Sitkari, Bhramari. Richtige Atmung: Anatomie, Physiologie",
             "hasMore": true,
-            "time": ""
+            "time": "",
+            "assignedTeacher": "burnie"
           },
           "F": {
             "text": "Sitali, Sitkari, Bhramari. Richtige Atmung:  Prana und Astralkörper. Atmung  im täglichen Leben",
@@ -1389,7 +1410,8 @@
             ],
             "fullText": "Sitali, Sitkari, Bhramari. Richtige Atmung:  Prana und Astralkörper. Atmung  im täglichen Leben",
             "hasMore": true,
-            "time": ""
+            "time": "",
+            "assignedTeacher": "burnie"
           },
           "G": {
             "text": "Denken: Der menschl. Geist. 4 Teile d. Antahkarana. Gedankenkraft und pos. Denken  Entwicklung positiver Eigenschaften",
@@ -1403,7 +1425,8 @@
             ],
             "fullText": "Denken: Der menschl. Geist. 4 Teile d. Antahkarana. Gedankenkraft und pos. Denken  Entwicklung positiver Eigenschaften",
             "hasMore": true,
-            "time": ""
+            "time": "",
+            "assignedTeacher": "Karuna"
           },
           "H": {
             "text": "Yoga für d. Rücken Teil 1 Anatomie: Wirbelsäule, Rückenmuskeln",
@@ -1417,7 +1440,8 @@
             ],
             "fullText": "Yoga für d. Rücken Teil 1 Anatomie: Wirbelsäule, Rückenmuskeln",
             "hasMore": true,
-            "time": ""
+            "time": "",
+            "assignedTeacher": "Anjali"
           },
           "I": {
             "text": "Yoga für den Rücken, Teil 2: Vorbeugung und Therapie von Rückenschmerzen",
@@ -1430,7 +1454,8 @@
             ],
             "fullText": "Yoga für den Rücken, Teil 2: Vorbeugung und Therapie von Rückenschmerzen",
             "hasMore": true,
-            "time": ""
+            "time": "",
+            "assignedTeacher": "Anjali"
           },
           "J": {
             "text": "Freizeit",
@@ -1758,7 +1783,8 @@
             ],
             "fullText": "Yogastunde. Korrigieren/ Hilfestellungen: Skorpion, Drehsitz, Krähe, Pfau,  Stehübungen. Klass. TE Erklärung/Einteilung der U.-Gruppen.",
             "hasMore": true,
-            "time": ""
+            "time": "",
+            "assignedTeacher": "Abha, Anjali"
           },
           "E": {
             "text": "Yogastunde. Wiederholung Korrekturen. Klassische Tiefenentspannung. Wiederholung Unterrichtsprinzipien Yoga Vidya Stil",
@@ -1772,7 +1798,8 @@
             ],
             "fullText": "Yogastunde. Wiederholung Korrekturen. Klassische Tiefenentspannung. Wiederholung Unterrichtsprinzipien Yoga Vidya Stil",
             "hasMore": true,
-            "time": ""
+            "time": "",
+            "assignedTeacher": "Abha"
           },
           "F": {
             "text": "Unterrichtsgruppen 1/1: Yoga Vidya Grundreihe ohne Skorpion/ Variationen (siehe YLH 11.2.2)",
@@ -1786,7 +1813,8 @@
             ],
             "fullText": "Unterrichtsgruppen 1/1: Yoga Vidya Grundreihe ohne Skorpion/ Variationen (siehe YLH 11.2.2)",
             "hasMore": true,
-            "time": "16:00"
+            "time": "16:00",
+            "assignedTeacher": "Abha"
           },
           "G": {
             "text": "Unterrichtsgruppen 1/2: Yoga Vidya Grundreihe ohne Skorpion/ Variationen (siehe YLH 11.2.2)",
@@ -1800,7 +1828,8 @@
             ],
             "fullText": "Unterrichtsgruppen 1/2: Yoga Vidya Grundreihe ohne Skorpion/ Variationen (siehe YLH 11.2.2)",
             "hasMore": true,
-            "time": "16:00"
+            "time": "16:00",
+            "assignedTeacher": "Abha"
           },
           "H": {
             "text": "Unterrichtsgruppen 1/3: Yoga Vidya Grundreihe ohne Skorpion/ Variationen (siehe YLH 11.2.2)",
@@ -1814,7 +1843,8 @@
             ],
             "fullText": "Unterrichtsgruppen 1/3: Yoga Vidya Grundreihe ohne Skorpion/ Variationen (siehe YLH 11.2.2)",
             "hasMore": true,
-            "time": "16:00"
+            "time": "16:00",
+            "assignedTeacher": "Abha"
           },
           "I": {
             "text": "Unterrichtsgruppen 1/4: Yoga Vidya Grundreihe ohne Skorpion/ Variationen (siehe YLH 11.2.2)",
@@ -1828,7 +1858,8 @@
             ],
             "fullText": "Unterrichtsgruppen 1/4: Yoga Vidya Grundreihe ohne Skorpion/ Variationen (siehe YLH 11.2.2)",
             "hasMore": true,
-            "time": "16:00"
+            "time": "16:00",
+            "assignedTeacher": "Abha"
           },
           "J": {
             "text": "Freizeit",
@@ -1881,7 +1912,8 @@
             ],
             "fullText": "Raja Yoga: Ashtangas: Die 8 Stufen des Yoga",
             "hasMore": true,
-            "time": ""
+            "time": "",
+            "assignedTeacher": "Karuna"
           },
           "G": {
             "text": "19:00 - 19:45 Uhr Info Mantra-Einweihung (freiwillig)\n\nFreizeit",
@@ -1894,7 +1926,8 @@
             ],
             "fullText": "19:00 - 19:45 Uhr Info Mantra-Einweihung (freiwillig)\n\nFreizeit",
             "hasMore": true,
-            "time": "19:00 - 19:45 Uhr"
+            "time": "19:00 - 19:45 Uhr",
+            "assignedTeacher": "Karuna"
           },
           "H": {
             "text": "Mantras Teil 2: 6 Teile des Mantras\nTratak-Meditation",
@@ -1907,7 +1940,8 @@
             ],
             "fullText": "Mantras Teil 2: 6 Teile des Mantras\nTratak-Meditation",
             "hasMore": true,
-            "time": ""
+            "time": "",
+            "assignedTeacher": "Karuna"
           },
           "I": {
             "text": "Raja Yoga: 5 Zustände des Geistes",
@@ -1920,7 +1954,8 @@
             ],
             "fullText": "Raja Yoga: 5 Zustände des Geistes",
             "hasMore": true,
-            "time": ""
+            "time": "",
+            "assignedTeacher": "Karuna"
           },
           "J": {
             "text": "",
@@ -1946,7 +1981,8 @@
             ],
             "fullText": "Ausdehnungsmeditation",
             "hasMore": false,
-            "time": ""
+            "time": "",
+            "assignedTeacher": "Karuna"
           },
           "E": {
             "text": "bunter Abend",
@@ -1970,7 +2006,8 @@
             ],
             "fullText": "Energie-Meditation",
             "hasMore": false,
-            "time": ""
+            "time": "",
+            "assignedTeacher": "Karuna"
           },
           "G": {
             "text": "",
@@ -1988,7 +2025,8 @@
             ],
             "fullText": "komb. Mantrameditation",
             "hasMore": true,
-            "time": ""
+            "time": "",
+            "assignedTeacher": "Karuna"
           },
           "I": {
             "text": "Eigenschaftsmeditation",
@@ -2000,7 +2038,8 @@
             ],
             "fullText": "Eigenschaftsmeditation",
             "hasMore": false,
-            "time": ""
+            "time": "",
+            "assignedTeacher": "Karuna"
           },
           "J": {
             "text": "",
