@@ -1,5 +1,58 @@
 <script lang="ts">
+  import { onMount } from 'svelte';
   import { todoManager } from '$lib/todoStore.svelte';
+
+  interface OpenDayProgramItem {
+    id: string;
+    time: string;
+    title: string;
+    instructor: string;
+    room?: string;
+    description?: string;
+  }
+
+  const defaultOpenDayProgram: OpenDayProgramItem[] = [
+    {
+      id: '1',
+      time: '11:00 - 12:00',
+      title: 'Hausführung & Begrüßung',
+      instructor: 'Karuna M. Wapke',
+      room: 'Foyer / Rezeption',
+      description: 'Herzlicher Empfang, Hausrundgang durch das Haus Yoga Vidya Nordsee & Vorstellung des Tagesablaufs'
+    },
+    {
+      id: '2',
+      time: '14:00 - 15:00',
+      title: 'Lachyoga-Stunde mit Antje',
+      instructor: 'Antje',
+      room: 'Shanti Raum',
+      description: 'Befreiendes Lachen, Atem- & Lachyoga-Übungen für pure Freude, Leichtigkeit und neue Lebensenergie'
+    },
+    {
+      id: '3',
+      time: '15:30 - 16:45',
+      title: 'Hatha Yoga Schnupperstunde (für alle Level)',
+      instructor: 'Sevaka-Team',
+      room: 'Großer Übungsraum',
+      description: 'Sanfte Asanas, Pranayama und geführte Tiefenentspannung'
+    },
+    {
+      id: '4',
+      time: '17:00 - 18:00',
+      title: 'Vortrag: Yoga als Lebensweg',
+      instructor: 'Karuna M. Wapke',
+      room: 'Satsang-Raum',
+      description: 'Einführung in die ganzheitliche Yoga-Philosophie, Meditation & gesunde Lebensführung'
+    },
+    {
+      id: '5',
+      time: '20:00 - 21:30',
+      title: 'Gemeinsamer Satsang & Kirtan',
+      instructor: 'Ashram Team',
+      room: 'Satsang-Raum',
+      description: 'Meditation, Mantrasingen, Friedensgebete & traditionelles Arati'
+    }
+  ];
 
   interface Seminar {
     title: string;
@@ -172,15 +225,250 @@
       default: return '📋 Aufgabe';
     }
   }
+  let isOpenDayExpanded = $state(false);
+  let openDayProgram = $state<OpenDayProgramItem[]>(defaultOpenDayProgram);
+
+  let showAddProgramForm = $state(false);
+  let newProgTime = $state('');
+  let newProgTitle = $state('');
+  let newProgInstructor = $state('');
+  let newProgRoom = $state('');
+  let newProgDesc = $state('');
+
+  onMount(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('open_day_program_2026');
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            openDayProgram = parsed;
+          }
+        } catch (e) {
+          console.error('Failed to parse open day program', e);
+        }
+      }
+    }
+  });
+
+  function saveProgram(items: OpenDayProgramItem[]) {
+    openDayProgram = items;
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('open_day_program_2026', JSON.stringify(items));
+    }
+  }
+
+  function handleAddProgramItem() {
+    if (!newProgTitle.trim()) return;
+    const newItem: OpenDayProgramItem = {
+      id: Date.now().toString(),
+      time: newProgTime.trim() || 'Ganztägig',
+      title: newProgTitle.trim(),
+      instructor: newProgInstructor.trim() || 'Offen / Team',
+      room: newProgRoom.trim() || 'Haus Nordsee',
+      description: newProgDesc.trim() || undefined
+    };
+    saveProgram([...openDayProgram, newItem]);
+    newProgTime = '';
+    newProgTitle = '';
+    newProgInstructor = '';
+    newProgRoom = '';
+    newProgDesc = '';
+    showAddProgramForm = false;
+  }
+
+  function handleDeleteProgramItem(id: string) {
+    saveProgram(openDayProgram.filter(item => item.id !== id));
+  }
 </script>
 
-<!-- Hero Section: "Yoga Orga Software" with mountains/river landscape background -->
-<div class="hero-card animate-fade-in" style="background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.6)), url('/nordsee_yoga_beach.jpg');">
+<!-- Hero Section with Event Highlight -->
+<div class="hero-card animate-fade-in" style="background-image: linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.65)), url('/nordsee_yoga_beach.jpg');">
   <div class="hero-content">
     <div class="hero-top-flower">🪷</div>
     <h1>Kommende & offene Seminare</h1>
+    <p class="hero-subtitle">Übersicht aller Seminare & Veranstaltungen im Haus Yoga Vidya Nordsee</p>
   </div>
+
+  <!-- Tag der offenen Tür Highlight-Hinweis (24.10.2026) -->
+  {#if !isOpenDayExpanded}
+    <!-- Zuklappter Modus: Einfach und kompakt -->
+    <div 
+      class="open-day-collapsed-pill"
+      onclick={() => isOpenDayExpanded = true}
+      role="button"
+      tabindex="0"
+      onkeydown={(e) => { if (e.key === 'Enter' || e.key === ' ') isOpenDayExpanded = true; }}
+    >
+      <div class="collapsed-left">
+        <span class="badge-pulse-dot"></span>
+        <span class="collapsed-icon">🚪✨</span>
+        <span class="collapsed-title">Tag der offenen Tür, 24. Oktober</span>
+      </div>
+      <button 
+        type="button" 
+        class="btn-expand-pill" 
+        onclick={(e) => { e.stopPropagation(); isOpenDayExpanded = true; }}
+      >
+        <span>Programm anzeigen</span>
+        <span class="expand-arrow">▼</span>
+      </button>
+    </div>
+  {:else}
+    <!-- Aufgeklappter Modus: Detailliertes Programm & Bearbeitung -->
+    <div class="open-day-banner expanded animate-fade-in">
+      <div class="open-day-banner-top">
+        <div class="open-day-badge">
+          <span class="badge-pulse-dot"></span>
+          <span>🎉 Tag der offenen Tür — Programm</span>
+        </div>
+        <button 
+          type="button" 
+          class="btn-collapse" 
+          onclick={() => isOpenDayExpanded = false}
+          title="Zuklappen"
+        >
+          ▲ Zuklappen
+        </button>
+      </div>
+
+      <div class="open-day-header">
+        <span class="open-day-icon">🚪✨</span>
+        <div class="open-day-title-group">
+          <h2 class="open-day-title">Tag der offenen Tür</h2>
+          <div class="open-day-date">
+            <span class="date-icon">📅</span>
+            <strong>24. Oktober 2026</strong>
+            <span class="day-of-week">(Samstag)</span>
+            <span class="location-tag">📍 Haus Yoga Vidya Nordsee</span>
+          </div>
+        </div>
+      </div>
+
+      <p class="open-day-desc">
+        Herzliche Einladung! Entdecke unser vielfältiges Programm mit Schnupperstunden, Lachyoga mit Antje, Führungen, Vorträgen & Satsang.
+      </p>
+
+      <!-- Program Points Section -->
+      <div class="open-day-program-section">
+        <div class="program-section-header">
+          <span class="program-title-label">📋 Tagesprogramm ({openDayProgram.length} Punkte):</span>
+          <button 
+            type="button" 
+            class="btn-add-program-toggle" 
+            onclick={() => showAddProgramForm = !showAddProgramForm}
+          >
+            {showAddProgramForm ? '✕ Abbrechen' : '＋ Programmpunkt hinzufügen'}
+          </button>
+        </div>
+
+        {#if showAddProgramForm}
+          <div class="add-program-inline-form animate-fade-in">
+            <h4>Neuen Programmpunkt anlegen</h4>
+            <div class="form-row-grid">
+              <div class="form-subgroup">
+                <label for="prog-time">Uhrzeit</label>
+                <input id="prog-time" type="text" placeholder="z. B. 14:00 - 15:00" bind:value={newProgTime} />
+              </div>
+              <div class="form-subgroup">
+                <label for="prog-title">Titel / Angebot *</label>
+                <input id="prog-title" type="text" placeholder="z. B. Lachyoga-Stunde" bind:value={newProgTitle} />
+              </div>
+            </div>
+            <div class="form-row-grid">
+              <div class="form-subgroup">
+                <label for="prog-inst">Unterrichtende / Leitung</label>
+                <input id="prog-inst" type="text" placeholder="z. B. Antje" bind:value={newProgInstructor} />
+              </div>
+              <div class="form-subgroup">
+                <label for="prog-room">Raum / Ort</label>
+                <input id="prog-room" type="text" placeholder="z. B. Shanti Raum" bind:value={newProgRoom} />
+              </div>
+            </div>
+            <div class="form-subgroup">
+              <label for="prog-desc">Beschreibung (optional)</label>
+              <input id="prog-desc" type="text" placeholder="Kurze Beschreibung des Programmpunkts..." bind:value={newProgDesc} />
+            </div>
+            <button type="button" class="btn-save-program" onclick={handleAddProgramItem}>
+              ✓ Programmpunkt speichern
+            </button>
+          </div>
+        {/if}
+
+        <div class="program-items-list">
+          {#if openDayProgram.length === 0}
+            <div class="empty-program-msg">Noch keine Programmpunkte eingetragen. Klicke auf „+ Programmpunkt hinzufügen“.</div>
+          {:else}
+            {#each openDayProgram as item (item.id)}
+              <div 
+                class="program-item-card" 
+                class:highlight-item={item.instructor.toLowerCase().includes('antje') || item.title.toLowerCase().includes('lachyoga')}
+              >
+                <div class="prog-time-badge">
+                  <span class="prog-clock-icon">⏰</span>
+                  <strong>{item.time}</strong>
+                </div>
+                <div class="prog-details">
+                  <div class="prog-title-row">
+                    <span class="prog-name">{item.title}</span>
+                    {#if item.instructor.toLowerCase().includes('antje') || item.title.toLowerCase().includes('lachyoga')}
+                      <span class="lachyoga-badge">😄 Lachyoga Highlight mit Antje</span>
+                    {/if}
+                  </div>
+                  <div class="prog-meta-row">
+                    <span class="prog-leader">🧘 {item.instructor}</span>
+                    {#if item.room}
+                      <span class="prog-room">📍 {item.room}</span>
+                    {/if}
+                  </div>
+                  {#if item.description}
+                    <p class="prog-desc-text">{item.description}</p>
+                  {/if}
+                </div>
+                <button 
+                  type="button" 
+                  class="btn-delete-prog" 
+                  onclick={() => handleDeleteProgramItem(item.id)} 
+                  title="Programmpunkt löschen"
+                  aria-label="Löschen"
+                >
+                  🗑️
+                </button>
+              </div>
+            {/each}
+          {/if}
+        </div>
+      </div>
+
+      <div class="open-day-footer">
+        <span class="open-day-leader">Gesamtleitung: <strong>Karuna M. Wapke</strong></span>
+        <div class="open-day-actions">
+          <button 
+            type="button" 
+            class="open-day-btn" 
+            onclick={() => {
+              searchQuery = 'Tag der offenen Tür';
+              const el = document.getElementById('seminars-list-anchor');
+              if (el) el.scrollIntoView({ behavior: 'smooth' });
+            }}
+            title="Im Seminarplan anzeigen"
+          >
+            Im Plan anzeigen ➔
+          </button>
+          <button 
+            type="button" 
+            class="btn-close-subtle" 
+            onclick={() => isOpenDayExpanded = false}
+          >
+            Zuklappen ▲
+          </button>
+        </div>
+      </div>
+    </div>
+  {/if}
 </div>
+
+<div id="seminars-list-anchor"></div>
 
 <div class="seminars-container animate-fade-in">
   <!-- Interactive Filters Toolbar -->
@@ -238,7 +526,11 @@
       {#each filteredSeminars as seminar}
         {@const todos = getSeminarTodos(seminar.title, seminar.date)}
         {@const openTodos = todos.filter(t => t.status === 'pending')}
-        <div class="seminar-card glass-card" class:unassigned={seminar.leader === ''}>
+        <div 
+          class="seminar-card glass-card" 
+          class:unassigned={seminar.leader === ''}
+          class:special-event={seminar.title.includes('Tag der offenen Tür')}
+        >
           <!-- Left Column: Date & Location Info -->
           <div class="seminar-date-sec">
             <span class="calendar-icon">📅</span>
@@ -253,6 +545,11 @@
 
           <!-- Middle Column: Seminar Title & Leader Info -->
           <div class="seminar-info-sec">
+            {#if seminar.title.includes('Tag der offenen Tür')}
+              <div class="special-event-pill">
+                <span>⭐ Besonderes Event</span>
+              </div>
+            {/if}
             <h3 class="seminar-title">{seminar.title}</h3>
             
             {#if seminar.leader !== ''}
@@ -419,15 +716,16 @@
     background-position: center 33%; /* Adjusted to show faces and bodies in optimal balance */
     border: 1px solid var(--border-color);
     border-radius: 20px;
-    padding: 2.5rem;
+    padding: 2.25rem 2.5rem;
     box-shadow: var(--shadow-main);
     overflow: hidden;
     position: relative;
     min-height: 220px;
+    gap: 2rem;
   }
 
   .hero-content {
-    max-width: 60%;
+    max-width: 52%;
     z-index: 10;
     color: #ffffff;
     text-shadow: 0 2px 4px rgba(45, 50, 39, 0.4);
@@ -445,6 +743,562 @@
     color: #ffffff;
     line-height: 1.25;
     margin: 0;
+  }
+
+  .hero-subtitle {
+    font-size: 0.95rem;
+    color: #fff9e6;
+    margin-top: 0.5rem;
+    font-weight: 500;
+    opacity: 0.95;
+    line-height: 1.4;
+  }
+
+  /* Collapsed Mode: Clean Minimal Pill */
+  .open-day-collapsed-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.25rem;
+    background: rgba(255, 255, 255, 0.94);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 2px solid #ffcc00;
+    border-radius: 999px;
+    padding: 0.65rem 1.25rem;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25), 0 0 20px rgba(255, 204, 0, 0.3);
+    transition: var(--transition-smooth);
+    z-index: 10;
+  }
+
+  .open-day-collapsed-pill:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3), 0 0 25px rgba(255, 204, 0, 0.5);
+    border-color: #ffd54f;
+    background: #ffffff;
+  }
+
+  .collapsed-left {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+  }
+
+  .collapsed-icon {
+    font-size: 1.25rem;
+    line-height: 1;
+  }
+
+  .collapsed-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: #960040;
+    letter-spacing: 0.01em;
+  }
+
+  .btn-expand-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: #960040;
+    color: #ffffff;
+    border: none;
+    border-radius: 999px;
+    padding: 0.35rem 0.85rem;
+    font-family: inherit;
+    font-size: 0.78rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: var(--transition-smooth);
+    box-shadow: 0 2px 6px rgba(150, 0, 64, 0.25);
+  }
+
+  .btn-expand-pill:hover {
+    background: #7d0034;
+    transform: scale(1.03);
+  }
+
+  .expand-arrow {
+    font-size: 0.7rem;
+    transition: transform 0.2s ease;
+  }
+
+  /* Tag der offenen Tür Highlight Banner (Expanded) */
+  .open-day-banner.expanded {
+    background: rgba(255, 255, 255, 0.97);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 2px solid #ffcc00;
+    border-radius: 18px;
+    padding: 1.4rem 1.6rem;
+    width: 100%;
+    max-width: 580px;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.3), 0 0 30px rgba(255, 204, 0, 0.4);
+    color: var(--text-primary);
+    position: relative;
+    z-index: 15;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    max-height: 520px;
+    overflow-y: auto;
+  }
+
+  .open-day-banner.expanded::-webkit-scrollbar {
+    width: 6px;
+  }
+  .open-day-banner.expanded::-webkit-scrollbar-thumb {
+    background: #ffe082;
+    border-radius: 4px;
+  }
+
+  .open-day-banner-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .btn-collapse {
+    background: rgba(150, 0, 64, 0.08);
+    border: 1px solid rgba(150, 0, 64, 0.2);
+    color: #960040;
+    font-size: 0.75rem;
+    font-weight: 700;
+    border-radius: 8px;
+    padding: 0.25rem 0.6rem;
+    cursor: pointer;
+    transition: var(--transition-smooth);
+    font-family: inherit;
+  }
+
+  .btn-collapse:hover {
+    background: #960040;
+    color: #ffffff;
+  }
+
+  .open-day-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: linear-gradient(135deg, #960040, #c41c5a);
+    color: #ffffff;
+    font-size: 0.72rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 0.25rem 0.65rem;
+    border-radius: 999px;
+    box-shadow: 0 2px 6px rgba(150, 0, 64, 0.25);
+    align-self: flex-start;
+  }
+
+  .badge-pulse-dot {
+    width: 6px;
+    height: 6px;
+    background-color: #ffd54f;
+    border-radius: 50%;
+    animation: pulse-dot 1.5s infinite;
+  }
+
+  @keyframes pulse-dot {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.6); opacity: 0.5; }
+  }
+
+  .open-day-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.15rem;
+  }
+
+  .open-day-icon {
+    font-size: 2rem;
+    line-height: 1;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+  }
+
+  .open-day-title-group {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .open-day-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: #960040;
+    margin: 0;
+    line-height: 1.2;
+  }
+
+  .open-day-date {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    font-size: 0.88rem;
+    color: #2a1b1b;
+    margin-top: 0.15rem;
+  }
+
+  .open-day-date strong {
+    color: #960040;
+    font-weight: 800;
+  }
+
+  .day-of-week {
+    color: var(--text-secondary);
+    font-weight: 600;
+    font-size: 0.8rem;
+  }
+
+  .location-tag {
+    background: #fff5cc;
+    color: #960040;
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 0.15rem 0.45rem;
+    border-radius: 6px;
+    border: 1px solid #ffe082;
+  }
+
+  .open-day-desc {
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    line-height: 1.35;
+    margin: 0.15rem 0 0.35rem 0;
+  }
+
+  /* Program Section */
+  .open-day-program-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    margin-top: 0.15rem;
+  }
+
+  .program-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    border-bottom: 1px dashed rgba(150, 0, 64, 0.2);
+    padding-bottom: 0.4rem;
+  }
+
+  .program-title-label {
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: #2a1b1b;
+  }
+
+  .btn-add-program-toggle {
+    background: #fff8e1;
+    border: 1px solid #ffe082;
+    color: #960040;
+    font-size: 0.74rem;
+    font-weight: 700;
+    border-radius: 6px;
+    padding: 0.2rem 0.55rem;
+    cursor: pointer;
+    font-family: inherit;
+    transition: var(--transition-smooth);
+  }
+
+  .btn-add-program-toggle:hover {
+    background: #960040;
+    color: #ffffff;
+    border-color: #960040;
+  }
+
+  /* Inline Add Form */
+  .add-program-inline-form {
+    background: #fffcf5;
+    border: 1px solid #ffe082;
+    border-radius: 10px;
+    padding: 0.85rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  }
+
+  .add-program-inline-form h4 {
+    font-size: 0.82rem;
+    margin: 0;
+    color: #960040;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .form-row-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+  }
+
+  .form-subgroup {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
+  .form-subgroup label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+  }
+
+  .form-subgroup input {
+    background: #ffffff;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 0.35rem 0.55rem;
+    font-size: 0.82rem;
+    font-family: inherit;
+    color: var(--text-primary);
+  }
+
+  .form-subgroup input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px rgba(150, 0, 64, 0.15);
+  }
+
+  .btn-save-program {
+    background: var(--primary);
+    color: #ffffff;
+    border: none;
+    border-radius: 6px;
+    padding: 0.4rem 0.75rem;
+    font-size: 0.78rem;
+    font-weight: 700;
+    cursor: pointer;
+    align-self: flex-end;
+    font-family: inherit;
+    transition: var(--transition-smooth);
+    margin-top: 0.25rem;
+  }
+
+  .btn-save-program:hover {
+    background: var(--primary-hover);
+  }
+
+  /* Program Items List */
+  .program-items-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    max-height: 220px;
+    overflow-y: auto;
+    padding-right: 0.2rem;
+  }
+
+  .program-items-list::-webkit-scrollbar {
+    width: 4px;
+  }
+  .program-items-list::-webkit-scrollbar-thumb {
+    background: rgba(150, 0, 64, 0.2);
+    border-radius: 2px;
+  }
+
+  .empty-program-msg {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    font-style: italic;
+    text-align: center;
+    padding: 1rem 0;
+  }
+
+  .program-item-card {
+    display: grid;
+    grid-template-columns: 110px 1fr auto;
+    align-items: flex-start;
+    gap: 0.65rem;
+    padding: 0.55rem 0.75rem;
+    background: #ffffff;
+    border: 1px solid #ffe082;
+    border-radius: 8px;
+    transition: var(--transition-smooth);
+  }
+
+  .program-item-card:hover {
+    background: #fffdf7;
+    border-color: #ffd54f;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+  }
+
+  .program-item-card.highlight-item {
+    border-left: 4px solid #ff9800;
+    background: linear-gradient(to right, #fff8e8, #ffffff);
+    box-shadow: 0 2px 8px rgba(217, 119, 36, 0.08);
+  }
+
+  .prog-time-badge {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.76rem;
+    color: #960040;
+    background: #fff5cc;
+    padding: 0.2rem 0.4rem;
+    border-radius: 6px;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  .prog-clock-icon {
+    font-size: 0.75rem;
+  }
+
+  .prog-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    min-width: 0;
+  }
+
+  .prog-title-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+  }
+
+  .prog-name {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+
+  .lachyoga-badge {
+    background: #ffecb3;
+    color: #b71c1c;
+    font-size: 0.68rem;
+    font-weight: 800;
+    padding: 0.1rem 0.4rem;
+    border-radius: 4px;
+    border: 1px solid #ffe082;
+  }
+
+  .prog-meta-row {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    font-size: 0.74rem;
+    color: var(--text-secondary);
+    font-weight: 600;
+  }
+
+  .prog-desc-text {
+    font-size: 0.73rem;
+    color: var(--text-secondary);
+    margin: 0.15rem 0 0 0;
+    line-height: 1.3;
+  }
+
+  .btn-delete-prog {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 0.78rem;
+    opacity: 0.4;
+    padding: 0.2rem;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+  }
+
+  .btn-delete-prog:hover {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+
+  .open-day-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding-top: 0.6rem;
+    border-top: 1px solid rgba(255, 224, 130, 0.6);
+    flex-wrap: wrap;
+  }
+
+  .open-day-leader {
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+  }
+
+  .open-day-leader strong {
+    color: #960040;
+  }
+
+  .open-day-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .open-day-btn {
+    background: #960040;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    padding: 0.35rem 0.75rem;
+    font-size: 0.78rem;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    transition: var(--transition-smooth);
+    box-shadow: 0 2px 6px rgba(150, 0, 64, 0.2);
+  }
+
+  .open-day-btn:hover {
+    background: #7d0034;
+    transform: translateX(2px);
+    box-shadow: 0 4px 10px rgba(150, 0, 64, 0.3);
+  }
+
+  .btn-close-subtle {
+    background: none;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 0.35rem 0.65rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-family: inherit;
+    transition: var(--transition-smooth);
+  }
+
+  .btn-close-subtle:hover {
+    background: rgba(0, 0, 0, 0.05);
+    color: var(--text-primary);
+  }
+
+  @media (max-width: 950px) {
+    .hero-card {
+      flex-direction: column;
+      align-items: stretch;
+      padding: 1.75rem 1.25rem;
+      gap: 1.25rem;
+    }
+    .hero-content {
+      max-width: 100%;
+    }
+    .open-day-banner.expanded {
+      max-width: 100%;
+    }
+    .open-day-collapsed-pill {
+      width: 100%;
+    }
+    .program-item-card {
+      grid-template-columns: 1fr;
+    }
   }
 
   /* Seminars Section Styling */
@@ -655,6 +1509,37 @@
     background: #ffeed6; /* Deeper hover highlight */
     border-color: #e65100;
     box-shadow: 0 6px 15px rgba(217, 119, 36, 0.12);
+  }
+
+  /* Highlight Style for Special Events (Tag der offenen Tür) */
+  .seminar-card.special-event {
+    border-left: 8px solid #ffcc00;
+    background: linear-gradient(to right, #fffdf2, #ffffff);
+    box-shadow: 0 4px 15px rgba(255, 204, 0, 0.12);
+    border-color: #ffd54f;
+  }
+
+  .seminar-card.special-event:hover {
+    border-left-width: 8px;
+    background: linear-gradient(to right, #fff9e6, #fffdf8);
+    border-color: #ffc107;
+    box-shadow: 0 8px 20px rgba(255, 204, 0, 0.22);
+  }
+
+  .special-event-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    background: linear-gradient(135deg, #fff5cc, #ffecb3);
+    border: 1px solid #ffe082;
+    color: #960040;
+    font-size: 0.72rem;
+    font-weight: 800;
+    padding: 0.15rem 0.55rem;
+    border-radius: 6px;
+    margin-bottom: 0.25rem;
+    width: fit-content;
+    box-shadow: 0 1px 3px rgba(150, 0, 64, 0.08);
   }
 
   /* Date & Location Section */

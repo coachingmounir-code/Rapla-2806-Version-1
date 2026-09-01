@@ -27,7 +27,7 @@ Nr.	Spiritueller Name	Vorname	Nachname	Team	Tätigkeit	TL	YL	HUM	Eintritt	Austri
 16	Adam			Küche					01.12.2025		12	0	12	24	6	18
 17	Narayani			ZV					01.01.2026		18	16	2	24	17	7
 19	Mounir			SPL					01.02.2026		12	0	12	22	8	14
-20	Harishakti			Rezeption								0	0	17	6	11
+20	Harishakti			Rezeption								0	0	17	8	9
 
 KALENDERÜBERSICHT 2026 – TERMINE JE PERSON UND KATEGORIE
 Nr.	Spiritueller Name	Vorname	Nachname	Team	Kürzel	Bedeutung	Anzahl Tage	Termine / Zeiträume
@@ -71,7 +71,7 @@ Nr.	Spiritueller Name	Vorname	Nachname	Team	Kürzel	Bedeutung	Anzahl Tage	Termin
 17	Narayani			ZV	SL	Seminarleitung / Seva außer Haus	3	23.02.2026, 07.08.2026, 09.08.2026
 19	Mounir			SPL	u	Sevafrei	8	24.07.2026–26.07.2026, 28.07.2026–01.08.2026
 19	Mounir			SPL	f	Frei	26	06.07.2026, 13.07.2026, 20.07.2026, 27.07.2026, 03.08.2026, 10.08.2026, 17.08.2026, 24.08.2026, 31.08.2026, 07.09.2026, 14.09.2026, 21.09.2026, 28.09.2026, 05.10.2026, 12.10.2026, 19.10.2026, 26.10.2026, 02.11.2026, 09.11.2026, 16.11.2026, 23.11.2026, 30.11.2026, 07.12.2026, 14.12.2026, 21.12.2026, 28.12.2026
-20	Harishakti			Rezeption	u	Sevafrei	6	01.08.2026–03.08.2026, 21.08.2026–23.08.2026
+20	Harishakti			Rezeption	u	Sevafrei	8	01.08.2026–03.08.2026, 21.08.2026–23.08.2026, 14.09.2026–15.09.2026
 20	Harishakti			Rezeption	f	Frei	37	22.04.2026, 29.04.2026, 06.05.2026, 13.05.2026, 20.05.2026, 27.05.2026, 03.06.2026, 10.06.2026, 17.06.2026, 24.06.2026, 01.07.2026, 08.07.2026, 15.07.2026, 22.07.2026, 29.07.2026, 05.08.2026, 12.08.2026, 19.08.2026, 26.08.2026, 02.09.2026, 09.09.2026, 16.09.2026, 23.09.2026, 30.09.2026, 07.10.2026, 14.10.2026, 21.10.2026, 28.10.2026, 04.11.2026, 11.11.2026, 18.11.2026, 25.11.2026, 02.12.2026, 09.12.2026, 16.12.2026, 23.12.2026, 30.12.2026
 
 HINWEIS
