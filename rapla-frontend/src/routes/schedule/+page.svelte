@@ -3,8 +3,18 @@
   import { db, type Course, type Teacher, type Room, type WeekPlan } from '$lib/db';
   import { validateAssignment, type ConflictMessage, getLocalDateForDay } from '$lib/planningEngine';
   import { isDateInYlaRange } from '$lib/ylaData';
+  import sivanandaImg from '$lib/assets/sivananda.png';
   import { page } from '$app/state';
   import { goto } from '$app/navigation';
+
+  export function isSivanandaPujaSlot(course: Course): boolean {
+    if (!course) return false;
+    const name = (course.name || '').toLowerCase();
+    const id = (course.id || '').toLowerCase();
+    const isSivananda = name.includes('sivananda') || name.includes('shivananda');
+    const isPuja = name.includes('puja') || course.style === 'Puja';
+    return (isSivananda && isPuja) || id.includes('puja-sivananda');
+  }
 
   let courses = $state<Course[]>([]);
   let teachers = $state<Teacher[]>([]);
@@ -191,6 +201,13 @@
 
   // Get color based on course name or style to match the image theme
   function getCourseColor(course: Course): { bg: string; border: string } {
+    if (isSivanandaPujaSlot(course)) {
+      return {
+        bg: '#fffbeb', // radiant golden cream
+        border: '#d97706' // deep golden saffron
+      };
+    }
+
     const isUnassigned = !course.teacherId || course.teacherId === 'teacher-gen-yl';
     if (isUnassigned) {
       return {
@@ -893,26 +910,59 @@
             {@const hasHard = courseConflicts.some(c => c.type === 'hard')}
             <!-- svelte-ignore a11y_click_events_have_key_events -->
             <!-- svelte-ignore a11y_no_static_element_interactions -->
-            <div 
-              class="course-card-rapla" 
-              class:unassigned-card={!course.teacherId || course.teacherId === 'teacher-gen-yl'}
-              style="background-color: {cardColors.bg}; border: 1px solid {cardColors.border};"
-              onclick={() => openEditModal(course)}
-            >
-              <!-- Top line: Time and Room -->
-              <div class="card-top-line">
-                <span class="card-time">{course.startTime} - {course.endTime}</span>
-                <span class="card-room" style="color: {roomObj?.color}">{roomObj?.name ? roomObj.name.split(' ')[0] : ''}</span>
+            {#if isSivanandaPujaSlot(course)}
+              <div 
+                class="course-card-rapla sivananda-puja-card"
+                onclick={() => openEditModal(course)}
+                title="Swami Sivanandas Geburtstag Puja - Spezielles Festangebot (Klicken zum Bearbeiten)"
+              >
+                <div class="puja-top-badge-row">
+                  <span class="puja-time-badge">⏰ {course.startTime} - {course.endTime}</span>
+                  <span class="puja-festive-badge">🪔 Spezielles Angebot</span>
+                </div>
+                <div class="puja-card-body">
+                  <div class="puja-img-wrapper">
+                    <img src={sivanandaImg} alt="Swami Sivananda" class="puja-sivananda-portrait" />
+                    <span class="puja-om-sparkle">🕉️</span>
+                  </div>
+                  <div class="puja-card-info">
+                    <div class="puja-title">
+                      <span class="puja-title-text">{course.name}</span>
+                    </div>
+                    <div class="puja-room-label">
+                      📍 {roomObj?.name || 'Radha-Krishna-Raum'} • 90 Min.
+                    </div>
+                    <div class="puja-teacher-line">
+                      👤 {getTeacherDisplayName(course.teacherId) === 'Unbesetzt' ? 'Alle willkommen / Team' : getTeacherDisplayName(course.teacherId)}
+                    </div>
+                  </div>
+                </div>
+                <div class="puja-ornament-footer">
+                  <span class="puja-ornament-symbol">✨ 🕉️ 🪔 🕉️ ✨</span>
+                </div>
               </div>
-              
-              <!-- Middle line: Course Name -->
-              <div class="card-title-line">{course.name}</div>
-              
-              <!-- Bottom line: Teacher Name -->
-              <div class="card-teacher-line" class:conflict-text={hasHard} title={hasHard ? courseConflicts.find(c => c.type === 'hard')?.message : ''}>
-                {getTeacherDisplayName(course.teacherId)}
+            {:else}
+              <div 
+                class="course-card-rapla" 
+                class:unassigned-card={!course.teacherId || course.teacherId === 'teacher-gen-yl'}
+                style="background-color: {cardColors.bg}; border: 1px solid {cardColors.border};"
+                onclick={() => openEditModal(course)}
+              >
+                <!-- Top line: Time and Room -->
+                <div class="card-top-line">
+                  <span class="card-time">{course.startTime} - {course.endTime}</span>
+                  <span class="card-room" style="color: {roomObj?.color}">{roomObj?.name ? roomObj.name.split(' ')[0] : ''}</span>
+                </div>
+                
+                <!-- Middle line: Course Name -->
+                <div class="card-title-line">{course.name}</div>
+                
+                <!-- Bottom line: Teacher Name -->
+                <div class="card-teacher-line" class:conflict-text={hasHard} title={hasHard ? courseConflicts.find(c => c.type === 'hard')?.message : ''}>
+                  {getTeacherDisplayName(course.teacherId)}
+                </div>
               </div>
-            </div>
+            {/if}
           {/each}
         </div>
       {/each}
@@ -1516,6 +1566,132 @@
     font-size: 0.72rem;
     font-weight: 500;
     color: #444;
+  }
+
+  /* Swami Sivananda Birthday Puja Card - Special Hindu Aesthetic */
+  .sivananda-puja-card {
+    background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 45%, #fed7aa 100%) !important;
+    border: 1.5px solid #f59e0b !important;
+    border-left: 6px solid #d97706 !important;
+    border-radius: 6px !important;
+    box-shadow: 0 3px 10px rgba(217, 119, 6, 0.2), 0 0 0 1px rgba(245, 158, 11, 0.2) !important;
+    padding: 6px 8px !important;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .sivananda-puja-card:hover {
+    box-shadow: 0 5px 14px rgba(217, 119, 6, 0.35), 0 0 0 1.5px #f59e0b !important;
+    transform: translateY(-1px);
+  }
+
+  .puja-top-badge-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 4px;
+    margin-bottom: 2px;
+  }
+
+  .puja-time-badge {
+    font-size: 0.7rem;
+    font-weight: 800;
+    color: #92400e;
+    white-space: nowrap;
+  }
+
+  .puja-festive-badge {
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    color: #92400e;
+    font-size: 0.6rem;
+    font-weight: 800;
+    padding: 1px 5px;
+    border-radius: 10px;
+    border: 1px solid #f59e0b;
+    white-space: nowrap;
+  }
+
+  .puja-card-body {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 1px 0;
+  }
+
+  .puja-img-wrapper {
+    position: relative;
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .puja-sivananda-portrait {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #d97706;
+    box-shadow: 0 0 6px rgba(245, 158, 11, 0.4);
+    background: #ffffff;
+  }
+
+  .puja-om-sparkle {
+    position: absolute;
+    bottom: -2px;
+    right: -3px;
+    font-size: 0.75rem;
+    line-height: 1;
+    background: #fffbeb;
+    border: 1px solid #f59e0b;
+    border-radius: 50%;
+    padding: 0 1px;
+  }
+
+  .puja-card-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+  }
+
+  .puja-title {
+    font-size: 0.82rem;
+    font-weight: 800;
+    color: #78350f;
+    line-height: 1.2;
+  }
+
+  .puja-title-text {
+    background: linear-gradient(90deg, #78350f 0%, #9a3412 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .puja-room-label {
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: #c2410c;
+  }
+
+  .puja-teacher-line {
+    font-size: 0.65rem;
+    font-weight: 600;
+    color: #92400e;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .puja-ornament-footer {
+    text-align: center;
+    font-size: 0.58rem;
+    color: #b45309;
+    letter-spacing: 0.12em;
+    margin-top: 1px;
+    opacity: 0.85;
   }
 
   /* Bottom Management Sections */

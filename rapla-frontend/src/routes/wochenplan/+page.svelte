@@ -12,8 +12,18 @@
   } from '$lib/ylaData';
   import YlaScheduleView from '$lib/components/YlaScheduleView.svelte';
   import nataraja from '$lib/assets/nataraja.jpg';
+  import sivanandaImg from '$lib/assets/sivananda.png';
   import { page } from '$app/state';
   import { goto } from '$app/navigation';
+
+  export function isSivanandaPujaSlot(course: Course | YlaTeacherWeekSlot): boolean {
+    if (!course) return false;
+    const name = (course.name || '').toLowerCase();
+    const id = ((course as Course).id || '').toLowerCase();
+    const isSivananda = name.includes('sivananda') || name.includes('shivananda');
+    const isPuja = name.includes('puja') || (course as Course).style === 'Puja';
+    return (isSivananda && isPuja) || id.includes('puja-sivananda');
+  }
 
   let courses = $state<Course[]>([]);
   let teachers = $state<Teacher[]>([]);
@@ -328,6 +338,13 @@
   }
 
   function getCourseColor(course: Course | YlaTeacherWeekSlot): { bg: string; border: string } {
+    if (isSivanandaPujaSlot(course)) {
+      return {
+        bg: '#fffbeb', // radiant golden cream
+        border: '#d97706' // deep golden saffron
+      };
+    }
+
     if ((course as any).isYla || course.style === 'YLA') {
       return {
         bg: '#faf5ff', // gentle lavender / light purple
@@ -455,10 +472,12 @@
       
       courses = currentPlan.courses
         .filter(c => {
+          const courseDate = getLocalDateForDay(weekCode, c.dayOfWeek);
           const isPranayama = c.name.toLowerCase().includes('pranayama') || c.style.toLowerCase().includes('pranayama');
-          if (isPranayama) {
-            const courseDate = getLocalDateForDay(weekCode, c.dayOfWeek);
-            if (isDateInYlaRange(courseDate)) return false;
+          if (isPranayama && isDateInYlaRange(courseDate)) return false;
+          // Specifically on Tuesday 08.09.2026 (Sivananda Birthday Puja), remove Om Namo Narayanaya and Meditativer Spaziergang
+          if (courseDate === '2026-09-08' && (c.name.toLowerCase().includes('om namo') || c.name.toLowerCase().includes('narayanaya') || c.name.toLowerCase().includes('spaziergang'))) {
+            return false;
           }
           return true;
         })
@@ -849,6 +868,38 @@
                         👤 {yla.teacherName}
                       </div>
                     </div>
+                  {:else if isSivanandaPujaSlot(course)}
+                    <div 
+                      class="course-card-rapla sivananda-puja-card"
+                      class:highlighted-card={isHighlighted}
+                      class:dimmed-card={selectedTeacher && !isHighlighted && !onlyMySlotsParam}
+                      title="Swami Sivanandas Geburtstag Puja - Spezielles Festangebot"
+                    >
+                      <div class="puja-top-badge-row">
+                        <span class="puja-time-badge">⏰ {course.startTime} - {course.endTime}</span>
+                        <span class="puja-festive-badge">🪔 Spezielles Fest-Angebot</span>
+                      </div>
+                      <div class="puja-card-body">
+                        <div class="puja-img-wrapper">
+                          <img src={sivanandaImg} alt="Swami Sivananda" class="puja-sivananda-portrait" />
+                          <span class="puja-om-sparkle">🕉️</span>
+                        </div>
+                        <div class="puja-card-info">
+                          <div class="puja-title">
+                            <span class="puja-title-text">{course.name}</span>
+                          </div>
+                          <div class="puja-room-label">
+                            📍 {roomName} • 90 Min.
+                          </div>
+                          <div class="puja-teacher-line">
+                            👤 {teacherName === 'Unbesetzt' ? 'Alle Sevakas & Gäste' : teacherName}
+                          </div>
+                        </div>
+                      </div>
+                      <div class="puja-ornament-footer">
+                        <span class="puja-ornament-symbol">✨ 🕉️ 🪔 🕉️ ✨</span>
+                      </div>
+                    </div>
                   {:else}
                     <div 
                       class="course-card-rapla" 
@@ -982,6 +1033,31 @@
                 </div>
                 <div class="agenda-teacher" style="color: #6b21a8; font-weight: 700;">
                   👤 {yla.teacherName}
+                </div>
+              </div>
+            {:else if isSivanandaPujaSlot(course)}
+              <div 
+                class="mobile-agenda-card sivananda-puja-mobile-card"
+                class:highlighted-card={isHighlighted}
+                class:dimmed-card={selectedTeacher && !isHighlighted && !onlyMySlotsParam}
+              >
+                <div class="puja-mobile-header">
+                  <span class="puja-mobile-time">⏰ {course.startTime} - {course.endTime}</span>
+                  <span class="puja-mobile-badge">🪔 Spezielles Geburtstags-Angebot</span>
+                </div>
+                <div class="puja-mobile-body">
+                  <div class="puja-img-wrapper mobile">
+                    <img src={sivanandaImg} alt="Swami Sivananda" class="puja-sivananda-portrait mobile" />
+                    <span class="puja-om-sparkle">🕉️</span>
+                  </div>
+                  <div class="puja-mobile-info">
+                    <h3 class="puja-mobile-title">{course.name}</h3>
+                    <div class="puja-mobile-sub">📍 {roomName} • 90 Min. Fest-Puja & Kirtan</div>
+                    <div class="puja-mobile-teacher">👤 {teacherName === 'Unbesetzt' ? 'Gemeinsame Feier • Alle willkommen' : teacherName}</div>
+                  </div>
+                </div>
+                <div class="puja-ornament-footer mobile">
+                  <span>✨ 🕉️ Swami Sivanandas Geburtstag 🕉️ ✨</span>
                 </div>
               </div>
             {:else}
@@ -2115,6 +2191,232 @@
     font-weight: 600;
     line-height: 1.2;
     margin-top: 1px;
+  }
+
+  /* Swami Sivananda Birthday Puja Card - Special Hindu Aesthetic */
+  .sivananda-puja-card {
+    background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 45%, #fed7aa 100%) !important;
+    border: 1.5px solid #f59e0b !important;
+    border-left: 6px solid #d97706 !important;
+    border-radius: 8px !important;
+    box-shadow: 0 4px 14px rgba(217, 119, 6, 0.22), 0 0 0 1px rgba(245, 158, 11, 0.25) !important;
+    padding: 7px 9px !important;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .sivananda-puja-card::before {
+    content: '';
+    position: absolute;
+    top: -20px;
+    right: -20px;
+    width: 60px;
+    height: 60px;
+    background: radial-gradient(circle, rgba(245, 158, 11, 0.2) 0%, transparent 70%);
+    pointer-events: none;
+    border-radius: 50%;
+  }
+
+  .sivananda-puja-card:hover {
+    box-shadow: 0 6px 18px rgba(217, 119, 6, 0.35), 0 0 0 2px #f59e0b !important;
+    transform: translateY(-1px) scale(1.01);
+  }
+
+  .puja-top-badge-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 4px;
+    margin-bottom: 3px;
+  }
+
+  .puja-time-badge {
+    font-size: 0.72rem;
+    font-weight: 800;
+    color: #92400e;
+    white-space: nowrap;
+  }
+
+  .puja-festive-badge {
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    color: #92400e;
+    font-size: 0.62rem;
+    font-weight: 800;
+    padding: 1.5px 6px;
+    border-radius: 12px;
+    border: 1px solid #f59e0b;
+    white-space: nowrap;
+    box-shadow: 0 1px 3px rgba(217, 119, 6, 0.15);
+    letter-spacing: 0.02em;
+  }
+
+  .puja-card-body {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 2px 0;
+  }
+
+  .puja-img-wrapper {
+    position: relative;
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .puja-sivananda-portrait {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #d97706;
+    box-shadow: 0 0 8px rgba(245, 158, 11, 0.4), 0 2px 5px rgba(180, 83, 9, 0.3);
+    background: #ffffff;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+
+  .sivananda-puja-card:hover .puja-sivananda-portrait {
+    transform: scale(1.06);
+    box-shadow: 0 0 12px rgba(245, 158, 11, 0.6), 0 3px 8px rgba(180, 83, 9, 0.4);
+  }
+
+  .puja-om-sparkle {
+    position: absolute;
+    bottom: -3px;
+    right: -4px;
+    font-size: 0.8rem;
+    line-height: 1;
+    background: #fffbeb;
+    border: 1px solid #f59e0b;
+    border-radius: 50%;
+    padding: 1px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  }
+
+  .puja-card-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5px;
+  }
+
+  .puja-title {
+    font-size: 0.84rem;
+    font-weight: 800;
+    color: #78350f;
+    line-height: 1.25;
+  }
+
+  .puja-title-text {
+    background: linear-gradient(90deg, #78350f 0%, #9a3412 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .puja-room-label {
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: #c2410c;
+  }
+
+  .puja-teacher-line {
+    font-size: 0.68rem;
+    font-weight: 600;
+    color: #92400e;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .puja-ornament-footer {
+    text-align: center;
+    font-size: 0.62rem;
+    color: #b45309;
+    letter-spacing: 0.15em;
+    margin-top: 2px;
+    opacity: 0.85;
+  }
+
+  /* Mobile Puja Card Styles */
+  .sivananda-puja-mobile-card {
+    background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 45%, #fed7aa 100%) !important;
+    border: 1.5px solid #f59e0b !important;
+    border-left: 6px solid #d97706 !important;
+    border-radius: 10px !important;
+    box-shadow: 0 4px 12px rgba(217, 119, 6, 0.2) !important;
+    padding: 0.85rem !important;
+  }
+
+  .puja-mobile-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .puja-mobile-time {
+    font-size: 0.82rem;
+    font-weight: 800;
+    color: #92400e;
+  }
+
+  .puja-mobile-badge {
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    color: #92400e;
+    font-size: 0.68rem;
+    font-weight: 800;
+    padding: 2px 8px;
+    border-radius: 12px;
+    border: 1px solid #f59e0b;
+  }
+
+  .puja-mobile-body {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .puja-sivananda-portrait.mobile {
+    width: 54px;
+    height: 54px;
+  }
+
+  .puja-mobile-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .puja-mobile-title {
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: #78350f;
+    margin: 0 0 0.2rem 0;
+    line-height: 1.25;
+  }
+
+  .puja-mobile-sub {
+    font-size: 0.75rem;
+    color: #c2410c;
+    font-weight: 700;
+    margin-bottom: 0.2rem;
+  }
+
+  .puja-mobile-teacher {
+    font-size: 0.75rem;
+    color: #92400e;
+    font-weight: 600;
+  }
+
+  .puja-ornament-footer.mobile {
+    margin-top: 0.5rem;
+    padding-top: 0.35rem;
+    border-top: 1px dashed rgba(217, 119, 6, 0.3);
+    font-size: 0.7rem;
+    font-weight: 600;
   }
 
   @media (max-width: 768px) {

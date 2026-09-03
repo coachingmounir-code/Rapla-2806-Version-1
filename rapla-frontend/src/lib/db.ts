@@ -1283,26 +1283,14 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W37-44",
-        "name": "Om Namo Narayanaya",
-        "style": "Meditation",
+        "id": "course-2026-W37-puja-sivananda",
+        "name": "Swami Sivanandas Geburtstag Puja",
+        "style": "Puja",
         "dayOfWeek": 2,
-        "startTime": "19:30",
-        "endTime": "20:00",
-        "roomId": "room-1",
-        "teacherId": "teacher-gen-christopher",
-        "isAiPlanned": false,
-        "status": "approved"
-      },
-      {
-        "id": "course-2026-W37-45",
-        "name": "Meditativer Spaziergang",
-        "style": "Entspannung",
-        "dayOfWeek": 2,
-        "startTime": "19:30",
-        "endTime": "20:30",
-        "roomId": "room-7",
-        "teacherId": "teacher-gen-pranava-pauly",
+        "startTime": "20:00",
+        "endTime": "21:30",
+        "roomId": "room-2",
+        "teacherId": null,
         "isAiPlanned": false,
         "status": "approved"
       },
@@ -1601,6 +1589,14 @@ export function reconcilePlansWithDefaults(plans: WeekPlan[]): { plans: WeekPlan
         }
       }
 
+      if (plan.targetWeekCode === '2026-W37') {
+        const preLen = plan.courses.length;
+        plan.courses = plan.courses.filter(c => !(c.dayOfWeek === 2 && (c.name.toLowerCase().includes('spaziergang') || c.name.toLowerCase().includes('om namo') || c.name.toLowerCase().includes('narayanaya'))));
+        if (plan.courses.length !== preLen) {
+          hasChanges = true;
+        }
+      }
+
       for (const defC of defPlan.courses) {
         const existingC = plan.courses.find(c => 
           c.id === defC.id || 
@@ -1645,7 +1641,7 @@ export function reconcilePlansWithDefaults(plans: WeekPlan[]): { plans: WeekPlan
   return { plans: list, hasChanges };
 }
 
-const CURRENT_DB_VERSION = 107;
+const CURRENT_DB_VERSION = 108;
 
 // Database Actions
 export const db = {
@@ -2195,38 +2191,67 @@ export const db = {
         }
       }
 
-      // Migration: Ensure Tuesday 19:30 Meditativer Spaziergang is present in every week plan
-      const walkCourse = p.courses.find(c => c.dayOfWeek === 2 && (c.name.toLowerCase().includes('spaziergang') || c.roomId === 'room-7'));
-      if (!walkCourse) {
-        p.courses.push({
-          id: `course-${p.targetWeekCode || p.id}-walk-tue`,
-          name: 'Meditativer Spaziergang',
-          style: 'Entspannung',
-          dayOfWeek: 2,
-          startTime: '19:30',
-          endTime: '20:30',
-          roomId: 'room-7',
-          teacherId: 'teacher-gen-pranava-pauly',
-          isAiPlanned: false,
-          status: p.status === 'approved' ? 'approved' : 'draft'
-        });
-        p.courses.sort((a, b) => {
-          if (a.dayOfWeek !== b.dayOfWeek) return a.dayOfWeek - b.dayOfWeek;
-          return a.startTime.localeCompare(b.startTime);
-        });
-        updated = true;
-      } else {
-        if (walkCourse.startTime !== '19:30' || walkCourse.endTime !== '20:30' || walkCourse.roomId !== 'room-7' || walkCourse.name !== 'Meditativer Spaziergang') {
-          walkCourse.name = 'Meditativer Spaziergang';
-          walkCourse.startTime = '19:30';
-          walkCourse.endTime = '20:30';
-          walkCourse.roomId = 'room-7';
-          if (!walkCourse.teacherId) walkCourse.teacherId = 'teacher-gen-pranava-pauly';
+      // Migration: On Tuesday 08.09 (2026-W37), replace Tuesday Om Namo Narayanaya and Meditativer Spaziergang with Swami Sivanandas Geburtstag Puja
+      if (p.targetWeekCode === '2026-W37') {
+        const preCoursesLen = p.courses.length;
+        p.courses = p.courses.filter(c => !(c.dayOfWeek === 2 && (c.name.toLowerCase().includes('spaziergang') || c.name.toLowerCase().includes('om namo') || c.name.toLowerCase().includes('narayanaya'))));
+        
+        const hasSivanandaPuja = p.courses.some(c => c.id === 'course-2026-W37-puja-sivananda' || (c.dayOfWeek === 2 && c.name.toLowerCase().includes('sivananda') && c.startTime === '20:00'));
+        if (!hasSivanandaPuja) {
+          p.courses.push({
+            id: 'course-2026-W37-puja-sivananda',
+            name: 'Swami Sivanandas Geburtstag Puja',
+            style: 'Puja',
+            dayOfWeek: 2,
+            startTime: '20:00',
+            endTime: '21:30',
+            roomId: 'room-2',
+            teacherId: null,
+            isAiPlanned: false,
+            status: p.status === 'approved' ? 'approved' : 'draft'
+          });
           p.courses.sort((a, b) => {
             if (a.dayOfWeek !== b.dayOfWeek) return a.dayOfWeek - b.dayOfWeek;
             return a.startTime.localeCompare(b.startTime);
           });
           updated = true;
+        } else if (p.courses.length !== preCoursesLen) {
+          updated = true;
+        }
+      } else {
+        // Migration: Ensure Tuesday 19:30 Meditativer Spaziergang is present in every week plan
+        const walkCourse = p.courses.find(c => c.dayOfWeek === 2 && (c.name.toLowerCase().includes('spaziergang') || c.roomId === 'room-7'));
+        if (!walkCourse) {
+          p.courses.push({
+            id: `course-${p.targetWeekCode || p.id}-walk-tue`,
+            name: 'Meditativer Spaziergang',
+            style: 'Entspannung',
+            dayOfWeek: 2,
+            startTime: '19:30',
+            endTime: '20:30',
+            roomId: 'room-7',
+            teacherId: 'teacher-gen-pranava-pauly',
+            isAiPlanned: false,
+            status: p.status === 'approved' ? 'approved' : 'draft'
+          });
+          p.courses.sort((a, b) => {
+            if (a.dayOfWeek !== b.dayOfWeek) return a.dayOfWeek - b.dayOfWeek;
+            return a.startTime.localeCompare(b.startTime);
+          });
+          updated = true;
+        } else {
+          if (walkCourse.startTime !== '19:30' || walkCourse.endTime !== '20:30' || walkCourse.roomId !== 'room-7' || walkCourse.name !== 'Meditativer Spaziergang') {
+            walkCourse.name = 'Meditativer Spaziergang';
+            walkCourse.startTime = '19:30';
+            walkCourse.endTime = '20:30';
+            walkCourse.roomId = 'room-7';
+            if (!walkCourse.teacherId) walkCourse.teacherId = 'teacher-gen-pranava-pauly';
+            p.courses.sort((a, b) => {
+              if (a.dayOfWeek !== b.dayOfWeek) return a.dayOfWeek - b.dayOfWeek;
+              return a.startTime.localeCompare(b.startTime);
+            });
+            updated = true;
+          }
         }
       }
     }
