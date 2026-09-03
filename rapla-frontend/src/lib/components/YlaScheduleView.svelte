@@ -8,6 +8,7 @@
     getYlaTeacherMeta,
     getYlaCleanShortTitle,
     getYlaCellRenderInfo,
+    normalizeTeacherName,
     YLA_TEACHERS,
     YLA_TEACHERS_META,
     type YlaWeek, 
@@ -23,25 +24,32 @@
   let { 
     initialWeek = 1, 
     readOnly = false, 
+    allowedWeeks = null,
+    highlightTeacherName = '',
     onWeekChange 
   }: { 
     initialWeek?: number; 
     readOnly?: boolean; 
+    allowedWeeks?: number[] | null;
+    highlightTeacherName?: string;
     onWeekChange?: (week: number) => void 
   } = $props();
 
   let assignmentsMap = $state<Record<string, string>>({});
-  let selectedWeekNumber = $state(initialWeek || 1);
+  let selectedWeekNumber = $state(1);
   let activeMobileDayIndex = $state(0);
   let isFullscreen = $state(false);
   let viewMode = $state<'grid' | 'agenda'>('grid'); // 'grid' = Wochentabelle, 'agenda' = Tages-Detailansicht
   let userRole = $state('');
   let allTeachersList = $state<Teacher[]>([]);
 
-  // Sync with initialWeek prop
+  // Sync with initialWeek & allowedWeeks props
   $effect(() => {
-    if (initialWeek && initialWeek !== untrack(() => selectedWeekNumber)) {
-      selectedWeekNumber = initialWeek;
+    const targetWeek = (allowedWeeks && allowedWeeks.length > 0 && !allowedWeeks.includes(initialWeek))
+      ? allowedWeeks[0]
+      : (initialWeek || 1);
+    if (targetWeek !== untrack(() => selectedWeekNumber)) {
+      selectedWeekNumber = targetWeek;
     }
   });
 
@@ -140,8 +148,15 @@
     };
   });
 
-  const allWeeks = getYlaWeeks();
-  let currentWeekRaw = $derived(getYlaWeek(selectedWeekNumber) || allWeeks[0]);
+  const rawAllWeeks = getYlaWeeks();
+  let allWeeks = $derived(
+    allowedWeeks && allowedWeeks.length > 0
+      ? rawAllWeeks.filter(w => allowedWeeks.includes(w.weekNumber))
+      : rawAllWeeks
+  );
+  let currentWeekRaw = $derived(
+    getYlaWeek(selectedWeekNumber) || allWeeks[0] || rawAllWeeks[0]
+  );
 
   // Merge live assignments into current week
   let currentWeek = $derived.by(() => {
@@ -161,7 +176,17 @@
   let specialDays = $derived(currentWeek.days.filter(d => d.specialFocus));
   let activeDay = $derived(currentWeek.days[activeMobileDayIndex] || currentWeek.days[0]);
 
+  function isTeacherMatched(assignedTeacher: string | null | undefined): boolean {
+    if (!highlightTeacherName || !assignedTeacher) return false;
+    const target = normalizeTeacherName(highlightTeacherName);
+    const assigned = assignedTeacher.includes(',')
+      ? assignedTeacher.split(',').map(s => normalizeTeacherName(s))
+      : [normalizeTeacherName(assignedTeacher)];
+    return assigned.some(a => a === target || a.includes(target) || target.includes(a));
+  }
+
   function selectWeek(num: number) {
+    if (allowedWeeks && allowedWeeks.length > 0 && !allowedWeeks.includes(num)) return;
     selectedWeekNumber = num;
     activeMobileDayIndex = 0;
     if (onWeekChange) {
@@ -170,9 +195,11 @@
   }
 
   function navigateWeek(delta: number) {
-    const newWeek = selectedWeekNumber + delta;
-    if (newWeek >= 1 && newWeek <= allWeeks.length) {
-      selectWeek(newWeek);
+    if (allWeeks.length <= 1) return;
+    const currentIdx = allWeeks.findIndex(w => w.weekNumber === selectedWeekNumber);
+    const targetIdx = (currentIdx >= 0 ? currentIdx : 0) + delta;
+    if (targetIdx >= 0 && targetIdx < allWeeks.length) {
+      selectWeek(allWeeks[targetIdx].weekNumber);
     }
   }
 
@@ -325,21 +352,27 @@
       </div>
 
       <!-- Quick 1-Click Week Switcher Pills in Fullscreen -->
-      <div class="fs-week-switcher">
-        {#each allWeeks as week}
-          {@const isActive = week.weekNumber === selectedWeekNumber}
-          <button 
-            type="button" 
-            class="fs-week-btn" 
-            class:active={isActive}
-            onclick={() => selectWeek(week.weekNumber)}
-            title={week.weekSubtitle}
-          >
-            <span class="fs-w-title">Woche {week.weekNumber}</span>
-            <span class="fs-w-dates">{week.dateRange.replace('.2026', '').replace('/2026', '')}</span>
-          </button>
-        {/each}
-      </div>
+      {#if allWeeks.length > 1}
+        <div class="fs-week-switcher">
+          {#each allWeeks as week}
+            {@const isActive = week.weekNumber === selectedWeekNumber}
+            <button 
+              type="button" 
+              class="fs-week-btn" 
+              class:active={isActive}
+              onclick={() => selectWeek(week.weekNumber)}
+              title={week.weekSubtitle}
+            >
+              <span class="fs-w-title">Woche {week.weekNumber}</span>
+              <span class="fs-w-dates">{week.dateRange.replace('.2026', '').replace('/2026', '')}</span>
+            </button>
+          {/each}
+        </div>
+      {:else}
+        <div class="fs-single-week-pill">
+          <span>📅 {currentWeek.dateRange}</span>
+        </div>
+      {/if}
 
       <!-- View Switcher in Fullscreen -->
       <div class="fs-view-toggles">
@@ -467,41 +500,48 @@
     <div class="week-summary-banner glass-card">
       <div class="summary-left">
         <div class="week-nav-mini">
-          <button 
-            type="button" 
-            class="btn-nav-mini" 
-            disabled={selectedWeekNumber <= 1}
-            onclick={() => navigateWeek(-1)}
-            title="Vorherige Woche"
-          >
-            ◀
-          </button>
+          {#if allWeeks.length > 1}
+            <button 
+              type="button" 
+              class="btn-nav-mini" 
+              disabled={selectedWeekNumber <= 1}
+              onclick={() => navigateWeek(-1)}
+              title="Vorherige Woche"
+            >
+              ◀
+            </button>
 
-          <div class="week-nav-pills">
-            {#each allWeeks as week}
-              {@const isActive = week.weekNumber === selectedWeekNumber}
-              <button 
-                type="button" 
-                class="btn-week-pill" 
-                class:active={isActive}
-                onclick={() => selectWeek(week.weekNumber)}
-                title="{week.weekSubtitle}"
-              >
-                <span class="pill-week-title">Woche {week.weekNumber}</span>
-                <span class="pill-week-dates">{week.dateRange.replace('.2026', '').replace('/2026', '')}</span>
-              </button>
-            {/each}
-          </div>
+            <div class="week-nav-pills">
+              {#each allWeeks as week}
+                {@const isActive = week.weekNumber === selectedWeekNumber}
+                <button 
+                  type="button" 
+                  class="btn-week-pill" 
+                  class:active={isActive}
+                  onclick={() => selectWeek(week.weekNumber)}
+                  title="{week.weekSubtitle}"
+                >
+                  <span class="pill-week-title">Woche {week.weekNumber}</span>
+                  <span class="pill-week-dates">{week.dateRange.replace('.2026', '').replace('/2026', '')}</span>
+                </button>
+              {/each}
+            </div>
 
-          <button 
-            type="button" 
-            class="btn-nav-mini" 
-            disabled={selectedWeekNumber >= allWeeks.length}
-            onclick={() => navigateWeek(1)}
-            title="Nächste Woche"
-          >
-            ▶
-          </button>
+            <button 
+              type="button" 
+              class="btn-nav-mini" 
+              disabled={selectedWeekNumber >= allWeeks.length}
+              onclick={() => navigateWeek(1)}
+              title="Nächste Woche"
+            >
+              ▶
+            </button>
+          {:else}
+            <div class="single-week-indicator-badge">
+              <span class="sw-tag">🧘 Woche {currentWeek.weekNumber}</span>
+              <span class="sw-dates">📅 {currentWeek.dateRange}</span>
+            </div>
+          {/if}
 
           <span class="current-week-pill">
             {currentWeek.weekSubtitle}
@@ -584,6 +624,7 @@
                 {@const key = `${currentWeek.weekNumber}_${day.col}_${cellInfo.rootSlot.rowNumber}`}
                 {@const assignedTeacher = assignmentsMap[key] || entry?.assignedTeacher}
                 {@const hasContent = !!(entry && (entry.text || entry.shortTitle))}
+                {@const isMatched = isTeacherMatched(assignedTeacher)}
                 
                 <!-- svelte-ignore a11y_click_events_have_key_events -->
                 <!-- svelte-ignore a11y_no_static_element_interactions -->
@@ -594,11 +635,12 @@
                   class:is-empty={!hasContent}
                   class:is-clickable={hasContent}
                   class:has-assigned-teacher={!!assignedTeacher}
+                  class:teacher-matched-cell={isMatched}
                   onclick={() => hasContent && entry && openSlotDetail(day, cellInfo.rootSlot, entry, cellInfo.displayTime, cellInfo.rowSpan)}
                   title={hasContent ? (entry?.fullText ? `${entry.fullText}\n\n👉 Klicken für alle Details${isAdmin ? ' & Zuweisung' : ''}` : `Klicken für Details${isAdmin ? ' & Zuweisung' : ''}`) : ''}
                 >
                   {#if hasContent && entry}
-                    <div class="compact-slot-box" class:spanned-box={cellInfo.rowSpan > 1}>
+                    <div class="compact-slot-box" class:spanned-box={cellInfo.rowSpan > 1} class:teacher-matched-box={isMatched}>
                       
                       <!-- Optional sub-time pill or spanned duration pill -->
                       {#if cellInfo.displayTime || cellInfo.rowSpan > 1}
@@ -708,12 +750,14 @@
               {@const entry = cellInfo.entry}
               {@const key = `${currentWeek.weekNumber}_${activeDay.col}_${cellInfo.rootSlot.rowNumber}`}
               {@const assignedTeacher = assignmentsMap[key] || entry?.assignedTeacher}
+              {@const isMatched = isTeacherMatched(assignedTeacher)}
               
               <!-- svelte-ignore a11y_click_events_have_key_events -->
               <!-- svelte-ignore a11y_no_static_element_interactions -->
               <div 
                 class="agenda-slot-card glass-card {getSlotStyleClass(cellInfo.rootSlot.type)} is-clickable"
                 class:is-spanned-card={cellInfo.rowSpan > 1}
+                class:teacher-matched-agenda-card={isMatched}
                 onclick={() => openSlotDetail(activeDay, cellInfo.rootSlot, entry, cellInfo.displayTime, cellInfo.rowSpan)}
               >
                 <!-- Top Card Meta Row -->
@@ -2834,5 +2878,59 @@
   @keyframes fadeIn {
     from { opacity: 0; transform: translateY(-4px); }
     to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Single-Week Indicator Badge (Team View / Single Week Mode) */
+  .single-week-indicator-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: #ffffff;
+    border: 1.5px solid #d8b4fe;
+    padding: 0.35rem 0.85rem;
+    border-radius: 999px;
+    box-shadow: 0 2px 6px rgba(147, 51, 234, 0.1);
+  }
+
+  .single-week-indicator-badge .sw-tag {
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: #7e22ce;
+  }
+
+  .single-week-indicator-badge .sw-dates {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #6b21a8;
+  }
+
+  .fs-single-week-pill {
+    background: rgba(147, 51, 234, 0.15);
+    border: 1px solid rgba(147, 51, 234, 0.3);
+    color: #581c87;
+    font-size: 0.85rem;
+    font-weight: 700;
+    padding: 0.35rem 0.85rem;
+    border-radius: 999px;
+  }
+
+  /* Teacher-Matched Highlighting */
+  :global(.teacher-matched-cell) {
+    background: #fdf4ff !important;
+    position: relative;
+  }
+
+  .teacher-matched-box {
+    border-left: 4px solid #ea580c !important;
+    box-shadow: 0 0 0 2px rgba(234, 88, 12, 0.4), 0 4px 10px rgba(234, 88, 12, 0.15) !important;
+    background: #fff7ed !important;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+  }
+
+  .teacher-matched-agenda-card {
+    border-left: 6px solid #ea580c !important;
+    box-shadow: 0 0 0 2px rgba(234, 88, 12, 0.35), 0 6px 16px rgba(234, 88, 12, 0.15) !important;
+    background: linear-gradient(135deg, #fffbf7 0%, #fff7ed 100%) !important;
   }
 </style>

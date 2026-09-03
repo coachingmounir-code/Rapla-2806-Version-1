@@ -1077,13 +1077,13 @@
 
   .checkbox-grid-3 {
     display: grid;
-    grid-template-cols: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 0.5rem;
   }
 
   .checkbox-grid-2 {
     display: grid;
-    grid-template-cols: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 0.5rem;
   }
 
