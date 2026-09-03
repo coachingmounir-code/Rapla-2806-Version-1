@@ -475,8 +475,8 @@
           const courseDate = getLocalDateForDay(weekCode, c.dayOfWeek);
           const isPranayama = c.name.toLowerCase().includes('pranayama') || c.style.toLowerCase().includes('pranayama');
           if (isPranayama && isDateInYlaRange(courseDate)) return false;
-          // Specifically on Tuesday 08.09.2026 (Sivananda Birthday Puja), remove Om Namo Narayanaya and Meditativer Spaziergang
-          if (courseDate === '2026-09-08' && (c.name.toLowerCase().includes('om namo') || c.name.toLowerCase().includes('narayanaya') || c.name.toLowerCase().includes('spaziergang'))) {
+          // Specifically on Tuesday 08.09.2026, Meditativer Spaziergang is removed
+          if (courseDate === '2026-09-08' && c.name.toLowerCase().includes('spaziergang')) {
             return false;
           }
           return true;

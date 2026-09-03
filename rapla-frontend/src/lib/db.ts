@@ -1283,6 +1283,18 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
+        "id": "course-2026-W37-44",
+        "name": "Om Namo Narayanaya",
+        "style": "Meditation",
+        "dayOfWeek": 2,
+        "startTime": "19:30",
+        "endTime": "20:00",
+        "roomId": "room-2",
+        "teacherId": "teacher-gen-christopher",
+        "isAiPlanned": false,
+        "status": "approved"
+      },
+      {
         "id": "course-2026-W37-puja-sivananda",
         "name": "Swami Sivanandas Geburtstag Puja",
         "style": "Puja",
@@ -1591,7 +1603,7 @@ export function reconcilePlansWithDefaults(plans: WeekPlan[]): { plans: WeekPlan
 
       if (plan.targetWeekCode === '2026-W37') {
         const preLen = plan.courses.length;
-        plan.courses = plan.courses.filter(c => !(c.dayOfWeek === 2 && (c.name.toLowerCase().includes('spaziergang') || c.name.toLowerCase().includes('om namo') || c.name.toLowerCase().includes('narayanaya'))));
+        plan.courses = plan.courses.filter(c => !(c.dayOfWeek === 2 && c.name.toLowerCase().includes('spaziergang')));
         if (plan.courses.length !== preLen) {
           hasChanges = true;
         }
@@ -1641,7 +1653,7 @@ export function reconcilePlansWithDefaults(plans: WeekPlan[]): { plans: WeekPlan
   return { plans: list, hasChanges };
 }
 
-const CURRENT_DB_VERSION = 108;
+const CURRENT_DB_VERSION = 109;
 
 // Database Actions
 export const db = {
@@ -2145,8 +2157,8 @@ export const db = {
           }
 
           if (isDateInYlaRange(courseDate) && !p.isManualOnly && !p.hasManualEdits) {
-            // Om Namo Narayanaya takes place in Devi room (room-1) during YLA (except Sunday start in Tripura)
-            if (c.dayOfWeek !== 0 && (nameLower.includes('om namo') || nameLower.includes('narayanaya')) && c.roomId !== 'room-1' && !c.isManuallyEdited) {
+            // Om Namo Narayanaya takes place in Devi room (room-1) during YLA (except Sunday start in Tripura, and except 08.09 in Radha-Krishna)
+            if (c.dayOfWeek !== 0 && !(p.targetWeekCode === '2026-W37' && c.dayOfWeek === 2) && (nameLower.includes('om namo') || nameLower.includes('narayanaya')) && c.roomId !== 'room-1' && !c.isManuallyEdited) {
               c.roomId = 'room-1';
               updated = true;
             }
@@ -2191,11 +2203,36 @@ export const db = {
         }
       }
 
-      // Migration: On Tuesday 08.09 (2026-W37), replace Tuesday Om Namo Narayanaya and Meditativer Spaziergang with Swami Sivanandas Geburtstag Puja
+      // Migration: On Tuesday 08.09 (2026-W37), remove Tuesday Meditativer Spaziergang, keep Om Namo Narayanaya in room-2 (19:30-20:00), and add Swami Sivanandas Geburtstag Puja (20:00-21:30)
       if (p.targetWeekCode === '2026-W37') {
         const preCoursesLen = p.courses.length;
-        p.courses = p.courses.filter(c => !(c.dayOfWeek === 2 && (c.name.toLowerCase().includes('spaziergang') || c.name.toLowerCase().includes('om namo') || c.name.toLowerCase().includes('narayanaya'))));
+        p.courses = p.courses.filter(c => !(c.dayOfWeek === 2 && c.name.toLowerCase().includes('spaziergang')));
         
+        // Ensure Om Namo Narayanaya is present on Tuesday in room-2
+        const onnCourse = p.courses.find(c => c.dayOfWeek === 2 && (c.name.toLowerCase().includes('om namo') || c.name.toLowerCase().includes('narayanaya')));
+        if (!onnCourse) {
+          p.courses.push({
+            id: 'course-2026-W37-44',
+            name: 'Om Namo Narayanaya',
+            style: 'Meditation',
+            dayOfWeek: 2,
+            startTime: '19:30',
+            endTime: '20:00',
+            roomId: 'room-2',
+            teacherId: 'teacher-gen-christopher',
+            isAiPlanned: false,
+            status: p.status === 'approved' ? 'approved' : 'draft'
+          });
+          updated = true;
+        } else {
+          if (onnCourse.roomId !== 'room-2' || onnCourse.startTime !== '19:30' || onnCourse.endTime !== '20:00') {
+            onnCourse.roomId = 'room-2';
+            onnCourse.startTime = '19:30';
+            onnCourse.endTime = '20:00';
+            updated = true;
+          }
+        }
+
         const hasSivanandaPuja = p.courses.some(c => c.id === 'course-2026-W37-puja-sivananda' || (c.dayOfWeek === 2 && c.name.toLowerCase().includes('sivananda') && c.startTime === '20:00'));
         if (!hasSivanandaPuja) {
           p.courses.push({
@@ -2210,12 +2247,15 @@ export const db = {
             isAiPlanned: false,
             status: p.status === 'approved' ? 'approved' : 'draft'
           });
-          p.courses.sort((a, b) => {
-            if (a.dayOfWeek !== b.dayOfWeek) return a.dayOfWeek - b.dayOfWeek;
-            return a.startTime.localeCompare(b.startTime);
-          });
           updated = true;
-        } else if (p.courses.length !== preCoursesLen) {
+        }
+
+        p.courses.sort((a, b) => {
+          if (a.dayOfWeek !== b.dayOfWeek) return a.dayOfWeek - b.dayOfWeek;
+          return a.startTime.localeCompare(b.startTime);
+        });
+
+        if (p.courses.length !== preCoursesLen) {
           updated = true;
         }
       } else {
