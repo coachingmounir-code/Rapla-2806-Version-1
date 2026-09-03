@@ -26,12 +26,14 @@
     readOnly = false, 
     allowedWeeks = null,
     highlightTeacherName = '',
+    hideSelfStudy = false,
     onWeekChange 
   }: { 
     initialWeek?: number; 
     readOnly?: boolean; 
     allowedWeeks?: number[] | null;
     highlightTeacherName?: string;
+    hideSelfStudy?: boolean;
     onWeekChange?: (week: number) => void 
   } = $props();
 
@@ -158,9 +160,27 @@
     getYlaWeek(selectedWeekNumber) || allWeeks[0] || rawAllWeeks[0]
   );
 
-  // Merge live assignments into current week
+  // Merge live assignments into current week and optionally filter self-study slots
   let currentWeek = $derived.by(() => {
     const w = JSON.parse(JSON.stringify(currentWeekRaw)) as YlaWeek;
+    if (hideSelfStudy) {
+      w.slots = w.slots.filter(s => {
+        const typeLower = (s.type || '').toLowerCase();
+        const timeLower = (s.time || '').toLowerCase();
+        const labelLower = (s.label || '').toLowerCase();
+        const isSelfStudy = 
+          typeLower === 'mantras' ||
+          typeLower === 'reading_basic' ||
+          typeLower === 'reading_advanced' ||
+          timeLower.includes('selbststudium') ||
+          labelLower.includes('selbststudium') ||
+          labelLower.startsWith('lesen:') ||
+          labelLower.startsWith('mantras zu lernen') ||
+          labelLower.toLowerCase().includes('lesen: grundwissen') ||
+          labelLower.toLowerCase().includes('lesen: aufbauwissen');
+        return !isSelfStudy;
+      });
+    }
     for (const slot of w.slots) {
       for (const day of w.days) {
         const key = `${w.weekNumber}_${day.col}_${slot.rowNumber}`;
@@ -606,14 +626,16 @@
             
             <!-- Left Label Column (Sticky) -->
             <td class="yla-cell yla-slot-label-cell {getSlotStyleClass(slot.type)} sticky-time-col">
+              {#if slot.time}
+                <div class="slot-time-badge-pill">
+                  <span>⏰ {slot.time}</span>
+                </div>
+              {/if}
               <div class="slot-badge-tag">
                 <span>{getSlotCategoryIcon(slot.type)}</span>
                 <span>{slot.badge}</span>
               </div>
-              <div class="slot-main-label">{slot.label}</div>
-              {#if slot.time}
-                <div class="slot-time-sub">⏰ {slot.time}</div>
-              {/if}
+              <div class="slot-main-label">{slot.label.replace(/^(\d{2}:\d{2}\s*–?\s*\d{2}:\d{2}\s*Uhr:\s*)/i, '').replace(/^(\d{2}:\d{2}\s*Uhr:\s*)/i, '')}</div>
             </td>
 
             <!-- Day Columns for this slot -->
@@ -659,16 +681,20 @@
                         {getYlaCleanShortTitle(entry, cellInfo.rootSlot.label)}
                       </div>
 
-                      <!-- ASSIGNED PERSON BADGE -->
+                      <!-- ASSIGNED PERSON BADGE(S) -->
                       {#if assignedTeacher}
-                        {@const meta = getYlaTeacherMeta(assignedTeacher)}
-                        <div 
-                          class="assigned-person-badge" 
-                          style="color: {meta.color}; background: {meta.badgeBg}; border: 1.5px solid {meta.color}40;"
-                          title="Eingeteilt: {meta.name || assignedTeacher}{isAdmin ? ' (Klicken zum Bearbeiten)' : ''}"
-                        >
-                          <span class="person-avatar">{meta.avatar}</span>
-                          <span class="person-name">{meta.name || assignedTeacher}</span>
+                        <div class="assigned-persons-row">
+                          {#each assignedTeacher.split(/[,+]/).map(s => s.trim()).filter(Boolean) as singleTeacher}
+                            {@const meta = getYlaTeacherMeta(singleTeacher)}
+                            <div 
+                              class="assigned-person-badge" 
+                              style="color: {meta.color}; background: {meta.badgeBg}; border: 1.5px solid {meta.color}50;"
+                              title="Eingeteilt: {meta.name || singleTeacher}{isAdmin ? ' (Klicken zum Bearbeiten)' : ''}"
+                            >
+                              <span class="person-avatar">{meta.avatar}</span>
+                              <span class="person-name">{meta.name || singleTeacher}</span>
+                            </div>
+                          {/each}
                         </div>
                       {:else if isAdmin}
                         <div class="admin-unassigned-pill" title="Klicken zum Zuweisen einer Lehrkraft">
@@ -808,10 +834,14 @@
                 <div class="agenda-card-footer">
                   <div class="teacher-badge-container">
                     {#if assignedTeacher}
-                      {@const meta = getYlaTeacherMeta(assignedTeacher)}
-                      <div class="agenda-assigned-teacher-badge" style="color: {meta.color}; background: {meta.badgeBg}; border: 1.5px solid {meta.color}50;">
-                        <span class="t-avatar">{meta.avatar}</span>
-                        <span class="t-name">Leitung: <strong>{meta.name || assignedTeacher}</strong></span>
+                      <div class="agenda-assigned-teachers-row">
+                        {#each assignedTeacher.split(/[,+]/).map(s => s.trim()).filter(Boolean) as singleTeacher}
+                          {@const meta = getYlaTeacherMeta(singleTeacher)}
+                          <div class="agenda-assigned-teacher-badge" style="color: {meta.color}; background: {meta.badgeBg}; border: 1.5px solid {meta.color}50;">
+                            <span class="t-avatar">{meta.avatar}</span>
+                            <span class="t-name">Leitung: <strong>{meta.name || singleTeacher}</strong></span>
+                          </div>
+                        {/each}
                       </div>
                     {:else if isAdmin}
                       <div class="agenda-admin-assign-btn">
@@ -1763,41 +1793,58 @@
 
   /* Slot Label Column */
   .yla-slot-label-cell {
-    width: 155px;
-    min-width: 155px;
-    max-width: 170px;
-    background: #fffdf8;
-    border-right: 2px solid #ffe082;
-    padding: 0.45rem 0.5rem;
+    width: 170px;
+    min-width: 170px;
+    max-width: 185px;
+    background: #ffffff;
+    border-right: 2px solid #fed7aa;
+    padding: 0.6rem 0.65rem;
   }
 
   .fs-grid-table .yla-slot-label-cell {
-    width: 140px !important;
-    min-width: 140px !important;
-    max-width: 140px !important;
+    width: 155px !important;
+    min-width: 155px !important;
+    max-width: 155px !important;
     flex-shrink: 0 !important;
-    padding: 0.2rem 0.4rem !important;
+    padding: 0.35rem 0.5rem !important;
+  }
+
+  .slot-time-badge-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.76rem;
+    font-weight: 800;
+    color: #1e293b;
+    background: #fff7ed;
+    border: 1.5px solid #fdba74;
+    padding: 0.15rem 0.5rem;
+    border-radius: 6px;
+    margin-bottom: 0.3rem;
+    box-shadow: 0 1px 2px rgba(234, 88, 12, 0.08);
+    letter-spacing: 0.02em;
   }
 
   .slot-badge-tag {
     display: inline-flex;
     align-items: center;
     gap: 0.25rem;
-    font-size: 0.65rem;
-    font-weight: 700;
+    font-size: 0.68rem;
+    font-weight: 750;
     text-transform: uppercase;
-    letter-spacing: 0.2px;
-    color: #960040;
+    letter-spacing: 0.3px;
+    color: #9a3412;
+    margin-bottom: 0.2rem;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
   }
 
   .slot-main-label {
-    font-size: 0.76rem;
+    font-size: 0.82rem;
     font-weight: 700;
-    color: #2a1b1b;
-    line-height: 1.25;
+    color: #1e293b;
+    line-height: 1.3;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     line-clamp: 2;
@@ -1806,30 +1853,26 @@
   }
 
   .fs-grid-table .slot-main-label {
-    font-size: 0.7rem;
-    -webkit-line-clamp: 1;
-    line-clamp: 1;
-  }
-
-  .slot-time-sub {
-    font-size: 0.68rem;
-    font-weight: 600;
-    color: #8c7070;
-    margin-top: 0.1rem;
+    font-size: 0.74rem;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
   }
 
   /* Slot Content Cell (Clean, Concise & Clickable) */
   .yla-slot-content-cell {
-    font-size: 0.8rem;
-    color: #2a1b1b;
-    line-height: 1.25;
+    font-size: 0.86rem;
+    color: #1e293b;
+    line-height: 1.35;
     position: relative;
+    padding: 0.55rem 0.65rem !important;
+    min-height: 68px;
     transition: all 0.15s ease-in-out;
   }
 
   .fs-grid-table .yla-slot-content-cell {
     flex: 1 !important;
     min-width: 0 !important;
+    padding: 0.35rem 0.45rem !important;
   }
 
   .yla-slot-content-cell.is-clickable {
@@ -1837,12 +1880,12 @@
   }
 
   .yla-slot-content-cell.is-clickable:hover {
-    background-color: #fff2cc !important;
-    box-shadow: inset 0 0 0 2px #960040;
+    background-color: #fff7ed !important;
+    box-shadow: inset 0 0 0 2px #ea580c;
   }
 
   .yla-slot-content-cell.has-assigned-teacher {
-    border-left: 3px solid #960040;
+    border-left-width: 4px;
   }
 
   .yla-slot-content-cell.is-empty {
@@ -1852,15 +1895,15 @@
   }
 
   .empty-slot-placeholder {
-    color: #d6ccbe;
-    font-size: 0.8rem;
+    color: #cbd5e1;
+    font-size: 0.85rem;
   }
 
   /* Compact Slot Box */
   .compact-slot-box {
     display: flex;
     flex-direction: column;
-    gap: 0.2rem;
+    gap: 0.35rem;
     height: 100%;
     justify-content: center;
     overflow: hidden;
@@ -1869,88 +1912,101 @@
   .slot-box-time-row {
     display: flex;
     align-items: center;
-    gap: 0.25rem;
+    gap: 0.3rem;
     flex-wrap: wrap;
   }
 
   .compact-slot-time-pill {
-    font-size: 0.65rem;
-    font-weight: 700;
-    color: #960040;
-    background: #fff5cc;
-    border: 1px solid #ffe082;
-    padding: 0.05rem 0.35rem;
-    border-radius: 4px;
+    font-size: 0.68rem;
+    font-weight: 750;
+    color: #9a3412;
+    background: #fff7ed;
+    border: 1px solid #fed7aa;
+    padding: 0.08rem 0.4rem;
+    border-radius: 5px;
     line-height: 1.2;
     white-space: nowrap;
   }
 
   .spanned-duration-pill {
-    font-size: 0.62rem;
-    font-weight: 700;
+    font-size: 0.65rem;
+    font-weight: 750;
     color: #0369a1;
     background: #e0f2fe;
     border: 1px solid #bae6fd;
-    padding: 0.05rem 0.3rem;
-    border-radius: 4px;
+    padding: 0.08rem 0.35rem;
+    border-radius: 5px;
     white-space: nowrap;
   }
 
   .compact-slot-title {
-    font-size: 0.8rem;
-    font-weight: 700;
-    color: #2a1b1b;
-    line-height: 1.25;
+    font-size: 0.88rem;
+    font-weight: 750;
+    color: #0f172a;
+    line-height: 1.3;
     display: -webkit-box;
-    -webkit-line-clamp: 2;
-    line-clamp: 2;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
     word-break: break-word;
   }
 
   .spanned-title {
-    line-height: 1.3;
-    -webkit-line-clamp: 4;
-    line-clamp: 4;
+    line-height: 1.35;
+    -webkit-line-clamp: 5;
+    line-clamp: 5;
   }
 
   .fs-grid-table .compact-slot-title {
-    font-size: 0.74rem;
+    font-size: 0.78rem;
     -webkit-line-clamp: 2;
     line-clamp: 2;
   }
 
   .fs-grid-table .spanned-title {
-    font-size: 0.78rem;
+    font-size: 0.82rem;
     -webkit-line-clamp: 3;
     line-clamp: 3;
+  }
+
+  .assigned-persons-row {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    flex-wrap: wrap;
+    margin-top: 0.1rem;
   }
 
   .assigned-person-badge {
     display: inline-flex;
     align-items: center;
-    gap: 0.25rem;
-    padding: 0.12rem 0.45rem;
-    border-radius: 12px;
-    font-size: 0.72rem;
-    font-weight: 700;
+    gap: 0.3rem;
+    padding: 0.18rem 0.55rem;
+    border-radius: 999px;
+    font-size: 0.76rem;
+    font-weight: 750;
     width: fit-content;
     max-width: 100%;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
-    line-height: 1.2;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+    line-height: 1.25;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    transition: transform 0.15s ease;
+  }
+
+  .assigned-person-badge:hover {
+    transform: scale(1.02);
   }
 
   .fs-grid-table .assigned-person-badge {
-    font-size: 0.68rem;
-    padding: 0.08rem 0.35rem;
+    font-size: 0.7rem;
+    padding: 0.1rem 0.4rem;
   }
 
   .person-avatar {
-    font-size: 0.75rem;
+    font-size: 0.8rem;
   }
 
   .person-name {
@@ -1959,26 +2015,33 @@
     white-space: nowrap;
   }
 
+  .agenda-assigned-teachers-row {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    flex-wrap: wrap;
+  }
+
   .admin-unassigned-pill {
     display: inline-flex;
     align-items: center;
-    gap: 0.2rem;
-    font-size: 0.68rem;
+    gap: 0.25rem;
+    font-size: 0.72rem;
     font-weight: 600;
-    color: #8c7070;
-    background: #fff9e6;
-    border: 1px dashed #e0c885;
-    border-radius: 10px;
-    padding: 0.08rem 0.35rem;
+    color: #64748b;
+    background: #f8fafc;
+    border: 1px dashed #cbd5e1;
+    border-radius: 999px;
+    padding: 0.12rem 0.45rem;
     width: fit-content;
     line-height: 1.2;
     transition: all 0.2s;
   }
 
   .admin-unassigned-pill:hover {
-    background: #fff0b3;
-    border-color: #960040;
-    color: #960040;
+    background: #fff7ed;
+    border-color: #ea580c;
+    color: #ea580c;
   }
 
   .plus-icon {
@@ -1986,18 +2049,18 @@
   }
 
   /* Category Themes & Colors */
-  .slot-morning-lecture { background: #fffef5; }
-  .slot-morning-practice { background: #fffaf5; }
-  .slot-gita { background: #f8fbff; }
-  .slot-afternoon-lecture { background: #fcf8f2; }
+  .slot-morning-lecture { background: #fffdf5; }
+  .slot-morning-practice { background: #fff8f1; }
+  .slot-gita { background: #fff1f2; }
+  .slot-afternoon-lecture { background: #f0fdf4; }
   .slot-mantra { background: #faf5ff; }
   .slot-reading-basic { background: #f6faff; }
   .slot-reading-advanced { background: #fff9f5; }
-  .slot-teaching { background: #fff5f0; }
+  .slot-teaching { background: #faf5ff; }
   .slot-review { background: #fffdf5; }
-  .slot-evening-lecture { background: #fcfaf5; }
-  .slot-satsang { background: #fffbe8; }
-  .slot-ceremony { background: #fff5eb; }
+  .slot-evening-lecture { background: #eff6ff; }
+  .slot-satsang { background: #fefce8; }
+  .slot-ceremony { background: #fdf2f8; }
   .slot-exam { background: #fff2f2; }
   .slot-default { background: #fffdf8; }
 

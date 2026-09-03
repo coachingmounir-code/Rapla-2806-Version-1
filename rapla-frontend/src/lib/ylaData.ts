@@ -687,14 +687,24 @@ export function getYlaCleanShortTitle(entry?: YlaDayEntry | null, slotLabel?: st
     if (st === '11-12') return 'Mittagessen (11:00–12:30)';
     if (st === 'Korr') return 'Bewegungslehre: Flexion, Extension & Asanas';
     if (st.toLowerCase().startsWith('8.30 bis ca. 11.00h')) return 'Abschlussfeier & Diplomverleihung';
+    if (st.toLowerCase() === 'bunter abend') return 'Bunter Abend';
+    if (st.startsWith('Richtige Ernährung, Vegetarismus')) return 'Ernährung, Vegetarismus & Fasten';
+    if (st === 'Yoga für d') return 'Yoga für den Rücken (Teil 1)';
+    if (st.startsWith('Grundstunde, besonders exakt')) return 'Grundstunde (Asanas exakt)';
+    if (st === 'Variationen') return 'Variationen & Umkehrstellungen';
+    if (st === 'Denken') return 'Denken & Mentalkraft';
+    if (st === 'Mantras für die Meditation') return 'Mantras für die Meditation (Teil 1)';
+    if (st === 'Mantras Teil 2') return 'Mantras Teil 2 (Tratak)';
+    if (st === 'Mantra-Einweihung (Freiwillig)') return 'Mantra-Einweihung (Freiwillig)';
+    if (st === 'Begrüßung neuer Seminarteilnehmer') return 'Begrüßung & Chakra-Methode';
     return st;
   }
   if (entry.text && entry.text.trim().length > 0) {
     const clean = entry.text.split(/[\n\r\.;]/)[0].trim();
-    if (clean.length <= 40) return clean;
+    if (clean.length <= 45) return clean;
     const words = clean.split(/\s+/);
-    if (words.length <= 6) return clean;
-    return words.slice(0, 5).join(' ') + '…';
+    if (words.length <= 7) return clean;
+    return words.slice(0, 6).join(' ') + '…';
   }
   return slotLabel || '—';
 }

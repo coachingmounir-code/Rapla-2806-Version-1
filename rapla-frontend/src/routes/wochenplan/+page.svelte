@@ -723,6 +723,7 @@
         initialWeek={2} 
         allowedWeeks={[2]} 
         readOnly={true} 
+        hideSelfStudy={true}
         highlightTeacherName={selectedTeacher?.name || ''} 
       />
     </div>
