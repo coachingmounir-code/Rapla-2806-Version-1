@@ -1302,7 +1302,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "20:00",
         "endTime": "21:30",
         "roomId": "room-2",
-        "teacherId": null,
+        "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
         "status": "approved"
       },
@@ -1653,7 +1653,7 @@ export function reconcilePlansWithDefaults(plans: WeekPlan[]): { plans: WeekPlan
   return { plans: list, hasChanges };
 }
 
-const CURRENT_DB_VERSION = 109;
+const CURRENT_DB_VERSION = 110;
 
 // Database Actions
 export const db = {
@@ -2233,8 +2233,8 @@ export const db = {
           }
         }
 
-        const hasSivanandaPuja = p.courses.some(c => c.id === 'course-2026-W37-puja-sivananda' || (c.dayOfWeek === 2 && c.name.toLowerCase().includes('sivananda') && c.startTime === '20:00'));
-        if (!hasSivanandaPuja) {
+        const pujaCourse = p.courses.find(c => c.id === 'course-2026-W37-puja-sivananda' || (c.dayOfWeek === 2 && (c.name.toLowerCase().includes('sivananda') || c.name.toLowerCase().includes('shivananda')) && c.startTime === '20:00'));
+        if (!pujaCourse) {
           p.courses.push({
             id: 'course-2026-W37-puja-sivananda',
             name: 'Swami Sivanandas Geburtstag Puja',
@@ -2243,11 +2243,21 @@ export const db = {
             startTime: '20:00',
             endTime: '21:30',
             roomId: 'room-2',
-            teacherId: null,
+            teacherId: 'teacher-gen-karuna-wapke',
             isAiPlanned: false,
             status: p.status === 'approved' ? 'approved' : 'draft'
           });
           updated = true;
+        } else {
+          if (pujaCourse.teacherId !== 'teacher-gen-karuna-wapke' || pujaCourse.roomId !== 'room-2' || pujaCourse.startTime !== '20:00' || pujaCourse.endTime !== '21:30') {
+            pujaCourse.teacherId = 'teacher-gen-karuna-wapke';
+            pujaCourse.roomId = 'room-2';
+            pujaCourse.startTime = '20:00';
+            pujaCourse.endTime = '21:30';
+            pujaCourse.name = 'Swami Sivanandas Geburtstag Puja';
+            pujaCourse.style = 'Puja';
+            updated = true;
+          }
         }
 
         p.courses.sort((a, b) => {

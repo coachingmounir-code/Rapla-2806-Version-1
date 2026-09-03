@@ -881,7 +881,14 @@
                       </div>
                       <div class="puja-card-body">
                         <div class="puja-img-wrapper">
-                          <img src={sivanandaImg} alt="Swami Sivananda" class="puja-sivananda-portrait" />
+                          <img 
+                            src={sivanandaImg || '/sivananda.png'} 
+                            alt="Swami Sivananda" 
+                            class="puja-sivananda-portrait" 
+                            loading="eager"
+                            decoding="async"
+                            onerror={(e) => { (e.currentTarget as HTMLImageElement).src = '/sivananda.png'; }}
+                          />
                           <span class="puja-om-sparkle">🕉️</span>
                         </div>
                         <div class="puja-card-info">
@@ -892,7 +899,7 @@
                             📍 {roomName} • 90 Min.
                           </div>
                           <div class="puja-teacher-line">
-                            👤 {teacherName === 'Unbesetzt' ? 'Alle Sevakas & Gäste' : teacherName}
+                            👤 {teacherName === 'Unbesetzt' ? 'Karuna' : teacherName}
                           </div>
                         </div>
                       </div>
@@ -1047,13 +1054,20 @@
                 </div>
                 <div class="puja-mobile-body">
                   <div class="puja-img-wrapper mobile">
-                    <img src={sivanandaImg} alt="Swami Sivananda" class="puja-sivananda-portrait mobile" />
+                    <img 
+                      src={sivanandaImg || '/sivananda.png'} 
+                      alt="Swami Sivananda" 
+                      class="puja-sivananda-portrait mobile" 
+                      loading="eager"
+                      decoding="async"
+                      onerror={(e) => { (e.currentTarget as HTMLImageElement).src = '/sivananda.png'; }}
+                    />
                     <span class="puja-om-sparkle">🕉️</span>
                   </div>
                   <div class="puja-mobile-info">
                     <h3 class="puja-mobile-title">{course.name}</h3>
                     <div class="puja-mobile-sub">📍 {roomName} • 90 Min. Fest-Puja & Kirtan</div>
-                    <div class="puja-mobile-teacher">👤 {teacherName === 'Unbesetzt' ? 'Gemeinsame Feier • Alle willkommen' : teacherName}</div>
+                    <div class="puja-mobile-teacher">👤 {teacherName === 'Unbesetzt' ? 'Karuna' : teacherName}</div>
                   </div>
                 </div>
                 <div class="puja-ornament-footer mobile">
@@ -2195,6 +2209,7 @@
 
   /* Swami Sivananda Birthday Puja Card - Special Hindu Aesthetic */
   .sivananda-puja-card {
+    background: #fffbeb !important;
     background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 45%, #fed7aa 100%) !important;
     border: 1.5px solid #f59e0b !important;
     border-left: 6px solid #d97706 !important;
@@ -2203,18 +2218,8 @@
     padding: 7px 9px !important;
     position: relative;
     overflow: hidden;
-  }
-
-  .sivananda-puja-card::before {
-    content: '';
-    position: absolute;
-    top: -20px;
-    right: -20px;
-    width: 60px;
-    height: 60px;
-    background: radial-gradient(circle, rgba(245, 158, 11, 0.2) 0%, transparent 70%);
-    pointer-events: none;
-    border-radius: 50%;
+    box-sizing: border-box !important;
+    width: 100% !important;
   }
 
   .sivananda-puja-card:hover {
@@ -2238,6 +2243,7 @@
   }
 
   .puja-festive-badge {
+    background: #fef3c7;
     background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
     color: #92400e;
     font-size: 0.62rem;
@@ -2259,21 +2265,51 @@
 
   .puja-img-wrapper {
     position: relative;
+    width: 46px;
+    height: 46px;
+    min-width: 46px;
+    min-height: 46px;
+    max-width: 46px;
+    max-height: 46px;
     flex-shrink: 0;
-    display: inline-flex;
+    display: flex;
     align-items: center;
     justify-content: center;
   }
 
+  .puja-img-wrapper.mobile {
+    width: 52px;
+    height: 52px;
+    min-width: 52px;
+    min-height: 52px;
+    max-width: 52px;
+    max-height: 52px;
+  }
+
   .puja-sivananda-portrait {
-    width: 48px;
-    height: 48px;
+    width: 46px;
+    height: 46px;
+    min-width: 46px;
+    min-height: 46px;
+    max-width: 46px;
+    max-height: 46px;
     border-radius: 50%;
     object-fit: cover;
+    display: block;
     border: 2px solid #d97706;
     box-shadow: 0 0 8px rgba(245, 158, 11, 0.4), 0 2px 5px rgba(180, 83, 9, 0.3);
-    background: #ffffff;
+    background-color: #ffffff;
+    flex-shrink: 0;
     transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+
+  .puja-sivananda-portrait.mobile {
+    width: 52px;
+    height: 52px;
+    min-width: 52px;
+    min-height: 52px;
+    max-width: 52px;
+    max-height: 52px;
   }
 
   .sivananda-puja-card:hover .puja-sivananda-portrait {
@@ -2283,8 +2319,8 @@
 
   .puja-om-sparkle {
     position: absolute;
-    bottom: -3px;
-    right: -4px;
+    bottom: -2px;
+    right: -3px;
     font-size: 0.8rem;
     line-height: 1;
     background: #fffbeb;
@@ -2292,6 +2328,7 @@
     border-radius: 50%;
     padding: 1px;
     box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    z-index: 2;
   }
 
   .puja-card-info {
@@ -2300,6 +2337,7 @@
     display: flex;
     flex-direction: column;
     gap: 1.5px;
+    overflow: hidden;
   }
 
   .puja-title {
@@ -2307,13 +2345,14 @@
     font-weight: 800;
     color: #78350f;
     line-height: 1.25;
+    margin: 0;
+    word-break: break-word;
   }
 
   .puja-title-text {
-    background: linear-gradient(90deg, #78350f 0%, #9a3412 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: #78350f;
+    font-weight: 800;
+    display: inline-block;
   }
 
   .puja-room-label {
@@ -2324,7 +2363,7 @@
 
   .puja-teacher-line {
     font-size: 0.68rem;
-    font-weight: 600;
+    font-weight: 700;
     color: #92400e;
     white-space: nowrap;
     overflow: hidden;
@@ -2342,6 +2381,7 @@
 
   /* Mobile Puja Card Styles */
   .sivananda-puja-mobile-card {
+    background: #fffbeb !important;
     background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 45%, #fed7aa 100%) !important;
     border: 1.5px solid #f59e0b !important;
     border-left: 6px solid #d97706 !important;
@@ -2365,6 +2405,7 @@
   }
 
   .puja-mobile-badge {
+    background: #fef3c7;
     background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
     color: #92400e;
     font-size: 0.68rem;
@@ -2378,11 +2419,6 @@
     display: flex;
     align-items: center;
     gap: 0.75rem;
-  }
-
-  .puja-sivananda-portrait.mobile {
-    width: 54px;
-    height: 54px;
   }
 
   .puja-mobile-info {
@@ -2408,7 +2444,7 @@
   .puja-mobile-teacher {
     font-size: 0.75rem;
     color: #92400e;
-    font-weight: 600;
+    font-weight: 700;
   }
 
   .puja-ornament-footer.mobile {
