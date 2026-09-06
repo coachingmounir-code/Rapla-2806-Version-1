@@ -821,4 +821,5 @@ exports.EXCEL_ABSENCES = [
     { excelName: "Harishakti", startDate: "2026-12-16", endDate: "2026-12-16", type: "Frei", status: "Genehmigt", note: "Regulärer freier Wochentag" },
     { excelName: "Harishakti", startDate: "2026-12-23", endDate: "2026-12-23", type: "Frei", status: "Genehmigt", note: "Regulärer freier Wochentag" },
     { excelName: "Harishakti", startDate: "2026-12-30", endDate: "2026-12-30", type: "Frei", status: "Genehmigt", note: "Regulärer freier Wochentag" },
+    { excelName: "Christopher", startDate: "2026-10-31", endDate: "2026-11-01", type: "Urlaub", status: "Genehmigt", note: "Sevafrei" }
 ];

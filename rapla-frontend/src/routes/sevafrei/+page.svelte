@@ -78,7 +78,8 @@
     { spiritualName: "Narayani", firstName: "Katja", lastName: "Kedenburg", team: "ZV", seminarSoll: 18, seminarIst: 16, sevafreiSoll: 24, sevafreiIst: 17 },
     { spiritualName: "Linda", firstName: "Linda", lastName: "Silberbauer", team: "Jaya", seminarSoll: 12, seminarIst: 0, sevafreiSoll: 22, sevafreiIst: 14 },
     { spiritualName: "Mounir", firstName: "Mounir", lastName: "Jaber", team: "SPL", seminarSoll: 12, seminarIst: 0, sevafreiSoll: 22, sevafreiIst: 8 },
-    { spiritualName: "Harishakti", firstName: "Ramona", lastName: "Gäpler", team: "Rezeption", seminarSoll: 0, seminarIst: 0, sevafreiSoll: 17, sevafreiIst: 6 }
+    { spiritualName: "Harishakti", firstName: "Ramona", lastName: "Gäpler", team: "Rezeption", seminarSoll: 0, seminarIst: 0, sevafreiSoll: 17, sevafreiIst: 6 },
+    { spiritualName: "Christopher", firstName: "Christopher", lastName: "", team: "Core Team", seminarSoll: 0, seminarIst: 0, sevafreiSoll: 24, sevafreiIst: 2 }
   ];
 
   let filteredSevakas = $derived(
@@ -332,6 +333,7 @@
       if (cleanExcel.includes("linda") && dbName.includes("linda")) return true;
       if (cleanExcel.includes("mounir") && dbName.includes("mounir")) return true;
       if (cleanExcel.includes("harishakti") && dbName.includes("harishakti")) return true;
+      if (cleanExcel.includes("christopher") && dbName.includes("christopher")) return true;
       
       const firstName = dbName.split(' ')[0];
       return cleanExcel.includes(firstName) && firstName.length > 2;

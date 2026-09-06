@@ -2,6 +2,7 @@
   import { onMount, untrack } from 'svelte';
   import { db, type Course, type Teacher, type Room, type WeekPlan } from '$lib/db';
   import { getLocalDateForDay } from '$lib/planningEngine';
+  import { EXCEL_ABSENCES } from '$lib/excel_absences';
   import { 
     isDateInYlaRange, 
     getYlaSlotsForTeacherAndWeek, 
@@ -468,7 +469,7 @@
     
     if (approved && currentPlan) {
       // Dynamically filter out absent teachers & remove Pranayama during YLA
-      const sevafreiList = db.getSevafrei();
+      const sevafreiList = [...db.getSevafrei(), ...EXCEL_ABSENCES];
       
       courses = currentPlan.courses
         .filter(c => {
@@ -499,7 +500,9 @@
         let isAbsent = false;
         for (const name of namesToCheck) {
           const activeAbsence = sevafreiList.find((entry: any) => {
-            const entryName = entry.teacherName.toLowerCase().trim();
+            if (!entry) return false;
+            const rawName = entry.teacherName || entry.excelName || '';
+            const entryName = rawName.toLowerCase().trim();
             const isMatch = entryName.includes(name) || name.includes(entryName.split(' ')[0]);
             return isMatch && courseDate >= entry.startDate && courseDate <= entry.endDate;
           });
@@ -521,7 +524,7 @@
           }
         }
         
-        if (isAbsent && c.isAiPlanned) {
+        if (isAbsent && (c.isAiPlanned || !c.isManuallyEdited)) {
           return { ...c, teacherId: null };
         }
         return c;

@@ -1,4 +1,5 @@
 import { db, type Teacher, type Course, type Room, type TimeSlot } from './db';
+import { EXCEL_ABSENCES } from './excel_absences';
 import wochenplanRules from './data/wochenplan_rules.json' with { type: 'json' };
 import { getYlaConflictForTeacher, isDateInYlaRange } from './ylaData';
 
@@ -70,6 +71,22 @@ export function getAbsenceDetails(teacherName: string, dayOfWeek: number, target
   if (!targetWeekCode) return null;
   const courseDate = getLocalDateForDay(targetWeekCode, dayOfWeek);
   
+  const checkList = absences || (typeof window !== 'undefined' ? db.getSevafrei() : []);
+  const allAbsencesToCheck = [...(checkList || []), ...EXCEL_ABSENCES];
+  if (allAbsencesToCheck.length > 0) {
+    const entry = allAbsencesToCheck.find((entry: any) => {
+      if (!entry) return false;
+      const rawName = entry.teacherName || entry.excelName || '';
+      const entryName = rawName.toLowerCase().trim();
+      const tNameLower = teacherName.toLowerCase().trim();
+      const isMatch = (entry.teacherId && entry.teacherId.toLowerCase() === tNameLower) ||
+                      entryName.includes(tNameLower) || 
+                      tNameLower.includes(entryName.split(' ')[0]);
+      return isMatch && courseDate >= entry.startDate && courseDate <= entry.endDate;
+    });
+    if (entry) return entry;
+  }
+
   // Abha is completely unavailable during the 4 weeks of Yogalehrerausbildung (YLA: 30.08.2026 - 27.09.2026)
   if (teacherName.toLowerCase().includes('abha') && isDateInYlaRange(courseDate)) {
     return {
@@ -81,16 +98,6 @@ export function getAbsenceDetails(teacherName: string, dayOfWeek: number, target
     };
   }
   
-  const checkList = absences || (typeof window !== 'undefined' ? db.getSevafrei() : []);
-  if (checkList && checkList.length > 0) {
-    const entry = checkList.find((entry: any) => {
-      if (!entry) return false;
-      const entryName = entry.teacherName.toLowerCase().trim();
-      const isMatch = entryName.includes(teacherName) || teacherName.includes(entryName.split(' ')[0]);
-      return isMatch && courseDate >= entry.startDate && courseDate <= entry.endDate;
-    });
-    if (entry) return entry;
-  }
   return null;
 }
 

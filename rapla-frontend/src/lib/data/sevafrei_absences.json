@@ -1,1 +1,35 @@
-[]
+[
+  {
+    "id": "sf-ulrich-2026-09-18-2026-09-25",
+    "teacherId": "teacher-gen-ulrich-nebel",
+    "teacherName": "Ulrich",
+    "avatarColor": "from-cyan-400 to-blue-500",
+    "startDate": "2026-09-18",
+    "endDate": "2026-09-25",
+    "type": "Urlaub",
+    "status": "Genehmigt",
+    "note": "Sevafrei"
+  },
+  {
+    "id": "sf-abha-2026-09-20-2026-09-21",
+    "teacherId": "teacher-gen-abha-morkoetter",
+    "teacherName": "Abha",
+    "avatarColor": "from-pink-500 to-rose-500",
+    "startDate": "2026-09-20",
+    "endDate": "2026-09-21",
+    "type": "Urlaub",
+    "status": "Genehmigt",
+    "note": "Sevafrei"
+  },
+  {
+    "id": "sf-christopher-2026-10-31-2026-11-01",
+    "teacherId": "teacher-gen-christopher",
+    "teacherName": "Christopher",
+    "avatarColor": "from-amber-400 to-orange-500",
+    "startDate": "2026-10-31",
+    "endDate": "2026-11-01",
+    "type": "Urlaub",
+    "status": "Genehmigt",
+    "note": "Sevafrei"
+  }
+]

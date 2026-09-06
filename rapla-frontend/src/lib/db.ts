@@ -2,6 +2,7 @@
 import { supabase } from './supabaseClient';
 import wochenplanRules from './data/wochenplan_rules.json' with { type: 'json' };
 import { isDateInYlaRange } from './ylaData';
+import { EXCEL_ABSENCES } from './excel_absences';
 
 // Convert ISO week code (e.g. "2026-W28") to actual date string (YYYY-MM-DD) for a specific day of the week (Friday-Thursday cycle)
 export function getLocalDateForDay(weekCode: string, dayOfWeek: number): string {
@@ -98,6 +99,25 @@ export function isTeacherInHouseOnDate(teacher: Teacher, dateStr: string): boole
   if (teacher.stayStartDate && dateStr < teacher.stayStartDate) return false;
   if (teacher.stayEndDate && dateStr > teacher.stayEndDate) return false;
   return true;
+}
+
+export function isTeacherAbsentOnDate(teacherIdOrName: string, dateStr: string): boolean {
+  if (!teacherIdOrName || !dateStr) return false;
+  const idOrNameLower = teacherIdOrName.toLowerCase().trim();
+  
+  if ((idOrNameLower.includes('abha') || idOrNameLower === 'teacher-gen-abha-morkoetter') && isDateInYlaRange(dateStr)) {
+    return true;
+  }
+
+  const allAbsences = [...(typeof window !== 'undefined' ? db.getSevafrei() : []), ...EXCEL_ABSENCES];
+  return allAbsences.some((entry: any) => {
+    if (!entry) return false;
+    const rawName = entry.teacherName || entry.excelName || '';
+    const entryName = rawName.toLowerCase().trim();
+    if (!entryName) return false;
+    const isMatch = idOrNameLower.includes(entryName) || entryName.includes(idOrNameLower.replace('teacher-gen-', '').split('-')[0]);
+    return isMatch && dateStr >= entry.startDate && dateStr <= entry.endDate;
+  });
 }
 
 export function getTeacherStayStatus(teacher: Teacher, referenceDateStr?: string): 'active' | 'upcoming' | 'expired' | 'permanent' {
@@ -1653,7 +1673,7 @@ export function reconcilePlansWithDefaults(plans: WeekPlan[]): { plans: WeekPlan
   return { plans: list, hasChanges };
 }
 
-const CURRENT_DB_VERSION = 110;
+const CURRENT_DB_VERSION = 112;
 
 // Database Actions
 export const db = {
@@ -1784,7 +1804,33 @@ export const db = {
       cloudInitialized = true;
     }
   },
-  getSevafrei: (): any[] => getStored<any[]>('rapla_sevafrei', []),
+  getSevafrei: (): any[] => {
+    const list = getStored<any[]>('rapla_sevafrei', []);
+    const hasChristopher = list.some((a: any) =>
+      (a.teacherName?.toLowerCase().includes('christopher') || a.teacherId === 'teacher-gen-christopher') &&
+      a.startDate === '2026-10-31' &&
+      a.endDate === '2026-11-01'
+    );
+    if (!hasChristopher) {
+      list.push({
+        id: 'sf-christopher-2026-10-31-2026-11-01',
+        teacherId: 'teacher-gen-christopher',
+        teacherName: 'Christopher',
+        avatarColor: 'from-amber-400 to-orange-500',
+        startDate: '2026-10-31',
+        endDate: '2026-11-01',
+        type: 'Urlaub',
+        status: 'Genehmigt',
+        note: 'Sevafrei'
+      });
+      if (typeof window !== 'undefined') {
+        try {
+          localStorage.setItem('rapla_sevafrei', JSON.stringify(list));
+        } catch (e) {}
+      }
+    }
+    return list;
+  },
   saveSevafrei: (list: any[]): void => setStored('rapla_sevafrei', list),
   getDefaultCourses: (): Course[] => DEFAULT_COURSES,
   getTeachers: (): Teacher[] => {
@@ -1812,6 +1858,7 @@ export const db = {
       else if (t.id === "teacher-gen-pranava-pauly" && t.name !== "Pranava") { t.name = "Pranava"; updated = true; }
       else if (t.id === "teacher-gen-teresa-allgaeu" && t.name !== "Teresa") { t.name = "Teresa"; updated = true; }
       else if (t.id === "teacher-gen-ulrich-nebel" && t.name !== "Ulrich") { t.name = "Ulrich"; updated = true; }
+      else if (t.id === "teacher-gen-christopher" && t.name !== "Christopher") { t.name = "Christopher"; updated = true; }
     }
 
     for (const defT of DEFAULT_TEACHERS) {
@@ -2167,6 +2214,13 @@ export const db = {
             if (!c.isManuallyEdited && (c.teacherId === 'teacher-gen-abha-morkoetter' || c.teacherId === 'abha')) {
               c.teacherId = null;
               c.isAiPlanned = false;
+              updated = true;
+            }
+
+            // Unassign teacher if absent on courseDate (Sevafrei, Urlaub, etc.) unless manually assigned by admin
+            if (!c.isManuallyEdited && c.teacherId && isTeacherAbsentOnDate(c.teacherId, courseDate)) {
+              c.teacherId = null;
+              c.isAiPlanned = true;
               updated = true;
             }
 
@@ -2646,12 +2700,14 @@ export const db = {
                 if (nameLower.includes('anfänger')) roomId = 'room-4';
                 else if (nameLower.includes('mittelstufe')) roomId = 'room-3';
               }
+              const isAbsent = c.teacherId ? isTeacherAbsentOnDate(c.teacherId, cDate) : false;
+              const shouldUnassign = isAfterW40 || isAbhaInYla || isAbsent;
               return {
                 ...c,
                 id: 'course-' + Math.random().toString(36).substr(2, 9),
                 roomId,
-                teacherId: (isAfterW40 || isAbhaInYla) ? null : c.teacherId,
-                isAiPlanned: false,
+                teacherId: shouldUnassign ? null : c.teacherId,
+                isAiPlanned: isAbsent ? true : false,
                 status: 'draft'
               };
             }),
