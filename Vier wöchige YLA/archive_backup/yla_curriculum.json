@@ -2284,60 +2284,6 @@
     ],
     "slots": [
       {
-        "rowNumber": 10,
-        "type": "early_practice",
-        "label": "09:15 Uhr / Frühe Praxis: Pranayama, Mudras, Bandhas (Höhere Stufen)",
-        "time": "09:15",
-        "badge": "Intensiv-Praxis",
-        "entries": {
-          "D": {
-            "text": "",
-            "isMerged": false,
-            "rawText": ""
-          },
-          "E": {
-            "text": "",
-            "isMerged": false,
-            "rawText": ""
-          },
-          "F": {
-            "text": "",
-            "isMerged": false,
-            "rawText": ""
-          },
-          "G": {
-            "text": "Praxis: Intensives Pranayama, Mudras.. Bandhas: Die höheren Stufen des Hatha Yoga (bis 9.00 Uhr).",
-            "isMerged": false,
-            "rawText": "Praxis: Intensives Pranayama, Mudras.. Bandhas: Die höheren Stufen des Hatha Yoga (bis 9.00 Uhr).",
-            "shortTitle": "Praxis",
-            "keywords": [
-              "Praxis",
-              "Intensives Pranayama, Mudras",
-              "Bandhas"
-            ],
-            "fullText": "Praxis: Intensives Pranayama, Mudras.. Bandhas: Die höheren Stufen des Hatha Yoga (bis 9.00 Uhr).",
-            "hasMore": true,
-            "time": "",
-            "assignedTeacher": "Karuna"
-          },
-          "H": {
-            "text": "",
-            "isMerged": false,
-            "rawText": ""
-          },
-          "I": {
-            "text": "",
-            "isMerged": false,
-            "rawText": ""
-          },
-          "J": {
-            "text": "",
-            "isMerged": false,
-            "rawText": ""
-          }
-        }
-      },
-      {
         "rowNumber": 11,
         "type": "morning_lecture",
         "label": "06:00 – 08:35 Uhr: Vortrag Teil 1, Satsang, Vortrag Teil 2",
@@ -2385,10 +2331,10 @@
             "assignedTeacher": "burnie"
           },
           "G": {
-            "text": "Praxis: Intensives Pranayama, Mudras.. Bandhas: Die höheren Stufen des Hatha Yoga (bis 9.00 Uhr).",
-            "isMerged": true,
+            "text": "Praxis: Intensives Pranayama, Mudras.. Bandhas: Die höheren Stufen des Hatha Yoga",
+            "isMerged": false,
             "rawText": "",
-            "shortTitle": "Praxis",
+            "shortTitle": "Praxis: Intensives Pranayama, Mudras.. Bandhas: Die höheren Stufen des Hatha Yoga",
             "keywords": [
               "Praxis",
               "Intensives Pranayama, Mudras",
@@ -3704,7 +3650,6 @@
     ],
     "merges": [
       "M5:M7",
-      "G10:G11",
       "C12:C13",
       "D12:D13",
       "E12:E13",
