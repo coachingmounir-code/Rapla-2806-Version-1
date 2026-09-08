@@ -8,6 +8,7 @@ export const YLA_TEACHERS = [
   'Hu',
   'Karuna',
   'Narayani',
+  'Nirmaya',
   'Pranava'
 ] as const;
 
@@ -63,6 +64,13 @@ export const YLA_TEACHERS_META: Record<YlaTeacherName, YlaTeacherMeta> = {
     avatar: '🧘‍♀️',
     color: '#512da8',
     badgeBg: '#ede7f6'
+  },
+  Nirmaya: {
+    name: 'Nirmaya',
+    alias: ['nirmaya'],
+    avatar: '🧘‍♀️',
+    color: '#00897b',
+    badgeBg: '#e0f2f1'
   },
   Pranava: {
     name: 'Pranava',
@@ -161,6 +169,7 @@ export function normalizeTeacherDisplayName(name: string | null | undefined): st
   if (n === 'anjali') return 'Anjali';
   if (n === 'hu') return 'Hu';
   if (n === 'narayani') return 'Narayani';
+  if (n === 'nirmaya') return 'Nirmaya';
   if (n === 'pranava') return 'Pranava';
   return name.trim();
 }
