@@ -163,6 +163,13 @@ const STORAGE_KEY = 'rapla_yla_assignments';
  */
 export function normalizeTeacherDisplayName(name: string | null | undefined): string | null {
   if (!name) return null;
+  if (name.includes(',')) {
+    return name.split(',').map(s => normalizeSingleTeacherDisplayName(s)).join(', ');
+  }
+  return normalizeSingleTeacherDisplayName(name);
+}
+
+function normalizeSingleTeacherDisplayName(name: string): string {
   const n = name.toLowerCase().trim();
   if (n === 'bintje' || n === 'bernie' || n === 'burnie') return 'burnie';
   if (n === 'abba' || n === 'abha') return 'Abha';
@@ -172,6 +179,7 @@ export function normalizeTeacherDisplayName(name: string | null | undefined): st
   if (n === 'narayani') return 'Narayani';
   if (n === 'nirmaya') return 'Nirmaya';
   if (n === 'pranava') return 'Pranava';
+  if (n === '?') return '?';
   return name.trim();
 }
 
@@ -449,9 +457,9 @@ export function getYlaConflictForTeacher(
         const assigned = assignments[key];
         if (!assigned) continue;
 
-        const normAssigned = normalizeTeacherName(assigned);
+        const assignedTeachers = assigned.split(/[,+/]/).map(n => normalizeTeacherName(n)).filter(Boolean);
         const matchesTeacher = namesToCheck.some(
-          name => name === normAssigned || normAssigned.includes(name) || name.includes(normAssigned)
+          name => assignedTeachers.some(at => at && at !== '?' && !at.includes('offen') && (at === name || at.includes(name) || name.includes(at)))
         );
         if (!matchesTeacher) continue;
 
@@ -651,6 +659,33 @@ export function getYlaTeacherMeta(teacherName?: string | null): { name: string; 
     return { name: '', avatar: '👤', color: '#64748b', badgeBg: '#f1f5f9' };
   }
   const norm = normalizeTeacherName(teacherName);
+
+  if (
+    norm === '?' || 
+    norm === 'offen' || 
+    norm.includes('offen') || 
+    norm.includes('2. person') || 
+    norm.includes('zweite person') || 
+    norm.includes('bitte fragen')
+  ) {
+    const isQuestionOrOpen = norm === '?' || norm.includes('2. person') || norm.includes('zweite person');
+    return {
+      name: isQuestionOrOpen ? '2. Lehrkraft (offen)' : teacherName,
+      avatar: '⏳',
+      color: '#d97706',
+      badgeBg: '#fef3c7'
+    };
+  }
+
+  if (norm === 'alle') {
+    return {
+      name: 'Alle Lehrkräfte',
+      avatar: '👥',
+      color: '#059669',
+      badgeBg: '#d1fae5'
+    };
+  }
+
   for (const t of YLA_TEACHERS) {
     const meta = YLA_TEACHERS_META[t];
     if (meta.name.toLowerCase() === norm || meta.alias.includes(norm)) {
@@ -816,13 +851,11 @@ export function getYlaSlotsForTeacherAndWeek(
         const entry = cellInfo.entry;
         if (!entry || !entry.assignedTeacher) continue;
 
-        // Support co-teaching (e.g. "Abha, Anjali")
-        const assignedTeachers = entry.assignedTeacher.includes(',')
-          ? entry.assignedTeacher.split(',').map(n => normalizeTeacherName(n))
-          : [normalizeTeacherName(entry.assignedTeacher)];
+        // Support co-teaching (e.g. "Abha, Anjali" or "Abha, ?")
+        const assignedTeachers = entry.assignedTeacher.split(/[,+/]/).map(n => normalizeTeacherName(n)).filter(Boolean);
 
         const isMatch = assignedTeachers.some(
-          at => at === normTeacher || normTeacher.includes(at) || at.includes(normTeacher)
+          at => at && at !== '?' && !at.includes('offen') && (at === normTeacher || normTeacher.includes(at) || at.includes(normTeacher))
         );
 
         if (isMatch) {

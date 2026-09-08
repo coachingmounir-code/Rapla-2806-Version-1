@@ -3184,7 +3184,7 @@
             "fullText": "Unterrichtsgruppen 2/1  1.Stunde Anfängerkurs (siehe YLH 11.4.3).",
             "hasMore": true,
             "time": "16:00",
-            "assignedTeacher": "Abha"
+            "assignedTeacher": "Abha, ?"
           },
           "F": {
             "text": "Asanas länger halten. Variationen: Kurmasana, Yoga Nidrasana; Kapalabhati, Wechselatmung; Erklärung von Bandas und Bhastrika.",
@@ -3214,7 +3214,7 @@
             "fullText": "Unterrichtsgruppen 2/2: 1.Stunde Anfängerkurse (siehe YLH 11.4.3).",
             "hasMore": true,
             "time": "16:00",
-            "assignedTeacher": "Abha"
+            "assignedTeacher": "Abha, ?"
           },
           "H": {
             "text": "Unterrichtsgruppen 2/3: Offene Stunde für Anfänger (siehe YLH 11.3).",
@@ -3229,7 +3229,7 @@
             "fullText": "Unterrichtsgruppen 2/3: Offene Stunde für Anfänger (siehe YLH 11.3).",
             "hasMore": true,
             "time": "16:00",
-            "assignedTeacher": "Abha"
+            "assignedTeacher": "Abha, ?"
           },
           "I": {
             "text": "15.30h Unterrichtsgruppen 2/4: Offene Stunde für Anfänger (YLH 11.3)",
@@ -3244,7 +3244,7 @@
             "fullText": "15.30h Unterrichtsgruppen 2/4: Offene Stunde für Anfänger (YLH 11.3)",
             "hasMore": true,
             "time": "15.30h",
-            "assignedTeacher": "Abha"
+            "assignedTeacher": "Abha, ?"
           },
           "J": {
             "text": "Freizeit",
@@ -3526,9 +3526,16 @@
             "assignedTeacher": "Karuna"
           },
           "I": {
-            "text": "",
+            "text": "Abendvortrag",
             "isMerged": false,
-            "rawText": "",
+            "rawText": "Abendvortrag",
+            "shortTitle": "Abendvortrag",
+            "keywords": [
+              "Abendvortrag"
+            ],
+            "fullText": "Abendvortrag (handschriftlich nachgetragen)",
+            "hasMore": false,
+            "time": "19:00 - 19:50",
             "assignedTeacher": "Abha"
           },
           "J": {
@@ -3606,7 +3613,7 @@
             "fullText": "Ausdehnungsmeditation",
             "hasMore": false,
             "time": "",
-            "assignedTeacher": "Karuna"
+            "assignedTeacher": "Karuna, ?"
           },
           "J": {
             "text": "",
@@ -3667,7 +3674,7 @@
             "fullText": "Puja; Anschl. Spirituelle Namensgebung möglich",
             "hasMore": true,
             "time": "20:00 / 21:45",
-            "assignedTeacher": "Karuna"
+            "assignedTeacher": "Karuna, ?"
           },
           "J": {
             "text": "Rückblick, Ausblick. Begrüßung neuer Seminarteilnehmer. 21.45h Karmayoga  Einteilung",

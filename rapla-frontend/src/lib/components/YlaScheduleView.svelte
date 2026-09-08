@@ -357,6 +357,35 @@
     if (textLower.includes('karma')) return '☸️';
     return '✨';
   }
+
+  function isPassiveSlot(entry?: YlaDayEntry | null): boolean {
+    if (!entry) return true;
+    const allText = `${entry.shortTitle || ''} ${entry.text || ''} ${entry.fullText || ''}`.toLowerCase();
+    if (!allText.trim()) return true;
+    if (allText.includes('freizeit') || allText.includes('freier tag')) return true;
+    if (allText.includes('abreise')) return true;
+    if (allText.includes('karma yoga') || allText.includes('karmayoga')) return true;
+    return false;
+  }
+
+  let weekOpenSlotsCount = $derived.by(() => {
+    let count = 0;
+    for (let sIdx = 0; sIdx < currentWeek.slots.length; sIdx++) {
+      for (const day of currentWeek.days) {
+        const cellInfo = getYlaCellRenderInfo(currentWeek, day.col, sIdx);
+        if (!cellInfo.shouldRender) continue;
+        const entry = cellInfo.entry;
+        if (!entry || (!entry.text && !entry.shortTitle)) continue;
+        if (isPassiveSlot(entry)) continue;
+        const key = `${currentWeek.weekNumber}_${day.col}_${cellInfo.rootSlot.rowNumber}`;
+        const assigned = assignmentsMap[key] || entry.assignedTeacher;
+        if (!assigned || assigned.includes('?') || assigned.toLowerCase().includes('offen')) {
+          count++;
+        }
+      }
+    }
+    return count;
+  });
 </script>
 
 <div id="yla-schedule-container" class="yla-view-wrapper" class:fullscreen-active={isFullscreen}>
@@ -391,6 +420,11 @@
       {:else}
         <div class="fs-single-week-pill">
           <span>📅 {currentWeek.dateRange}</span>
+          {#if weekOpenSlotsCount > 0}
+            <span class="fs-open-badge">⏳ {weekOpenSlotsCount} offene Slots</span>
+          {:else}
+            <span class="fs-open-badge fs-all-set">✅ Vollständig besetzt</span>
+          {/if}
         </div>
       {/if}
 
@@ -566,6 +600,16 @@
           <span class="current-week-pill">
             {currentWeek.weekSubtitle}
           </span>
+
+          {#if weekOpenSlotsCount > 0}
+            <span class="week-open-slots-pill" title="{weekOpenSlotsCount} Unterrichtseinheiten dieser Woche sind noch offen oder benötigen eine 2. Lehrkraft">
+              ⏳ {weekOpenSlotsCount} offene Slots
+            </span>
+          {:else}
+            <span class="week-open-slots-pill all-assigned-pill" title="Alle Unterrichtseinheiten dieser Woche sind fest besetzt">
+              ✅ Alle Einheiten besetzt
+            </span>
+          {/if}
         </div>
       </div>
 
@@ -684,7 +728,7 @@
                       <!-- ASSIGNED PERSON BADGE(S) -->
                       {#if assignedTeacher}
                         <div class="assigned-persons-row">
-                          {#each assignedTeacher.split(/[,+]/).map(s => s.trim()).filter(Boolean) as singleTeacher}
+                          {#each assignedTeacher.split(/[,+/]/).map(s => s.trim()).filter(Boolean) as singleTeacher}
                             {@const meta = getYlaTeacherMeta(singleTeacher)}
                             <div 
                               class="assigned-person-badge" 
@@ -700,6 +744,11 @@
                         <div class="admin-unassigned-pill" title="Klicken zum Zuweisen einer Lehrkraft">
                           <span class="plus-icon">+</span>
                           <span>Zuweisen</span>
+                        </div>
+                      {:else if !isPassiveSlot(entry)}
+                        <div class="unassigned-slot-pill" title="Offener Slot – noch keine Lehrkraft eingeteilt">
+                          <span class="open-icon">⏳</span>
+                          <span class="open-text">Offener Slot</span>
                         </div>
                       {/if}
 
@@ -835,11 +884,17 @@
                   <div class="teacher-badge-container">
                     {#if assignedTeacher}
                       <div class="agenda-assigned-teachers-row">
-                        {#each assignedTeacher.split(/[,+]/).map(s => s.trim()).filter(Boolean) as singleTeacher}
+                        {#each assignedTeacher.split(/[,+/]/).map(s => s.trim()).filter(Boolean) as singleTeacher}
                           {@const meta = getYlaTeacherMeta(singleTeacher)}
                           <div class="agenda-assigned-teacher-badge" style="color: {meta.color}; background: {meta.badgeBg}; border: 1.5px solid {meta.color}50;">
                             <span class="t-avatar">{meta.avatar}</span>
-                            <span class="t-name">Leitung: <strong>{meta.name || singleTeacher}</strong></span>
+                            <span class="t-name">
+                              {#if meta.name.includes('(offen)')}
+                                <span>{meta.name}</span>
+                              {:else}
+                                Leitung: <strong>{meta.name || singleTeacher}</strong>
+                              {/if}
+                            </span>
                           </div>
                         {/each}
                       </div>
@@ -847,9 +902,13 @@
                       <div class="agenda-admin-assign-btn">
                         <span>➕ Lehrkraft einteilen</span>
                       </div>
+                    {:else if !isPassiveSlot(entry)}
+                      <div class="agenda-unassigned-note open-slot-highlight">
+                        <span>⏳ <strong>Offener Slot</strong> – noch keine Lehrkraft eingeteilt</span>
+                      </div>
                     {:else}
                       <div class="agenda-unassigned-note">
-                        <span>ℹ️ Offen</span>
+                        <span>ℹ️ Keine Lehrkraft erforderlich</span>
                       </div>
                     {/if}
                   </div>
@@ -1013,14 +1072,28 @@
             {:else}
               <!-- Team / Viewer Read-Only Display -->
               {#if currentAssigned}
-                {@const meta = getYlaTeacherMeta(currentAssigned)}
-                <div class="team-view-assigned-badge" style="color: {meta.color}; background: {meta.badgeBg}; border: 1.5px solid {meta.color}50;">
-                  <span class="badge-avatar">{meta.avatar}</span>
-                  <span class="badge-text">Unterrichtet von: <strong>{currentAssigned}</strong></span>
+                <div class="modal-assigned-teachers-row" style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                  {#each currentAssigned.split(/[,+/]/).map(s => s.trim()).filter(Boolean) as singleTeacher}
+                    {@const meta = getYlaTeacherMeta(singleTeacher)}
+                    <div class="team-view-assigned-badge" style="color: {meta.color}; background: {meta.badgeBg}; border: 1.5px solid {meta.color}50;">
+                      <span class="badge-avatar">{meta.avatar}</span>
+                      <span class="badge-text">
+                        {#if meta.name.includes('(offen)')}
+                          <span>{meta.name}</span>
+                        {:else}
+                          Unterrichtet von: <strong>{meta.name || singleTeacher}</strong>
+                        {/if}
+                      </span>
+                    </div>
+                  {/each}
+                </div>
+              {:else if !isPassiveSlot(activeDetailModal.entry)}
+                <div class="team-view-unassigned-note warning-unassigned">
+                  <span>⏳ <strong>Offener Slot:</strong> Für diese Unterrichtseinheit ist noch keine Lehrkraft eingeteilt.</span>
                 </div>
               {:else}
                 <div class="team-view-unassigned-note">
-                  <span>ℹ️ Für diese Einheit ist noch keine Lehrkraft eingeteilt.</span>
+                  <span>ℹ️ Für diese Einheit ist keine Lehrkraft erforderlich (Freizeit / Information).</span>
                 </div>
               {/if}
             {/if}
@@ -2046,6 +2119,81 @@
 
   .plus-icon {
     font-weight: 800;
+  }
+
+  .unassigned-slot-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.15rem 0.5rem;
+    border-radius: 6px;
+    background: #fffbeb;
+    border: 1px dashed #d97706;
+    color: #b45309;
+    font-size: 0.72rem;
+    font-weight: 750;
+    margin-top: 0.25rem;
+    width: fit-content;
+    box-shadow: 0 1px 2px rgba(217, 119, 6, 0.06);
+    line-height: 1.25;
+  }
+
+  .unassigned-slot-pill .open-icon {
+    font-size: 0.75rem;
+  }
+
+  .open-slot-highlight {
+    background: #fffbeb !important;
+    border: 1px solid #fde68a !important;
+    color: #b45309 !important;
+    font-weight: 600;
+    border-radius: 8px;
+    padding: 0.35rem 0.75rem;
+  }
+
+  .warning-unassigned {
+    background: #fffbeb !important;
+    border: 1.5px dashed #f59e0b !important;
+    color: #92400e !important;
+    border-radius: 8px;
+    padding: 0.65rem 0.85rem;
+  }
+
+  .week-open-slots-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    background: #fffbeb;
+    color: #b45309;
+    border: 1.5px solid #fcd34d;
+    padding: 0.25rem 0.75rem;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 750;
+    box-shadow: 0 1px 3px rgba(180, 83, 9, 0.08);
+  }
+
+  .week-open-slots-pill.all-assigned-pill {
+    background: #ecfdf5;
+    color: #065f46;
+    border-color: #6ee7b7;
+  }
+
+  .fs-open-badge {
+    background: #fef3c7;
+    color: #92400e;
+    border: 1px solid #fcd34d;
+    padding: 0.15rem 0.5rem;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    margin-left: 0.5rem;
+  }
+
+  .fs-open-badge.fs-all-set {
+    background: #d1fae5;
+    color: #065f46;
+    border-color: #6ee7b7;
   }
 
   /* Category Themes & Colors */
