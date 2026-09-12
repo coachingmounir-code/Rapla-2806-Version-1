@@ -349,7 +349,9 @@
   function isTeacherAssigned(courseTeacherId: string | null | undefined, targetTeacherId: string): boolean {
     if (!courseTeacherId) return false;
     const ids = courseTeacherId.split(',').map(s => s.trim());
-    return ids.includes(targetTeacherId);
+    if (ids.includes(targetTeacherId)) return true;
+    if ((targetTeacherId === 'teacher-karma-gopala' || targetTeacherId.includes('gopala')) && ids.some(id => id === 'teacher-guest-1789207307944' || id.includes('gopala'))) return true;
+    return false;
   }
 
   function isTeacherVisibleForCourse(course: Course | YlaTeacherWeekSlot, targetTeacherId: string): boolean {
@@ -363,10 +365,11 @@
     if (!courseTeacherId || courseTeacherId === 'teacher-gen-yl') return 'Unbesetzt';
     const ids = courseTeacherId.split(',').map(s => s.trim());
     const names = ids.map(id => {
-      const found = teachers.find(t => t.id === id || (id.includes('tanja') && (t.id.includes('tanja') || t.name.toLowerCase().includes('tanja'))) || (id.includes('swantje') && (t.id.includes('swantje') || t.name.toLowerCase().includes('swantje'))));
+      const found = teachers.find(t => t.id === id || (id.includes('tanja') && (t.id.includes('tanja') || t.name.toLowerCase().includes('tanja'))) || (id.includes('swantje') && (t.id.includes('swantje') || t.name.toLowerCase().includes('swantje'))) || (id.includes('gopala') && (t.id.includes('gopala') || t.name.toLowerCase().includes('gopala'))) || id === 'teacher-guest-1789207307944');
       if (found) return found.name;
       if (id.toLowerCase().includes('tanja')) return 'Tanja';
       if (id.toLowerCase().includes('swantje')) return 'Swantje';
+      if (id.toLowerCase().includes('gopala') || id === 'teacher-guest-1789207307944') return 'Gopala';
       return id;
     });
     return names.join(', ');

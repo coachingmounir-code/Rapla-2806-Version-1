@@ -553,6 +553,38 @@ const DEFAULT_TEACHERS: Teacher[] = [
     }
   },
   {
+    id: 'teacher-karma-gopala',
+    name: 'Gopala',
+    email: '',
+    phone: '',
+    avatarColor: 'from-blue-500 to-indigo-500',
+    specialties: ['Hatha', 'Anfänger', 'Mittelstufe', 'Meditation'],
+    isYogaTeacher: true,
+    availabilityMode: 'always',
+    roleType: 'karma_yogi',
+    stayStartDate: '2026-09-12',
+    stayEndDate: '2026-09-26',
+    stayNotes: 'Karma Yogi als Yogalehrer (12.09. bis 26.09.2026).',
+    customWishes: 'Unterrichtet als Yogalehrer vom 12.09. bis 26.09.2026.',
+    rules: {
+      preferredRooms: [],
+      preferredDays: [],
+      canLeadMeditation: true,
+      canLeadSatsang: false,
+      canLeadHausfuehrung: false,
+      prefersMittelstufe: true,
+      availability: [
+        { day: 1, start: '06:30', end: '22:00' },
+        { day: 2, start: '06:30', end: '22:00' },
+        { day: 3, start: '06:30', end: '22:00' },
+        { day: 4, start: '06:30', end: '22:00' },
+        { day: 5, start: '06:30', end: '22:00' },
+        { day: 6, start: '06:30', end: '22:00' },
+        { day: 0, start: '06:30', end: '22:00' }
+      ]
+    }
+  },
+  {
     id: 'teacher-1',
     name: 'Sarah Schmidt',
     email: 'sarah.schmidt@yoga.de',
@@ -657,6 +689,7 @@ const generateDefaultCourses = (): Course[] => {
     if (nameLower === 'marlen' || nameLower === 'marlene') return 'teacher-karma-marlene';
     if (nameLower === 'tanja' || nameLower === 'tanja eichenmüller' || nameLower === 'tanja eichenmueller') return 'teacher-karma-tanja-eichenmueller';
     if (nameLower === 'swantje' || nameLower === 'karma yogini' || nameLower === 'karma-yogini' || nameLower === 'neue karma yogini') return 'teacher-karma-swantje';
+    if (nameLower === 'gopala') return 'teacher-karma-gopala';
     return null;
   };
 
@@ -1787,8 +1820,9 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "09:15",
         "endTime": "11:00",
         "roomId": "room-3",
-        "teacherId": "teacher-karma-tanja-eichenmueller",
-        "isAiPlanned": true,
+        "teacherId": "teacher-karma-gopala",
+        "isAiPlanned": false,
+        "isManuallyEdited": true,
         "status": "approved"
       },
       {
@@ -1919,8 +1953,9 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "16:15",
         "endTime": "18:00",
         "roomId": "room-4",
-        "teacherId": "teacher-gen-pranava-pauly",
+        "teacherId": "teacher-karma-gopala",
         "isAiPlanned": false,
+        "isManuallyEdited": true,
         "status": "approved"
       },
       {
@@ -2027,8 +2062,9 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "16:15",
         "endTime": "18:00",
         "roomId": "room-4",
-        "teacherId": "teacher-karma-tanja-eichenmueller",
-        "isAiPlanned": true,
+        "teacherId": "teacher-karma-gopala",
+        "isAiPlanned": false,
+        "isManuallyEdited": true,
         "status": "approved"
       },
       {
@@ -2111,8 +2147,9 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "09:15",
         "endTime": "11:00",
         "roomId": "room-3",
-        "teacherId": "teacher-karma-tanja-eichenmueller",
-        "isAiPlanned": true,
+        "teacherId": "teacher-karma-gopala",
+        "isAiPlanned": false,
+        "isManuallyEdited": true,
         "status": "approved"
       },
       {
@@ -2398,6 +2435,13 @@ export function reconcilePlansWithDefaults(plans: WeekPlan[]): { plans: WeekPlan
         }
       }
 
+      for (const c of plan.courses) {
+        if (c.teacherId === 'teacher-guest-1789207307944') {
+          c.teacherId = 'teacher-karma-gopala';
+          hasChanges = true;
+        }
+      }
+
       const beforeLen = plan.courses.length;
       plan.courses = plan.courses.filter(c => c.id !== 'course-2026-W36-mittelstufe-pflicht');
       if (plan.courses.length !== beforeLen) {
@@ -2414,7 +2458,7 @@ export function reconcilePlansWithDefaults(plans: WeekPlan[]): { plans: WeekPlan
   return { plans: list, hasChanges };
 }
 
-const CURRENT_DB_VERSION = 113;
+const CURRENT_DB_VERSION = 114;
 
 // Database Actions
 export const db = {
@@ -2828,6 +2872,53 @@ export const db = {
         }
         if (t.isYogaTeacher !== true) {
           t.isYogaTeacher = true;
+          updated = true;
+        }
+      }
+
+      if (nameLower === 'gopala' || t.id === 'teacher-karma-gopala' || t.id === 'teacher-guest-1789207307944') {
+        if (t.id !== 'teacher-karma-gopala') {
+          t.id = 'teacher-karma-gopala';
+          updated = true;
+        }
+        if (t.name !== 'Gopala') {
+          t.name = 'Gopala';
+          updated = true;
+        }
+        if (t.roleType !== 'karma_yogi') {
+          t.roleType = 'karma_yogi';
+          updated = true;
+        }
+        if (t.isYogaTeacher !== true) {
+          t.isYogaTeacher = true;
+          updated = true;
+        }
+        if (t.stayStartDate !== '2026-09-12') {
+          t.stayStartDate = '2026-09-12';
+          updated = true;
+        }
+        if (t.stayEndDate !== '2026-09-26') {
+          t.stayEndDate = '2026-09-26';
+          updated = true;
+        }
+        if (!t.stayNotes) {
+          t.stayNotes = 'Karma Yogi als Yogalehrer (12.09. bis 26.09.2026).';
+          updated = true;
+        }
+        if (t.availabilityMode !== 'always') {
+          t.availabilityMode = 'always';
+          updated = true;
+        }
+        if (!t.rules.availability || t.rules.availability.length === 0) {
+          t.rules.availability = [
+            { day: 1, start: '06:30', end: '22:00' },
+            { day: 2, start: '06:30', end: '22:00' },
+            { day: 3, start: '06:30', end: '22:00' },
+            { day: 4, start: '06:30', end: '22:00' },
+            { day: 5, start: '06:30', end: '22:00' },
+            { day: 6, start: '06:30', end: '22:00' },
+            { day: 0, start: '06:30', end: '22:00' }
+          ];
           updated = true;
         }
       }

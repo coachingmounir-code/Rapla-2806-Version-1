@@ -771,9 +771,9 @@ export function runAiPlanning(
   const logs: string[] = [];
   logs.push('Starte automatischen KI-Planungsalgorithmus...');
   
-  // Only plan with Sevakas (Kernteam) and prioritized Karma Yogis (Tanja, Swantje)
+  // Only plan with Sevakas (Kernteam) and prioritized Karma Yogis (Tanja, Swantje, Gopala)
   const yogaTeachers = teachers.filter(t => 
-    t.roleType === 'sevaka' || t.name === 'Tanja' || t.name === 'Swantje'
+    t.roleType === 'sevaka' || t.name === 'Tanja' || t.name === 'Swantje' || t.name === 'Gopala'
   );
   logs.push(`Berücksichtige ${yogaTeachers.length} Sevakas/Priorisierte Lehrer für die KI-Vorplanung.`);
   
