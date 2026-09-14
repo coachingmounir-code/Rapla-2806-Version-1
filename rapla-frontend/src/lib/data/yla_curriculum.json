@@ -3951,7 +3951,8 @@
             ],
             "fullText": "Abstrakte Meditation (lange Sitzung). Höhere Erfahrungen in der Meditation",
             "hasMore": true,
-            "time": ""
+            "time": "",
+            "assignedTeacher": "Abha"
           },
           "H": {
             "text": "Abstrakte Meditation (lange Sitzung) Jivanmukta",
@@ -3963,7 +3964,8 @@
             ],
             "fullText": "Abstrakte Meditation (lange Sitzung) Jivanmukta",
             "hasMore": false,
-            "time": ""
+            "time": "",
+            "assignedTeacher": "Karuna"
           },
           "I": {
             "text": "",
@@ -4004,7 +4006,8 @@
             ],
             "fullText": "Einführung ins Ayurveda",
             "hasMore": false,
-            "time": ""
+            "time": "",
+            "assignedTeacher": "Karuna"
           },
           "E": {
             "text": "Aufbau der Gelenke. Bewegungslehre: Flexion, Extension, etc.",
@@ -4018,7 +4021,8 @@
             ],
             "fullText": "Aufbau der Gelenke. Bewegungslehre: Flexion, Extension, etc.",
             "hasMore": true,
-            "time": ""
+            "time": "",
+            "assignedTeacher": "Anjali"
           },
           "F": {
             "text": "Hatha Yoga Pradipika; Einstimmen auf Schweigetag",
@@ -4031,7 +4035,8 @@
             ],
             "fullText": "Hatha Yoga Pradipika; Einstimmen auf Schweigetag",
             "hasMore": true,
-            "time": ""
+            "time": "",
+            "assignedTeacher": "Karuna"
           },
           "G": {
             "text": "Abstrakte Meditation (lange Sitzung). Höhere Erfahrungen in der Meditation",
@@ -4044,7 +4049,8 @@
             ],
             "fullText": "Abstrakte Meditation (lange Sitzung). Höhere Erfahrungen in der Meditation",
             "hasMore": true,
-            "time": ""
+            "time": "",
+            "assignedTeacher": "Abha"
           },
           "H": {
             "text": "Abstrakte Meditation (lange Sitzung) Jivanmukta",
@@ -4056,7 +4062,8 @@
             ],
             "fullText": "Abstrakte Meditation (lange Sitzung) Jivanmukta",
             "hasMore": false,
-            "time": ""
+            "time": "",
+            "assignedTeacher": "Karuna"
           },
           "I": {
             "text": "Wiederholung: Raja Yoga, Bhakti Yoga und Karma Yoga.",
@@ -4069,7 +4076,8 @@
             ],
             "fullText": "Wiederholung: Raja Yoga, Bhakti Yoga und Karma Yoga.",
             "hasMore": true,
-            "time": ""
+            "time": "",
+            "assignedTeacher": "burnie"
           },
           "J": {
             "text": "Guru und Schüler; Karma Yoga",
@@ -4082,7 +4090,8 @@
             ],
             "fullText": "Guru und Schüler; Karma Yoga",
             "hasMore": false,
-            "time": ""
+            "time": "",
+            "assignedTeacher": "Anjali"
           },
           "K": {
             "text": "Diene, liebe, gib, reinige Dich, meditiere und verwirkliche.",
@@ -4094,7 +4103,8 @@
             ],
             "fullText": "Diene, liebe, gib, reinige Dich, meditiere und verwirkliche.",
             "hasMore": true,
-            "time": ""
+            "time": "",
+            "assignedTeacher": "Abha"
           },
           "L": {
             "text": "7.15-8.15h Asanas Pranayama. Anwesenheitspflicht!",
@@ -4107,7 +4117,8 @@
             ],
             "fullText": "7.15-8.15h Asanas Pranayama. Anwesenheitspflicht!",
             "hasMore": true,
-            "time": "7.15-8.15h"
+            "time": "7.15-8.15h",
+            "assignedTeacher": "Karuna"
           }
         }
       },
@@ -4130,7 +4141,8 @@
             ],
             "fullText": "Sanfte Sonnengebete. Andere Stellungen  länger halten. Affirmationen. Geistige und psychische Wirkungen der Asanas.",
             "hasMore": true,
-            "time": ""
+            "time": "",
+            "assignedTeacher": "Abha"
           },
           "E": {
             "text": "Korr. Benennen der Bewegungen wäh- rend der Yoga-Std.: Flexion, Extension, Abduktion, Adduktion, etc. Variationen von Krähe, Pfau, Zehen-spitzenstellung, Berg. Steh.Gleichgewichts-Variationen.",
@@ -4144,7 +4156,8 @@
             ],
             "fullText": "Korr. Benennen der Bewegungen wäh- rend der Yoga-Std.: Flexion, Extension, Abduktion, Adduktion, etc. Variationen von Krähe, Pfau, Zehen-spitzenstellung, Berg. Steh.Gleichgewichts-Variationen.",
             "hasMore": true,
-            "time": ""
+            "time": "",
+            "assignedTeacher": "Harishakti"
           },
           "F": {
             "text": "Eine Fortgeschrittene Yogastunde für alle mit Variationen, insbesondere: Vorwärtsbeugen. Sitzhaltungen. Asanas für Hüftflexibilität. Lotus-Variationen.",
@@ -4158,7 +4171,8 @@
             ],
             "fullText": "Eine Fortgeschrittene Yogastunde für alle mit Variationen, insbesondere: Vorwärtsbeugen. Sitzhaltungen. Asanas für Hüftflexibilität. Lotus-Variationen.",
             "hasMore": true,
-            "time": ""
+            "time": "",
+            "assignedTeacher": "burnie"
           },
           "G": {
             "text": "Stellungen länger halten: Achtsam halten.",
@@ -4171,34 +4185,41 @@
             ],
             "fullText": "Stellungen länger halten: Achtsam halten.",
             "hasMore": true,
-            "time": ""
+            "time": "",
+            "assignedTeacher": "Narayani"
           },
           "H": {
-            "text": "Yoga Vidya Stil Grundreihe ohne Variationen, Stellungen länger halten.  Klassische Tiefenentspannung.",
+            "text": "Viele Variationen,  auch als Partnerübungen. Insbesondere (aber nicht nur) Vira Bhadrasana, Handstand, Skorpion.",
             "isMerged": false,
-            "rawText": "Yoga Vidya Stil Grundreihe ohne Variationen, Stellungen länger halten.  Klassische Tiefenentspannung.",
-            "shortTitle": "Yoga Vidya Stil Grundreihe",
+            "rawText": "Viele Variationen,  auch als Partnerübungen. Insbesondere (aber nicht nur) Vira Bhadrasana, Handstand, Skorpion.",
+            "shortTitle": "Viele Variationen,  auch als Partnerübungen",
             "keywords": [
-              "Yoga Vidya Stil Grundreihe ohne Variationen, Stellungen länger halten",
-              "Klassische Tiefenentspannung"
+              "Viele Variationen",
+              "Partnerübungen",
+              "Vira Bhadrasana",
+              "Handstand",
+              "Skorpion"
             ],
-            "fullText": "Yoga Vidya Stil Grundreihe ohne Variationen, Stellungen länger halten.  Klassische Tiefenentspannung.",
+            "fullText": "Viele Variationen,  auch als Partnerübungen. Insbesondere (aber nicht nur) Vira Bhadrasana, Handstand, Skorpion.",
             "hasMore": true,
-            "time": ""
+            "time": "",
+            "assignedTeacher": "burnie"
           },
           "I": {
-            "text": "Viele Variationen,  auch als Partnerübungen. Insbesondere (aber nicht nur) Vira Bhadrasana, Handstand, Skorpion.            Bis 10:50 Uhr",
+            "text": "Yoga Vidya Stil Grundreihe ohne Variationen, Stellungen länger halten. Klassische Tiefenentspannung. Wer Weihe hat, kann um 10:50 Uhr gehen",
             "isMerged": false,
-            "rawText": "Viele Variationen,  auch als Partnerübungen. Insbesondere (aber nicht nur) Vira Bhadrasana, Handstand, Skorpion.            Bis 10:50 Uhr",
-            "shortTitle": "Viele Variationen, auch als",
+            "rawText": "Yoga Vidya Stil Grundreihe ohne Variationen, Stellungen länger halten. Klassische Tiefenentspannung. Wer Weihe hat, kann um 10:50 Uhr gehen",
+            "shortTitle": "Yoga Vidya Stil Grundreihe ohne Variationen, Stellungen länger halten",
             "keywords": [
-              "Viele Variationen, auch als Partnerübungen",
-              "Insbesondere (aber nicht nur) Vira Bhadrasana, Handstand, Skorpion",
-              "Bis 10"
+              "Yoga Vidya Stil Grundreihe",
+              "Klassische Tiefenentspannung",
+              "Wer Weihe hat",
+              "kann um 10:50 Uhr gehen"
             ],
-            "fullText": "Viele Variationen,  auch als Partnerübungen. Insbesondere (aber nicht nur) Vira Bhadrasana, Handstand, Skorpion.            Bis 10:50 Uhr",
+            "fullText": "Yoga Vidya Stil Grundreihe ohne Variationen, Stellungen länger halten. Klassische Tiefenentspannung. Wer Weihe hat, kann um 10:50 Uhr gehen",
             "hasMore": true,
-            "time": ""
+            "time": "",
+            "assignedTeacher": "Abha, Anjali"
           },
           "J": {
             "text": "Individuelle Praxis. Bitte auch heute Karma Yoga machen.",
@@ -4223,7 +4244,8 @@
             ],
             "fullText": "8.00 h Frühstück                                                      .",
             "hasMore": true,
-            "time": "8.00 h"
+            "time": "8.00 h",
+            "assignedTeacher": "Abha"
           },
           "L": {
             "text": "8.30 bis ca. 11.00h  Abschlußvortrag. Abschlußfeier, Zeremonie, spiritueller Segen, Verleihung der Diplome. Abreise ab 12.00 h",
@@ -4350,14 +4372,15 @@
             "text": "8.30-12.30h Abschlussprüfung",
             "isMerged": false,
             "rawText": "8.30-12.30h Abschlussprüfung",
-            "shortTitle": "Abschlussprüfung (8:30–12:30)",
+            "shortTitle": "Abschlussprüfung (Aufsicht: 8:30 Abha, 9:30 Anjali, 10:30 Karuna)",
             "keywords": [
               "Schriftliche Prüfung",
               "Anwesenheitspflicht"
             ],
-            "fullText": "8.30-12.30h Abschlussprüfung",
+            "fullText": "8.30-12.30h Abschlussprüfung (8:30-9:30 Abha, 9:30-10:30 Anjali, 10:30-12:30 Karuna)",
             "hasMore": true,
-            "time": "08:30 - 12:30"
+            "time": "08:30 - 12:30",
+            "assignedTeacher": "Abha, Anjali, Karuna"
           },
           "L": {
             "text": "8.30 bis ca. 11.00h  Abschlußvortrag. Abschlußfeier, Zeremonie, spiritueller Segen, Verleihung der Diplome. Abreise ab 12.00 h",
@@ -4491,7 +4514,8 @@
             ],
             "fullText": "11-12.30h Mittagessen",
             "hasMore": true,
-            "time": "12.30h"
+            "time": "12.30h",
+            "assignedTeacher": "Karuna"
           },
           "L": {
             "text": "8.30 bis ca. 11.00h  Abschlußvortrag. Abschlußfeier, Zeremonie, spiritueller Segen, Verleihung der Diplome. Abreise ab 12.00 h",
@@ -4597,7 +4621,8 @@
             ],
             "fullText": "11.30h Mantra-Einweihung (freiwillig)",
             "hasMore": true,
-            "time": "11.30h"
+            "time": "11.30h",
+            "assignedTeacher": "Karuna"
           },
           "J": {
             "text": "Studientag",
@@ -4654,34 +4679,34 @@
             ],
             "fullText": "Bh.Gita, XII 1-14",
             "hasMore": false,
-            "time": ""
+            "time": "",
+            "assignedTeacher": "Narayani"
           },
           "E": {
+            "text": "Yoga & Sexualität",
+            "isMerged": false,
+            "rawText": "Yoga & Sexualität",
+            "shortTitle": "Yoga & Sexualität",
+            "keywords": [
+              "Yoga & Sexualität"
+            ],
+            "fullText": "Yoga & Sexualität",
+            "hasMore": false,
+            "time": "",
+            "assignedTeacher": "Karuna"
+          },
+          "F": {
             "text": "Bh G XIV 1-13",
             "isMerged": false,
             "rawText": "Bh G XIV 1-13",
-            "shortTitle": "BhG XIV 1-13",
+            "shortTitle": "Bh G XIV 1-13",
             "keywords": [
-              "Bhagavad Gita",
-              "Verse XIV 1-13"
+              "Bh G XIV 1-13"
             ],
             "fullText": "Bh G XIV 1-13",
             "hasMore": false,
-            "time": ""
-          },
-          "F": {
-            "text": "Yamas und Niyamas",
-            "isMerged": false,
-            "rawText": "Yamas und Niyamas",
-            "shortTitle": "Yamas & Niyamas",
-            "keywords": [
-              "Yamas",
-              "Niyamas",
-              "Ethik"
-            ],
-            "fullText": "Yamas und Niyamas",
-            "hasMore": false,
-            "time": ""
+            "time": "",
+            "assignedTeacher": "Narayani"
           },
           "G": {
             "text": "Meditation: Rajayoga Sutras I 1-4",
@@ -4707,7 +4732,8 @@
             ],
             "fullText": "Bh G XVIII; Literatur-empfehlungen",
             "hasMore": true,
-            "time": ""
+            "time": "",
+            "assignedTeacher": "Narayani"
           },
           "I": {
             "text": "Wiederholung",
@@ -4776,7 +4802,8 @@
             ],
             "fullText": "Verdauungssystem und Stoffwechsel",
             "hasMore": false,
-            "time": ""
+            "time": "",
+            "assignedTeacher": "Anjali"
           },
           "E": {
             "text": "Bewegungslehre: Orthopädische Probleme",
@@ -4789,7 +4816,8 @@
             ],
             "fullText": "Bewegungslehre: Orthopädische Probleme",
             "hasMore": true,
-            "time": ""
+            "time": "",
+            "assignedTeacher": "Anjali"
           },
           "F": {
             "text": "15.00 Uhr: Information über Yogalehrer Weiterbildungsseminare, Bund der Yoga Vidya Lehrer und Yoga Vidya Zentren.",
@@ -4801,7 +4829,8 @@
             ],
             "fullText": "15.00 Uhr: Information über Yogalehrer Weiterbildungsseminare, Bund der Yoga Vidya Lehrer und Yoga Vidya Zentren.",
             "hasMore": true,
-            "time": "15.00 Uhr"
+            "time": "15.00 Uhr",
+            "assignedTeacher": "Narayani"
           },
           "G": {
             "text": "Meditation: Rajayoga Sutras I 1-4",
@@ -4814,7 +4843,8 @@
             ],
             "fullText": "Meditation: Rajayoga Sutras I 1-4",
             "hasMore": true,
-            "time": ""
+            "time": "",
+            "assignedTeacher": "Karuna"
           },
           "H": {
             "text": "Herz- Kreislauf- System; Das Ornish-Programm",
@@ -4827,7 +4857,8 @@
             ],
             "fullText": "Herz- Kreislauf- System; Das Ornish-Programm",
             "hasMore": true,
-            "time": ""
+            "time": "",
+            "assignedTeacher": "Anjali"
           },
           "I": {
             "text": "Wiederholung",
@@ -4839,7 +4870,8 @@
             ],
             "fullText": "Wiederholung",
             "hasMore": false,
-            "time": ""
+            "time": "",
+            "assignedTeacher": "Karuna"
           },
           "J": {
             "text": "Studientag",
@@ -5121,7 +5153,8 @@
             ],
             "fullText": "Neu-Einteilung der Unterrichtsgruppen; Yogastunde und Besprechung: Yoga für Schwangere",
             "hasMore": true,
-            "time": "17:35"
+            "time": "17:35",
+            "assignedTeacher": "Karuna"
           },
           "E": {
             "text": "Unterrichtsgruppen 3/1: Yoga für den Rücken.",
@@ -5135,7 +5168,8 @@
             ],
             "fullText": "Unterrichtsgruppen 3/1: Yoga für den Rücken.",
             "hasMore": true,
-            "time": "16:00"
+            "time": "16:00",
+            "assignedTeacher": "Karuna, ?"
           },
           "F": {
             "text": "Unterrichtsgruppen 3/2: Yoga für Schwangere",
@@ -5149,7 +5183,8 @@
             ],
             "fullText": "Unterrichtsgruppen 3/2: Yoga für Schwangere",
             "hasMore": true,
-            "time": "16:00"
+            "time": "16:00",
+            "assignedTeacher": "Karuna, ?"
           },
           "G": {
             "text": "Stellungen länger halten: Geistige Wirkungen.",
@@ -5162,7 +5197,8 @@
             ],
             "fullText": "Stellungen länger halten: Geistige Wirkungen.",
             "hasMore": true,
-            "time": ""
+            "time": "",
+            "assignedTeacher": "Abha"
           },
           "H": {
             "text": "Unterrichtsgruppen 3/3 Fortgeschrittenen-Gruppe",
@@ -5176,7 +5212,8 @@
             ],
             "fullText": "Unterrichtsgruppen 3/3 Fortgeschrittenen-Gruppe",
             "hasMore": true,
-            "time": "16:00"
+            "time": "16:00",
+            "assignedTeacher": "Abha, ?"
           },
           "I": {
             "text": "Unterrichtsgruppen 3/4 Fortgeschrittenen-Gruppe",
@@ -5190,7 +5227,8 @@
             ],
             "fullText": "Unterrichtsgruppen 3/4 Fortgeschrittenen-Gruppe",
             "hasMore": true,
-            "time": "16:00"
+            "time": "16:00",
+            "assignedTeacher": "Abha, ?"
           },
           "J": {
             "text": "Studientag",
@@ -5217,7 +5255,8 @@
             ],
             "fullText": "15.30-17.00h                     Yoga-Stunde.                 Anwesenheits\npflicht",
             "hasMore": true,
-            "time": "15.30-17.00h"
+            "time": "15.30-17.00h",
+            "assignedTeacher": "Abha"
           },
           "L": {
             "text": "8.30 bis ca. 11.00h  Abschlußvortrag. Abschlußfeier, Zeremonie, spiritueller Segen, Verleihung der Diplome. Abreise ab 12.00 h",
@@ -5268,7 +5307,8 @@
             ],
             "fullText": "17:35h Besprechung: Yoga für Fortgeschrittene",
             "hasMore": true,
-            "time": "17:35h"
+            "time": "17:35h",
+            "assignedTeacher": "Karuna, ?"
           },
           "F": {
             "text": "17:35h Besprechung: Yoga Vidya Prinzipien der Yoga Therapie",
@@ -5281,7 +5321,8 @@
             ],
             "fullText": "17:35h Besprechung: Yoga Vidya Prinzipien der Yoga Therapie",
             "hasMore": true,
-            "time": "17:35h"
+            "time": "17:35h",
+            "assignedTeacher": "Anjali"
           },
           "G": {
             "text": "Stellungen länger halten: Geistige Wirkungen.",
@@ -5311,7 +5352,8 @@
             ],
             "fullText": "17:35 h Wiederholung Unterrichts-prinzipien",
             "hasMore": false,
-            "time": "17:35 h"
+            "time": "17:35 h",
+            "assignedTeacher": "Abha, ?"
           },
           "J": {
             "text": "Studientag",
@@ -5371,16 +5413,17 @@
             "rawText": ""
           },
           "E": {
-            "text": "Yoga und Sexualität",
+            "text": "Yamas & Niyamas",
             "isMerged": false,
-            "rawText": "Yoga und Sexualität",
-            "shortTitle": "Yoga und Sexualität",
+            "rawText": "Yamas & Niyamas",
+            "shortTitle": "Yamas & Niyamas",
             "keywords": [
-              "Yoga und Sexualität"
+              "Yamas & Niyamas"
             ],
-            "fullText": "Yoga und Sexualität",
+            "fullText": "Yamas & Niyamas",
             "hasMore": false,
-            "time": ""
+            "time": "",
+            "assignedTeacher": "Karuna"
           },
           "F": {
             "text": "",
@@ -5399,7 +5442,8 @@
             ],
             "fullText": "Lange Meditation. Vedanta: 4 Mahavakyas",
             "hasMore": true,
-            "time": ""
+            "time": "",
+            "assignedTeacher": "burnie"
           },
           "H": {
             "text": "Indische Schriften. Geschichte des Yoga",
@@ -5412,7 +5456,8 @@
             ],
             "fullText": "Indische Schriften. Geschichte des Yoga",
             "hasMore": true,
-            "time": ""
+            "time": "",
+            "assignedTeacher": "Narayani"
           },
           "I": {
             "text": "",
@@ -5429,7 +5474,8 @@
             ],
             "fullText": "Hinweise für Übungen zuhause",
             "hasMore": false,
-            "time": ""
+            "time": "",
+            "assignedTeacher": "burnie"
           },
           "K": {
             "text": "",
@@ -5471,7 +5517,8 @@
             ],
             "fullText": "nach Wahl",
             "hasMore": false,
-            "time": ""
+            "time": "",
+            "assignedTeacher": "Karuna"
           },
           "E": {
             "text": "nach Wahl",
@@ -5483,7 +5530,8 @@
             ],
             "fullText": "nach Wahl",
             "hasMore": false,
-            "time": ""
+            "time": "",
+            "assignedTeacher": "Karuna"
           },
           "F": {
             "text": "Freizeit",
@@ -5513,7 +5561,8 @@
             ],
             "fullText": "nach Wahl",
             "hasMore": false,
-            "time": ""
+            "time": "",
+            "assignedTeacher": "Narayani"
           },
           "I": {
             "text": "Abstrakte Meditation",
@@ -5525,7 +5574,8 @@
             ],
             "fullText": "Abstrakte Meditation",
             "hasMore": false,
-            "time": ""
+            "time": "",
+            "assignedTeacher": "Karuna"
           },
           "J": {
             "text": "nach Wahl",
@@ -5549,7 +5599,8 @@
             ],
             "fullText": "nach Wahl",
             "hasMore": false,
-            "time": ""
+            "time": "",
+            "assignedTeacher": "Karuna"
           },
           "L": {
             "text": "8.30 bis ca. 11.00h  Abschlußvortrag. Abschlußfeier, Zeremonie, spiritueller Segen, Verleihung der Diplome. Abreise ab 12.00 h",
@@ -5586,7 +5637,8 @@
             ],
             "fullText": "langer Satsang",
             "hasMore": false,
-            "time": ""
+            "time": "",
+            "assignedTeacher": "Karuna"
           },
           "E": {
             "text": "",
@@ -5627,7 +5679,8 @@
             ],
             "fullText": "Homa; 21.45h Namensgebung",
             "hasMore": true,
-            "time": "20:00 / 21:45"
+            "time": "20:00 / 21:45",
+            "assignedTeacher": "alle"
           },
           "J": {
             "text": "",
@@ -5644,7 +5697,8 @@
             ],
             "fullText": "langer Saatsang",
             "hasMore": false,
-            "time": ""
+            "time": "",
+            "assignedTeacher": "Karuna"
           },
           "L": {
             "text": "8.30 bis ca. 11.00h  Abschlußvortrag. Abschlußfeier, Zeremonie, spiritueller Segen, Verleihung der Diplome. Abreise ab 12.00 h",

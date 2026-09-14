@@ -6,6 +6,7 @@ export const YLA_TEACHERS = [
   'Abha',
   'Anjali',
   'burnie',
+  'Harishakti',
   'Hu',
   'Karuna',
   'Narayani',
@@ -44,6 +45,13 @@ export const YLA_TEACHERS_META: Record<YlaTeacherName, YlaTeacherMeta> = {
     avatar: '🧘‍♂️',
     color: '#1976d2',
     badgeBg: '#e3f2fd'
+  },
+  Harishakti: {
+    name: 'Harishakti',
+    alias: ['harishakti'],
+    avatar: '🧘‍♀️',
+    color: '#00838f',
+    badgeBg: '#e0f7fa'
   },
   Hu: {
     name: 'Hu',
@@ -175,6 +183,7 @@ function normalizeSingleTeacherDisplayName(name: string): string {
   if (n === 'abba' || n === 'abha') return 'Abha';
   if (n === 'kamuna' || n === 'karuna') return 'Karuna';
   if (n === 'anjali') return 'Anjali';
+  if (n === 'harishakti' || n === 'h') return 'Harishakti';
   if (n === 'hu') return 'Hu';
   if (n === 'narayani') return 'Narayani';
   if (n === 'nirmaya') return 'Nirmaya';
@@ -298,9 +307,11 @@ export function normalizeTeacherName(name: string): string {
   if (n === 'abba' || n === 'abha') return 'abha';
   if (n === 'bernie' || n === 'burnie' || n === 'bintje') return 'burnie';
   if (n === 'anjali') return 'anjali';
+  if (n === 'harishakti' || n === 'h') return 'harishakti';
   if (n === 'hu') return 'hu';
   if (n === 'karuna' || n === 'kamuna') return 'karuna';
   if (n === 'narayani') return 'narayani';
+  if (n === 'nirmaya') return 'nirmaya';
   if (n === 'pranava') return 'pranava';
   return n;
 }
