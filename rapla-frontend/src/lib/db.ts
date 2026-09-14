@@ -769,7 +769,7 @@ const generateDefaultCourses = (): Course[] => {
     { name: 'Entspannungsangebot: Yogageschichten am Kamin', style: 'Entspannung', dayOfWeek: 3, startTime: '21:10', endTime: '22:00', roomId: 'room-6', teacherName: '' },
 
     // Thursday (dayOfWeek: 4)
-    { name: 'Geführte Meditation', style: 'Meditation', dayOfWeek: 4, startTime: '07:00', endTime: '07:30', roomId: 'room-5', teacherName: 'Christopher' },
+    { name: 'Geführte Meditation', style: 'Meditation', dayOfWeek: 4, startTime: '07:00', endTime: '07:30', roomId: 'room-5', teacherName: '' },
     { name: 'Satsang', style: 'Meditation', dayOfWeek: 4, startTime: '07:00', endTime: '08:00', roomId: 'room-2', teacherName: 'Anjali' },
     { name: 'Anfänger', style: 'Hatha', dayOfWeek: 4, startTime: '09:15', endTime: '11:00', roomId: 'room-2', teacherName: 'Alexander' },
     { name: 'Mittelstufe', style: 'Hatha', dayOfWeek: 4, startTime: '09:15', endTime: '11:00', roomId: 'room-5', teacherName: 'Abha' },
@@ -1343,7 +1343,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-christopher",
+        "teacherId": "teacher-gen-chandrashekara",
         "isAiPlanned": false,
         "status": "approved"
       },
@@ -1451,7 +1451,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "07:00",
         "endTime": "07:30",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-christopher",
+        "teacherId": "teacher-gen-narayani-kedenburg",
         "isAiPlanned": false,
         "status": "approved"
       },
@@ -2087,7 +2087,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-1",
-        "teacherId": "teacher-gen-christopher",
+        "teacherId": "teacher-gen-chandrashekara",
         "isAiPlanned": false,
         "status": "approved"
       },
@@ -2196,7 +2196,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "07:00",
         "endTime": "07:30",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-christopher",
+        "teacherId": "teacher-gen-narayani-kedenburg",
         "isAiPlanned": false,
         "status": "approved"
       },
@@ -2208,7 +2208,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "07:00",
         "endTime": "08:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-harishakti",
+        "teacherId": "teacher-gen-burnie-bansemer",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -2458,7 +2458,7 @@ export function reconcilePlansWithDefaults(plans: WeekPlan[]): { plans: WeekPlan
   return { plans: list, hasChanges };
 }
 
-const CURRENT_DB_VERSION = 114;
+const CURRENT_DB_VERSION = 115;
 
 // Database Actions
 export const db = {
@@ -2655,14 +2655,28 @@ export const db = {
     }
     // Ensure all entries have the isYogaTeacher property (defaults to true)
     for (const t of list) {
-      // Migration for Harishakti's rules
+      // Migration for Harishakti's rules (free Wednesday, Tue after 11:00 off, Thu before 11:00 off)
       if (t.name.toLowerCase().includes('harishakti')) {
         t.rules.availability = [
           { day: 0, start: '06:00', end: '22:00' }, // Sunday
           { day: 1, start: '06:00', end: '22:00' }, // Monday
-          { day: 2, start: '06:00', end: '22:00' }, // Tuesday
+          { day: 2, start: '06:00', end: '11:00' }, // Tuesday (until 11:00)
           // Wednesday: FREI
-          { day: 4, start: '06:00', end: '22:00' }, // Thursday
+          { day: 4, start: '11:00', end: '22:00' }, // Thursday (from 11:00)
+          { day: 5, start: '06:00', end: '22:00' }, // Friday
+          { day: 6, start: '06:00', end: '22:00' }  // Saturday
+        ];
+        updated = true;
+      }
+
+      // Migration for Christopher's rules (free Wednesday, Tue after 11:00 off, Thu before 11:00 off)
+      if (t.name.toLowerCase().includes('christopher')) {
+        t.rules.availability = [
+          { day: 0, start: '06:00', end: '22:00' }, // Sunday
+          { day: 1, start: '06:00', end: '22:00' }, // Monday
+          { day: 2, start: '06:00', end: '11:00' }, // Tuesday (until 11:00)
+          // Wednesday: FREI
+          { day: 4, start: '11:00', end: '22:00' }, // Thursday (from 11:00)
           { day: 5, start: '06:00', end: '22:00' }, // Friday
           { day: 6, start: '06:00', end: '22:00' }  // Saturday
         ];
@@ -3056,6 +3070,21 @@ export const db = {
               updated = true;
             }
 
+            // Unassign Christopher or Harishakti if scheduled during their weekly Seva-frei time (Tue >= 11:00, Wed, Thu < 11:00)
+            if (!c.isManuallyEdited && c.teacherId) {
+              const tId = c.teacherId.toLowerCase();
+              if (tId.includes('christopher') || tId.includes('harishakti')) {
+                const isTueAfter11 = c.dayOfWeek === 2 && c.startTime >= '11:00';
+                const isWed = c.dayOfWeek === 3;
+                const isThuBefore11 = c.dayOfWeek === 4 && c.startTime < '11:00';
+                if (isTueAfter11 || isWed || isThuBefore11) {
+                  c.teacherId = null;
+                  c.isAiPlanned = true;
+                  updated = true;
+                }
+              }
+            }
+
             // Morning 7:00 Satsang during 1st week of YLA matches the YLA morning teacher if not manually overridden
             if (!c.isManuallyEdited && !p.isManualOnly && nameLower === 'satsang' && c.startTime === '07:00') {
               const ylaMorningMap: Record<string, string> = {
@@ -3105,12 +3134,16 @@ export const db = {
             startTime: '19:30',
             endTime: '20:00',
             roomId: 'room-2',
-            teacherId: 'teacher-gen-christopher',
+            teacherId: 'teacher-gen-chandrashekara',
             isAiPlanned: false,
             status: p.status === 'approved' ? 'approved' : 'draft'
           });
           updated = true;
         } else {
+          if (onnCourse.teacherId === 'teacher-gen-christopher') {
+            onnCourse.teacherId = 'teacher-gen-chandrashekara';
+            updated = true;
+          }
           if (onnCourse.roomId !== 'room-2' || onnCourse.startTime !== '19:30' || onnCourse.endTime !== '20:00') {
             onnCourse.roomId = 'room-2';
             onnCourse.startTime = '19:30';

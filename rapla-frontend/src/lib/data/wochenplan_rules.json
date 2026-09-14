@@ -401,24 +401,19 @@
       "weekendAsBackupOnly": false,
       "prefersMittelstufe": false,
       "customCourseNames": [],
-      "availabilityRestrictions": [],
-      "preferredAvailability": [
-        {
-          "day": 1,
-          "start": "06:30",
-          "end": "22:00"
-        },
+      "availabilityRestrictions": [
         {
           "day": 2,
-          "start": "06:30",
-          "end": "12:00"
+          "timeAfter": "11:00",
+          "allowed": false
         },
         {
-          "day": 5,
-          "start": "06:30",
-          "end": "12:00"
+          "day": 4,
+          "timeBefore": "11:00",
+          "allowed": false
         }
       ],
+      "preferredAvailability": [],
       "maxClassesPerDay": 2
     },
     "ulrich": {
@@ -470,7 +465,18 @@
       "weekendAsBackupOnly": false,
       "prefersMittelstufe": false,
       "customCourseNames": [],
-      "availabilityRestrictions": [],
+      "availabilityRestrictions": [
+        {
+          "day": 2,
+          "timeAfter": "11:00",
+          "allowed": false
+        },
+        {
+          "day": 4,
+          "timeBefore": "11:00",
+          "allowed": false
+        }
+      ],
       "preferredAvailability": [],
       "maxClassesPerDay": 2
     },
@@ -572,7 +578,6 @@
       "0": "harishakti",
       "1": "hu",
       "2": "alexander",
-      "4": "christopher",
       "5": "pranava",
       "6": "nirmaya"
     }

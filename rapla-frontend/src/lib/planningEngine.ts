@@ -266,7 +266,8 @@ export function validateAssignment(
   if (!fitsAvailability) {
     const isWalk = courseNameLower.includes('spaziergang');
     const isPranava = teacherNameLower.includes('pranava');
-    if (!(isWalk && isPranava) && !isOnnForSevaka) {
+    const isNarayaniSundayOnn = isOnnForSevaka && teacherNameLower.includes('narayani') && course.dayOfWeek === 0;
+    if (!(isWalk && isPranava) && !isNarayaniSundayOnn) {
       conflicts.push({
         type: 'hard',
         message: `${teacher.name} ist am ${getDayName(course.dayOfWeek)} zur Kurszeit (${course.startTime} - ${course.endTime}) laut Regeln/Freitagen nicht verfügbar.`
@@ -472,10 +473,19 @@ export function validateAssignment(
     const primaryName = (wochenplanRules.meditation.dailyPrimary as any)[course.dayOfWeek];
     if (primaryName) {
       const isPrimaryAbsent = isTeacherAbsent(primaryName, course.dayOfWeek, targetWeekCode, absences);
-      if (!isPrimaryAbsent && !teacherNameLower.includes(primaryName)) {
+      const primaryTeacher = teachers?.find(t => t.name.toLowerCase().includes(primaryName));
+      let isPrimaryAvailable = !isPrimaryAbsent;
+      if (primaryTeacher && isPrimaryAvailable) {
+        const cStart = timeToMinutes(course.startTime);
+        const cEnd = timeToMinutes(course.endTime);
+        const dSlots = primaryTeacher.rules.availability.filter(s => s.day === course.dayOfWeek);
+        const fits = dSlots.some(s => cStart >= timeToMinutes(s.start) && cEnd <= timeToMinutes(s.end));
+        if (!fits) isPrimaryAvailable = false;
+      }
+      if (isPrimaryAvailable && !teacherNameLower.includes(primaryName)) {
         conflicts.push({
           type: 'hard',
-          message: `Die geführte Meditation am ${getDayName(course.dayOfWeek)} darf nur von ${primaryName.toUpperCase()} geleitet werden (es sei denn, ${primaryName.toUpperCase()} ist laut sevafrei-Kalender abwesend).`
+          message: `Die geführte Meditation am ${getDayName(course.dayOfWeek)} darf nur von ${primaryName.toUpperCase()} geleitet werden (es sei denn, ${primaryName.toUpperCase()} ist laut sevafrei-Kalender/Regeln abwesend).`
         });
       }
     }
