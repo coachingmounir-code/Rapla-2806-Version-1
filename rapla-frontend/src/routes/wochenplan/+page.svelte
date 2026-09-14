@@ -36,18 +36,24 @@
   let activeMobileDay = $state(5);
   let isWeekApproved = $state(false);
 
-  // Tab switcher state: 'wochenplan' | 'yla4' | 'yla4_w3'
+  // Tab switcher state: 'wochenplan' | 'yla4' | 'yla4_w3' | 'yla4_w4'
   let tabParam = $derived(page.url.searchParams.get('tab') || '');
-  let activeTab = $state<'wochenplan' | 'yla4' | 'yla4_w3'>(
-    (typeof window !== 'undefined' && (page.url.searchParams.get('tab') === 'yla4_w3' || page.url.searchParams.get('tab') === 'woche3' || page.url.searchParams.get('tab') === 'w3'))
-      ? 'yla4_w3'
-      : (typeof window !== 'undefined' && (page.url.searchParams.get('tab') === 'yla4' || page.url.searchParams.get('tab') === 'woche2' || page.url.searchParams.get('tab') === 'w2'))
-        ? 'yla4'
-        : 'wochenplan'
+  let activeTab = $state<'wochenplan' | 'yla4' | 'yla4_w3' | 'yla4_w4'>(
+    (typeof window !== 'undefined' && (page.url.searchParams.get('tab') === 'yla4_w4' || page.url.searchParams.get('tab') === 'woche4' || page.url.searchParams.get('tab') === 'w4' || page.url.searchParams.get('tab') === 'yla4_4'))
+      ? 'yla4_w4'
+      : (typeof window !== 'undefined' && (page.url.searchParams.get('tab') === 'yla4_w3' || page.url.searchParams.get('tab') === 'woche3' || page.url.searchParams.get('tab') === 'w3'))
+        ? 'yla4_w3'
+        : (typeof window !== 'undefined' && (page.url.searchParams.get('tab') === 'yla4' || page.url.searchParams.get('tab') === 'woche2' || page.url.searchParams.get('tab') === 'w2'))
+          ? 'yla4'
+          : 'wochenplan'
   );
 
   $effect(() => {
-    if (tabParam === 'yla4_w3' || tabParam === 'woche3' || tabParam === 'w3' || tabParam === 'yla3') {
+    if (tabParam === 'yla4_w4' || tabParam === 'woche4' || tabParam === 'w4' || tabParam === 'yla4_4') {
+      if ('yla4_w4' !== untrack(() => activeTab)) {
+        activeTab = 'yla4_w4';
+      }
+    } else if (tabParam === 'yla4_w3' || tabParam === 'woche3' || tabParam === 'w3' || tabParam === 'yla3') {
       if ('yla4_w3' !== untrack(() => activeTab)) {
         activeTab = 'yla4_w3';
       }
@@ -62,10 +68,10 @@
     }
   });
 
-  function switchTab(tab: 'wochenplan' | 'yla4' | 'yla4_w3') {
+  function switchTab(tab: 'wochenplan' | 'yla4' | 'yla4_w3' | 'yla4_w4') {
     activeTab = tab;
     const params = new URLSearchParams(page.url.searchParams);
-    if (tab === 'yla4' || tab === 'yla4_w3') {
+    if (tab === 'yla4' || tab === 'yla4_w3' || tab === 'yla4_w4') {
       params.set('tab', tab);
     } else {
       params.delete('tab');
@@ -142,6 +148,30 @@
       const slot = w3.slots[slotIdx];
       for (const day of w3.days) {
         const cellInfo = getYlaCellRenderInfo(w3, day.col, slotIdx);
+        if (!cellInfo.shouldRender) continue;
+        const entry = cellInfo.entry;
+        if (!entry || !entry.assignedTeacher) continue;
+        const assigned = entry.assignedTeacher.split(/[,+/]/).map(n => normalizeTeacherName(n)).filter(Boolean);
+        if (assigned.some(a => a && a !== '?' && !a.includes('offen') && (a === norm || norm.includes(a) || a.includes(norm)))) {
+          result.push({ slot, day, entry, cellInfo });
+        }
+      }
+    }
+    return result;
+  });
+
+  // Resolved Week 4 YLA slots specifically for selected teacher (for YLA4 tab)
+  let selectedTeacherWeek4YlaSlots = $derived.by(() => {
+    if (!selectedTeacher) return [];
+    const weeks = getYlaWeeks();
+    const w4 = weeks.find(w => w.weekNumber === 4);
+    if (!w4) return [];
+    const norm = normalizeTeacherName(selectedTeacher.name);
+    const result: any[] = [];
+    for (let slotIdx = 0; slotIdx < w4.slots.length; slotIdx++) {
+      const slot = w4.slots[slotIdx];
+      for (const day of w4.days) {
+        const cellInfo = getYlaCellRenderInfo(w4, day.col, slotIdx);
         if (!cellInfo.shouldRender) continue;
         const entry = cellInfo.entry;
         if (!entry || !entry.assignedTeacher) continue;
@@ -351,6 +381,17 @@
     const ids = courseTeacherId.split(',').map(s => s.trim());
     if (ids.includes(targetTeacherId)) return true;
     if ((targetTeacherId === 'teacher-karma-gopala' || targetTeacherId.includes('gopala')) && ids.some(id => id === 'teacher-guest-1789207307944' || id.includes('gopala'))) return true;
+
+    // Check composite assignments (e.g. teacher-gen-adam-anjali, teacher-gen-burnie-narayani)
+    const targetTeacher = teachers.find(t => t.id === targetTeacherId);
+    if (targetTeacher) {
+      const targetName = targetTeacher.name.toLowerCase().trim();
+      const courseTeacher = teachers.find(t => t.id === courseTeacherId);
+      if (courseTeacher && courseTeacher.name.includes(',')) {
+        const parts = courseTeacher.name.split(',').map(p => p.trim().toLowerCase());
+        if (parts.some(p => p === targetName || targetName.includes(p) || p.includes(targetName))) return true;
+      }
+    }
     return false;
   }
 
@@ -728,6 +769,17 @@
         <span class="tab-label">YLA4</span>
         <span class="tab-badge">Woche 3</span>
       </button>
+
+      <button 
+        type="button" 
+        class="team-view-tab-btn yla4-tab-btn" 
+        class:active={activeTab === 'yla4_w4'}
+        onclick={() => switchTab('yla4_w4')}
+      >
+        <span class="tab-icon">🧘‍♀️</span>
+        <span class="tab-label">YLA4</span>
+        <span class="tab-badge">Woche 4</span>
+      </button>
     </div>
 
     {#if activeTab === 'yla4'}
@@ -738,12 +790,16 @@
       <div class="tab-info-pill">
         <span>📖 4-Wochen Yogalehrerausbildung • <strong>Woche 3 (12.09. – 18.09.2026)</strong></span>
       </div>
+    {:else if activeTab === 'yla4_w4'}
+      <div class="tab-info-pill">
+        <span>📖 4-Wochen Yogalehrerausbildung • <strong>Woche 4 (19.09. – 27.09.2026)</strong></span>
+      </div>
     {/if}
   </div>
 
   {#if selectedTeacher}
-    <div class="personal-teacher-header-banner animate-fade-in" class:yla-banner={activeTab === 'yla4' || activeTab === 'yla4_w3'}>
-      <div class="teacher-avatar-badge" style="background-color: {selectedTeacher.avatarColor || (activeTab === 'yla4' || activeTab === 'yla4_w3' ? '#9333ea' : '#ea580c')};">
+    <div class="personal-teacher-header-banner animate-fade-in" class:yla-banner={activeTab === 'yla4' || activeTab === 'yla4_w3' || activeTab === 'yla4_w4'}>
+      <div class="teacher-avatar-badge" style="background-color: {selectedTeacher.avatarColor || (activeTab === 'yla4' || activeTab === 'yla4_w3' || activeTab === 'yla4_w4' ? '#9333ea' : '#ea580c')};">
         {selectedTeacher.name.charAt(0)}
       </div>
       <div class="teacher-info-col">
@@ -760,6 +816,13 @@
             {#if selectedTeacherWeek3YlaSlots.length > 0}
               <span class="yla-counter-pill yla-counter-pill-purple">
                 🧘‍♂️ {selectedTeacherWeek3YlaSlots.length}x in YLA4 Woche 3 eingeteilt
+              </span>
+            {/if}
+          {:else if activeTab === 'yla4_w4'}
+            <h2>Persönlicher YLA4-Plan (Woche 4): <strong>{selectedTeacher.name}</strong></h2>
+            {#if selectedTeacherWeek4YlaSlots.length > 0}
+              <span class="yla-counter-pill yla-counter-pill-purple">
+                🧘‍♀️ {selectedTeacherWeek4YlaSlots.length}x in YLA4 Woche 4 eingeteilt
               </span>
             {/if}
           {:else}
@@ -782,6 +845,11 @@
             <span class="dot-separator">•</span>
             <span class="yla-active-notice" style="color: #9333ea;">
               ✨ Deine Unterrichtseinheiten für Woche 3 der Yogalehrerausbildung sind im Plan hervorgehoben!
+            </span>
+          {:else if activeTab === 'yla4_w4'}
+            <span class="dot-separator">•</span>
+            <span class="yla-active-notice" style="color: #9333ea;">
+              ✨ Deine Unterrichtseinheiten für Woche 4 der Yogalehrerausbildung sind im Plan hervorgehoben!
             </span>
           {:else if selectedTeacherYlaSlots.length > 0}
             <span class="dot-separator">•</span>
@@ -819,6 +887,17 @@
       <YlaScheduleView 
         initialWeek={3} 
         allowedWeeks={[3]} 
+        readOnly={true} 
+        hideSelfStudy={true}
+        highlightTeacherName={selectedTeacher?.name || ''} 
+      />
+    </div>
+  {:else if activeTab === 'yla4_w4'}
+    <!-- Dedicated YLA4 View for Week 4 (Team View) -->
+    <div class="yla4-team-view-wrapper animate-fade-in">
+      <YlaScheduleView 
+        initialWeek={4} 
+        allowedWeeks={[4]} 
         readOnly={true} 
         hideSelfStudy={true}
         highlightTeacherName={selectedTeacher?.name || ''} 

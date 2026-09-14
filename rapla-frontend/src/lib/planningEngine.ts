@@ -497,7 +497,8 @@ export function validateAssignment(
                                 courseNameLower.includes('mittelstufe');
   if (isMittelstufeAnkommen) {
     const primary = wochenplanRules.yoga.fridayMittelstufeAnkommen.primary;
-    const isPrimaryAbsent = isTeacherAbsent(primary, course.dayOfWeek, targetWeekCode, absences);
+    const hasPrimaryYla = targetWeekCode ? !!getYlaConflictForTeacher(primary, course.dayOfWeek, course.startTime, course.endTime, targetWeekCode, course.name) : false;
+    const isPrimaryAbsent = isTeacherAbsent(primary, course.dayOfWeek, targetWeekCode, absences) || hasPrimaryYla;
     if (!isPrimaryAbsent) {
       if (!teacherNameLower.includes(primary)) {
         conflicts.push({
@@ -509,7 +510,8 @@ export function validateAssignment(
       const backups = wochenplanRules.yoga.sundayMittelstufeAnkommen.backups;
       let assignedBackup = null;
       for (const backupName of backups) {
-        const isBackupAbsent = isTeacherAbsent(backupName, course.dayOfWeek, targetWeekCode, absences);
+        const hasBackupYla = targetWeekCode ? !!getYlaConflictForTeacher(backupName, course.dayOfWeek, course.startTime, course.endTime, targetWeekCode, course.name) : false;
+        const isBackupAbsent = isTeacherAbsent(backupName, course.dayOfWeek, targetWeekCode, absences) || hasBackupYla;
         if (!isBackupAbsent) {
           assignedBackup = backupName;
           break;
@@ -518,7 +520,7 @@ export function validateAssignment(
       if (assignedBackup && !teacherNameLower.includes(assignedBackup)) {
         conflicts.push({
           type: 'hard',
-          message: `Da ${primary.toUpperCase()} abwesend ist, muss ${assignedBackup.toUpperCase()} die Mittelstufe Ankommensstunde am Sonntag leiten.`
+          message: `Da ${primary.toUpperCase()} abwesend/in YLA ist, muss ${assignedBackup.toUpperCase()} die Mittelstufe Ankommensstunde am Sonntag leiten.`
         });
       }
     }
@@ -817,11 +819,11 @@ export function runAiPlanning(
     const adjustedCourse = tempLayout.find(x => x.id === c.id)!;
 
     const conflicts = validateAssignment(teacher, adjustedCourse, tempLayout, seminarLeaderIds, targetWeekCode, teachers, absences);
-    const hasAbsenceConflict = conflicts.some(conf => conf.type === 'hard' && conf.message.includes('abwesend'));
-    if (hasAbsenceConflict) {
+    const hasHardConflict = conflicts.some(conf => conf.type === 'hard');
+    if (hasHardConflict) {
       const dayNames = ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag'];
       const dayName = dayNames[c.dayOfWeek] || c.dayOfWeek.toString();
-      logs.push(`Replanung erforderlich für "${c.name}" am ${dayName} (${c.startTime}), da ${teacher.name} abwesend/sevafrei ist.`);
+      logs.push(`Replanung erforderlich für "${c.name}" am ${dayName} (${c.startTime}), da ${teacher.name} einen Konflikt/Abwesenheit hat.`);
       return true;
     }
     return false;
