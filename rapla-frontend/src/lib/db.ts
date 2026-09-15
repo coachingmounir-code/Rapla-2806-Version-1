@@ -2283,18 +2283,6 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
         "status": "approved"
-      },
-      {
-        "id": "course-2026-W38-61",
-        "name": "Entspannungsangebot: Fantasiereise",
-        "style": "Entspannung",
-        "dayOfWeek": 4,
-        "startTime": "21:10",
-        "endTime": "22:00",
-        "roomId": "room-5",
-        "teacherId": "teacher-gen-harishakti",
-        "isAiPlanned": false,
-        "status": "approved"
       }
     ],
     "createdAt": "2026-09-08T08:00:00.000Z"
@@ -2478,6 +2466,14 @@ export function reconcilePlansWithDefaults(plans: WeekPlan[]): { plans: WeekPlan
         }
       }
 
+      if (plan.targetWeekCode === '2026-W38') {
+        const preLen = plan.courses.length;
+        plan.courses = plan.courses.filter(c => !(c.dayOfWeek === 4 && (c.name.toLowerCase().includes('entspannung') || c.style.toLowerCase().includes('entspannung'))));
+        if (plan.courses.length !== preLen) {
+          hasChanges = true;
+        }
+      }
+
       for (const defC of defPlan.courses) {
         const existingC = plan.courses.find(c => 
           c.id === defC.id || 
@@ -2529,7 +2525,7 @@ export function reconcilePlansWithDefaults(plans: WeekPlan[]): { plans: WeekPlan
   return { plans: list, hasChanges };
 }
 
-const CURRENT_DB_VERSION = 116;
+const CURRENT_DB_VERSION = 117;
 
 // Database Actions
 export const db = {
@@ -3303,6 +3299,15 @@ export const db = {
             });
             updated = true;
           }
+        }
+      }
+
+      // Migration: Remove Entspannungsangebot on Thursday 17.09 (2026-W38)
+      if (p.targetWeekCode === '2026-W38') {
+        const preLen = p.courses.length;
+        p.courses = p.courses.filter(c => !(c.dayOfWeek === 4 && (c.name.toLowerCase().includes('entspannung') || c.style.toLowerCase().includes('entspannung'))));
+        if (p.courses.length !== preLen) {
+          updated = true;
         }
       }
     }
