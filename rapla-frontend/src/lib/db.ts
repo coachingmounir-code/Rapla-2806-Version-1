@@ -2309,7 +2309,6 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       { "id": "course-2026-W39-13", "name": "Anfänger", "style": "Hatha", "dayOfWeek": 6, "startTime": "09:15", "endTime": "11:00", "roomId": "room-4", "teacherId": "teacher-gen-pranava-pauly", "isAiPlanned": false, "status": "approved" },
       { "id": "course-2026-W39-14", "name": "Mittelstufe", "style": "Hatha", "dayOfWeek": 6, "startTime": "09:15", "endTime": "11:00", "roomId": "room-3", "teacherId": "teacher-karma-gopala", "isAiPlanned": true, "status": "approved" },
       { "id": "course-2026-W39-15", "name": "Anfänger", "style": "Hatha", "dayOfWeek": 6, "startTime": "16:15", "endTime": "18:00", "roomId": "room-4", "teacherId": "teacher-gen-yl", "isAiPlanned": false, "status": "approved" },
-      { "id": "course-2026-W39-16", "name": "Mittelstufe Mantrayogastunde", "style": "Hatha", "dayOfWeek": 6, "startTime": "16:15", "endTime": "18:00", "roomId": "room-3", "teacherId": "teacher-gen-anjali-gelzleichter", "isAiPlanned": false, "status": "approved" },
       { "id": "course-2026-W39-17", "name": "Om Namo Narayanaya", "style": "Meditation", "dayOfWeek": 6, "startTime": "19:30", "endTime": "20:00", "roomId": "room-1", "teacherId": "teacher-gen-anjali-gelzleichter", "isAiPlanned": false, "status": "approved" },
       { "id": "course-2026-W39-18", "name": "Satsang", "style": "Meditation", "dayOfWeek": 6, "startTime": "20:00", "endTime": "22:00", "roomId": "room-2", "teacherId": "teacher-gen-karuna-wapke", "isAiPlanned": false, "status": "approved" },
       { "id": "course-2026-W39-19", "name": "Geführte Meditation", "style": "Meditation", "dayOfWeek": 0, "startTime": "07:00", "endTime": "07:30", "roomId": "room-5", "teacherId": "teacher-gen-harishakti", "isAiPlanned": false, "status": "approved" },
@@ -2474,6 +2473,14 @@ export function reconcilePlansWithDefaults(plans: WeekPlan[]): { plans: WeekPlan
         }
       }
 
+      if (plan.targetWeekCode === '2026-W39') {
+        const preLen = plan.courses.length;
+        plan.courses = plan.courses.filter(c => !(c.dayOfWeek === 6 && c.startTime === '16:15' && (c.name.toLowerCase().includes('mantra') || c.id === 'course-2026-W39-16')));
+        if (plan.courses.length !== preLen) {
+          hasChanges = true;
+        }
+      }
+
       for (const defC of defPlan.courses) {
         const existingC = plan.courses.find(c => 
           c.id === defC.id || 
@@ -2525,7 +2532,7 @@ export function reconcilePlansWithDefaults(plans: WeekPlan[]): { plans: WeekPlan
   return { plans: list, hasChanges };
 }
 
-const CURRENT_DB_VERSION = 117;
+const CURRENT_DB_VERSION = 118;
 
 // Database Actions
 export const db = {
@@ -3306,6 +3313,15 @@ export const db = {
       if (p.targetWeekCode === '2026-W38') {
         const preLen = p.courses.length;
         p.courses = p.courses.filter(c => !(c.dayOfWeek === 4 && (c.name.toLowerCase().includes('entspannung') || c.style.toLowerCase().includes('entspannung'))));
+        if (p.courses.length !== preLen) {
+          updated = true;
+        }
+      }
+
+      // Migration: Remove Mittelstufe Mantrayogastunde on Saturday 19.09 (2026-W39)
+      if (p.targetWeekCode === '2026-W39') {
+        const preLen = p.courses.length;
+        p.courses = p.courses.filter(c => !(c.dayOfWeek === 6 && c.startTime === '16:15' && (c.name.toLowerCase().includes('mantra') || c.id === 'course-2026-W39-16')));
         if (p.courses.length !== preLen) {
           updated = true;
         }
