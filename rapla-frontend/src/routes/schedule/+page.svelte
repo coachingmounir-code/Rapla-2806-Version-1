@@ -607,6 +607,10 @@
         currentPlan.isManualOnly = true;
         currentPlan.hasManualEdits = true;
         currentPlan.lastEditedAt = new Date().toISOString();
+        if (!currentPlan.deletedCourseIds) currentPlan.deletedCourseIds = [];
+        if (!currentPlan.deletedCourseIds.includes(id)) {
+          currentPlan.deletedCourseIds.push(id);
+        }
         currentPlan.courses = currentPlan.courses.filter(c => c.id !== id);
         if (!db.getWeekPlan(currentPlan.id)) {
           db.addWeekPlan(currentPlan);

@@ -167,6 +167,7 @@ export interface WeekPlan {
   isApproved?: boolean;
   hasManualEdits?: boolean;
   lastEditedAt?: string;
+  deletedCourseIds?: string[];
 }
 
 // Default Data
@@ -2334,8 +2335,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       { "id": "course-2026-W39-39", "name": "Satsang", "style": "Meditation", "dayOfWeek": 2, "startTime": "07:00", "endTime": "08:00", "roomId": "room-2", "teacherId": "teacher-gen-harishakti", "isAiPlanned": false, "status": "approved" },
       { "id": "course-2026-W39-40", "name": "Anfänger", "style": "Hatha", "dayOfWeek": 2, "startTime": "09:15", "endTime": "11:00", "roomId": "room-4", "teacherId": "teacher-gen-alexander-melior", "isAiPlanned": true, "status": "approved" },
       { "id": "course-2026-W39-41", "name": "Mittelstufe", "style": "Hatha", "dayOfWeek": 2, "startTime": "09:15", "endTime": "11:00", "roomId": "room-3", "teacherId": "teacher-gen-anjali-gelzleichter", "isAiPlanned": false, "status": "approved" },
-      { "id": "course-2026-W39-42", "name": "Anfänger Yin Yoga", "style": "Hatha", "dayOfWeek": 2, "startTime": "16:15", "endTime": "18:00", "roomId": "room-4", "teacherId": "teacher-gen-chandrashekara", "isAiPlanned": true, "status": "approved" },
-      { "id": "course-2026-W39-43", "name": "Mittelstufe", "style": "Hatha", "dayOfWeek": 2, "startTime": "16:15", "endTime": "18:00", "roomId": "room-3", "teacherId": "teacher-gen-narayani-kedenburg", "isAiPlanned": false, "status": "approved" },
+      { "id": "course-2026-W39-pranava-joint", "name": "Gemeinsame Stunde", "style": "Hatha", "dayOfWeek": 2, "startTime": "16:15", "endTime": "18:00", "roomId": "room-3", "teacherId": "teacher-gen-pranava-pauly", "isAiPlanned": false, "status": "approved" },
       { "id": "course-2026-W39-44", "name": "Om Namo Narayanaya", "style": "Meditation", "dayOfWeek": 2, "startTime": "19:30", "endTime": "20:00", "roomId": "room-1", "teacherId": "teacher-gen-chandrashekara", "isAiPlanned": false, "status": "approved" },
       { "id": "course-2026-W39-45", "name": "Meditativer Spaziergang", "style": "Sonstiges", "dayOfWeek": 2, "startTime": "19:30", "endTime": "20:30", "roomId": "room-7", "teacherId": "teacher-gen-pranava-pauly", "isAiPlanned": false, "status": "approved" },
       { "id": "course-2026-W39-46", "name": "Geführte Meditation", "style": "Meditation", "dayOfWeek": 3, "startTime": "07:00", "endTime": "07:30", "roomId": "room-5", "teacherId": "teacher-gen-mouniir-jaber", "isAiPlanned": true, "status": "approved" },
@@ -2475,19 +2475,47 @@ export function reconcilePlansWithDefaults(plans: WeekPlan[]): { plans: WeekPlan
 
       if (plan.targetWeekCode === '2026-W39') {
         const preLen = plan.courses.length;
-        plan.courses = plan.courses.filter(c => !(c.dayOfWeek === 6 && c.startTime === '16:15' && (c.name.toLowerCase().includes('mantra') || c.id === 'course-2026-W39-16')));
+        plan.courses = plan.courses.filter(c => 
+          !(c.dayOfWeek === 6 && c.startTime === '16:15' && (c.name.toLowerCase().includes('mantra') || c.id === 'course-2026-W39-16')) &&
+          !(c.dayOfWeek === 2 && c.startTime === '16:15' && (c.name.toLowerCase().includes('anfänger') || c.name.toLowerCase().includes('mittelstufe') || c.id === 'course-2026-W39-42' || c.id === 'course-2026-W39-43'))
+        );
+
+        const hasPranavaJoint = plan.courses.some(c => c.dayOfWeek === 2 && c.startTime === '16:15' && (c.teacherId === 'teacher-gen-pranava-pauly' || c.name.toLowerCase().includes('gemeinsam')));
+        if (!hasPranavaJoint) {
+          plan.courses.push({
+            id: 'course-2026-W39-pranava-joint',
+            name: 'Gemeinsame Stunde',
+            style: 'Hatha',
+            dayOfWeek: 2,
+            startTime: '16:15',
+            endTime: '18:00',
+            roomId: 'room-3',
+            teacherId: 'teacher-gen-pranava-pauly',
+            isAiPlanned: false,
+            status: plan.status === 'approved' ? 'approved' : 'draft'
+          });
+          hasChanges = true;
+        }
+
         if (plan.courses.length !== preLen) {
           hasChanges = true;
         }
       }
 
       for (const defC of defPlan.courses) {
+        if (plan.deletedCourseIds?.includes(defC.id)) {
+          continue;
+        }
+
         const existingC = plan.courses.find(c => 
           c.id === defC.id || 
           (c.dayOfWeek === defC.dayOfWeek && c.startTime === defC.startTime && c.name === defC.name)
         );
 
         if (!existingC) {
+          if (plan.hasManualEdits || plan.isManualOnly) {
+            continue;
+          }
           plan.courses.push(JSON.parse(JSON.stringify(defC)));
           hasChanges = true;
         } else {
@@ -3318,10 +3346,30 @@ export const db = {
         }
       }
 
-      // Migration: Remove Mittelstufe Mantrayogastunde on Saturday 19.09 (2026-W39)
+      // Migration: Remove Mittelstufe Mantrayogastunde on Saturday 19.09 (2026-W39) and Anfänger/Mittelstufe on Tuesday 22.09 (2026-W39)
       if (p.targetWeekCode === '2026-W39') {
         const preLen = p.courses.length;
-        p.courses = p.courses.filter(c => !(c.dayOfWeek === 6 && c.startTime === '16:15' && (c.name.toLowerCase().includes('mantra') || c.id === 'course-2026-W39-16')));
+        p.courses = p.courses.filter(c => 
+          !(c.dayOfWeek === 6 && c.startTime === '16:15' && (c.name.toLowerCase().includes('mantra') || c.id === 'course-2026-W39-16')) &&
+          !(c.dayOfWeek === 2 && c.startTime === '16:15' && (c.name.toLowerCase().includes('anfänger') || c.name.toLowerCase().includes('mittelstufe') || c.id === 'course-2026-W39-42' || c.id === 'course-2026-W39-43'))
+        );
+        const hasPranavaJoint = p.courses.some(c => c.dayOfWeek === 2 && c.startTime === '16:15' && (c.teacherId === 'teacher-gen-pranava-pauly' || c.name.toLowerCase().includes('gemeinsam')));
+        if (!hasPranavaJoint) {
+          p.courses.push({
+            id: 'course-2026-W39-pranava-joint',
+            name: 'Gemeinsame Stunde',
+            style: 'Hatha',
+            dayOfWeek: 2,
+            startTime: '16:15',
+            endTime: '18:00',
+            roomId: 'room-3',
+            teacherId: 'teacher-gen-pranava-pauly',
+            isAiPlanned: false,
+            status: p.status === 'approved' ? 'approved' : 'draft'
+          });
+          updated = true;
+        }
+
         if (p.courses.length !== preLen) {
           updated = true;
         }
@@ -3447,6 +3495,10 @@ export const db = {
     const pId = planId || plans.find(p => p.status === 'approved')?.id || plans[0]?.id || '';
     const plan = db.getWeekPlan(pId);
     if (plan) {
+      if (!plan.deletedCourseIds) plan.deletedCourseIds = [];
+      if (!plan.deletedCourseIds.includes(id)) {
+        plan.deletedCourseIds.push(id);
+      }
       plan.courses = plan.courses.filter(c => c.id !== id);
       plan.isManualOnly = true;
       plan.hasManualEdits = true;
@@ -3462,6 +3514,7 @@ export const db = {
     const plan = db.getWeekPlan(pId);
     if (plan) {
       plan.courses = plan.courses.map(c => ({ ...c, teacherId: null, isAiPlanned: false, isManuallyEdited: false, status: 'draft' }));
+      plan.deletedCourseIds = [];
       plan.isManualOnly = false;
       plan.hasManualEdits = false;
       plan.lastEditedAt = new Date().toISOString();
