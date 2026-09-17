@@ -20,11 +20,20 @@
   let formName = $state('');
   let formEmail = $state('');
   let formPhone = $state('');
+  let formStayStartDate = $state('');
+  let formStayEndDate = $state('');
   let formSpecialties = $state<string[]>([]);
   let formIsYogaTeacher = $state(true);
   let formAvailabilityMode = $state<'always' | 'seminar_only'>('always');
   let formCustomWishes = $state('');
   let selectedTeacherIds = $state<string[]>([]);
+  let isSaving = $state(false);
+  let toastMessage = $state<string | null>(null);
+
+  function showToast(msg: string) {
+    toastMessage = msg;
+    setTimeout(() => { toastMessage = null; }, 4500);
+  }
   
   // Rule fields
   let rulePreferredRooms = $state<string[]>([]);
@@ -102,6 +111,8 @@
     formName = '';
     formEmail = '';
     formPhone = '';
+    formStayStartDate = '';
+    formStayEndDate = '';
     formSpecialties = [];
     formIsYogaTeacher = true;
     formAvailabilityMode = roleType === 'sevaka' ? 'always' : 'seminar_only';
@@ -143,6 +154,8 @@
     formName = teacher.name;
     formEmail = teacher.email;
     formPhone = teacher.phone;
+    formStayStartDate = teacher.stayStartDate || '';
+    formStayEndDate = teacher.stayEndDate || '';
     formSpecialties = [...teacher.specialties];
     formIsYogaTeacher = teacher.isYogaTeacher !== false;
     formAvailabilityMode = teacher.availabilityMode || 'always';
@@ -173,8 +186,11 @@
     isModalOpen = true;
   }
 
-  function handleSave() {
+  async function handleSave() {
     if (!formName) return alert('Bitte Namen eingeben');
+    if (formStayStartDate && formStayEndDate && formStayStartDate > formStayEndDate) {
+      return alert('Das Enddatum darf nicht vor dem Startdatum liegen.');
+    }
 
     const customCourseNames: { originalName: string; customName: string }[] = [];
     if (ruleCustomCourseNamesText.trim()) {
@@ -189,58 +205,68 @@
       });
     }
 
-    const teacherData: Teacher = {
-      id: editingTeacher?.id || 'teacher-' + Date.now(),
-      name: formName,
-      email: formEmail,
-      phone: formPhone,
-      avatarColor: editingTeacher?.avatarColor || AVATAR_COLORS[Math.floor(Math.random() * AVATAR_COLORS.length)],
-      specialties: formSpecialties,
-      isYogaTeacher: formIsYogaTeacher,
-      availabilityMode: formAvailabilityMode,
-      roleType: editingTeacher?.roleType || roleType, // Preserves roleType if karma_yogi/guest_teacher
-      stayStartDate: editingTeacher?.stayStartDate,
-      stayEndDate: editingTeacher?.stayEndDate,
-      stayNotes: editingTeacher?.stayNotes,
-      customWishes: formCustomWishes,
-      rules: {
-        preferredRooms: rulePreferredRooms,
-        preferredDays: rulePreferredDays,
-        canLeadMeditation: ruleCanLeadMeditation,
-        canLeadSatsang: ruleCanLeadSatsang,
-        canLeadPranayama: ruleCanLeadPranayama,
-        canLeadOnn: ruleCanLeadOnn,
-        canLeadSatsangEinfuehrung: ruleCanLeadSatsangEinfuehrung,
-        canLeadHausfuehrung: ruleCanLeadHausfuehrung,
-        canLeadSpaziergang: ruleCanLeadSpaziergang,
-        maxYogaClassesPerWeek: ruleMaxYogaClasses === null ? undefined : ruleMaxYogaClasses,
-        maxMeditationPerWeek: ruleMaxMeditation === null ? undefined : ruleMaxMeditation,
-        maxSatsangsPerWeek: ruleMaxSatsangs === null ? undefined : ruleMaxSatsangs,
-        maxOnnPerWeek: ruleMaxOnn === null ? undefined : ruleMaxOnn,
-        maxMorningSatsangsPerWeek: ruleMaxMorningSatsangs === null ? undefined : ruleMaxMorningSatsangs,
-        noTwoYogaSameDay: ruleNoTwoYogaSameDay,
-        weekendAfternoonOnly: ruleWeekendAfternoonOnly,
-        weekendAsBackupOnly: ruleWeekendAsBackupOnly,
-        noYogaOnWeekend: ruleNoYogaOnWeekend,
-        prefersMittelstufe: rulePrefersMittelstufe,
-        customCourseNames: customCourseNames.length > 0 ? customCourseNames : undefined,
-        availability: ruleAvailability
+    isSaving = true;
+    try {
+      const teacherData: Teacher = {
+        id: editingTeacher?.id || 'teacher-' + Date.now(),
+        name: formName,
+        email: formEmail,
+        phone: formPhone,
+        avatarColor: editingTeacher?.avatarColor || AVATAR_COLORS[Math.floor(Math.random() * AVATAR_COLORS.length)],
+        specialties: formSpecialties,
+        isYogaTeacher: formIsYogaTeacher,
+        availabilityMode: formAvailabilityMode,
+        roleType: editingTeacher?.roleType || roleType, // Preserves roleType if karma_yogi/guest_teacher
+        stayStartDate: formStayStartDate || undefined,
+        stayEndDate: formStayEndDate || undefined,
+        stayNotes: editingTeacher?.stayNotes,
+        customWishes: formCustomWishes,
+        rules: {
+          preferredRooms: rulePreferredRooms,
+          preferredDays: rulePreferredDays,
+          canLeadMeditation: ruleCanLeadMeditation,
+          canLeadSatsang: ruleCanLeadSatsang,
+          canLeadPranayama: ruleCanLeadPranayama,
+          canLeadOnn: ruleCanLeadOnn,
+          canLeadSatsangEinfuehrung: ruleCanLeadSatsangEinfuehrung,
+          canLeadHausfuehrung: ruleCanLeadHausfuehrung,
+          canLeadSpaziergang: ruleCanLeadSpaziergang,
+          maxYogaClassesPerWeek: ruleMaxYogaClasses === null ? undefined : ruleMaxYogaClasses,
+          maxMeditationPerWeek: ruleMaxMeditation === null ? undefined : ruleMaxMeditation,
+          maxSatsangsPerWeek: ruleMaxSatsangs === null ? undefined : ruleMaxSatsangs,
+          maxOnnPerWeek: ruleMaxOnn === null ? undefined : ruleMaxOnn,
+          maxMorningSatsangsPerWeek: ruleMaxMorningSatsangs === null ? undefined : ruleMaxMorningSatsangs,
+          noTwoYogaSameDay: ruleNoTwoYogaSameDay,
+          weekendAfternoonOnly: ruleWeekendAfternoonOnly,
+          weekendAsBackupOnly: ruleWeekendAsBackupOnly,
+          noYogaOnWeekend: ruleNoYogaOnWeekend,
+          prefersMittelstufe: rulePrefersMittelstufe,
+          customCourseNames: customCourseNames.length > 0 ? customCourseNames : undefined,
+          availability: ruleAvailability
+        }
+      };
+
+      if (editingTeacher) {
+        await db.updateTeacherAsync(teacherData);
+        showToast(`✅ ${teacherData.name} aktualisiert & in der Cloud gespeichert!`);
+      } else {
+        await db.addTeacherAsync(teacherData);
+        showToast(`✅ ${teacherData.name} angelegt & in der Cloud gespeichert!`);
       }
-    };
 
-    if (editingTeacher) {
-      db.updateTeacher(teacherData);
-    } else {
-      db.addTeacher(teacherData);
+      isModalOpen = false;
+      loadData();
+    } catch (err: any) {
+      alert('Fehler beim Speichern: ' + (err?.message || err));
+    } finally {
+      isSaving = false;
     }
-
-    isModalOpen = false;
-    loadData();
   }
 
-  function handleDelete(id: string) {
+  async function handleDelete(id: string) {
     if (confirm('Möchten Sie dieses Profil wirklich löschen?')) {
-      db.deleteTeacher(id);
+      await db.deleteTeacherAsync(id);
+      showToast('🗑️ Profil gelöscht.');
       isModalOpen = false;
       loadData();
     }
@@ -324,6 +350,13 @@
   }
 </script>
 
+{#if toastMessage}
+  <div class="toast-banner animate-fade-in" style="margin-bottom: 1.5rem;">
+    <span>{toastMessage}</span>
+    <button type="button" class="toast-close" onclick={() => toastMessage = null}>✕</button>
+  </div>
+{/if}
+
 <div class="page-header">
   <div class="title-section">
     <span class="badge badge-primary">{roleType === 'sevaka' ? 'Kernteam' : 'Ressourcen'}</span>
@@ -332,100 +365,111 @@
   </div>
   {#if userRole !== 'viewer'}
     <button class="btn btn-primary" onclick={openAddModal}>
-      <span>➕</span> {roleType === 'sevaka' ? 'Sevaka hinzufügen' : 'Lehrer hinzufügen'}
+      <span>➕</span> {roleType === 'sevaka' ? 'Neuer Sevaka' : 'Neuer Unterrichtender'}
     </button>
   {/if}
 </div>
 
-<!-- Teachers Grid -->
-<div class="grid-cols-3 animate-fade-in" style="margin-top: 2rem;">
+<!-- Teacher Cards Grid -->
+<div class="grid-cols-3">
   {#each filteredTeachers as teacher}
     <!-- svelte-ignore a11y_click_events_have_key_events -->
     <!-- svelte-ignore a11y_no_static_element_interactions -->
     <div 
-      class="glass-card glass-card-interactive teacher-card" 
+      class="glass-card glass-card-interactive teacher-card"
       class:selected-card={selectedTeacherIds.includes(teacher.id)}
       onclick={() => openEditModal(teacher)}
     >
-      <!-- Card Header -->
-      <div class="teacher-header">
-        <input 
-          type="checkbox" 
-          class="teacher-select-checkbox" 
-          checked={selectedTeacherIds.includes(teacher.id)}
-          onclick={(e) => {
-            e.stopPropagation();
-            toggleSelectTeacher(teacher.id);
-          }}
-        />
+      <div class="card-header-flex">
+        {#if userRole !== 'viewer'}
+          <input 
+            type="checkbox" 
+            class="teacher-select-checkbox" 
+            checked={selectedTeacherIds.includes(teacher.id)}
+            onclick={(e) => {
+              e.stopPropagation();
+              toggleSelectTeacher(teacher.id);
+            }}
+          />
+        {/if}
         <div class="avatar bg-gradient-to-br {teacher.avatarColor}">
           {teacher.name.split(' ').map(n => n[0]).join('')}
         </div>
-        <div class="teacher-meta">
-          <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
-            <h3 style="margin: 0;">{teacher.name}</h3>
+        <div class="card-meta">
+          <h3>{teacher.name}</h3>
+          <div class="badges-row">
             {#if teacher.isYogaTeacher === false}
-              <span class="badge-tag label-seminar">Seminarleiter</span>
+              <span class="badge-role badge-role-seminar">⛺ Kein Yoga</span>
             {:else}
-              <span class="badge-tag label-yoga">Yogalehrer</span>
-              {#if teacher.availabilityMode === 'seminar_only'}
-                <span class="badge-tag label-external">Extern (Nur Seminar)</span>
-              {:else}
-                <span class="badge-tag label-fulltime">Vollzeit</span>
-              {/if}
+              <span class="badge-role badge-role-yoga">🧘 Yogalehrer</span>
+            {/if}
+            {#if teacher.availabilityMode === 'always'}
+              <span class="badge-role badge-role-active">🟢 Vollzeit</span>
+            {:else if teacher.availabilityMode === 'seminar_only'}
+              <span class="badge-role badge-role-seminar">⛺ Nur Seminarwochen</span>
             {/if}
           </div>
-          <span class="teacher-contact">{teacher.email}</span>
         </div>
       </div>
-
-      <!-- Specialties -->
-      <div class="specialties-row">
-        {#each teacher.specialties as specialty}
-          <span class="specialty-tag">{specialty}</span>
-        {/each}
-      </div>
-
-      <!-- Rules Summary -->
-      {#if roleType !== 'sevaka'}
-        <div class="rules-summary">
-          <h4>📋 Aktive Grundregeln:</h4>
-          <div class="rule-item">
-            <span>Verfügbarkeit:</span>
-            <strong>{teacher.rules.availability.length} Schichten</strong>
+      
+      <div class="card-body-details">
+        {#if teacher.email || teacher.phone}
+          <div class="contact-info">
+            {#if teacher.email}
+              <span>✉️ {teacher.email}</span>
+            {/if}
+            {#if teacher.phone}
+              <span>📞 {teacher.phone}</span>
+            {/if}
           </div>
-          {#if teacher.rules.preferredDays && teacher.rules.preferredDays.length > 0}
-            <div class="rule-item">
-              <span>Priorisiert an:</span>
-              <strong style="color: var(--primary);">{teacher.rules.preferredDays.map(d => DAYS.find(day => day.value === d)?.label.substring(0, 2)).join(', ')}</strong>
-            </div>
-          {/if}
-          {#if teacher.rules.canLeadMeditation || teacher.rules.canLeadSatsang}
-            <div class="rule-item">
-              <span>KI-Qualifikation:</span>
-              <strong style="color: #960040;">
-                {[
-                  teacher.rules.canLeadMeditation ? 'Meditation' : '',
-                  teacher.rules.canLeadSatsang ? 'Satsang' : ''
-                ].filter(Boolean).join(', ')}
-              </strong>
-            </div>
-          {/if}
+        {/if}
+
+        {#if teacher.stayStartDate || teacher.stayEndDate}
+          <div style="font-size: 0.8rem; color: #059669; font-weight: 600; margin-top: 0.35rem; display: flex; align-items: center; gap: 0.3rem;">
+            <span>📅 Zeitfenster: {teacher.stayStartDate || '...'} bis {teacher.stayEndDate || '...'}</span>
+          </div>
+        {/if}
+
+        {#if teacher.specialties && teacher.specialties.length > 0}
+          <div class="specialties-tags">
+            {#each teacher.specialties as spec}
+              <span class="tag">{spec}</span>
+            {/each}
+          </div>
+        {/if}
+
+        {#if teacher.customWishes}
+          <div class="custom-wishes-preview" title={teacher.customWishes}>
+            <span class="wishes-icon">💬</span>
+            <span class="wishes-text">{teacher.customWishes}</span>
+          </div>
+        {/if}
+
+        <!-- Quick Summary of Availability & Permissions -->
+        <div class="permissions-summary">
+          <div class="perm-badge" class:active={teacher.rules.canLeadMeditation} title="Darf morgens geführte Meditationen leiten">
+            <span class="perm-icon">🪷</span>
+            <span>Meditation</span>
+          </div>
+          <div class="perm-badge" class:active={teacher.rules.canLeadSatsang} title="Darf Satsangs leiten">
+            <span class="perm-icon">🕉️</span>
+            <span>Satsang</span>
+          </div>
+          <div class="perm-badge" class:active={teacher.rules.canLeadPranayama} title="Darf Pranayama leiten">
+            <span class="perm-icon">💨</span>
+            <span>Pranayama</span>
+          </div>
         </div>
-        
-        <div class="card-action">
-          <span class="edit-link">Regeln bearbeiten →</span>
-        </div>
-      {:else}
-        <div class="card-action">
-          <span class="edit-link">Profil bearbeiten →</span>
-        </div>
-      {/if}
-    </div>
-  {:else}
-    <div class="glass-card" style="grid-column: 1 / -1; padding: 3rem; text-align: center; color: var(--text-secondary);">
-      <h3>Keine Einträge vorhanden</h3>
-      <p>Klicken Sie oben auf "{roleType === 'sevaka' ? 'Sevaka hinzufügen' : 'Lehrer hinzufügen'}", um ein neues Profil zu erstellen.</p>
+      </div>
+
+      <div class="card-footer">
+        {#if teacher.rules.availability && teacher.rules.availability.length > 0}
+          <span class="avail-badge">{teacher.rules.availability.length} Schichten hinterlegt</span>
+        {:else}
+          <span class="avail-badge text-warning">Keine Schichten (Blockiert)</span>
+        {/if}
+        <button class="btn-text" onclick={() => openEditModal(teacher)}>Bearbeiten →</button>
+      </div>
     </div>
   {/each}
 </div>
@@ -458,6 +502,17 @@
           <div class="form-group">
             <label class="form-label" for="teacher-phone">Telefonnummer</label>
             <input id="teacher-phone" type="text" class="form-input" placeholder="+49 170..." bind:value={formPhone} />
+          </div>
+        </div>
+
+        <div class="grid-cols-2" style="gap: 1rem; margin-top: 0.5rem;">
+          <div class="form-group">
+            <label class="form-label" for="teacher-stay-start">Aufenthalt von (optional)</label>
+            <input id="teacher-stay-start" type="date" class="form-input" bind:value={formStayStartDate} />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="teacher-stay-end">Aufenthalt bis (optional)</label>
+            <input id="teacher-stay-end" type="date" class="form-input" bind:value={formStayEndDate} />
           </div>
         </div>
 
@@ -699,13 +754,15 @@
 
       <div class="modal-footer">
         {#if editingTeacher && userRole !== 'viewer'}
-          <button class="btn btn-danger" style="margin-right: auto;" onclick={() => editingTeacher && handleDelete(editingTeacher.id)}>
+          <button class="btn btn-danger" style="margin-right: auto;" onclick={() => editingTeacher && handleDelete(editingTeacher.id)} disabled={isSaving}>
             🗑️ Löschen
           </button>
         {/if}
-        <button class="btn btn-secondary" onclick={() => isModalOpen = false}>Abbrechen</button>
+        <button class="btn btn-secondary" onclick={() => isModalOpen = false} disabled={isSaving}>Abbrechen</button>
         {#if userRole !== 'viewer'}
-          <button class="btn btn-primary" onclick={handleSave}>Speichern</button>
+          <button class="btn btn-primary" onclick={handleSave} disabled={isSaving}>
+            {isSaving ? '⏳ Speichere in Cloud...' : '💾 Speichern'}
+          </button>
         {/if}
       </div>
     </div>
@@ -788,12 +845,6 @@
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
   }
 
-  .teacher-meta h3 {
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: var(--text-primary);
-  }
-
   .teacher-contact {
     font-size: 0.8rem;
     color: var(--text-muted);
@@ -814,37 +865,6 @@
     font-weight: 600;
     padding: 0.2rem 0.5rem;
     color: var(--text-secondary);
-  }
-
-  .rules-summary {
-    border-top: 1px solid var(--border-color);
-    padding-top: 1rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    flex-grow: 1;
-  }
-
-  .rules-summary h4 {
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: var(--text-secondary);
-    margin-bottom: 0.25rem;
-  }
-
-  .rule-item {
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.85rem;
-  }
-
-  .rule-item span {
-    color: var(--text-muted);
-  }
-
-  .rule-item strong {
-    color: var(--text-secondary);
-    font-weight: 500;
   }
 
   .card-action {
@@ -1116,5 +1136,32 @@
 
   .checkbox-chip-label input {
     cursor: pointer;
+  }
+
+  .toast-banner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    font-weight: 700;
+    font-size: 1rem;
+    padding: 0.85rem 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.35);
+  }
+
+  .toast-close {
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 1.1rem;
+    cursor: pointer;
+    margin-left: 1rem;
+    opacity: 0.8;
+  }
+
+  .toast-close:hover {
+    opacity: 1;
   }
 </style>

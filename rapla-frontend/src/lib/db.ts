@@ -2389,11 +2389,11 @@ function getStored<T>(key: string, defaultValue: T): T {
   }
 }
 
-let syncDebounceTimer: any = null;
+const syncDebounceTimers: Record<string, any> = {};
 let eventDebounceTimer: any = null;
 
-function setStored<T>(key: string, value: T, immediate = false): void {
-  if (typeof window === 'undefined') return;
+async function setStored<T>(key: string, value: T, immediate = false): Promise<boolean> {
+  if (typeof window === 'undefined') return false;
   
   inMemoryStore[key] = value;
   try {
@@ -2402,21 +2402,36 @@ function setStored<T>(key: string, value: T, immediate = false): void {
     console.error('Failed to save to localStorage', e);
   }
 
+  let cloudSuccess = true;
+
   if (supabase) {
     const client = supabase;
     if (immediate) {
-      client.from('app_state').upsert({ key, value: JSON.stringify(value) })
-        .then(({ error }) => {
-          if (error) console.error('Failed to sync to cloud', error);
-        });
+      if (syncDebounceTimers[key]) {
+        clearTimeout(syncDebounceTimers[key]);
+        delete syncDebounceTimers[key];
+      }
+      try {
+        const { error } = await client.from('app_state').upsert({ key, value: JSON.stringify(value) });
+        if (error) {
+          console.error(`Failed to sync ${key} immediately to cloud`, error);
+          cloudSuccess = false;
+        }
+      } catch (err) {
+        console.error(`Error in immediate cloud sync for ${key}:`, err);
+        cloudSuccess = false;
+      }
     } else {
-      if (syncDebounceTimer) clearTimeout(syncDebounceTimer);
-      syncDebounceTimer = setTimeout(() => {
+      if (syncDebounceTimers[key]) clearTimeout(syncDebounceTimers[key]);
+      syncDebounceTimers[key] = setTimeout(async () => {
+        delete syncDebounceTimers[key];
         if (client) {
-          client.from('app_state').upsert({ key, value: JSON.stringify(value) })
-            .then(({ error }) => {
-              if (error) console.error('Failed to sync to cloud', error);
-            });
+          try {
+            const { error } = await client.from('app_state').upsert({ key, value: JSON.stringify(value) });
+            if (error) console.error(`Failed to sync ${key} to cloud`, error);
+          } catch (err) {
+            console.error(`Error in debounced cloud sync for ${key}:`, err);
+          }
         }
       }, 300);
     }
@@ -2426,6 +2441,68 @@ function setStored<T>(key: string, value: T, immediate = false): void {
   eventDebounceTimer = setTimeout(() => {
     window.dispatchEvent(new CustomEvent('rapla-data-synced'));
   }, 50);
+
+  return cloudSuccess;
+}
+
+// Comprehensive Teacher Reconciliation Function to guarantee custom & default teachers are ALWAYS preserved and merged
+export function reconcileTeachersWithCloud(
+  localTeachers: Teacher[], 
+  remoteTeachers: Teacher[]
+): { teachers: Teacher[]; hasChanges: boolean } {
+  let hasChanges = false;
+  const deletedIds = getStored<string[]>('rapla_deleted_teacher_ids', []);
+  const teacherMap = new Map<string, Teacher>();
+
+  // 1. First populate with default teachers (except deleted ones)
+  for (const defT of DEFAULT_TEACHERS) {
+    if (!deletedIds.includes(defT.id)) {
+      teacherMap.set(defT.id, JSON.parse(JSON.stringify(defT)));
+    }
+  }
+
+  // 2. Merge remote teachers
+  if (Array.isArray(remoteTeachers)) {
+    for (const remT of remoteTeachers) {
+      if (!remT || !remT.id || deletedIds.includes(remT.id)) continue;
+      const existing = teacherMap.get(remT.id);
+      if (existing) {
+        teacherMap.set(remT.id, { ...existing, ...remT });
+      } else {
+        teacherMap.set(remT.id, remT);
+      }
+    }
+  }
+
+  // 3. Merge local teachers (preserving locally created teachers and local edits)
+  if (Array.isArray(localTeachers)) {
+    for (const locT of localTeachers) {
+      if (!locT || !locT.id || deletedIds.includes(locT.id)) continue;
+      const existing = teacherMap.get(locT.id);
+      if (!existing) {
+        // Local has a newly created teacher not yet in remote
+        teacherMap.set(locT.id, locT);
+        hasChanges = true;
+      } else {
+        // Merge attributes, preserving custom stay dates and local updates
+        const merged: Teacher = {
+          ...existing,
+          ...locT,
+          rules: {
+            ...existing.rules,
+            ...locT.rules
+          }
+        };
+        if ((locT.stayStartDate || locT.stayEndDate) && (!existing.stayStartDate && !existing.stayEndDate)) {
+          hasChanges = true;
+        }
+        teacherMap.set(locT.id, merged);
+      }
+    }
+  }
+
+  const result = Array.from(teacherMap.values());
+  return { teachers: result, hasChanges };
 }
 
 // Comprehensive Reconciliation Function to guarantee default week plans & courses are ALWAYS preserved and merged
@@ -2623,6 +2700,23 @@ export const db = {
               if (needsCloudPush && supabase) {
                 supabase.from('app_state').upsert({ key: 'rapla_week_plans', value: mergedStr }).then(() => {});
               }
+            } else if (row.key === 'rapla_teachers') {
+              const remoteTeachers: Teacher[] = JSON.parse(row.value);
+              const localTeachers = getStored<Teacher[]>('rapla_teachers', DEFAULT_TEACHERS);
+              const { teachers: reconciled, hasChanges: teachersChanged } = reconcileTeachersWithCloud(localTeachers, remoteTeachers);
+
+              const reconciledStr = JSON.stringify(reconciled);
+              const currentStr = localStorage.getItem('rapla_teachers');
+              if (currentStr !== reconciledStr) {
+                changed = true;
+                localStorage.setItem('rapla_teachers', reconciledStr);
+              }
+              inMemoryStore['rapla_teachers'] = reconciled;
+
+              if (teachersChanged && supabase) {
+                needsCloudPush = true;
+                supabase.from('app_state').upsert({ key: 'rapla_teachers', value: reconciledStr }).then(() => {});
+              }
             } else {
               const currentStr = localStorage.getItem(row.key);
               if (currentStr !== row.value) {
@@ -2667,6 +2761,16 @@ export const db = {
                       const reconciledStr = JSON.stringify(reconciled);
                       localStorage.setItem(key, reconciledStr);
                       inMemoryStore[key] = reconciled;
+                    } else if (key === 'rapla_teachers') {
+                      const remoteTeachers: Teacher[] = JSON.parse(val);
+                      const localTeachers = getStored<Teacher[]>('rapla_teachers', DEFAULT_TEACHERS);
+                      const { teachers: reconciled, hasChanges: teachersChanged } = reconcileTeachersWithCloud(localTeachers, remoteTeachers);
+                      const reconciledStr = JSON.stringify(reconciled);
+                      localStorage.setItem(key, reconciledStr);
+                      inMemoryStore[key] = reconciled;
+                      if (teachersChanged && supabase) {
+                        supabase.from('app_state').upsert({ key: 'rapla_teachers', value: reconciledStr }).then(() => {});
+                      }
                     } else {
                       localStorage.setItem(key, val);
                       inMemoryStore[key] = JSON.parse(val);
@@ -2718,7 +2822,7 @@ export const db = {
     }
     return list;
   },
-  saveSevafrei: (list: any[]): void => setStored('rapla_sevafrei', list),
+  saveSevafrei: (list: any[]): void => { setStored('rapla_sevafrei', list); },
   getDefaultCourses: (): Course[] => DEFAULT_COURSES,
   getTeachers: (): Teacher[] => {
     const storedVersion = typeof window !== 'undefined' ? localStorage.getItem('rapla_db_version') : null;
@@ -3047,23 +3151,65 @@ export const db = {
     }
     return list;
   },
-  saveTeachers: (teachers: Teacher[]): void => setStored('rapla_teachers', teachers),
-  addTeacher: (teacher: Teacher): void => {
-    const list = db.getTeachers();
-    list.push(teacher);
-    db.saveTeachers(list);
+  saveTeachers: (teachers: Teacher[], immediate = true): void => {
+    setStored('rapla_teachers', teachers, immediate);
   },
-  updateTeacher: (teacher: Teacher): void => {
+  saveTeachersAsync: async (teachers: Teacher[]): Promise<boolean> => {
+    return await setStored('rapla_teachers', teachers, true);
+  },
+  addTeacher: (teacher: Teacher, immediate = true): void => {
+    const deletedIds = getStored<string[]>('rapla_deleted_teacher_ids', []);
+    if (deletedIds.includes(teacher.id)) {
+      setStored('rapla_deleted_teacher_ids', deletedIds.filter(id => id !== teacher.id), true);
+    }
+    const list = db.getTeachers();
+    const existingIdx = list.findIndex(t => t.id === teacher.id);
+    if (existingIdx !== -1) {
+      list[existingIdx] = teacher;
+    } else {
+      list.push(teacher);
+    }
+    db.saveTeachers(list, immediate);
+  },
+  addTeacherAsync: async (teacher: Teacher): Promise<boolean> => {
+    const deletedIds = getStored<string[]>('rapla_deleted_teacher_ids', []);
+    if (deletedIds.includes(teacher.id)) {
+      setStored('rapla_deleted_teacher_ids', deletedIds.filter(id => id !== teacher.id), true);
+    }
+    const list = db.getTeachers();
+    const existingIdx = list.findIndex(t => t.id === teacher.id);
+    if (existingIdx !== -1) {
+      list[existingIdx] = teacher;
+    } else {
+      list.push(teacher);
+    }
+    return await setStored('rapla_teachers', list, true);
+  },
+  updateTeacher: (teacher: Teacher, immediate = true): void => {
     const list = db.getTeachers();
     const index = list.findIndex(t => t.id === teacher.id);
     if (index !== -1) {
       list[index] = teacher;
-      db.saveTeachers(list);
+      db.saveTeachers(list, immediate);
     }
   },
-  deleteTeacher: (id: string): void => {
+  updateTeacherAsync: async (teacher: Teacher): Promise<boolean> => {
     const list = db.getTeachers();
-    db.saveTeachers(list.filter(t => t.id !== id));
+    const index = list.findIndex(t => t.id === teacher.id);
+    if (index !== -1) {
+      list[index] = teacher;
+      return await setStored('rapla_teachers', list, true);
+    }
+    return false;
+  },
+  deleteTeacher: (id: string, immediate = true): void => {
+    const deletedIds = getStored<string[]>('rapla_deleted_teacher_ids', []);
+    if (!deletedIds.includes(id)) {
+      deletedIds.push(id);
+      setStored('rapla_deleted_teacher_ids', deletedIds, true);
+    }
+    const list = db.getTeachers();
+    db.saveTeachers(list.filter(t => t.id !== id), immediate);
     
     // Clean up course assignments across all plans for deleted teacher
     const plans = db.getWeekPlans();
@@ -3072,6 +3218,24 @@ export const db = {
       courses: plan.courses.map(c => c.teacherId === id ? { ...c, teacherId: null, isAiPlanned: false } : c)
     }));
     db.saveWeekPlans(updated);
+  },
+  deleteTeacherAsync: async (id: string): Promise<boolean> => {
+    const deletedIds = getStored<string[]>('rapla_deleted_teacher_ids', []);
+    if (!deletedIds.includes(id)) {
+      deletedIds.push(id);
+      await setStored('rapla_deleted_teacher_ids', deletedIds, true);
+    }
+    const list = db.getTeachers();
+    const ok = await setStored('rapla_teachers', list.filter(t => t.id !== id), true);
+    
+    // Clean up course assignments across all plans for deleted teacher
+    const plans = db.getWeekPlans();
+    const updated = plans.map(plan => ({
+      ...plan,
+      courses: plan.courses.map(c => c.teacherId === id ? { ...c, teacherId: null, isAiPlanned: false } : c)
+    }));
+    db.saveWeekPlans(updated);
+    return ok;
   },
   
   getRooms: (): Room[] => {
@@ -3083,7 +3247,7 @@ export const db = {
     }
     return stored;
   },
-  saveRooms: (rooms: Room[]): void => setStored('rapla_rooms', rooms),
+  saveRooms: (rooms: Room[]): void => { setStored('rapla_rooms', rooms); },
   
   // Week Plan Methods
   getWeekPlans: (): WeekPlan[] => {
@@ -3383,7 +3547,7 @@ export const db = {
     }
     return list;
   },
-  saveWeekPlans: (plans: WeekPlan[]): void => setStored('rapla_week_plans', plans),
+  saveWeekPlans: (plans: WeekPlan[]): void => { setStored('rapla_week_plans', plans); },
   getWeekPlan: (id: string): WeekPlan | undefined => db.getWeekPlans().find(p => p.id === id),
   addWeekPlan: (plan: WeekPlan): void => {
     const list = db.getWeekPlans();

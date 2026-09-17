@@ -709,6 +709,116 @@
       isSyncing = false;
     }
   }
+
+  // Quick Add Person / Karma-Yogi Modal state
+  let isQuickPersonModalOpen = $state(false);
+  let isSavingQuickPerson = $state(false);
+  let assignToCurrentCourseOnSave = $state(false);
+  let quickName = $state('');
+  let quickRole = $state<'karma_yogi' | 'guest_teacher' | 'external'>('karma_yogi');
+  let quickStartDate = $state('');
+  let quickEndDate = $state('');
+  let quickIsYogaTeacher = $state(true);
+  let quickCanLeadMeditation = $state(true);
+  let quickCanLeadSatsang = $state(false);
+  let quickNotes = $state('');
+
+  function openQuickAddPersonModal(forCurrentCourse = false) {
+    assignToCurrentCourseOnSave = forCurrentCourse;
+    quickName = '';
+    quickRole = 'karma_yogi';
+    
+    // Default dates to the current plan week
+    const weekCode = currentPlan?.targetWeekCode || getWeekCode(getMondayOfCurrentWeek());
+    const fridayDate = getLocalDateForDay(weekCode, 5); // Friday of week
+    quickStartDate = fridayDate;
+    
+    // Default to 14 days later
+    const sDate = new Date(fridayDate);
+    const eDate = new Date(sDate.getTime());
+    eDate.setDate(sDate.getDate() + 14);
+    quickEndDate = eDate.toISOString().split('T')[0];
+    
+    quickIsYogaTeacher = true;
+    quickCanLeadMeditation = true;
+    quickCanLeadSatsang = false;
+    quickNotes = '';
+    isQuickPersonModalOpen = true;
+  }
+
+  async function handleQuickPersonSave() {
+    if (!quickName.trim()) {
+      alert('Bitte einen Namen eingeben.');
+      return;
+    }
+    if (quickStartDate && quickEndDate && quickStartDate > quickEndDate) {
+      alert('Das Enddatum darf nicht vor dem Startdatum liegen.');
+      return;
+    }
+
+    isSavingQuickPerson = true;
+    try {
+      const colors = [
+        'from-emerald-400 to-teal-600',
+        'from-amber-400 to-orange-500',
+        'from-pink-500 to-rose-500',
+        'from-blue-500 to-indigo-500',
+        'from-purple-500 to-indigo-600',
+        'from-cyan-400 to-blue-500'
+      ];
+      const avatarColor = colors[Math.floor(Math.random() * colors.length)];
+      
+      const newTeacher: Teacher = {
+        id: `teacher-guest-${Date.now()}`,
+        name: quickName.trim(),
+        email: '',
+        phone: '',
+        avatarColor,
+        specialties: quickIsYogaTeacher ? ['Hatha', 'Meditation'] : ['Meditation'],
+        isYogaTeacher: quickIsYogaTeacher,
+        availabilityMode: 'always',
+        roleType: quickRole,
+        stayStartDate: quickStartDate || undefined,
+        stayEndDate: quickEndDate || undefined,
+        stayNotes: quickNotes.trim() || undefined,
+        customWishes: quickNotes.trim() || undefined,
+        rules: {
+          preferredRooms: [],
+          preferredDays: [],
+          canLeadMeditation: quickCanLeadMeditation,
+          canLeadSatsang: quickCanLeadSatsang,
+          canLeadPranayama: false,
+          canLeadOnn: true,
+          availability: [
+            { day: 1, start: '06:30', end: '22:00' },
+            { day: 2, start: '06:30', end: '22:00' },
+            { day: 3, start: '06:30', end: '22:00' },
+            { day: 4, start: '06:30', end: '22:00' },
+            { day: 5, start: '06:30', end: '22:00' },
+            { day: 6, start: '06:30', end: '22:00' },
+            { day: 0, start: '06:30', end: '22:00' }
+          ]
+        }
+      };
+
+      await db.addTeacherAsync(newTeacher);
+      teachers = db.getTeachers();
+
+      if (assignToCurrentCourseOnSave) {
+        formTeacherId = newTeacher.id;
+        syncFeedback = `✅ Person "${newTeacher.name}" erfolgreich in der Cloud gespeichert und dem aktuellen Kurs zugewiesen!`;
+      } else {
+        syncFeedback = `✅ Person "${newTeacher.name}" erfolgreich in der Cloud gespeichert und einsatzbereit!`;
+      }
+      setTimeout(() => { syncFeedback = null; }, 4500);
+
+      isQuickPersonModalOpen = false;
+    } catch (err: any) {
+      alert('Fehler beim Speichern der Person: ' + (err?.message || err));
+    } finally {
+      isSavingQuickPerson = false;
+    }
+  }
 </script>
 
 <div class="page-header">
@@ -751,6 +861,9 @@
     </a>
     <button class="btn btn-secondary" onclick={handleSync} disabled={isSyncing} title="Lädt den neuesten Stand aus dem System">
       <span class:icon-spin={isSyncing}>🔄</span> {isSyncing ? 'Synchronisiere...' : 'Synchronisieren'}
+    </button>
+    <button class="btn btn-secondary" onclick={() => openQuickAddPersonModal(false)} title="Schnell einen neuen Karma-Yogi oder Gast anlegen">
+      <span>✨</span> Person erfassen
     </button>
     <button class="btn btn-primary" onclick={openAddModal}>
       <span>➕</span> Kurs hinzufügen
@@ -1150,10 +1263,20 @@
         </div>
 
         <div class="divider"></div>
-        <div class="section-title">👤 Yogalehrer-Zuweisung</div>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; flex-wrap: wrap; gap: 0.5rem;">
+          <div class="section-title" style="margin-bottom: 0;">👤 Yogalehrer-Zuweisung</div>
+          <button 
+            type="button" 
+            class="btn-quick-add-teacher"
+            onclick={() => openQuickAddPersonModal(true)}
+            title="Neue Person / Karma-Yogi anlegen und direkt diesem Kurs zuweisen"
+          >
+            <span>➕</span> Neue Person / Karma-Yogi anlegen
+          </button>
+        </div>
 
         <div class="form-group">
-          <label class="form-label" for="assign-teacher">Yogalehrer zuteilen</label>
+          <label class="form-label" for="assign-teacher">Yogalehrer auswählen:</label>
           <select id="assign-teacher" class="form-select" bind:value={formTeacherId}>
             <option value={null}>-- Unbesetzt (Später per KI einteilen) --</option>
             <optgroup label="Sevakas (Kernteam)">
@@ -1217,6 +1340,108 @@
         {/if}
         <button class="btn btn-secondary" onclick={() => isModalOpen = false}>Abbrechen</button>
         <button class="btn btn-primary" onclick={handleSave}>Speichern</button>
+      </div>
+    </div>
+  </div>
+{/if}
+
+<!-- Quick Add Person / Karma-Yogi Modal -->
+{#if isQuickPersonModalOpen}
+  <!-- svelte-ignore a11y_click_events_have_key_events -->
+  <!-- svelte-ignore a11y_no_static_element_interactions -->
+  <div class="modal-backdrop" style="z-index: 1050;" onclick={() => isQuickPersonModalOpen = false}>
+    <!-- svelte-ignore a11y_click_events_have_key_events -->
+    <!-- svelte-ignore a11y_no_static_element_interactions -->
+    <div class="modal-content glass-card modal-quick-person" onclick={(e) => e.stopPropagation()}>
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+          <span style="font-size: 1.5rem;">✨</span>
+          <h2>Neue Person anlegen (Karma-Yogi / Gast-Seminarleiter)</h2>
+        </div>
+        <button class="close-btn" onclick={() => isQuickPersonModalOpen = false}>✕</button>
+      </div>
+
+      <div class="modal-body">
+        <p style="color: var(--text-secondary); margin-bottom: 1rem; font-size: 0.9rem; line-height: 1.45;">
+          Legen Sie hier direkt eine neue Unterrichtsperson mit Von-Bis-Zeitfenster an. Die Person wird sofort <strong>dauerhaft in der Cloud gespeichert</strong> und kann danach direkt eingeteilt werden.
+        </p>
+
+        <div class="grid-cols-2" style="gap: 1rem; display: grid; grid-template-columns: 1fr 1fr;">
+          <div class="form-group">
+            <label class="form-label" for="quick-name">Name der Person *</label>
+            <input 
+              id="quick-name" 
+              type="text" 
+              class="form-input" 
+              placeholder="z. B. Johanna Weber" 
+              bind:value={quickName} 
+            />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="quick-role">Status / Rolle</label>
+            <select id="quick-role" class="form-select" bind:value={quickRole}>
+              <option value="karma_yogi">🧡 Karma-Yogi</option>
+              <option value="guest_teacher">⛺ Externer Gast-Seminarleiter</option>
+              <option value="external">👤 Externer Yogalehrer</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid-cols-2" style="gap: 1rem; display: grid; grid-template-columns: 1fr 1fr; margin-top: 0.5rem;">
+          <div class="form-group">
+            <label class="form-label" for="quick-start">Im Haus von (Anreise)</label>
+            <input id="quick-start" type="date" class="form-input" bind:value={quickStartDate} />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="quick-end">Im Haus bis (Abreise)</label>
+            <input id="quick-end" type="date" class="form-input" bind:value={quickEndDate} />
+          </div>
+        </div>
+
+        <div class="divider" style="margin: 1rem 0;"></div>
+
+        <div class="section-title" style="font-size: 0.95rem; margin-bottom: 0.5rem;">Unterrichtsberechtigungen</div>
+        <div class="checkbox-box-group">
+          <label class="custom-checkbox-row">
+            <input type="checkbox" bind:checked={quickIsYogaTeacher} />
+            <div class="checkbox-text-meta">
+              <strong>🧘 Kann Yogastunden unterrichten</strong>
+              <span>Ermöglicht Zuteilung zu Anfänger-, Mittelstufen- und Themenstunden.</span>
+            </div>
+          </label>
+          <label class="custom-checkbox-row">
+            <input type="checkbox" bind:checked={quickCanLeadMeditation} />
+            <div class="checkbox-text-meta">
+              <strong>🪷 Kann geführte Meditationen leiten (07:00 Uhr)</strong>
+            </div>
+          </label>
+          <label class="custom-checkbox-row">
+            <input type="checkbox" bind:checked={quickCanLeadSatsang} />
+            <div class="checkbox-text-meta">
+              <strong>🕉️ Kann Satsangs leiten</strong>
+            </div>
+          </label>
+        </div>
+
+        <div class="form-group" style="margin-top: 0.75rem;">
+          <label class="form-label" for="quick-notes">Notiz / Aufgaben (optional)</label>
+          <input 
+            id="quick-notes" 
+            type="text" 
+            class="form-input" 
+            placeholder="z. B. Gibt gerne Anfänger- und Mittelstufenstunden..." 
+            bind:value={quickNotes} 
+          />
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick={() => isQuickPersonModalOpen = false} disabled={isSavingQuickPerson}>
+          Abbrechen
+        </button>
+        <button class="btn btn-primary" onclick={handleQuickPersonSave} disabled={isSavingQuickPerson}>
+          {isSavingQuickPerson ? '⏳ Speichere in Cloud...' : (assignToCurrentCourseOnSave ? '💾 Speichern & sofort zuweisen' : '💾 Speichern & Aktivieren')}
+        </button>
       </div>
     </div>
   </div>
@@ -2142,5 +2367,72 @@
       margin-left: 0 !important;
       justify-content: center;
     }
+  }
+
+  .btn-quick-add-teacher {
+    background: #fff7ed;
+    border: 1.5px solid #fdba74;
+    color: #c2410c;
+    font-size: 0.82rem;
+    font-weight: 700;
+    padding: 0.35rem 0.75rem;
+    border-radius: 6px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    transition: all 0.2s ease;
+  }
+
+  .btn-quick-add-teacher:hover {
+    background: #ffedd5;
+    border-color: #f97316;
+    color: #9a3412;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(249, 115, 22, 0.15);
+  }
+
+  .modal-quick-person {
+    max-width: 580px;
+    width: 95%;
+  }
+
+  .custom-checkbox-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.65rem 0.85rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: #fafafa;
+    cursor: pointer;
+    margin-bottom: 0.5rem;
+    transition: background 0.15s ease;
+  }
+
+  .custom-checkbox-row:hover {
+    background: #f4f4f5;
+  }
+
+  .custom-checkbox-row input[type="checkbox"] {
+    margin-top: 0.25rem;
+    cursor: pointer;
+    accent-color: #f97316;
+  }
+
+  .checkbox-text-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+
+  .checkbox-text-meta strong {
+    font-size: 0.88rem;
+    color: var(--text-primary);
+  }
+
+  .checkbox-text-meta span {
+    font-size: 0.78rem;
+    color: var(--text-secondary);
   }
 </style>

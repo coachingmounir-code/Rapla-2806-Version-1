@@ -196,64 +196,82 @@
     isModalOpen = true;
   }
 
-  function handleSave() {
+  let isSaving = $state(false);
+  let toastMessage = $state<string | null>(null);
+
+  function showToast(msg: string) {
+    toastMessage = msg;
+    setTimeout(() => { toastMessage = null; }, 4500);
+  }
+
+  async function handleSave() {
     if (!formName.trim()) return alert('Bitte Namen eingeben');
     if (formStayStartDate && formStayEndDate && formStayStartDate > formStayEndDate) {
       return alert('Das Enddatum darf nicht vor dem Startdatum liegen.');
     }
 
-    const teacherData: Teacher = {
-      id: editingTeacher?.id || `teacher-guest-${Date.now()}`,
-      name: formName.trim(),
-      email: formEmail.trim(),
-      phone: formPhone.trim(),
-      avatarColor: editingTeacher?.avatarColor || AVATAR_COLORS[Math.floor(Math.random() * AVATAR_COLORS.length)],
-      specialties: formSpecialties,
-      isYogaTeacher: formIsYogaTeacher,
-      availabilityMode: 'always',
-      roleType: formRoleType,
-      stayStartDate: formStayStartDate || undefined,
-      stayEndDate: formStayEndDate || undefined,
-      stayNotes: formStayNotes.trim() || undefined,
-      customWishes: formStayNotes.trim() || undefined,
-      rules: {
-        preferredRooms: editingTeacher?.rules.preferredRooms || [],
-        preferredDays: editingTeacher?.rules.preferredDays || [],
-        canLeadMeditation: formCanLeadMeditation,
-        canLeadSatsang: formCanLeadSatsang,
-        canLeadPranayama: editingTeacher?.rules.canLeadPranayama || false,
-        canLeadOnn: editingTeacher?.rules.canLeadOnn !== undefined ? editingTeacher.rules.canLeadOnn : true,
-        availability: formAvailability.length > 0 ? formAvailability : [
-          { day: 1, start: '06:30', end: '22:00' },
-          { day: 2, start: '06:30', end: '22:00' },
-          { day: 3, start: '06:30', end: '22:00' },
-          { day: 4, start: '06:30', end: '22:00' },
-          { day: 5, start: '06:30', end: '22:00' },
-          { day: 6, start: '06:30', end: '22:00' },
-          { day: 0, start: '06:30', end: '22:00' }
-        ]
+    isSaving = true;
+    try {
+      const teacherData: Teacher = {
+        id: editingTeacher?.id || `teacher-guest-${Date.now()}`,
+        name: formName.trim(),
+        email: formEmail.trim(),
+        phone: formPhone.trim(),
+        avatarColor: editingTeacher?.avatarColor || AVATAR_COLORS[Math.floor(Math.random() * AVATAR_COLORS.length)],
+        specialties: formSpecialties,
+        isYogaTeacher: formIsYogaTeacher,
+        availabilityMode: 'always',
+        roleType: formRoleType,
+        stayStartDate: formStayStartDate || undefined,
+        stayEndDate: formStayEndDate || undefined,
+        stayNotes: formStayNotes.trim() || undefined,
+        customWishes: formStayNotes.trim() || undefined,
+        rules: {
+          preferredRooms: editingTeacher?.rules.preferredRooms || [],
+          preferredDays: editingTeacher?.rules.preferredDays || [],
+          canLeadMeditation: formCanLeadMeditation,
+          canLeadSatsang: formCanLeadSatsang,
+          canLeadPranayama: editingTeacher?.rules.canLeadPranayama || false,
+          canLeadOnn: editingTeacher?.rules.canLeadOnn !== undefined ? editingTeacher.rules.canLeadOnn : true,
+          availability: formAvailability.length > 0 ? formAvailability : [
+            { day: 1, start: '06:30', end: '22:00' },
+            { day: 2, start: '06:30', end: '22:00' },
+            { day: 3, start: '06:30', end: '22:00' },
+            { day: 4, start: '06:30', end: '22:00' },
+            { day: 5, start: '06:30', end: '22:00' },
+            { day: 6, start: '06:30', end: '22:00' },
+            { day: 0, start: '06:30', end: '22:00' }
+          ]
+        }
+      };
+
+      if (editingTeacher) {
+        await db.updateTeacherAsync(teacherData);
+        showToast(`✅ ${teacherData.name} erfolgreich aktualisiert & in der Cloud gespeichert!`);
+      } else {
+        await db.addTeacherAsync(teacherData);
+        showToast(`✅ ${teacherData.name} erfolgreich angelegt & in der Cloud gespeichert!`);
       }
-    };
 
-    if (editingTeacher) {
-      db.updateTeacher(teacherData);
-    } else {
-      db.addTeacher(teacherData);
+      isModalOpen = false;
+      loadData();
+    } catch (err: any) {
+      alert('Fehler beim Speichern: ' + (err?.message || err));
+    } finally {
+      isSaving = false;
     }
-
-    isModalOpen = false;
-    loadData();
   }
 
-  function handleDelete(id: string) {
+  async function handleDelete(id: string) {
     if (confirm('Möchten Sie diesen Eintrag wirklich löschen?')) {
-      db.deleteTeacher(id);
+      await db.deleteTeacherAsync(id);
+      showToast('🗑️ Eintrag gelöscht.');
       isModalOpen = false;
       loadData();
     }
   }
 
-  function extendStay(teacher: Teacher, daysToAdd: number) {
+  async function extendStay(teacher: Teacher, daysToAdd: number) {
     const baseDateStr = teacher.stayEndDate && teacher.stayEndDate >= todayStr 
       ? teacher.stayEndDate 
       : todayStr;
@@ -266,11 +284,12 @@
       ...teacher,
       stayEndDate: newEnd
     };
-    db.updateTeacher(updated);
+    await db.updateTeacherAsync(updated);
+    showToast(`📅 Aufenthalt für ${teacher.name} bis ${formatDateDe(newEnd)} verlängert!`);
     loadData();
   }
 
-  function reactivateStay(teacher: Teacher, daysToAdd: number = 14) {
+  async function reactivateStay(teacher: Teacher, daysToAdd: number = 14) {
     const start = new Date(todayStr);
     const end = new Date(todayStr);
     end.setDate(start.getDate() + daysToAdd);
@@ -280,7 +299,8 @@
       stayStartDate: start.toISOString().split('T')[0],
       stayEndDate: end.toISOString().split('T')[0]
     };
-    db.updateTeacher(updated);
+    await db.updateTeacherAsync(updated);
+    showToast(`🔄 ${teacher.name} für 14 Tage reaktiviert & in der Cloud gespeichert!`);
     loadData();
   }
 
@@ -300,16 +320,26 @@
     }
   }
 
-  function bulkDelete() {
+  async function bulkDelete() {
     if (selectedTeacherIds.length === 0) return;
     if (!confirm(`Möchten Sie ${selectedTeacherIds.length} Einträge wirklich löschen?`)) return;
-    selectedTeacherIds.forEach(id => db.deleteTeacher(id));
+    for (const id of selectedTeacherIds) {
+      await db.deleteTeacherAsync(id);
+    }
     selectedTeacherIds = [];
+    showToast('🗑️ Ausgewählte Einträge gelöscht.');
     loadData();
   }
 </script>
 
 <div class="page-container">
+  {#if toastMessage}
+    <div class="toast-banner animate-fade-in">
+      <span>{toastMessage}</span>
+      <button type="button" class="toast-close" onclick={() => toastMessage = null}>✕</button>
+    </div>
+  {/if}
+
   <!-- Page Header -->
   <div class="page-header">
     <div class="title-section">
@@ -936,13 +966,15 @@
 
       <div class="modal-footer">
         {#if editingTeacher && userRole !== 'viewer'}
-          <button class="btn btn-danger" style="margin-right: auto;" onclick={() => editingTeacher && handleDelete(editingTeacher.id)}>
+          <button class="btn btn-danger" style="margin-right: auto;" onclick={() => editingTeacher && handleDelete(editingTeacher.id)} disabled={isSaving}>
             🗑️ Löschen
           </button>
         {/if}
-        <button class="btn btn-secondary" onclick={() => isModalOpen = false}>Abbrechen</button>
+        <button class="btn btn-secondary" onclick={() => isModalOpen = false} disabled={isSaving}>Abbrechen</button>
         {#if userRole !== 'viewer'}
-          <button class="btn btn-primary" onclick={handleSave}>Speichern & Aktivieren</button>
+          <button class="btn btn-primary" onclick={handleSave} disabled={isSaving}>
+            {isSaving ? '⏳ Speichere in Cloud...' : '💾 Speichern & Aktivieren'}
+          </button>
         {/if}
       </div>
     </div>
@@ -963,6 +995,32 @@
 {/if}
 
 <style>
+  .toast-banner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    font-weight: 700;
+    font-size: 1rem;
+    padding: 0.85rem 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.35);
+  }
+
+  .toast-close {
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 1.1rem;
+    cursor: pointer;
+    margin-left: 1rem;
+    opacity: 0.8;
+  }
+
+  .toast-close:hover {
+    opacity: 1;
+  }
   .page-container {
     display: flex;
     flex-direction: column;
