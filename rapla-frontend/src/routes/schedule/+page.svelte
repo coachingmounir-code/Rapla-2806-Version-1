@@ -356,8 +356,11 @@
             const nameLower = c.name.toLowerCase();
             let roomId = c.roomId;
             if (inYla) {
-              if (nameLower.includes('anfänger')) roomId = 'room-4';
-              else if (nameLower.includes('mittelstufe')) roomId = 'room-3';
+              const isAfterYlaEnd = courseDate === '2026-09-27' && c.startTime >= '16:30';
+              if (!isAfterYlaEnd) {
+                if (nameLower.includes('anfänger')) roomId = 'room-4';
+                else if (nameLower.includes('mittelstufe')) roomId = 'room-3';
+              }
             }
             return { ...c, roomId, teacherId: null, isAiPlanned: false, status: 'draft' };
           }) : []

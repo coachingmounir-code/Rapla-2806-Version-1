@@ -1616,14 +1616,17 @@ export function adjustRoomsForRules(courses: Course[], teachers: Teacher[], targ
     if (targetWeekCode) {
       const courseDate = getLocalDateForDay(targetWeekCode, course.dayOfWeek);
       if (isDateInYlaRange(courseDate)) {
-        if (isOnn) {
-          course.roomId = 'room-1'; // Devi
-        } else if (isBeginner) {
-          course.roomId = 'room-4'; // Sitaram
-        } else if (isIntermediate) {
-          course.roomId = 'room-3'; // Hanuman
+        const isAfterYlaEnd = courseDate === '2026-09-27' && course.startTime >= '16:30';
+        if (!isAfterYlaEnd) {
+          if (isOnn) {
+            course.roomId = 'room-1'; // Devi
+          } else if (isBeginner) {
+            course.roomId = 'room-4'; // Sitaram
+          } else if (isIntermediate) {
+            course.roomId = 'room-3'; // Hanuman
+          }
+          return;
         }
-        return;
       }
     }
 

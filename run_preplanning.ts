@@ -156,9 +156,12 @@ function planWeekWithAbsences(weekCode: string, standardCourses: any[]) {
       const inYla = courseDate >= '2026-08-30' && courseDate <= '2026-09-27';
       let roomId = c.roomId;
       if (inYla) {
-        if (c.name.toLowerCase().includes('anfänger')) roomId = 'room-4';
-        else if (c.name.toLowerCase().includes('mittelstufe')) roomId = 'room-3';
-        else if (c.name.toLowerCase().includes('om namo') || c.name.toLowerCase().includes('narayanaya')) roomId = 'room-1';
+        const isAfterYlaEnd = courseDate === '2026-09-27' && c.startTime >= '16:30';
+        if (!isAfterYlaEnd) {
+          if (c.name.toLowerCase().includes('anfänger')) roomId = 'room-4';
+          else if (c.name.toLowerCase().includes('mittelstufe')) roomId = 'room-3';
+        }
+        if (c.name.toLowerCase().includes('om namo') || c.name.toLowerCase().includes('narayanaya')) roomId = 'room-1';
       }
       const courseCopy = {
         ...c,
@@ -403,7 +406,7 @@ function getNext8WeekCodes(): string[] {
   return weeks;
 }
 
-const weeksToPlan = ["2026-W37"];
+const weeksToPlan = ["2026-W40"];
 console.log(`[PREPLANNING] Planning for the next 8 weeks: ${weeksToPlan.join(', ')}`);
 
 const results: Record<string, any[]> = {};
