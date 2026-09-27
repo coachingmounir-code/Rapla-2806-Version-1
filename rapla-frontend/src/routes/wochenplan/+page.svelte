@@ -735,66 +735,18 @@
     </div>
   {/if}
 
-  <!-- Main View Tabs Navigation (Wochenplan vs YLA4 Woche 2 vs YLA4 Woche 3) -->
+  <!-- Main View Tabs Navigation (Wochenplan) -->
   <div class="team-view-tabs-container">
     <div class="team-view-tabs-nav">
       <button 
         type="button" 
-        class="team-view-tab-btn" 
-        class:active={activeTab === 'wochenplan'}
+        class="team-view-tab-btn active" 
         onclick={() => switchTab('wochenplan')}
       >
         <span class="tab-icon">📅</span>
         <span class="tab-label">Wochenplan</span>
       </button>
-
-      <button 
-        type="button" 
-        class="team-view-tab-btn yla4-tab-btn" 
-        class:active={activeTab === 'yla4'}
-        onclick={() => switchTab('yla4')}
-      >
-        <span class="tab-icon">🧘‍♂️</span>
-        <span class="tab-label">YLA4</span>
-        <span class="tab-badge">Woche 2</span>
-      </button>
-
-      <button 
-        type="button" 
-        class="team-view-tab-btn yla4-tab-btn" 
-        class:active={activeTab === 'yla4_w3'}
-        onclick={() => switchTab('yla4_w3')}
-      >
-        <span class="tab-icon">🧘‍♂️</span>
-        <span class="tab-label">YLA4</span>
-        <span class="tab-badge">Woche 3</span>
-      </button>
-
-      <button 
-        type="button" 
-        class="team-view-tab-btn yla4-tab-btn" 
-        class:active={activeTab === 'yla4_w4'}
-        onclick={() => switchTab('yla4_w4')}
-      >
-        <span class="tab-icon">🧘‍♀️</span>
-        <span class="tab-label">YLA4</span>
-        <span class="tab-badge">Woche 4</span>
-      </button>
     </div>
-
-    {#if activeTab === 'yla4'}
-      <div class="tab-info-pill">
-        <span>📖 4-Wochen Yogalehrerausbildung • <strong>Woche 2 (05.09. – 11.09.2026)</strong></span>
-      </div>
-    {:else if activeTab === 'yla4_w3'}
-      <div class="tab-info-pill">
-        <span>📖 4-Wochen Yogalehrerausbildung • <strong>Woche 3 (12.09. – 18.09.2026)</strong></span>
-      </div>
-    {:else if activeTab === 'yla4_w4'}
-      <div class="tab-info-pill">
-        <span>📖 4-Wochen Yogalehrerausbildung • <strong>Woche 4 (19.09. – 27.09.2026)</strong></span>
-      </div>
-    {/if}
   </div>
 
   {#if selectedTeacher}
@@ -870,42 +822,8 @@
     </div>
   {/if}
 
-  {#if activeTab === 'yla4'}
-    <!-- Dedicated YLA4 View for Week 2 (Team View) -->
-    <div class="yla4-team-view-wrapper animate-fade-in">
-      <YlaScheduleView 
-        initialWeek={2} 
-        allowedWeeks={[2]} 
-        readOnly={true} 
-        hideSelfStudy={true}
-        highlightTeacherName={selectedTeacher?.name || ''} 
-      />
-    </div>
-  {:else if activeTab === 'yla4_w3'}
-    <!-- Dedicated YLA4 View for Week 3 (Team View) -->
-    <div class="yla4-team-view-wrapper animate-fade-in">
-      <YlaScheduleView 
-        initialWeek={3} 
-        allowedWeeks={[3]} 
-        readOnly={true} 
-        hideSelfStudy={true}
-        highlightTeacherName={selectedTeacher?.name || ''} 
-      />
-    </div>
-  {:else if activeTab === 'yla4_w4'}
-    <!-- Dedicated YLA4 View for Week 4 (Team View) -->
-    <div class="yla4-team-view-wrapper animate-fade-in">
-      <YlaScheduleView 
-        initialWeek={4} 
-        allowedWeeks={[4]} 
-        readOnly={true} 
-        hideSelfStudy={true}
-        highlightTeacherName={selectedTeacher?.name || ''} 
-      />
-    </div>
-  {:else}
-    <!-- Calendar Roster Grid (Desktop Only) -->
-    <div class="desktop-only-grid">
+  <!-- Calendar Roster Grid (Desktop Only) -->
+  <div class="desktop-only-grid">
       <div id="view-calendar-container" class="calendar-grid-container animate-fade-in" class:fullscreen-mode={isFullscreen}>
         <div class="grid-controls-row">
           <div class="navigation-group">
@@ -1254,7 +1172,6 @@
       </div>
     {/if}
   </div>
-  {/if}
   
   <footer class="view-footer-info" style="margin-top: 2rem; text-align: center; font-size: 0.8rem; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 1rem; clear: both;">
     <span>Yoga Vidya Nordsee © 2026</span>
