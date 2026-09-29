@@ -3778,13 +3778,30 @@ export const db = {
         if (absencesRes.ok) {
           const serverAbsences = await absencesRes.json();
           if (serverAbsences && serverAbsences.length > 0) {
-            const localAbsences = db.getSevafrei();
+            let localAbsences = db.getSevafrei();
             let updated = false;
+            
+            // Remove local generated absences for Sept/Oct 2026 that no longer exist on the server
+            const serverIds = new Set(serverAbsences.map((a: any) => a.id));
+            const originalLength = localAbsences.length;
+            localAbsences = localAbsences.filter((a: any) => {
+              if (a.id.startsWith('sf-') && a.id.length > 15) {
+                if ((a.startDate?.startsWith('2026-09') || a.startDate?.startsWith('2026-10')) && !serverIds.has(a.id)) {
+                  return false; // Drop it
+                }
+              }
+              return true;
+            });
+            if (localAbsences.length !== originalLength) updated = true;
+
             for (const sAbs of serverAbsences) {
               const idx = localAbsences.findIndex((a: any) => a.id === sAbs.id);
               if (idx !== -1) {
-                localAbsences[idx] = sAbs;
-                updated = true;
+                // Only update if something changed
+                if (JSON.stringify(localAbsences[idx]) !== JSON.stringify(sAbs)) {
+                  localAbsences[idx] = sAbs;
+                  updated = true;
+                }
               } else {
                 localAbsences.push(sAbs);
                 updated = true;
