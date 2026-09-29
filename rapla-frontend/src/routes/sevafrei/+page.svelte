@@ -33,8 +33,8 @@
   let showRegularFreeDaysInTimeline = $state(false);
 
   // Month tracking
-  let currentYear = $state(2026);
-  let currentMonth = $state(6); // July (0-indexed, so 6 = July)
+  let currentYear = $state(new Date().getFullYear());
+  let currentMonth = $state(new Date().getMonth());
 
   const MONTH_NAMES = [
     "Januar", "Februar", "März", "April", "Mai", "Juni",
@@ -63,7 +63,6 @@
     { spiritualName: "Pranava", firstName: "Heinz", lastName: "Pauly", team: "Hum/Shop", seminarSoll: 18, seminarIst: 6, sevafreiSoll: 29, sevafreiIst: 19 },
     { spiritualName: "Jyoti", firstName: "Melanie", lastName: "Rudolphi", team: "Jaya", seminarSoll: 0, seminarIst: 0, sevafreiSoll: 25, sevafreiIst: 0 },
     { spiritualName: "Anjali", firstName: "Magdalena", lastName: "Gelzleichter", team: "Seva/Karmayoga", seminarSoll: 18, seminarIst: 12, sevafreiSoll: 24, sevafreiIst: 19 },
-    { spiritualName: "Adinatha", firstName: "Matthias", lastName: "Lang", team: "Vishnu/Shop", seminarSoll: 18, seminarIst: 18, sevafreiSoll: 24, sevafreiIst: 5 },
     { spiritualName: "Marlen", firstName: "Marlen", lastName: "Posnien", team: "ZV", seminarSoll: 0, seminarIst: 0, sevafreiSoll: 25, sevafreiIst: 0 },
     { spiritualName: "Melanie", firstName: "Melanie", lastName: "Vagt", team: "Jaya", seminarSoll: 0, seminarIst: 0, sevafreiSoll: 0, sevafreiIst: 0 },
     { spiritualName: "burnie", firstName: "Bernhard", lastName: "Bansemer", team: "Vishnu", seminarSoll: 18, seminarIst: 0, sevafreiSoll: 24, sevafreiIst: 12 },
@@ -72,14 +71,13 @@
     { spiritualName: "Alexander", firstName: "Alexander", lastName: "Melior", team: "Küche", seminarSoll: 16, seminarIst: 18, sevafreiSoll: 24, sevafreiIst: 0 },
     { spiritualName: "Abha", firstName: "Ann-Katrin", lastName: "Morkötter", team: "Jaya, Hum", seminarSoll: 16, seminarIst: 17, sevafreiSoll: 24, sevafreiIst: 17 },
     { spiritualName: "Hu", firstName: "Katja", lastName: "Bürkle", team: "Vishnu, socM", seminarSoll: 14, seminarIst: 16, sevafreiSoll: 24, sevafreiIst: 24 },
-    { spiritualName: "Ulrich", firstName: "Ulrich", lastName: "Nebel", team: "Sattva", seminarSoll: 14, seminarIst: 0, sevafreiSoll: 24, sevafreiIst: 19 },
     { spiritualName: "Shantara", firstName: "Jessica", lastName: "Nickler", team: "Küche", seminarSoll: 0, seminarIst: 0, sevafreiSoll: 25, sevafreiIst: 18 },
     { spiritualName: "Adam", firstName: "Adam", lastName: "Zmuda", team: "Küche", seminarSoll: 12, seminarIst: 0, sevafreiSoll: 24, sevafreiIst: 6 },
     { spiritualName: "Narayani", firstName: "Katja", lastName: "Kedenburg", team: "ZV", seminarSoll: 18, seminarIst: 16, sevafreiSoll: 24, sevafreiIst: 17 },
-    { spiritualName: "Linda", firstName: "Linda", lastName: "Silberbauer", team: "Jaya", seminarSoll: 12, seminarIst: 0, sevafreiSoll: 22, sevafreiIst: 14 },
     { spiritualName: "Mounir", firstName: "Mounir", lastName: "Jaber", team: "SPL", seminarSoll: 12, seminarIst: 0, sevafreiSoll: 22, sevafreiIst: 8 },
     { spiritualName: "Harishakti", firstName: "Ramona", lastName: "Gäpler", team: "Rezeption", seminarSoll: 0, seminarIst: 0, sevafreiSoll: 17, sevafreiIst: 6 },
-    { spiritualName: "Christopher", firstName: "Christopher", lastName: "", team: "Core Team", seminarSoll: 0, seminarIst: 0, sevafreiSoll: 24, sevafreiIst: 2 }
+    { spiritualName: "Christopher", firstName: "Christopher", lastName: "", team: "Core Team", seminarSoll: 0, seminarIst: 0, sevafreiSoll: 24, sevafreiIst: 2 },
+    { spiritualName: "Suryani", firstName: "Justyna", lastName: "", team: "", seminarSoll: 0, seminarIst: 0, sevafreiSoll: 24, sevafreiIst: 0 }
   ];
 
   let filteredSevakas = $derived(
