@@ -11,7 +11,7 @@
     "note": "Sevafrei"
   },
   {
-    "id": "sf-karuna-mayi-2026-09-07-2026-09-07-frei",
+    "id": "sf-karuna-mayi-2026-09-07-2026-09-07-f",
     "teacherId": "teacher-gen-karuna-wapke",
     "teacherName": "Karuna Mayi",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -19,10 +19,10 @@
     "endDate": "2026-09-07",
     "type": "Frei",
     "status": "Genehmigt",
-    "note": "Sevafrei"
+    "note": "Regulärer freier Tag"
   },
   {
-    "id": "sf-karuna-mayi-2026-09-14-2026-09-14-frei",
+    "id": "sf-karuna-mayi-2026-09-14-2026-09-14-f",
     "teacherId": "teacher-gen-karuna-wapke",
     "teacherName": "Karuna Mayi",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -30,10 +30,10 @@
     "endDate": "2026-09-14",
     "type": "Frei",
     "status": "Genehmigt",
-    "note": "Sevafrei"
+    "note": "Regulärer freier Tag"
   },
   {
-    "id": "sf-karuna-mayi-2026-09-21-2026-09-21-frei",
+    "id": "sf-karuna-mayi-2026-09-21-2026-09-21-f",
     "teacherId": "teacher-gen-karuna-wapke",
     "teacherName": "Karuna Mayi",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -41,285 +41,10 @@
     "endDate": "2026-09-21",
     "type": "Frei",
     "status": "Genehmigt",
-    "note": "Sevafrei"
+    "note": "Regulärer freier Tag"
   },
   {
-    "id": "sf-karuna-mayi-2026-09-28-2026-09-30-frei",
-    "teacherId": "teacher-gen-karuna-wapke",
-    "teacherName": "Karuna Mayi",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-09-28",
-    "endDate": "2026-09-30",
-    "type": "Frei",
-    "status": "Genehmigt",
-    "note": "Sevafrei"
-  },
-  {
-    "id": "sf-karuna-mayi-2026-10-05-2026-10-05-frei",
-    "teacherId": "teacher-gen-karuna-wapke",
-    "teacherName": "Karuna Mayi",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-10-05",
-    "endDate": "2026-10-05",
-    "type": "Frei",
-    "status": "Genehmigt",
-    "note": "Sevafrei"
-  },
-  {
-    "id": "sf-karuna-mayi-2026-10-12-2026-10-12-frei",
-    "teacherId": "teacher-gen-karuna-wapke",
-    "teacherName": "Karuna Mayi",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-10-12",
-    "endDate": "2026-10-12",
-    "type": "Frei",
-    "status": "Genehmigt",
-    "note": "Sevafrei"
-  },
-  {
-    "id": "sf-karuna-mayi-2026-10-15-2026-10-16-frei",
-    "teacherId": "teacher-gen-karuna-wapke",
-    "teacherName": "Karuna Mayi",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-10-15",
-    "endDate": "2026-10-16",
-    "type": "Frei",
-    "status": "Genehmigt",
-    "note": "Sevafrei"
-  },
-  {
-    "id": "sf-karuna-mayi-2026-10-19-2026-10-19-frei",
-    "teacherId": "teacher-gen-karuna-wapke",
-    "teacherName": "Karuna Mayi",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-10-19",
-    "endDate": "2026-10-19",
-    "type": "Frei",
-    "status": "Genehmigt",
-    "note": "Sevafrei"
-  },
-  {
-    "id": "sf-karuna-mayi-2026-10-26-2026-10-26-frei",
-    "teacherId": "teacher-gen-karuna-wapke",
-    "teacherName": "Karuna Mayi",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-10-26",
-    "endDate": "2026-10-26",
-    "type": "Frei",
-    "status": "Genehmigt",
-    "note": "Sevafrei"
-  },
-  {
-    "id": "sf-pranava-2026-09-01-2026-09-02-frei",
-    "teacherId": "teacher-gen-pranava-pauly",
-    "teacherName": "Pranava",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-09-01",
-    "endDate": "2026-09-02",
-    "type": "Frei",
-    "status": "Genehmigt",
-    "note": "Sevafrei"
-  },
-  {
-    "id": "sf-pranava-2026-09-08-2026-09-09-frei",
-    "teacherId": "teacher-gen-pranava-pauly",
-    "teacherName": "Pranava",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-09-08",
-    "endDate": "2026-09-09",
-    "type": "Frei",
-    "status": "Genehmigt",
-    "note": "Sevafrei"
-  },
-  {
-    "id": "sf-pranava-2026-09-15-2026-09-16-frei",
-    "teacherId": "teacher-gen-pranava-pauly",
-    "teacherName": "Pranava",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-09-15",
-    "endDate": "2026-09-16",
-    "type": "Frei",
-    "status": "Genehmigt",
-    "note": "Sevafrei"
-  },
-  {
-    "id": "sf-pranava-2026-09-22-2026-09-23-frei",
-    "teacherId": "teacher-gen-pranava-pauly",
-    "teacherName": "Pranava",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-09-22",
-    "endDate": "2026-09-23",
-    "type": "Frei",
-    "status": "Genehmigt",
-    "note": "Sevafrei"
-  },
-  {
-    "id": "sf-pranava-2026-09-29-2026-09-30-frei",
-    "teacherId": "teacher-gen-pranava-pauly",
-    "teacherName": "Pranava",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-09-29",
-    "endDate": "2026-09-30",
-    "type": "Frei",
-    "status": "Genehmigt",
-    "note": "Sevafrei"
-  },
-  {
-    "id": "sf-pranava-2026-10-06-2026-10-07-frei",
-    "teacherId": "teacher-gen-pranava-pauly",
-    "teacherName": "Pranava",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-10-06",
-    "endDate": "2026-10-07",
-    "type": "Frei",
-    "status": "Genehmigt",
-    "note": "Sevafrei"
-  },
-  {
-    "id": "sf-pranava-2026-10-13-2026-10-14-frei",
-    "teacherId": "teacher-gen-pranava-pauly",
-    "teacherName": "Pranava",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-10-13",
-    "endDate": "2026-10-14",
-    "type": "Frei",
-    "status": "Genehmigt",
-    "note": "Sevafrei"
-  },
-  {
-    "id": "sf-pranava-2026-10-20-2026-10-21-frei",
-    "teacherId": "teacher-gen-pranava-pauly",
-    "teacherName": "Pranava",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-10-20",
-    "endDate": "2026-10-21",
-    "type": "Frei",
-    "status": "Genehmigt",
-    "note": "Sevafrei"
-  },
-  {
-    "id": "sf-pranava-2026-10-27-2026-10-28-frei",
-    "teacherId": "teacher-gen-pranava-pauly",
-    "teacherName": "Pranava",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-10-27",
-    "endDate": "2026-10-28",
-    "type": "Frei",
-    "status": "Genehmigt",
-    "note": "Sevafrei"
-  },
-  {
-    "id": "sf-jyoti-2026-09-04-2026-09-05-frei",
-    "teacherId": "teacher-gen-jyoti",
-    "teacherName": "Jyoti",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-09-04",
-    "endDate": "2026-09-05",
-    "type": "Frei",
-    "status": "Genehmigt",
-    "note": "Sevafrei"
-  },
-  {
-    "id": "sf-jyoti-2026-09-06-2026-09-10-urlaub",
-    "teacherId": "teacher-gen-jyoti",
-    "teacherName": "Jyoti",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-09-06",
-    "endDate": "2026-09-10",
-    "type": "Urlaub",
-    "status": "Genehmigt",
-    "note": "Urlaub"
-  },
-  {
-    "id": "sf-jyoti-2026-09-11-2026-09-12-frei",
-    "teacherId": "teacher-gen-jyoti",
-    "teacherName": "Jyoti",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-09-11",
-    "endDate": "2026-09-12",
-    "type": "Frei",
-    "status": "Genehmigt",
-    "note": "Sevafrei"
-  },
-  {
-    "id": "sf-jyoti-2026-09-18-2026-09-19-frei",
-    "teacherId": "teacher-gen-jyoti",
-    "teacherName": "Jyoti",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-09-18",
-    "endDate": "2026-09-19",
-    "type": "Frei",
-    "status": "Genehmigt",
-    "note": "Sevafrei"
-  },
-  {
-    "id": "sf-jyoti-2026-09-25-2026-09-26-frei",
-    "teacherId": "teacher-gen-jyoti",
-    "teacherName": "Jyoti",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-09-25",
-    "endDate": "2026-09-26",
-    "type": "Frei",
-    "status": "Genehmigt",
-    "note": "Sevafrei"
-  },
-  {
-    "id": "sf-jyoti-2026-10-02-2026-10-03-frei",
-    "teacherId": "teacher-gen-jyoti",
-    "teacherName": "Jyoti",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-10-02",
-    "endDate": "2026-10-03",
-    "type": "Frei",
-    "status": "Genehmigt",
-    "note": "Sevafrei"
-  },
-  {
-    "id": "sf-jyoti-2026-10-09-2026-10-10-frei",
-    "teacherId": "teacher-gen-jyoti",
-    "teacherName": "Jyoti",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-10-09",
-    "endDate": "2026-10-10",
-    "type": "Frei",
-    "status": "Genehmigt",
-    "note": "Sevafrei"
-  },
-  {
-    "id": "sf-jyoti-2026-10-16-2026-10-17-frei",
-    "teacherId": "teacher-gen-jyoti",
-    "teacherName": "Jyoti",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-10-16",
-    "endDate": "2026-10-17",
-    "type": "Frei",
-    "status": "Genehmigt",
-    "note": "Sevafrei"
-  },
-  {
-    "id": "sf-jyoti-2026-10-23-2026-10-24-frei",
-    "teacherId": "teacher-gen-jyoti",
-    "teacherName": "Jyoti",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-10-23",
-    "endDate": "2026-10-24",
-    "type": "Frei",
-    "status": "Genehmigt",
-    "note": "Sevafrei"
-  },
-  {
-    "id": "sf-jyoti-2026-10-30-2026-10-31-frei",
-    "teacherId": "teacher-gen-jyoti",
-    "teacherName": "Jyoti",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-10-30",
-    "endDate": "2026-10-31",
-    "type": "Frei",
-    "status": "Genehmigt",
-    "note": "Sevafrei"
-  },
-  {
-    "id": "sf-anjali-2026-09-02-2026-09-02-frei",
+    "id": "sf-anjali-2026-09-02-2026-09-02-f",
     "teacherId": "teacher-gen-anjali-gelzleichter",
     "teacherName": "Anjali",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -327,10 +52,10 @@
     "endDate": "2026-09-02",
     "type": "Frei",
     "status": "Genehmigt",
-    "note": "Sevafrei"
+    "note": "Regulärer freier Tag"
   },
   {
-    "id": "sf-anjali-2026-09-09-2026-09-09-frei",
+    "id": "sf-anjali-2026-09-09-2026-09-09-f",
     "teacherId": "teacher-gen-anjali-gelzleichter",
     "teacherName": "Anjali",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -338,10 +63,10 @@
     "endDate": "2026-09-09",
     "type": "Frei",
     "status": "Genehmigt",
-    "note": "Sevafrei"
+    "note": "Regulärer freier Tag"
   },
   {
-    "id": "sf-anjali-2026-09-16-2026-09-16-frei",
+    "id": "sf-anjali-2026-09-16-2026-09-16-f",
     "teacherId": "teacher-gen-anjali-gelzleichter",
     "teacherName": "Anjali",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -349,10 +74,10 @@
     "endDate": "2026-09-16",
     "type": "Frei",
     "status": "Genehmigt",
-    "note": "Sevafrei"
+    "note": "Regulärer freier Tag"
   },
   {
-    "id": "sf-anjali-2026-09-23-2026-09-23-frei",
+    "id": "sf-anjali-2026-09-23-2026-09-23-f",
     "teacherId": "teacher-gen-anjali-gelzleichter",
     "teacherName": "Anjali",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -360,10 +85,10 @@
     "endDate": "2026-09-23",
     "type": "Frei",
     "status": "Genehmigt",
-    "note": "Sevafrei"
+    "note": "Regulärer freier Tag"
   },
   {
-    "id": "sf-anjali-2026-09-30-2026-09-30-frei",
+    "id": "sf-anjali-2026-09-30-2026-09-30-f",
     "teacherId": "teacher-gen-anjali-gelzleichter",
     "teacherName": "Anjali",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -371,54 +96,10 @@
     "endDate": "2026-09-30",
     "type": "Frei",
     "status": "Genehmigt",
-    "note": "Sevafrei"
+    "note": "Regulärer freier Tag"
   },
   {
-    "id": "sf-anjali-2026-10-07-2026-10-07-frei",
-    "teacherId": "teacher-gen-anjali-gelzleichter",
-    "teacherName": "Anjali",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-10-07",
-    "endDate": "2026-10-07",
-    "type": "Frei",
-    "status": "Genehmigt",
-    "note": "Sevafrei"
-  },
-  {
-    "id": "sf-anjali-2026-10-14-2026-10-14-frei",
-    "teacherId": "teacher-gen-anjali-gelzleichter",
-    "teacherName": "Anjali",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-10-14",
-    "endDate": "2026-10-14",
-    "type": "Frei",
-    "status": "Genehmigt",
-    "note": "Sevafrei"
-  },
-  {
-    "id": "sf-anjali-2026-10-21-2026-10-21-frei",
-    "teacherId": "teacher-gen-anjali-gelzleichter",
-    "teacherName": "Anjali",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-10-21",
-    "endDate": "2026-10-21",
-    "type": "Frei",
-    "status": "Genehmigt",
-    "note": "Sevafrei"
-  },
-  {
-    "id": "sf-anjali-2026-10-28-2026-10-28-frei",
-    "teacherId": "teacher-gen-anjali-gelzleichter",
-    "teacherName": "Anjali",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-10-28",
-    "endDate": "2026-10-28",
-    "type": "Frei",
-    "status": "Genehmigt",
-    "note": "Sevafrei"
-  },
-  {
-    "id": "sf-melanie-2026-09-01-2026-09-01-frei",
+    "id": "sf-melanie-2026-09-01-2026-09-01-f",
     "teacherId": "teacher-gen-melanie",
     "teacherName": "Melanie",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -426,10 +107,10 @@
     "endDate": "2026-09-01",
     "type": "Frei",
     "status": "Genehmigt",
-    "note": "Sevafrei"
+    "note": "Regulärer freier Tag"
   },
   {
-    "id": "sf-melanie-2026-09-03-2026-09-03-frei",
+    "id": "sf-melanie-2026-09-03-2026-09-03-f",
     "teacherId": "teacher-gen-melanie",
     "teacherName": "Melanie",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -437,21 +118,10 @@
     "endDate": "2026-09-03",
     "type": "Frei",
     "status": "Genehmigt",
-    "note": "Sevafrei"
+    "note": "Regulärer freier Tag"
   },
   {
-    "id": "sf-melanie-2026-09-05-2026-09-08-frei",
-    "teacherId": "teacher-gen-melanie",
-    "teacherName": "Melanie",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-09-05",
-    "endDate": "2026-09-08",
-    "type": "Frei",
-    "status": "Genehmigt",
-    "note": "Sevafrei"
-  },
-  {
-    "id": "sf-melanie-2026-09-10-2026-09-10-frei",
+    "id": "sf-melanie-2026-09-10-2026-09-10-f",
     "teacherId": "teacher-gen-melanie",
     "teacherName": "Melanie",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -459,10 +129,10 @@
     "endDate": "2026-09-10",
     "type": "Frei",
     "status": "Genehmigt",
-    "note": "Sevafrei"
+    "note": "Regulärer freier Tag"
   },
   {
-    "id": "sf-melanie-2026-09-12-2026-09-12-frei",
+    "id": "sf-melanie-2026-09-12-2026-09-12-f",
     "teacherId": "teacher-gen-melanie",
     "teacherName": "Melanie",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -470,21 +140,10 @@
     "endDate": "2026-09-12",
     "type": "Frei",
     "status": "Genehmigt",
-    "note": "Sevafrei"
+    "note": "Regulärer freier Tag"
   },
   {
-    "id": "sf-melanie-2026-09-14-2026-09-15-frei",
-    "teacherId": "teacher-gen-melanie",
-    "teacherName": "Melanie",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-09-14",
-    "endDate": "2026-09-15",
-    "type": "Frei",
-    "status": "Genehmigt",
-    "note": "Sevafrei"
-  },
-  {
-    "id": "sf-melanie-2026-09-17-2026-09-17-frei",
+    "id": "sf-melanie-2026-09-17-2026-09-17-f",
     "teacherId": "teacher-gen-melanie",
     "teacherName": "Melanie",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -492,21 +151,10 @@
     "endDate": "2026-09-17",
     "type": "Frei",
     "status": "Genehmigt",
-    "note": "Sevafrei"
+    "note": "Regulärer freier Tag"
   },
   {
-    "id": "sf-melanie-2026-09-19-2026-09-22-frei",
-    "teacherId": "teacher-gen-melanie",
-    "teacherName": "Melanie",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-09-19",
-    "endDate": "2026-09-22",
-    "type": "Frei",
-    "status": "Genehmigt",
-    "note": "Sevafrei"
-  },
-  {
-    "id": "sf-melanie-2026-09-24-2026-09-24-frei",
+    "id": "sf-melanie-2026-09-24-2026-09-24-f",
     "teacherId": "teacher-gen-melanie",
     "teacherName": "Melanie",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -514,87 +162,10 @@
     "endDate": "2026-09-24",
     "type": "Frei",
     "status": "Genehmigt",
-    "note": "Sevafrei"
+    "note": "Regulärer freier Tag"
   },
   {
-    "id": "sf-melanie-2026-09-26-2026-09-29-frei",
-    "teacherId": "teacher-gen-melanie",
-    "teacherName": "Melanie",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-09-26",
-    "endDate": "2026-09-29",
-    "type": "Frei",
-    "status": "Genehmigt",
-    "note": "Sevafrei"
-  },
-  {
-    "id": "sf-melanie-2026-10-01-2026-10-01-frei",
-    "teacherId": "teacher-gen-melanie",
-    "teacherName": "Melanie",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-10-01",
-    "endDate": "2026-10-01",
-    "type": "Frei",
-    "status": "Genehmigt",
-    "note": "Sevafrei"
-  },
-  {
-    "id": "sf-melanie-2026-10-03-2026-10-06-frei",
-    "teacherId": "teacher-gen-melanie",
-    "teacherName": "Melanie",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-10-03",
-    "endDate": "2026-10-06",
-    "type": "Frei",
-    "status": "Genehmigt",
-    "note": "Sevafrei"
-  },
-  {
-    "id": "sf-melanie-2026-10-08-2026-10-08-frei",
-    "teacherId": "teacher-gen-melanie",
-    "teacherName": "Melanie",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-10-08",
-    "endDate": "2026-10-08",
-    "type": "Frei",
-    "status": "Genehmigt",
-    "note": "Sevafrei"
-  },
-  {
-    "id": "sf-melanie-2026-10-10-2026-10-13-frei",
-    "teacherId": "teacher-gen-melanie",
-    "teacherName": "Melanie",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-10-10",
-    "endDate": "2026-10-13",
-    "type": "Frei",
-    "status": "Genehmigt",
-    "note": "Sevafrei"
-  },
-  {
-    "id": "sf-melanie-2026-10-15-2026-10-15-frei",
-    "teacherId": "teacher-gen-melanie",
-    "teacherName": "Melanie",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-10-15",
-    "endDate": "2026-10-15",
-    "type": "Frei",
-    "status": "Genehmigt",
-    "note": "Sevafrei"
-  },
-  {
-    "id": "sf-melanie-2026-10-17-2026-10-20-frei",
-    "teacherId": "teacher-gen-melanie",
-    "teacherName": "Melanie",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-10-17",
-    "endDate": "2026-10-20",
-    "type": "Frei",
-    "status": "Genehmigt",
-    "note": "Sevafrei"
-  },
-  {
-    "id": "sf-burnie-2026-09-01-2026-09-01-frei",
+    "id": "sf-burnie-2026-09-01-2026-09-01-f",
     "teacherId": "teacher-gen-burnie",
     "teacherName": "burnie",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -602,10 +173,10 @@
     "endDate": "2026-09-01",
     "type": "Frei",
     "status": "Genehmigt",
-    "note": "Sevafrei"
+    "note": "Regulärer freier Tag"
   },
   {
-    "id": "sf-burnie-2026-09-05-2026-09-05-frei",
+    "id": "sf-burnie-2026-09-05-2026-09-05-f",
     "teacherId": "teacher-gen-burnie",
     "teacherName": "burnie",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -613,10 +184,10 @@
     "endDate": "2026-09-05",
     "type": "Frei",
     "status": "Genehmigt",
-    "note": "Sevafrei"
+    "note": "Regulärer freier Tag"
   },
   {
-    "id": "sf-burnie-2026-09-08-2026-09-08-frei",
+    "id": "sf-burnie-2026-09-08-2026-09-08-f",
     "teacherId": "teacher-gen-burnie",
     "teacherName": "burnie",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -624,10 +195,10 @@
     "endDate": "2026-09-08",
     "type": "Frei",
     "status": "Genehmigt",
-    "note": "Sevafrei"
+    "note": "Regulärer freier Tag"
   },
   {
-    "id": "sf-burnie-2026-09-12-2026-09-12-frei",
+    "id": "sf-burnie-2026-09-12-2026-09-12-f",
     "teacherId": "teacher-gen-burnie",
     "teacherName": "burnie",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -635,10 +206,10 @@
     "endDate": "2026-09-12",
     "type": "Frei",
     "status": "Genehmigt",
-    "note": "Sevafrei"
+    "note": "Regulärer freier Tag"
   },
   {
-    "id": "sf-burnie-2026-09-15-2026-09-15-frei",
+    "id": "sf-burnie-2026-09-15-2026-09-15-f",
     "teacherId": "teacher-gen-burnie",
     "teacherName": "burnie",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -646,10 +217,10 @@
     "endDate": "2026-09-15",
     "type": "Frei",
     "status": "Genehmigt",
-    "note": "Sevafrei"
+    "note": "Regulärer freier Tag"
   },
   {
-    "id": "sf-burnie-2026-09-19-2026-09-19-frei",
+    "id": "sf-burnie-2026-09-19-2026-09-19-f",
     "teacherId": "teacher-gen-burnie",
     "teacherName": "burnie",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -657,10 +228,10 @@
     "endDate": "2026-09-19",
     "type": "Frei",
     "status": "Genehmigt",
-    "note": "Sevafrei"
+    "note": "Regulärer freier Tag"
   },
   {
-    "id": "sf-burnie-2026-09-22-2026-09-22-frei",
+    "id": "sf-burnie-2026-09-22-2026-09-22-f",
     "teacherId": "teacher-gen-burnie",
     "teacherName": "burnie",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -668,10 +239,10 @@
     "endDate": "2026-09-22",
     "type": "Frei",
     "status": "Genehmigt",
-    "note": "Sevafrei"
+    "note": "Regulärer freier Tag"
   },
   {
-    "id": "sf-burnie-2026-09-26-2026-09-26-frei",
+    "id": "sf-burnie-2026-09-26-2026-09-26-f",
     "teacherId": "teacher-gen-burnie",
     "teacherName": "burnie",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -679,10 +250,10 @@
     "endDate": "2026-09-26",
     "type": "Frei",
     "status": "Genehmigt",
-    "note": "Sevafrei"
+    "note": "Regulärer freier Tag"
   },
   {
-    "id": "sf-burnie-2026-09-29-2026-09-29-frei",
+    "id": "sf-burnie-2026-09-29-2026-09-29-f",
     "teacherId": "teacher-gen-burnie",
     "teacherName": "burnie",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -690,307 +261,10 @@
     "endDate": "2026-09-29",
     "type": "Frei",
     "status": "Genehmigt",
-    "note": "Sevafrei"
+    "note": "Regulärer freier Tag"
   },
   {
-    "id": "sf-burnie-2026-10-03-2026-10-03-frei",
-    "teacherId": "teacher-gen-burnie",
-    "teacherName": "burnie",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-10-03",
-    "endDate": "2026-10-03",
-    "type": "Frei",
-    "status": "Genehmigt",
-    "note": "Sevafrei"
-  },
-  {
-    "id": "sf-burnie-2026-10-06-2026-10-06-frei",
-    "teacherId": "teacher-gen-burnie",
-    "teacherName": "burnie",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-10-06",
-    "endDate": "2026-10-06",
-    "type": "Frei",
-    "status": "Genehmigt",
-    "note": "Sevafrei"
-  },
-  {
-    "id": "sf-burnie-2026-10-10-2026-10-10-frei",
-    "teacherId": "teacher-gen-burnie",
-    "teacherName": "burnie",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-10-10",
-    "endDate": "2026-10-10",
-    "type": "Frei",
-    "status": "Genehmigt",
-    "note": "Sevafrei"
-  },
-  {
-    "id": "sf-burnie-2026-10-13-2026-10-13-frei",
-    "teacherId": "teacher-gen-burnie",
-    "teacherName": "burnie",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-10-13",
-    "endDate": "2026-10-13",
-    "type": "Frei",
-    "status": "Genehmigt",
-    "note": "Sevafrei"
-  },
-  {
-    "id": "sf-burnie-2026-10-17-2026-10-17-frei",
-    "teacherId": "teacher-gen-burnie",
-    "teacherName": "burnie",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-10-17",
-    "endDate": "2026-10-17",
-    "type": "Frei",
-    "status": "Genehmigt",
-    "note": "Sevafrei"
-  },
-  {
-    "id": "sf-burnie-2026-10-20-2026-10-20-frei",
-    "teacherId": "teacher-gen-burnie",
-    "teacherName": "burnie",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-10-20",
-    "endDate": "2026-10-20",
-    "type": "Frei",
-    "status": "Genehmigt",
-    "note": "Sevafrei"
-  },
-  {
-    "id": "sf-burnie-2026-10-24-2026-10-24-frei",
-    "teacherId": "teacher-gen-burnie",
-    "teacherName": "burnie",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-10-24",
-    "endDate": "2026-10-24",
-    "type": "Frei",
-    "status": "Genehmigt",
-    "note": "Sevafrei"
-  },
-  {
-    "id": "sf-burnie-2026-10-27-2026-10-27-frei",
-    "teacherId": "teacher-gen-burnie",
-    "teacherName": "burnie",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-10-27",
-    "endDate": "2026-10-27",
-    "type": "Frei",
-    "status": "Genehmigt",
-    "note": "Sevafrei"
-  },
-  {
-    "id": "sf-burnie-2026-10-31-2026-10-31-frei",
-    "teacherId": "teacher-gen-burnie",
-    "teacherName": "burnie",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-10-31",
-    "endDate": "2026-10-31",
-    "type": "Frei",
-    "status": "Genehmigt",
-    "note": "Sevafrei"
-  },
-  {
-    "id": "sf-nirmaya-2026-09-01-2026-09-02-frei",
-    "teacherId": "teacher-gen-nirmaya-fodor",
-    "teacherName": "Nirmaya",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-09-01",
-    "endDate": "2026-09-02",
-    "type": "Frei",
-    "status": "Genehmigt",
-    "note": "Sevafrei"
-  },
-  {
-    "id": "sf-nirmaya-2026-09-08-2026-09-09-frei",
-    "teacherId": "teacher-gen-nirmaya-fodor",
-    "teacherName": "Nirmaya",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-09-08",
-    "endDate": "2026-09-09",
-    "type": "Frei",
-    "status": "Genehmigt",
-    "note": "Sevafrei"
-  },
-  {
-    "id": "sf-nirmaya-2026-09-15-2026-09-16-frei",
-    "teacherId": "teacher-gen-nirmaya-fodor",
-    "teacherName": "Nirmaya",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-09-15",
-    "endDate": "2026-09-16",
-    "type": "Frei",
-    "status": "Genehmigt",
-    "note": "Sevafrei"
-  },
-  {
-    "id": "sf-nirmaya-2026-09-22-2026-09-23-frei",
-    "teacherId": "teacher-gen-nirmaya-fodor",
-    "teacherName": "Nirmaya",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-09-22",
-    "endDate": "2026-09-23",
-    "type": "Frei",
-    "status": "Genehmigt",
-    "note": "Sevafrei"
-  },
-  {
-    "id": "sf-nirmaya-2026-09-29-2026-09-30-frei",
-    "teacherId": "teacher-gen-nirmaya-fodor",
-    "teacherName": "Nirmaya",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-09-29",
-    "endDate": "2026-09-30",
-    "type": "Frei",
-    "status": "Genehmigt",
-    "note": "Sevafrei"
-  },
-  {
-    "id": "sf-nirmaya-2026-10-06-2026-10-07-frei",
-    "teacherId": "teacher-gen-nirmaya-fodor",
-    "teacherName": "Nirmaya",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-10-06",
-    "endDate": "2026-10-07",
-    "type": "Frei",
-    "status": "Genehmigt",
-    "note": "Sevafrei"
-  },
-  {
-    "id": "sf-nirmaya-2026-10-13-2026-10-14-frei",
-    "teacherId": "teacher-gen-nirmaya-fodor",
-    "teacherName": "Nirmaya",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-10-13",
-    "endDate": "2026-10-14",
-    "type": "Frei",
-    "status": "Genehmigt",
-    "note": "Sevafrei"
-  },
-  {
-    "id": "sf-nirmaya-2026-10-20-2026-10-21-frei",
-    "teacherId": "teacher-gen-nirmaya-fodor",
-    "teacherName": "Nirmaya",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-10-20",
-    "endDate": "2026-10-21",
-    "type": "Frei",
-    "status": "Genehmigt",
-    "note": "Sevafrei"
-  },
-  {
-    "id": "sf-nirmaya-2026-10-27-2026-10-28-frei",
-    "teacherId": "teacher-gen-nirmaya-fodor",
-    "teacherName": "Nirmaya",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-10-27",
-    "endDate": "2026-10-28",
-    "type": "Frei",
-    "status": "Genehmigt",
-    "note": "Sevafrei"
-  },
-  {
-    "id": "sf-maitri-2026-09-01-2026-09-13-krank",
-    "teacherId": "teacher-gen-maitri",
-    "teacherName": "Maitri",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-09-01",
-    "endDate": "2026-09-13",
-    "type": "Krank",
-    "status": "Genehmigt",
-    "note": "Krank"
-  },
-  {
-    "id": "sf-alexander-2026-09-06-2026-09-07-frei",
-    "teacherId": "teacher-gen-alexander-melior",
-    "teacherName": "Alexander",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-09-06",
-    "endDate": "2026-09-07",
-    "type": "Frei",
-    "status": "Genehmigt",
-    "note": "Sevafrei"
-  },
-  {
-    "id": "sf-alexander-2026-09-13-2026-09-14-frei",
-    "teacherId": "teacher-gen-alexander-melior",
-    "teacherName": "Alexander",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-09-13",
-    "endDate": "2026-09-14",
-    "type": "Frei",
-    "status": "Genehmigt",
-    "note": "Sevafrei"
-  },
-  {
-    "id": "sf-alexander-2026-09-20-2026-09-21-frei",
-    "teacherId": "teacher-gen-alexander-melior",
-    "teacherName": "Alexander",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-09-20",
-    "endDate": "2026-09-21",
-    "type": "Frei",
-    "status": "Genehmigt",
-    "note": "Sevafrei"
-  },
-  {
-    "id": "sf-alexander-2026-09-27-2026-09-28-frei",
-    "teacherId": "teacher-gen-alexander-melior",
-    "teacherName": "Alexander",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-09-27",
-    "endDate": "2026-09-28",
-    "type": "Frei",
-    "status": "Genehmigt",
-    "note": "Sevafrei"
-  },
-  {
-    "id": "sf-alexander-2026-10-04-2026-10-05-frei",
-    "teacherId": "teacher-gen-alexander-melior",
-    "teacherName": "Alexander",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-10-04",
-    "endDate": "2026-10-05",
-    "type": "Frei",
-    "status": "Genehmigt",
-    "note": "Sevafrei"
-  },
-  {
-    "id": "sf-alexander-2026-10-11-2026-10-12-frei",
-    "teacherId": "teacher-gen-alexander-melior",
-    "teacherName": "Alexander",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-10-11",
-    "endDate": "2026-10-12",
-    "type": "Frei",
-    "status": "Genehmigt",
-    "note": "Sevafrei"
-  },
-  {
-    "id": "sf-alexander-2026-10-18-2026-10-19-frei",
-    "teacherId": "teacher-gen-alexander-melior",
-    "teacherName": "Alexander",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-10-18",
-    "endDate": "2026-10-19",
-    "type": "Frei",
-    "status": "Genehmigt",
-    "note": "Sevafrei"
-  },
-  {
-    "id": "sf-alexander-2026-10-25-2026-10-26-frei",
-    "teacherId": "teacher-gen-alexander-melior",
-    "teacherName": "Alexander",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-10-25",
-    "endDate": "2026-10-26",
-    "type": "Frei",
-    "status": "Genehmigt",
-    "note": "Sevafrei"
-  },
-  {
-    "id": "sf-abha-2026-09-02-2026-09-02-frei",
+    "id": "sf-abha-2026-09-02-2026-09-02-f",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -998,10 +272,10 @@
     "endDate": "2026-09-02",
     "type": "Frei",
     "status": "Genehmigt",
-    "note": "Sevafrei"
+    "note": "Regulärer freier Tag"
   },
   {
-    "id": "sf-abha-2026-09-06-2026-09-06-frei",
+    "id": "sf-abha-2026-09-06-2026-09-06-f",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -1009,10 +283,10 @@
     "endDate": "2026-09-06",
     "type": "Frei",
     "status": "Genehmigt",
-    "note": "Sevafrei"
+    "note": "Regulärer freier Tag"
   },
   {
-    "id": "sf-abha-2026-09-09-2026-09-09-frei",
+    "id": "sf-abha-2026-09-09-2026-09-09-f",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -1020,10 +294,10 @@
     "endDate": "2026-09-09",
     "type": "Frei",
     "status": "Genehmigt",
-    "note": "Sevafrei"
+    "note": "Regulärer freier Tag"
   },
   {
-    "id": "sf-abha-2026-09-13-2026-09-13-frei",
+    "id": "sf-abha-2026-09-13-2026-09-13-f",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -1031,10 +305,10 @@
     "endDate": "2026-09-13",
     "type": "Frei",
     "status": "Genehmigt",
-    "note": "Sevafrei"
+    "note": "Regulärer freier Tag"
   },
   {
-    "id": "sf-abha-2026-09-16-2026-09-16-frei",
+    "id": "sf-abha-2026-09-16-2026-09-16-f",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -1042,10 +316,10 @@
     "endDate": "2026-09-16",
     "type": "Frei",
     "status": "Genehmigt",
-    "note": "Sevafrei"
+    "note": "Regulärer freier Tag"
   },
   {
-    "id": "sf-abha-2026-09-23-2026-09-23-frei",
+    "id": "sf-abha-2026-09-23-2026-09-23-f",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -1053,10 +327,10 @@
     "endDate": "2026-09-23",
     "type": "Frei",
     "status": "Genehmigt",
-    "note": "Sevafrei"
+    "note": "Regulärer freier Tag"
   },
   {
-    "id": "sf-abha-2026-09-27-2026-09-27-frei",
+    "id": "sf-abha-2026-09-27-2026-09-27-f",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -1064,10 +338,10 @@
     "endDate": "2026-09-27",
     "type": "Frei",
     "status": "Genehmigt",
-    "note": "Sevafrei"
+    "note": "Regulärer freier Tag"
   },
   {
-    "id": "sf-abha-2026-09-30-2026-09-30-frei",
+    "id": "sf-abha-2026-09-30-2026-09-30-f",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -1075,142 +349,10 @@
     "endDate": "2026-09-30",
     "type": "Frei",
     "status": "Genehmigt",
-    "note": "Sevafrei"
+    "note": "Regulärer freier Tag"
   },
   {
-    "id": "sf-abha-2026-10-04-2026-10-04-frei",
-    "teacherId": "teacher-gen-abha-morkoetter",
-    "teacherName": "Abha",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-10-04",
-    "endDate": "2026-10-04",
-    "type": "Frei",
-    "status": "Genehmigt",
-    "note": "Sevafrei"
-  },
-  {
-    "id": "sf-abha-2026-10-07-2026-10-07-frei",
-    "teacherId": "teacher-gen-abha-morkoetter",
-    "teacherName": "Abha",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-10-07",
-    "endDate": "2026-10-07",
-    "type": "Frei",
-    "status": "Genehmigt",
-    "note": "Sevafrei"
-  },
-  {
-    "id": "sf-abha-2026-10-09-2026-10-10-urlaub",
-    "teacherId": "teacher-gen-abha-morkoetter",
-    "teacherName": "Abha",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-10-09",
-    "endDate": "2026-10-10",
-    "type": "Urlaub",
-    "status": "Genehmigt",
-    "note": "Urlaub"
-  },
-  {
-    "id": "sf-abha-2026-10-11-2026-10-11-frei",
-    "teacherId": "teacher-gen-abha-morkoetter",
-    "teacherName": "Abha",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-10-11",
-    "endDate": "2026-10-11",
-    "type": "Frei",
-    "status": "Genehmigt",
-    "note": "Sevafrei"
-  },
-  {
-    "id": "sf-abha-2026-10-12-2026-10-13-seminartage",
-    "teacherId": "teacher-gen-abha-morkoetter",
-    "teacherName": "Abha",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-10-12",
-    "endDate": "2026-10-13",
-    "type": "Seminartage",
-    "status": "Genehmigt",
-    "note": "Seminartage"
-  },
-  {
-    "id": "sf-abha-2026-10-14-2026-10-14-frei",
-    "teacherId": "teacher-gen-abha-morkoetter",
-    "teacherName": "Abha",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-10-14",
-    "endDate": "2026-10-14",
-    "type": "Frei",
-    "status": "Genehmigt",
-    "note": "Sevafrei"
-  },
-  {
-    "id": "sf-abha-2026-10-15-2026-10-15-urlaub",
-    "teacherId": "teacher-gen-abha-morkoetter",
-    "teacherName": "Abha",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-10-15",
-    "endDate": "2026-10-15",
-    "type": "Urlaub",
-    "status": "Genehmigt",
-    "note": "Urlaub"
-  },
-  {
-    "id": "sf-abha-2026-10-16-2026-10-17-seminartage",
-    "teacherId": "teacher-gen-abha-morkoetter",
-    "teacherName": "Abha",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-10-16",
-    "endDate": "2026-10-17",
-    "type": "Seminartage",
-    "status": "Genehmigt",
-    "note": "Seminartage"
-  },
-  {
-    "id": "sf-abha-2026-10-18-2026-10-18-frei",
-    "teacherId": "teacher-gen-abha-morkoetter",
-    "teacherName": "Abha",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-10-18",
-    "endDate": "2026-10-18",
-    "type": "Frei",
-    "status": "Genehmigt",
-    "note": "Sevafrei"
-  },
-  {
-    "id": "sf-abha-2026-10-19-2026-10-24-seminartage",
-    "teacherId": "teacher-gen-abha-morkoetter",
-    "teacherName": "Abha",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-10-19",
-    "endDate": "2026-10-24",
-    "type": "Seminartage",
-    "status": "Genehmigt",
-    "note": "Seminartage"
-  },
-  {
-    "id": "sf-abha-2026-10-25-2026-10-25-frei",
-    "teacherId": "teacher-gen-abha-morkoetter",
-    "teacherName": "Abha",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-10-25",
-    "endDate": "2026-10-25",
-    "type": "Frei",
-    "status": "Genehmigt",
-    "note": "Sevafrei"
-  },
-  {
-    "id": "sf-abha-2026-10-28-2026-10-28-frei",
-    "teacherId": "teacher-gen-abha-morkoetter",
-    "teacherName": "Abha",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-10-28",
-    "endDate": "2026-10-28",
-    "type": "Frei",
-    "status": "Genehmigt",
-    "note": "Sevafrei"
-  },
-  {
-    "id": "sf-hu-2026-09-01-2026-09-01-frei",
+    "id": "sf-hu-2026-09-01-2026-09-01-f",
     "teacherId": "teacher-gen-hu-buerkle",
     "teacherName": "Hu",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -1218,10 +360,10 @@
     "endDate": "2026-09-01",
     "type": "Frei",
     "status": "Genehmigt",
-    "note": "Sevafrei"
+    "note": "Regulärer freier Tag"
   },
   {
-    "id": "sf-hu-2026-09-08-2026-09-08-frei",
+    "id": "sf-hu-2026-09-08-2026-09-08-f",
     "teacherId": "teacher-gen-hu-buerkle",
     "teacherName": "Hu",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -1229,10 +371,10 @@
     "endDate": "2026-09-08",
     "type": "Frei",
     "status": "Genehmigt",
-    "note": "Sevafrei"
+    "note": "Regulärer freier Tag"
   },
   {
-    "id": "sf-hu-2026-09-15-2026-09-15-frei",
+    "id": "sf-hu-2026-09-15-2026-09-15-f",
     "teacherId": "teacher-gen-hu-buerkle",
     "teacherName": "Hu",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -1240,10 +382,10 @@
     "endDate": "2026-09-15",
     "type": "Frei",
     "status": "Genehmigt",
-    "note": "Sevafrei"
+    "note": "Regulärer freier Tag"
   },
   {
-    "id": "sf-hu-2026-09-22-2026-09-22-frei",
+    "id": "sf-hu-2026-09-22-2026-09-22-f",
     "teacherId": "teacher-gen-hu-buerkle",
     "teacherName": "Hu",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -1251,10 +393,10 @@
     "endDate": "2026-09-22",
     "type": "Frei",
     "status": "Genehmigt",
-    "note": "Sevafrei"
+    "note": "Regulärer freier Tag"
   },
   {
-    "id": "sf-hu-2026-09-29-2026-09-29-frei",
+    "id": "sf-hu-2026-09-29-2026-09-29-f",
     "teacherId": "teacher-gen-hu-buerkle",
     "teacherName": "Hu",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -1262,87 +404,10 @@
     "endDate": "2026-09-29",
     "type": "Frei",
     "status": "Genehmigt",
-    "note": "Sevafrei"
+    "note": "Regulärer freier Tag"
   },
   {
-    "id": "sf-hu-2026-10-06-2026-10-06-frei",
-    "teacherId": "teacher-gen-hu-buerkle",
-    "teacherName": "Hu",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-10-06",
-    "endDate": "2026-10-06",
-    "type": "Frei",
-    "status": "Genehmigt",
-    "note": "Sevafrei"
-  },
-  {
-    "id": "sf-hu-2026-10-13-2026-10-13-frei",
-    "teacherId": "teacher-gen-hu-buerkle",
-    "teacherName": "Hu",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-10-13",
-    "endDate": "2026-10-13",
-    "type": "Frei",
-    "status": "Genehmigt",
-    "note": "Sevafrei"
-  },
-  {
-    "id": "sf-hu-2026-10-19-2026-10-19-seminartage",
-    "teacherId": "teacher-gen-hu-buerkle",
-    "teacherName": "Hu",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-10-19",
-    "endDate": "2026-10-19",
-    "type": "Seminartage",
-    "status": "Genehmigt",
-    "note": "Seminartage"
-  },
-  {
-    "id": "sf-hu-2026-10-20-2026-10-20-frei",
-    "teacherId": "teacher-gen-hu-buerkle",
-    "teacherName": "Hu",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-10-20",
-    "endDate": "2026-10-20",
-    "type": "Frei",
-    "status": "Genehmigt",
-    "note": "Sevafrei"
-  },
-  {
-    "id": "sf-hu-2026-10-21-2026-10-26-seminartage",
-    "teacherId": "teacher-gen-hu-buerkle",
-    "teacherName": "Hu",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-10-21",
-    "endDate": "2026-10-26",
-    "type": "Seminartage",
-    "status": "Genehmigt",
-    "note": "Seminartage"
-  },
-  {
-    "id": "sf-hu-2026-10-27-2026-10-27-frei",
-    "teacherId": "teacher-gen-hu-buerkle",
-    "teacherName": "Hu",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-10-27",
-    "endDate": "2026-10-27",
-    "type": "Frei",
-    "status": "Genehmigt",
-    "note": "Sevafrei"
-  },
-  {
-    "id": "sf-hu-2026-10-28-2026-10-30-seminartage",
-    "teacherId": "teacher-gen-hu-buerkle",
-    "teacherName": "Hu",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-10-28",
-    "endDate": "2026-10-30",
-    "type": "Seminartage",
-    "status": "Genehmigt",
-    "note": "Seminartage"
-  },
-  {
-    "id": "sf-adam-2026-09-01-2026-09-01-frei",
+    "id": "sf-adam-2026-09-01-2026-09-01-f",
     "teacherId": "teacher-gen-adam-zmuda",
     "teacherName": "Adam",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -1350,10 +415,10 @@
     "endDate": "2026-09-01",
     "type": "Frei",
     "status": "Genehmigt",
-    "note": "Sevafrei"
+    "note": "Regulärer freier Tag"
   },
   {
-    "id": "sf-adam-2026-09-08-2026-09-08-frei",
+    "id": "sf-adam-2026-09-08-2026-09-08-f",
     "teacherId": "teacher-gen-adam-zmuda",
     "teacherName": "Adam",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -1361,10 +426,10 @@
     "endDate": "2026-09-08",
     "type": "Frei",
     "status": "Genehmigt",
-    "note": "Sevafrei"
+    "note": "Regulärer freier Tag"
   },
   {
-    "id": "sf-adam-2026-09-15-2026-09-15-frei",
+    "id": "sf-adam-2026-09-15-2026-09-15-f",
     "teacherId": "teacher-gen-adam-zmuda",
     "teacherName": "Adam",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -1372,10 +437,10 @@
     "endDate": "2026-09-15",
     "type": "Frei",
     "status": "Genehmigt",
-    "note": "Sevafrei"
+    "note": "Regulärer freier Tag"
   },
   {
-    "id": "sf-adam-2026-09-22-2026-09-22-frei",
+    "id": "sf-adam-2026-09-22-2026-09-22-f",
     "teacherId": "teacher-gen-adam-zmuda",
     "teacherName": "Adam",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -1383,10 +448,10 @@
     "endDate": "2026-09-22",
     "type": "Frei",
     "status": "Genehmigt",
-    "note": "Sevafrei"
+    "note": "Regulärer freier Tag"
   },
   {
-    "id": "sf-adam-2026-09-29-2026-09-29-frei",
+    "id": "sf-adam-2026-09-29-2026-09-29-f",
     "teacherId": "teacher-gen-adam-zmuda",
     "teacherName": "Adam",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -1394,54 +459,10 @@
     "endDate": "2026-09-29",
     "type": "Frei",
     "status": "Genehmigt",
-    "note": "Sevafrei"
+    "note": "Regulärer freier Tag"
   },
   {
-    "id": "sf-adam-2026-10-06-2026-10-06-frei",
-    "teacherId": "teacher-gen-adam-zmuda",
-    "teacherName": "Adam",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-10-06",
-    "endDate": "2026-10-06",
-    "type": "Frei",
-    "status": "Genehmigt",
-    "note": "Sevafrei"
-  },
-  {
-    "id": "sf-adam-2026-10-13-2026-10-13-frei",
-    "teacherId": "teacher-gen-adam-zmuda",
-    "teacherName": "Adam",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-10-13",
-    "endDate": "2026-10-13",
-    "type": "Frei",
-    "status": "Genehmigt",
-    "note": "Sevafrei"
-  },
-  {
-    "id": "sf-adam-2026-10-20-2026-10-20-frei",
-    "teacherId": "teacher-gen-adam-zmuda",
-    "teacherName": "Adam",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-10-20",
-    "endDate": "2026-10-20",
-    "type": "Frei",
-    "status": "Genehmigt",
-    "note": "Sevafrei"
-  },
-  {
-    "id": "sf-adam-2026-10-27-2026-10-27-frei",
-    "teacherId": "teacher-gen-adam-zmuda",
-    "teacherName": "Adam",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-10-27",
-    "endDate": "2026-10-27",
-    "type": "Frei",
-    "status": "Genehmigt",
-    "note": "Sevafrei"
-  },
-  {
-    "id": "sf-narayani-2026-09-05-2026-09-05-frei",
+    "id": "sf-narayani-2026-09-05-2026-09-05-f",
     "teacherId": "teacher-gen-narayani-kedenburg",
     "teacherName": "Narayani",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -1449,10 +470,10 @@
     "endDate": "2026-09-05",
     "type": "Frei",
     "status": "Genehmigt",
-    "note": "Sevafrei"
+    "note": "Regulärer freier Tag"
   },
   {
-    "id": "sf-narayani-2026-09-12-2026-09-12-frei",
+    "id": "sf-narayani-2026-09-12-2026-09-12-f",
     "teacherId": "teacher-gen-narayani-kedenburg",
     "teacherName": "Narayani",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -1460,10 +481,10 @@
     "endDate": "2026-09-12",
     "type": "Frei",
     "status": "Genehmigt",
-    "note": "Sevafrei"
+    "note": "Regulärer freier Tag"
   },
   {
-    "id": "sf-narayani-2026-09-18-2026-09-18-urlaub",
+    "id": "sf-narayani-2026-09-18-2026-09-18-u",
     "teacherId": "teacher-gen-narayani-kedenburg",
     "teacherName": "Narayani",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -1471,10 +492,10 @@
     "endDate": "2026-09-18",
     "type": "Urlaub",
     "status": "Genehmigt",
-    "note": "Urlaub"
+    "note": "Sevafrei"
   },
   {
-    "id": "sf-narayani-2026-09-19-2026-09-19-frei",
+    "id": "sf-narayani-2026-09-19-2026-09-19-f",
     "teacherId": "teacher-gen-narayani-kedenburg",
     "teacherName": "Narayani",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -1482,10 +503,10 @@
     "endDate": "2026-09-19",
     "type": "Frei",
     "status": "Genehmigt",
-    "note": "Sevafrei"
+    "note": "Regulärer freier Tag"
   },
   {
-    "id": "sf-narayani-2026-09-20-2026-09-20-urlaub",
+    "id": "sf-narayani-2026-09-20-2026-09-20-u",
     "teacherId": "teacher-gen-narayani-kedenburg",
     "teacherName": "Narayani",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -1493,10 +514,10 @@
     "endDate": "2026-09-20",
     "type": "Urlaub",
     "status": "Genehmigt",
-    "note": "Urlaub"
+    "note": "Sevafrei"
   },
   {
-    "id": "sf-narayani-2026-09-26-2026-09-26-frei",
+    "id": "sf-narayani-2026-09-26-2026-09-26-f",
     "teacherId": "teacher-gen-narayani-kedenburg",
     "teacherName": "Narayani",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -1504,76 +525,10 @@
     "endDate": "2026-09-26",
     "type": "Frei",
     "status": "Genehmigt",
-    "note": "Sevafrei"
+    "note": "Regulärer freier Tag"
   },
   {
-    "id": "sf-narayani-2026-10-03-2026-10-03-frei",
-    "teacherId": "teacher-gen-narayani-kedenburg",
-    "teacherName": "Narayani",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-10-03",
-    "endDate": "2026-10-03",
-    "type": "Frei",
-    "status": "Genehmigt",
-    "note": "Sevafrei"
-  },
-  {
-    "id": "sf-narayani-2026-10-10-2026-10-10-frei",
-    "teacherId": "teacher-gen-narayani-kedenburg",
-    "teacherName": "Narayani",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-10-10",
-    "endDate": "2026-10-10",
-    "type": "Frei",
-    "status": "Genehmigt",
-    "note": "Sevafrei"
-  },
-  {
-    "id": "sf-narayani-2026-10-17-2026-10-17-frei",
-    "teacherId": "teacher-gen-narayani-kedenburg",
-    "teacherName": "Narayani",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-10-17",
-    "endDate": "2026-10-17",
-    "type": "Frei",
-    "status": "Genehmigt",
-    "note": "Sevafrei"
-  },
-  {
-    "id": "sf-narayani-2026-10-18-2026-10-23-seminartage",
-    "teacherId": "teacher-gen-narayani-kedenburg",
-    "teacherName": "Narayani",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-10-18",
-    "endDate": "2026-10-23",
-    "type": "Seminartage",
-    "status": "Genehmigt",
-    "note": "Seminartage"
-  },
-  {
-    "id": "sf-narayani-2026-10-24-2026-10-24-frei",
-    "teacherId": "teacher-gen-narayani-kedenburg",
-    "teacherName": "Narayani",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-10-24",
-    "endDate": "2026-10-24",
-    "type": "Frei",
-    "status": "Genehmigt",
-    "note": "Sevafrei"
-  },
-  {
-    "id": "sf-narayani-2026-10-31-2026-10-31-frei",
-    "teacherId": "teacher-gen-narayani-kedenburg",
-    "teacherName": "Narayani",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-10-31",
-    "endDate": "2026-10-31",
-    "type": "Frei",
-    "status": "Genehmigt",
-    "note": "Sevafrei"
-  },
-  {
-    "id": "sf-mounir-2026-09-07-2026-09-07-frei",
+    "id": "sf-mounir-2026-09-07-2026-09-07-f",
     "teacherId": "teacher-gen-mouniir-jaber",
     "teacherName": "Mounir",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -1581,21 +536,10 @@
     "endDate": "2026-09-07",
     "type": "Frei",
     "status": "Genehmigt",
-    "note": "Sevafrei"
+    "note": "Regulärer freier Tag"
   },
   {
-    "id": "sf-mounir-2026-09-12-2026-09-13-seminartage",
-    "teacherId": "teacher-gen-mouniir-jaber",
-    "teacherName": "Mounir",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-09-12",
-    "endDate": "2026-09-13",
-    "type": "Seminartage",
-    "status": "Genehmigt",
-    "note": "Seminartage"
-  },
-  {
-    "id": "sf-mounir-2026-09-14-2026-09-14-frei",
+    "id": "sf-mounir-2026-09-14-2026-09-14-f",
     "teacherId": "teacher-gen-mouniir-jaber",
     "teacherName": "Mounir",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -1603,21 +547,10 @@
     "endDate": "2026-09-14",
     "type": "Frei",
     "status": "Genehmigt",
-    "note": "Sevafrei"
+    "note": "Regulärer freier Tag"
   },
   {
-    "id": "sf-mounir-2026-09-15-2026-09-20-seminartage",
-    "teacherId": "teacher-gen-mouniir-jaber",
-    "teacherName": "Mounir",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-09-15",
-    "endDate": "2026-09-20",
-    "type": "Seminartage",
-    "status": "Genehmigt",
-    "note": "Seminartage"
-  },
-  {
-    "id": "sf-mounir-2026-09-21-2026-09-21-frei",
+    "id": "sf-mounir-2026-09-21-2026-09-21-f",
     "teacherId": "teacher-gen-mouniir-jaber",
     "teacherName": "Mounir",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -1625,21 +558,10 @@
     "endDate": "2026-09-21",
     "type": "Frei",
     "status": "Genehmigt",
-    "note": "Sevafrei"
+    "note": "Regulärer freier Tag"
   },
   {
-    "id": "sf-mounir-2026-09-22-2026-09-26-urlaub",
-    "teacherId": "teacher-gen-mouniir-jaber",
-    "teacherName": "Mounir",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-09-22",
-    "endDate": "2026-09-26",
-    "type": "Urlaub",
-    "status": "Genehmigt",
-    "note": "Urlaub"
-  },
-  {
-    "id": "sf-mounir-2026-09-28-2026-09-28-frei",
+    "id": "sf-mounir-2026-09-28-2026-09-28-f",
     "teacherId": "teacher-gen-mouniir-jaber",
     "teacherName": "Mounir",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -1647,54 +569,10 @@
     "endDate": "2026-09-28",
     "type": "Frei",
     "status": "Genehmigt",
-    "note": "Sevafrei"
+    "note": "Regulärer freier Tag"
   },
   {
-    "id": "sf-mounir-2026-10-05-2026-10-05-frei",
-    "teacherId": "teacher-gen-mouniir-jaber",
-    "teacherName": "Mounir",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-10-05",
-    "endDate": "2026-10-05",
-    "type": "Frei",
-    "status": "Genehmigt",
-    "note": "Sevafrei"
-  },
-  {
-    "id": "sf-mounir-2026-10-12-2026-10-12-frei",
-    "teacherId": "teacher-gen-mouniir-jaber",
-    "teacherName": "Mounir",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-10-12",
-    "endDate": "2026-10-12",
-    "type": "Frei",
-    "status": "Genehmigt",
-    "note": "Sevafrei"
-  },
-  {
-    "id": "sf-mounir-2026-10-19-2026-10-19-frei",
-    "teacherId": "teacher-gen-mouniir-jaber",
-    "teacherName": "Mounir",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-10-19",
-    "endDate": "2026-10-19",
-    "type": "Frei",
-    "status": "Genehmigt",
-    "note": "Sevafrei"
-  },
-  {
-    "id": "sf-mounir-2026-10-26-2026-10-26-frei",
-    "teacherId": "teacher-gen-mouniir-jaber",
-    "teacherName": "Mounir",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-10-26",
-    "endDate": "2026-10-26",
-    "type": "Frei",
-    "status": "Genehmigt",
-    "note": "Sevafrei"
-  },
-  {
-    "id": "sf-harishakti-2026-09-02-2026-09-02-frei",
+    "id": "sf-harishakti-2026-09-02-2026-09-02-f",
     "teacherId": "teacher-gen-harishakti",
     "teacherName": "Harishakti",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -1702,10 +580,10 @@
     "endDate": "2026-09-02",
     "type": "Frei",
     "status": "Genehmigt",
-    "note": "Sevafrei"
+    "note": "Regulärer freier Tag"
   },
   {
-    "id": "sf-harishakti-2026-09-09-2026-09-09-frei",
+    "id": "sf-harishakti-2026-09-09-2026-09-09-f",
     "teacherId": "teacher-gen-harishakti",
     "teacherName": "Harishakti",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -1713,10 +591,10 @@
     "endDate": "2026-09-09",
     "type": "Frei",
     "status": "Genehmigt",
-    "note": "Sevafrei"
+    "note": "Regulärer freier Tag"
   },
   {
-    "id": "sf-harishakti-2026-09-16-2026-09-16-frei",
+    "id": "sf-harishakti-2026-09-16-2026-09-16-f",
     "teacherId": "teacher-gen-harishakti",
     "teacherName": "Harishakti",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -1724,10 +602,10 @@
     "endDate": "2026-09-16",
     "type": "Frei",
     "status": "Genehmigt",
-    "note": "Sevafrei"
+    "note": "Regulärer freier Tag"
   },
   {
-    "id": "sf-harishakti-2026-09-23-2026-09-23-frei",
+    "id": "sf-harishakti-2026-09-23-2026-09-23-f",
     "teacherId": "teacher-gen-harishakti",
     "teacherName": "Harishakti",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -1735,10 +613,10 @@
     "endDate": "2026-09-23",
     "type": "Frei",
     "status": "Genehmigt",
-    "note": "Sevafrei"
+    "note": "Regulärer freier Tag"
   },
   {
-    "id": "sf-harishakti-2026-09-30-2026-09-30-frei",
+    "id": "sf-harishakti-2026-09-30-2026-09-30-f",
     "teacherId": "teacher-gen-harishakti",
     "teacherName": "Harishakti",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -1746,10 +624,604 @@
     "endDate": "2026-09-30",
     "type": "Frei",
     "status": "Genehmigt",
+    "note": "Regulärer freier Tag"
+  },
+  {
+    "id": "sf-satyam-2026-09-21-2026-09-21-f",
+    "teacherId": "teacher-gen-satyam",
+    "teacherName": "Satyam",
+    "avatarColor": "from-blue-400 to-indigo-500",
+    "startDate": "2026-09-21",
+    "endDate": "2026-09-21",
+    "type": "Frei",
+    "status": "Genehmigt",
+    "note": "Regulärer freier Tag"
+  },
+  {
+    "id": "sf-satyam-2026-09-28-2026-09-28-f",
+    "teacherId": "teacher-gen-satyam",
+    "teacherName": "Satyam",
+    "avatarColor": "from-blue-400 to-indigo-500",
+    "startDate": "2026-09-28",
+    "endDate": "2026-09-28",
+    "type": "Frei",
+    "status": "Genehmigt",
+    "note": "Regulärer freier Tag"
+  },
+  {
+    "id": "sf-christopher-2026-09-02-2026-09-02-f",
+    "teacherId": "teacher-gen-christopher",
+    "teacherName": "Christopher",
+    "avatarColor": "from-blue-400 to-indigo-500",
+    "startDate": "2026-09-02",
+    "endDate": "2026-09-02",
+    "type": "Frei",
+    "status": "Genehmigt",
+    "note": "Regulärer freier Tag"
+  },
+  {
+    "id": "sf-christopher-2026-09-09-2026-09-09-f",
+    "teacherId": "teacher-gen-christopher",
+    "teacherName": "Christopher",
+    "avatarColor": "from-blue-400 to-indigo-500",
+    "startDate": "2026-09-09",
+    "endDate": "2026-09-09",
+    "type": "Frei",
+    "status": "Genehmigt",
+    "note": "Regulärer freier Tag"
+  },
+  {
+    "id": "sf-christopher-2026-09-16-2026-09-16-f",
+    "teacherId": "teacher-gen-christopher",
+    "teacherName": "Christopher",
+    "avatarColor": "from-blue-400 to-indigo-500",
+    "startDate": "2026-09-16",
+    "endDate": "2026-09-16",
+    "type": "Frei",
+    "status": "Genehmigt",
+    "note": "Regulärer freier Tag"
+  },
+  {
+    "id": "sf-christopher-2026-09-23-2026-09-23-f",
+    "teacherId": "teacher-gen-christopher",
+    "teacherName": "Christopher",
+    "avatarColor": "from-blue-400 to-indigo-500",
+    "startDate": "2026-09-23",
+    "endDate": "2026-09-23",
+    "type": "Frei",
+    "status": "Genehmigt",
+    "note": "Regulärer freier Tag"
+  },
+  {
+    "id": "sf-christopher-2026-09-30-2026-09-30-f",
+    "teacherId": "teacher-gen-christopher",
+    "teacherName": "Christopher",
+    "avatarColor": "from-blue-400 to-indigo-500",
+    "startDate": "2026-09-30",
+    "endDate": "2026-09-30",
+    "type": "Frei",
+    "status": "Genehmigt",
+    "note": "Regulärer freier Tag"
+  },
+  {
+    "id": "sf-karuna-mayi-2026-10-05-2026-10-05-f",
+    "teacherId": "teacher-gen-karuna-wapke",
+    "teacherName": "Karuna Mayi",
+    "avatarColor": "from-blue-400 to-indigo-500",
+    "startDate": "2026-10-05",
+    "endDate": "2026-10-05",
+    "type": "Frei",
+    "status": "Genehmigt",
+    "note": "Regulärer freier Tag"
+  },
+  {
+    "id": "sf-karuna-mayi-2026-10-12-2026-10-12-f",
+    "teacherId": "teacher-gen-karuna-wapke",
+    "teacherName": "Karuna Mayi",
+    "avatarColor": "from-blue-400 to-indigo-500",
+    "startDate": "2026-10-12",
+    "endDate": "2026-10-12",
+    "type": "Frei",
+    "status": "Genehmigt",
+    "note": "Regulärer freier Tag"
+  },
+  {
+    "id": "sf-karuna-mayi-2026-10-19-2026-10-19-f",
+    "teacherId": "teacher-gen-karuna-wapke",
+    "teacherName": "Karuna Mayi",
+    "avatarColor": "from-blue-400 to-indigo-500",
+    "startDate": "2026-10-19",
+    "endDate": "2026-10-19",
+    "type": "Frei",
+    "status": "Genehmigt",
+    "note": "Regulärer freier Tag"
+  },
+  {
+    "id": "sf-karuna-mayi-2026-10-26-2026-10-26-f",
+    "teacherId": "teacher-gen-karuna-wapke",
+    "teacherName": "Karuna Mayi",
+    "avatarColor": "from-blue-400 to-indigo-500",
+    "startDate": "2026-10-26",
+    "endDate": "2026-10-26",
+    "type": "Frei",
+    "status": "Genehmigt",
+    "note": "Regulärer freier Tag"
+  },
+  {
+    "id": "sf-anjali-2026-10-07-2026-10-07-f",
+    "teacherId": "teacher-gen-anjali-gelzleichter",
+    "teacherName": "Anjali",
+    "avatarColor": "from-blue-400 to-indigo-500",
+    "startDate": "2026-10-07",
+    "endDate": "2026-10-07",
+    "type": "Frei",
+    "status": "Genehmigt",
+    "note": "Regulärer freier Tag"
+  },
+  {
+    "id": "sf-anjali-2026-10-14-2026-10-14-f",
+    "teacherId": "teacher-gen-anjali-gelzleichter",
+    "teacherName": "Anjali",
+    "avatarColor": "from-blue-400 to-indigo-500",
+    "startDate": "2026-10-14",
+    "endDate": "2026-10-14",
+    "type": "Frei",
+    "status": "Genehmigt",
+    "note": "Regulärer freier Tag"
+  },
+  {
+    "id": "sf-anjali-2026-10-21-2026-10-21-f",
+    "teacherId": "teacher-gen-anjali-gelzleichter",
+    "teacherName": "Anjali",
+    "avatarColor": "from-blue-400 to-indigo-500",
+    "startDate": "2026-10-21",
+    "endDate": "2026-10-21",
+    "type": "Frei",
+    "status": "Genehmigt",
+    "note": "Regulärer freier Tag"
+  },
+  {
+    "id": "sf-anjali-2026-10-28-2026-10-28-f",
+    "teacherId": "teacher-gen-anjali-gelzleichter",
+    "teacherName": "Anjali",
+    "avatarColor": "from-blue-400 to-indigo-500",
+    "startDate": "2026-10-28",
+    "endDate": "2026-10-28",
+    "type": "Frei",
+    "status": "Genehmigt",
+    "note": "Regulärer freier Tag"
+  },
+  {
+    "id": "sf-melanie-2026-10-01-2026-10-01-f",
+    "teacherId": "teacher-gen-melanie",
+    "teacherName": "Melanie",
+    "avatarColor": "from-blue-400 to-indigo-500",
+    "startDate": "2026-10-01",
+    "endDate": "2026-10-01",
+    "type": "Frei",
+    "status": "Genehmigt",
+    "note": "Regulärer freier Tag"
+  },
+  {
+    "id": "sf-melanie-2026-10-08-2026-10-08-f",
+    "teacherId": "teacher-gen-melanie",
+    "teacherName": "Melanie",
+    "avatarColor": "from-blue-400 to-indigo-500",
+    "startDate": "2026-10-08",
+    "endDate": "2026-10-08",
+    "type": "Frei",
+    "status": "Genehmigt",
+    "note": "Regulärer freier Tag"
+  },
+  {
+    "id": "sf-melanie-2026-10-15-2026-10-15-f",
+    "teacherId": "teacher-gen-melanie",
+    "teacherName": "Melanie",
+    "avatarColor": "from-blue-400 to-indigo-500",
+    "startDate": "2026-10-15",
+    "endDate": "2026-10-15",
+    "type": "Frei",
+    "status": "Genehmigt",
+    "note": "Regulärer freier Tag"
+  },
+  {
+    "id": "sf-burnie-2026-10-03-2026-10-03-f",
+    "teacherId": "teacher-gen-burnie",
+    "teacherName": "burnie",
+    "avatarColor": "from-blue-400 to-indigo-500",
+    "startDate": "2026-10-03",
+    "endDate": "2026-10-03",
+    "type": "Frei",
+    "status": "Genehmigt",
+    "note": "Regulärer freier Tag"
+  },
+  {
+    "id": "sf-burnie-2026-10-06-2026-10-06-f",
+    "teacherId": "teacher-gen-burnie",
+    "teacherName": "burnie",
+    "avatarColor": "from-blue-400 to-indigo-500",
+    "startDate": "2026-10-06",
+    "endDate": "2026-10-06",
+    "type": "Frei",
+    "status": "Genehmigt",
+    "note": "Regulärer freier Tag"
+  },
+  {
+    "id": "sf-burnie-2026-10-10-2026-10-10-f",
+    "teacherId": "teacher-gen-burnie",
+    "teacherName": "burnie",
+    "avatarColor": "from-blue-400 to-indigo-500",
+    "startDate": "2026-10-10",
+    "endDate": "2026-10-10",
+    "type": "Frei",
+    "status": "Genehmigt",
+    "note": "Regulärer freier Tag"
+  },
+  {
+    "id": "sf-burnie-2026-10-13-2026-10-13-f",
+    "teacherId": "teacher-gen-burnie",
+    "teacherName": "burnie",
+    "avatarColor": "from-blue-400 to-indigo-500",
+    "startDate": "2026-10-13",
+    "endDate": "2026-10-13",
+    "type": "Frei",
+    "status": "Genehmigt",
+    "note": "Regulärer freier Tag"
+  },
+  {
+    "id": "sf-burnie-2026-10-17-2026-10-17-f",
+    "teacherId": "teacher-gen-burnie",
+    "teacherName": "burnie",
+    "avatarColor": "from-blue-400 to-indigo-500",
+    "startDate": "2026-10-17",
+    "endDate": "2026-10-17",
+    "type": "Frei",
+    "status": "Genehmigt",
+    "note": "Regulärer freier Tag"
+  },
+  {
+    "id": "sf-burnie-2026-10-20-2026-10-20-f",
+    "teacherId": "teacher-gen-burnie",
+    "teacherName": "burnie",
+    "avatarColor": "from-blue-400 to-indigo-500",
+    "startDate": "2026-10-20",
+    "endDate": "2026-10-20",
+    "type": "Frei",
+    "status": "Genehmigt",
+    "note": "Regulärer freier Tag"
+  },
+  {
+    "id": "sf-burnie-2026-10-24-2026-10-24-f",
+    "teacherId": "teacher-gen-burnie",
+    "teacherName": "burnie",
+    "avatarColor": "from-blue-400 to-indigo-500",
+    "startDate": "2026-10-24",
+    "endDate": "2026-10-24",
+    "type": "Frei",
+    "status": "Genehmigt",
+    "note": "Regulärer freier Tag"
+  },
+  {
+    "id": "sf-burnie-2026-10-27-2026-10-27-f",
+    "teacherId": "teacher-gen-burnie",
+    "teacherName": "burnie",
+    "avatarColor": "from-blue-400 to-indigo-500",
+    "startDate": "2026-10-27",
+    "endDate": "2026-10-27",
+    "type": "Frei",
+    "status": "Genehmigt",
+    "note": "Regulärer freier Tag"
+  },
+  {
+    "id": "sf-burnie-2026-10-31-2026-10-31-f",
+    "teacherId": "teacher-gen-burnie",
+    "teacherName": "burnie",
+    "avatarColor": "from-blue-400 to-indigo-500",
+    "startDate": "2026-10-31",
+    "endDate": "2026-10-31",
+    "type": "Frei",
+    "status": "Genehmigt",
+    "note": "Regulärer freier Tag"
+  },
+  {
+    "id": "sf-abha-2026-10-04-2026-10-04-f",
+    "teacherId": "teacher-gen-abha-morkoetter",
+    "teacherName": "Abha",
+    "avatarColor": "from-blue-400 to-indigo-500",
+    "startDate": "2026-10-04",
+    "endDate": "2026-10-04",
+    "type": "Frei",
+    "status": "Genehmigt",
+    "note": "Regulärer freier Tag"
+  },
+  {
+    "id": "sf-abha-2026-10-07-2026-10-07-f",
+    "teacherId": "teacher-gen-abha-morkoetter",
+    "teacherName": "Abha",
+    "avatarColor": "from-blue-400 to-indigo-500",
+    "startDate": "2026-10-07",
+    "endDate": "2026-10-07",
+    "type": "Frei",
+    "status": "Genehmigt",
+    "note": "Regulärer freier Tag"
+  },
+  {
+    "id": "sf-abha-2026-10-11-2026-10-11-f",
+    "teacherId": "teacher-gen-abha-morkoetter",
+    "teacherName": "Abha",
+    "avatarColor": "from-blue-400 to-indigo-500",
+    "startDate": "2026-10-11",
+    "endDate": "2026-10-11",
+    "type": "Frei",
+    "status": "Genehmigt",
+    "note": "Regulärer freier Tag"
+  },
+  {
+    "id": "sf-abha-2026-10-14-2026-10-14-f",
+    "teacherId": "teacher-gen-abha-morkoetter",
+    "teacherName": "Abha",
+    "avatarColor": "from-blue-400 to-indigo-500",
+    "startDate": "2026-10-14",
+    "endDate": "2026-10-14",
+    "type": "Frei",
+    "status": "Genehmigt",
+    "note": "Regulärer freier Tag"
+  },
+  {
+    "id": "sf-abha-2026-10-15-2026-10-15-u",
+    "teacherId": "teacher-gen-abha-morkoetter",
+    "teacherName": "Abha",
+    "avatarColor": "from-blue-400 to-indigo-500",
+    "startDate": "2026-10-15",
+    "endDate": "2026-10-15",
+    "type": "Urlaub",
+    "status": "Genehmigt",
     "note": "Sevafrei"
   },
   {
-    "id": "sf-harishakti-2026-10-07-2026-10-07-frei",
+    "id": "sf-abha-2026-10-18-2026-10-18-f",
+    "teacherId": "teacher-gen-abha-morkoetter",
+    "teacherName": "Abha",
+    "avatarColor": "from-blue-400 to-indigo-500",
+    "startDate": "2026-10-18",
+    "endDate": "2026-10-18",
+    "type": "Frei",
+    "status": "Genehmigt",
+    "note": "Regulärer freier Tag"
+  },
+  {
+    "id": "sf-abha-2026-10-25-2026-10-25-f",
+    "teacherId": "teacher-gen-abha-morkoetter",
+    "teacherName": "Abha",
+    "avatarColor": "from-blue-400 to-indigo-500",
+    "startDate": "2026-10-25",
+    "endDate": "2026-10-25",
+    "type": "Frei",
+    "status": "Genehmigt",
+    "note": "Regulärer freier Tag"
+  },
+  {
+    "id": "sf-abha-2026-10-28-2026-10-28-f",
+    "teacherId": "teacher-gen-abha-morkoetter",
+    "teacherName": "Abha",
+    "avatarColor": "from-blue-400 to-indigo-500",
+    "startDate": "2026-10-28",
+    "endDate": "2026-10-28",
+    "type": "Frei",
+    "status": "Genehmigt",
+    "note": "Regulärer freier Tag"
+  },
+  {
+    "id": "sf-hu-2026-10-06-2026-10-06-f",
+    "teacherId": "teacher-gen-hu-buerkle",
+    "teacherName": "Hu",
+    "avatarColor": "from-blue-400 to-indigo-500",
+    "startDate": "2026-10-06",
+    "endDate": "2026-10-06",
+    "type": "Frei",
+    "status": "Genehmigt",
+    "note": "Regulärer freier Tag"
+  },
+  {
+    "id": "sf-hu-2026-10-13-2026-10-13-f",
+    "teacherId": "teacher-gen-hu-buerkle",
+    "teacherName": "Hu",
+    "avatarColor": "from-blue-400 to-indigo-500",
+    "startDate": "2026-10-13",
+    "endDate": "2026-10-13",
+    "type": "Frei",
+    "status": "Genehmigt",
+    "note": "Regulärer freier Tag"
+  },
+  {
+    "id": "sf-hu-2026-10-19-2026-10-19-s",
+    "teacherId": "teacher-gen-hu-buerkle",
+    "teacherName": "Hu",
+    "avatarColor": "from-blue-400 to-indigo-500",
+    "startDate": "2026-10-19",
+    "endDate": "2026-10-19",
+    "type": "Seminartage",
+    "status": "Genehmigt",
+    "note": "Seminartage"
+  },
+  {
+    "id": "sf-hu-2026-10-20-2026-10-20-f",
+    "teacherId": "teacher-gen-hu-buerkle",
+    "teacherName": "Hu",
+    "avatarColor": "from-blue-400 to-indigo-500",
+    "startDate": "2026-10-20",
+    "endDate": "2026-10-20",
+    "type": "Frei",
+    "status": "Genehmigt",
+    "note": "Regulärer freier Tag"
+  },
+  {
+    "id": "sf-hu-2026-10-27-2026-10-27-f",
+    "teacherId": "teacher-gen-hu-buerkle",
+    "teacherName": "Hu",
+    "avatarColor": "from-blue-400 to-indigo-500",
+    "startDate": "2026-10-27",
+    "endDate": "2026-10-27",
+    "type": "Frei",
+    "status": "Genehmigt",
+    "note": "Regulärer freier Tag"
+  },
+  {
+    "id": "sf-hu-2026-10-31-2026-10-31-x",
+    "teacherId": "teacher-gen-hu-buerkle",
+    "teacherName": "Hu",
+    "avatarColor": "from-blue-400 to-indigo-500",
+    "startDate": "2026-10-31",
+    "endDate": "2026-10-31",
+    "type": "Sonstiges",
+    "status": "Genehmigt",
+    "note": "Sevafrei unbezahlt"
+  },
+  {
+    "id": "sf-adam-2026-10-06-2026-10-06-f",
+    "teacherId": "teacher-gen-adam-zmuda",
+    "teacherName": "Adam",
+    "avatarColor": "from-blue-400 to-indigo-500",
+    "startDate": "2026-10-06",
+    "endDate": "2026-10-06",
+    "type": "Frei",
+    "status": "Genehmigt",
+    "note": "Regulärer freier Tag"
+  },
+  {
+    "id": "sf-adam-2026-10-13-2026-10-13-f",
+    "teacherId": "teacher-gen-adam-zmuda",
+    "teacherName": "Adam",
+    "avatarColor": "from-blue-400 to-indigo-500",
+    "startDate": "2026-10-13",
+    "endDate": "2026-10-13",
+    "type": "Frei",
+    "status": "Genehmigt",
+    "note": "Regulärer freier Tag"
+  },
+  {
+    "id": "sf-adam-2026-10-20-2026-10-20-f",
+    "teacherId": "teacher-gen-adam-zmuda",
+    "teacherName": "Adam",
+    "avatarColor": "from-blue-400 to-indigo-500",
+    "startDate": "2026-10-20",
+    "endDate": "2026-10-20",
+    "type": "Frei",
+    "status": "Genehmigt",
+    "note": "Regulärer freier Tag"
+  },
+  {
+    "id": "sf-adam-2026-10-27-2026-10-27-f",
+    "teacherId": "teacher-gen-adam-zmuda",
+    "teacherName": "Adam",
+    "avatarColor": "from-blue-400 to-indigo-500",
+    "startDate": "2026-10-27",
+    "endDate": "2026-10-27",
+    "type": "Frei",
+    "status": "Genehmigt",
+    "note": "Regulärer freier Tag"
+  },
+  {
+    "id": "sf-narayani-2026-10-03-2026-10-03-f",
+    "teacherId": "teacher-gen-narayani-kedenburg",
+    "teacherName": "Narayani",
+    "avatarColor": "from-blue-400 to-indigo-500",
+    "startDate": "2026-10-03",
+    "endDate": "2026-10-03",
+    "type": "Frei",
+    "status": "Genehmigt",
+    "note": "Regulärer freier Tag"
+  },
+  {
+    "id": "sf-narayani-2026-10-10-2026-10-10-f",
+    "teacherId": "teacher-gen-narayani-kedenburg",
+    "teacherName": "Narayani",
+    "avatarColor": "from-blue-400 to-indigo-500",
+    "startDate": "2026-10-10",
+    "endDate": "2026-10-10",
+    "type": "Frei",
+    "status": "Genehmigt",
+    "note": "Regulärer freier Tag"
+  },
+  {
+    "id": "sf-narayani-2026-10-17-2026-10-17-f",
+    "teacherId": "teacher-gen-narayani-kedenburg",
+    "teacherName": "Narayani",
+    "avatarColor": "from-blue-400 to-indigo-500",
+    "startDate": "2026-10-17",
+    "endDate": "2026-10-17",
+    "type": "Frei",
+    "status": "Genehmigt",
+    "note": "Regulärer freier Tag"
+  },
+  {
+    "id": "sf-narayani-2026-10-24-2026-10-24-f",
+    "teacherId": "teacher-gen-narayani-kedenburg",
+    "teacherName": "Narayani",
+    "avatarColor": "from-blue-400 to-indigo-500",
+    "startDate": "2026-10-24",
+    "endDate": "2026-10-24",
+    "type": "Frei",
+    "status": "Genehmigt",
+    "note": "Regulärer freier Tag"
+  },
+  {
+    "id": "sf-narayani-2026-10-31-2026-10-31-f",
+    "teacherId": "teacher-gen-narayani-kedenburg",
+    "teacherName": "Narayani",
+    "avatarColor": "from-blue-400 to-indigo-500",
+    "startDate": "2026-10-31",
+    "endDate": "2026-10-31",
+    "type": "Frei",
+    "status": "Genehmigt",
+    "note": "Regulärer freier Tag"
+  },
+  {
+    "id": "sf-mounir-2026-10-05-2026-10-05-f",
+    "teacherId": "teacher-gen-mouniir-jaber",
+    "teacherName": "Mounir",
+    "avatarColor": "from-blue-400 to-indigo-500",
+    "startDate": "2026-10-05",
+    "endDate": "2026-10-05",
+    "type": "Frei",
+    "status": "Genehmigt",
+    "note": "Regulärer freier Tag"
+  },
+  {
+    "id": "sf-mounir-2026-10-12-2026-10-12-f",
+    "teacherId": "teacher-gen-mouniir-jaber",
+    "teacherName": "Mounir",
+    "avatarColor": "from-blue-400 to-indigo-500",
+    "startDate": "2026-10-12",
+    "endDate": "2026-10-12",
+    "type": "Frei",
+    "status": "Genehmigt",
+    "note": "Regulärer freier Tag"
+  },
+  {
+    "id": "sf-mounir-2026-10-19-2026-10-19-f",
+    "teacherId": "teacher-gen-mouniir-jaber",
+    "teacherName": "Mounir",
+    "avatarColor": "from-blue-400 to-indigo-500",
+    "startDate": "2026-10-19",
+    "endDate": "2026-10-19",
+    "type": "Frei",
+    "status": "Genehmigt",
+    "note": "Regulärer freier Tag"
+  },
+  {
+    "id": "sf-mounir-2026-10-26-2026-10-26-f",
+    "teacherId": "teacher-gen-mouniir-jaber",
+    "teacherName": "Mounir",
+    "avatarColor": "from-blue-400 to-indigo-500",
+    "startDate": "2026-10-26",
+    "endDate": "2026-10-26",
+    "type": "Frei",
+    "status": "Genehmigt",
+    "note": "Regulärer freier Tag"
+  },
+  {
+    "id": "sf-harishakti-2026-10-07-2026-10-07-f",
     "teacherId": "teacher-gen-harishakti",
     "teacherName": "Harishakti",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -1757,10 +1229,10 @@
     "endDate": "2026-10-07",
     "type": "Frei",
     "status": "Genehmigt",
-    "note": "Sevafrei"
+    "note": "Regulärer freier Tag"
   },
   {
-    "id": "sf-harishakti-2026-10-14-2026-10-14-frei",
+    "id": "sf-harishakti-2026-10-14-2026-10-14-f",
     "teacherId": "teacher-gen-harishakti",
     "teacherName": "Harishakti",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -1768,10 +1240,10 @@
     "endDate": "2026-10-14",
     "type": "Frei",
     "status": "Genehmigt",
-    "note": "Sevafrei"
+    "note": "Regulärer freier Tag"
   },
   {
-    "id": "sf-harishakti-2026-10-15-2026-10-15-urlaub",
+    "id": "sf-harishakti-2026-10-15-2026-10-15-u",
     "teacherId": "teacher-gen-harishakti",
     "teacherName": "Harishakti",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -1779,21 +1251,10 @@
     "endDate": "2026-10-15",
     "type": "Urlaub",
     "status": "Genehmigt",
-    "note": "Urlaub"
+    "note": "Sevafrei"
   },
   {
-    "id": "sf-harishakti-2026-10-18-2026-10-20-urlaub",
-    "teacherId": "teacher-gen-harishakti",
-    "teacherName": "Harishakti",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-10-18",
-    "endDate": "2026-10-20",
-    "type": "Urlaub",
-    "status": "Genehmigt",
-    "note": "Urlaub"
-  },
-  {
-    "id": "sf-harishakti-2026-10-21-2026-10-21-frei",
+    "id": "sf-harishakti-2026-10-21-2026-10-21-f",
     "teacherId": "teacher-gen-harishakti",
     "teacherName": "Harishakti",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -1801,32 +1262,10 @@
     "endDate": "2026-10-21",
     "type": "Frei",
     "status": "Genehmigt",
-    "note": "Sevafrei"
+    "note": "Regulärer freier Tag"
   },
   {
-    "id": "sf-harishakti-2026-10-22-2026-10-24-urlaub",
-    "teacherId": "teacher-gen-harishakti",
-    "teacherName": "Harishakti",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-10-22",
-    "endDate": "2026-10-24",
-    "type": "Urlaub",
-    "status": "Genehmigt",
-    "note": "Urlaub"
-  },
-  {
-    "id": "sf-harishakti-2026-10-25-2026-10-30-seminartage",
-    "teacherId": "teacher-gen-harishakti",
-    "teacherName": "Harishakti",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-10-25",
-    "endDate": "2026-10-30",
-    "type": "Seminartage",
-    "status": "Genehmigt",
-    "note": "Seminartage"
-  },
-  {
-    "id": "sf-harishakti-2026-10-31-2026-10-31-frei",
+    "id": "sf-harishakti-2026-10-31-2026-10-31-f",
     "teacherId": "teacher-gen-harishakti",
     "teacherName": "Harishakti",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -1834,43 +1273,10 @@
     "endDate": "2026-10-31",
     "type": "Frei",
     "status": "Genehmigt",
-    "note": "Sevafrei"
+    "note": "Regulärer freier Tag"
   },
   {
-    "id": "sf-satyam-2026-09-21-2026-09-21-frei",
-    "teacherId": "teacher-gen-satyam",
-    "teacherName": "Satyam",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-09-21",
-    "endDate": "2026-09-21",
-    "type": "Frei",
-    "status": "Genehmigt",
-    "note": "Sevafrei"
-  },
-  {
-    "id": "sf-satyam-2026-09-28-2026-09-28-frei",
-    "teacherId": "teacher-gen-satyam",
-    "teacherName": "Satyam",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-09-28",
-    "endDate": "2026-09-28",
-    "type": "Frei",
-    "status": "Genehmigt",
-    "note": "Sevafrei"
-  },
-  {
-    "id": "sf-satyam-2026-09-29-2026-10-04-urlaub",
-    "teacherId": "teacher-gen-satyam",
-    "teacherName": "Satyam",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-09-29",
-    "endDate": "2026-10-04",
-    "type": "Urlaub",
-    "status": "Genehmigt",
-    "note": "Urlaub"
-  },
-  {
-    "id": "sf-satyam-2026-10-05-2026-10-05-frei",
+    "id": "sf-satyam-2026-10-05-2026-10-05-f",
     "teacherId": "teacher-gen-satyam",
     "teacherName": "Satyam",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -1878,10 +1284,10 @@
     "endDate": "2026-10-05",
     "type": "Frei",
     "status": "Genehmigt",
-    "note": "Sevafrei"
+    "note": "Regulärer freier Tag"
   },
   {
-    "id": "sf-satyam-2026-10-12-2026-10-12-frei",
+    "id": "sf-satyam-2026-10-12-2026-10-12-f",
     "teacherId": "teacher-gen-satyam",
     "teacherName": "Satyam",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -1889,10 +1295,10 @@
     "endDate": "2026-10-12",
     "type": "Frei",
     "status": "Genehmigt",
-    "note": "Sevafrei"
+    "note": "Regulärer freier Tag"
   },
   {
-    "id": "sf-satyam-2026-10-19-2026-10-19-frei",
+    "id": "sf-satyam-2026-10-19-2026-10-19-f",
     "teacherId": "teacher-gen-satyam",
     "teacherName": "Satyam",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -1900,10 +1306,10 @@
     "endDate": "2026-10-19",
     "type": "Frei",
     "status": "Genehmigt",
-    "note": "Sevafrei"
+    "note": "Regulärer freier Tag"
   },
   {
-    "id": "sf-satyam-2026-10-26-2026-10-26-frei",
+    "id": "sf-satyam-2026-10-26-2026-10-26-f",
     "teacherId": "teacher-gen-satyam",
     "teacherName": "Satyam",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -1911,65 +1317,10 @@
     "endDate": "2026-10-26",
     "type": "Frei",
     "status": "Genehmigt",
-    "note": "Sevafrei"
+    "note": "Regulärer freier Tag"
   },
   {
-    "id": "sf-christopher-2026-09-02-2026-09-02-frei",
-    "teacherId": "teacher-gen-christopher",
-    "teacherName": "Christopher",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-09-02",
-    "endDate": "2026-09-02",
-    "type": "Frei",
-    "status": "Genehmigt",
-    "note": "Sevafrei"
-  },
-  {
-    "id": "sf-christopher-2026-09-09-2026-09-09-frei",
-    "teacherId": "teacher-gen-christopher",
-    "teacherName": "Christopher",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-09-09",
-    "endDate": "2026-09-09",
-    "type": "Frei",
-    "status": "Genehmigt",
-    "note": "Sevafrei"
-  },
-  {
-    "id": "sf-christopher-2026-09-16-2026-09-16-frei",
-    "teacherId": "teacher-gen-christopher",
-    "teacherName": "Christopher",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-09-16",
-    "endDate": "2026-09-16",
-    "type": "Frei",
-    "status": "Genehmigt",
-    "note": "Sevafrei"
-  },
-  {
-    "id": "sf-christopher-2026-09-23-2026-09-23-frei",
-    "teacherId": "teacher-gen-christopher",
-    "teacherName": "Christopher",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-09-23",
-    "endDate": "2026-09-23",
-    "type": "Frei",
-    "status": "Genehmigt",
-    "note": "Sevafrei"
-  },
-  {
-    "id": "sf-christopher-2026-09-30-2026-09-30-frei",
-    "teacherId": "teacher-gen-christopher",
-    "teacherName": "Christopher",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-09-30",
-    "endDate": "2026-09-30",
-    "type": "Frei",
-    "status": "Genehmigt",
-    "note": "Sevafrei"
-  },
-  {
-    "id": "sf-christopher-2026-10-07-2026-10-07-frei",
+    "id": "sf-christopher-2026-10-07-2026-10-07-f",
     "teacherId": "teacher-gen-christopher",
     "teacherName": "Christopher",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -1977,10 +1328,10 @@
     "endDate": "2026-10-07",
     "type": "Frei",
     "status": "Genehmigt",
-    "note": "Sevafrei"
+    "note": "Regulärer freier Tag"
   },
   {
-    "id": "sf-christopher-2026-10-14-2026-10-14-frei",
+    "id": "sf-christopher-2026-10-14-2026-10-14-f",
     "teacherId": "teacher-gen-christopher",
     "teacherName": "Christopher",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -1988,10 +1339,10 @@
     "endDate": "2026-10-14",
     "type": "Frei",
     "status": "Genehmigt",
-    "note": "Sevafrei"
+    "note": "Regulärer freier Tag"
   },
   {
-    "id": "sf-christopher-2026-10-21-2026-10-21-frei",
+    "id": "sf-christopher-2026-10-21-2026-10-21-f",
     "teacherId": "teacher-gen-christopher",
     "teacherName": "Christopher",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -1999,10 +1350,10 @@
     "endDate": "2026-10-21",
     "type": "Frei",
     "status": "Genehmigt",
-    "note": "Sevafrei"
+    "note": "Regulärer freier Tag"
   },
   {
-    "id": "sf-christopher-2026-10-28-2026-10-28-frei",
+    "id": "sf-christopher-2026-10-28-2026-10-28-f",
     "teacherId": "teacher-gen-christopher",
     "teacherName": "Christopher",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -2010,10 +1361,10 @@
     "endDate": "2026-10-28",
     "type": "Frei",
     "status": "Genehmigt",
-    "note": "Sevafrei"
+    "note": "Regulärer freier Tag"
   },
   {
-    "id": "sf-christopher-2026-10-31-2026-10-31-urlaub",
+    "id": "sf-christopher-2026-10-31-2026-10-31-u",
     "teacherId": "teacher-gen-christopher",
     "teacherName": "Christopher",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -2021,6 +1372,6 @@
     "endDate": "2026-10-31",
     "type": "Urlaub",
     "status": "Genehmigt",
-    "note": "Urlaub"
+    "note": "Sevafrei"
   }
 ]
