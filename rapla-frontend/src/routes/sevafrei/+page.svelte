@@ -227,9 +227,14 @@
     const saved = localStorage.getItem('rapla_sevafrei');
     if (saved) {
       sevafreiList = JSON.parse(saved);
+      
+      // Clean up old excel entries to ensure we match the latest EXCEL_ABSENCES
+      const originalLen = sevafreiList.length;
+      sevafreiList = sevafreiList.filter(e => !e.id.startsWith('excel-sf-'));
+
       // Auto-merge new Excel absences from EXCEL_ABSENCES
       const dbTeachers = db.getTeachers();
-      let updated = false;
+      let updated = (sevafreiList.length !== originalLen);
       EXCEL_ABSENCES.forEach((abs, i) => {
         const match = findTeacherForExcelName(abs.excelName, dbTeachers);
         if (match) {
