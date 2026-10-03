@@ -2907,6 +2907,38 @@ export const db = {
       else if (t.id === "teacher-gen-ulrich-nebel" && t.name !== "Ulrich") { t.name = "Ulrich"; updated = true; }
       else if (t.id === "teacher-gen-christopher" && t.name !== "Christopher") { t.name = "Christopher"; updated = true; }
     }
+    // Restore missing Sathyam teacher
+    if (!list.some(t => t.id === "teacher-guest-1790942126763")) {
+      list.push({
+        id: "teacher-guest-1790942126763",
+        name: "Sathyam Bad Meinberg",
+        email: "",
+        phone: "",
+        avatarColor: "#f59e0b",
+        specialties: ["Meditation"],
+        isYogaTeacher: false,
+        availabilityMode: "always",
+        roleType: "karma_yogi",
+        rules: {
+          preferredRooms: [],
+          preferredDays: [],
+          canLeadMeditation: true,
+          canLeadSatsang: false,
+          canLeadPranayama: false,
+          canLeadOnn: false,
+          availability: [
+            { day: 1, start: '06:30', end: '22:00' },
+            { day: 2, start: '06:30', end: '22:00' },
+            { day: 3, start: '06:30', end: '22:00' },
+            { day: 4, start: '06:30', end: '22:00' },
+            { day: 5, start: '06:30', end: '22:00' },
+            { day: 6, start: '06:30', end: '22:00' },
+            { day: 0, start: '06:30', end: '22:00' }
+          ]
+        }
+      });
+      updated = true;
+    }
 
     for (const defT of DEFAULT_TEACHERS) {
       const existingIdx = list.findIndex(t => t.id === defT.id || t.name === defT.name);
