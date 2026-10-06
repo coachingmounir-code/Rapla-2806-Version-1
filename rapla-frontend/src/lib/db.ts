@@ -846,7 +846,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
     createdAt: new Date().toISOString()
   },
   // --- PREPLANNED WEEKS ---
-                                                                                                                                    {
+                                                                                                                                        {
     id: "plan-pre-2026-W41",
     name: "Vorplanung 2026-W41 (Automatisch)",
     status: "approved",
@@ -2285,7 +2285,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "07:00",
         "endTime": "08:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-anjali-gelzleichter",
+        "teacherId": "teacher-gen-alexander-melior",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -2321,7 +2321,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "16:15",
         "endTime": "18:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-narayani-kedenburg",
+        "teacherId": "teacher-gen-anjali-gelzleichter",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -3348,10 +3348,35 @@ export function reconcilePlansWithDefaults(plans: WeekPlan[]): { plans: WeekPlan
         hasChanges = true;
       }
 
-      if ((defPlan.targetWeekCode === '2026-W37' || defPlan.targetWeekCode === '2026-W38' || defPlan.targetWeekCode === '2026-W39') && !plan.hasManualEdits && !plan.isManualOnly) {
-        if (JSON.stringify(plan.courses) !== JSON.stringify(defPlan.courses)) {
-          plan.courses = JSON.parse(JSON.stringify(defPlan.courses));
-          hasChanges = true;
+      if (["2026-W37", "2026-W38", "2026-W39", "2026-W40", "2026-W41", "2026-W42"].includes(defPlan.targetWeekCode || "")) {
+        if (!plan.hasManualEdits && !plan.isManualOnly) {
+          if (JSON.stringify(plan.courses) !== JSON.stringify(defPlan.courses)) {
+            plan.courses = JSON.parse(JSON.stringify(defPlan.courses));
+            hasChanges = true;
+          }
+        } else if (plan.hasManualEdits) {
+          const newCourses: any[] = [];
+          for (const defC of defPlan.courses) {
+            const extC = plan.courses.find(c => c.id === defC.id || (c.dayOfWeek === defC.dayOfWeek && c.startTime === defC.startTime && c.roomId === defC.roomId));
+            if (extC && extC.isManuallyEdited) {
+              newCourses.push(extC);
+            } else {
+              if (!extC || JSON.stringify(extC) !== JSON.stringify(defC)) {
+                hasChanges = true;
+              }
+              newCourses.push(JSON.parse(JSON.stringify(defC)));
+            }
+          }
+          // Also keep any manually added courses that don't match a default slot
+          for (const extC of plan.courses) {
+            if (extC.isManuallyEdited && !newCourses.some(c => c.id === extC.id || (c.dayOfWeek === extC.dayOfWeek && c.startTime === extC.startTime && c.roomId === extC.roomId))) {
+              newCourses.push(extC);
+              hasChanges = true;
+            }
+          }
+          if (hasChanges) {
+            plan.courses = newCourses;
+          }
         }
       }
 
@@ -3458,7 +3483,7 @@ export function reconcilePlansWithDefaults(plans: WeekPlan[]): { plans: WeekPlan
   return { plans: list, hasChanges };
 }
 
-const CURRENT_DB_VERSION = 129;
+const CURRENT_DB_VERSION = 131;
 
 // Database Actions
 export const db = {

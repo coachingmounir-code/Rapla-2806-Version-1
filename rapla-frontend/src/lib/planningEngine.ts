@@ -1303,7 +1303,7 @@ export function runAiPlanning(
         const nonRelaxableConflicts = conflicts.filter(c => {
           if (c.type !== 'hard') return false;
           const msg = c.message.toLowerCase();
-          return msg.includes('abwesend') || msg.includes('urlaub') || msg.includes('krank') || msg.includes('satsang-regel 4') || msg.includes('nie für einen satsang');
+          return msg.includes('abwesend') || msg.includes('urlaub') || msg.includes('krank') || msg.includes('satsang-regel 4') || msg.includes('nie für einen satsang') || msg.includes('verfügbar');
         });
 
         if (nonRelaxableConflicts.length === 0) {
@@ -1317,7 +1317,7 @@ export function runAiPlanning(
 
           // Huge penalty for each hard conflict we relaxed
           const hardConflictsToRelax = conflicts.filter(c => c.type === 'hard');
-          score -= hardConflictsToRelax.length * 10000;
+          score -= hardConflictsToRelax.length * 1000000;
 
           const combinedSoftConflicts = conflicts.map(c => {
             if (c.type === 'hard') {
