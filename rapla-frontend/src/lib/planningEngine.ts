@@ -134,14 +134,11 @@ export function validateAssignment(
       const activeAbsence = getAbsenceDetails(name, course.dayOfWeek, targetWeekCode, absences);
       if (activeAbsence) {
         const isSatsang = course.name.toLowerCase().includes('satsang');
-        const isBypassedType = ['seminartage'].includes(activeAbsence.type.toLowerCase());
         const isWalk = courseNameLower.includes('spaziergang');
         const isPranava = teacherNameLower.includes('pranava');
         const isRegularFreeDay = activeAbsence.type.toLowerCase() === 'frei' || (activeAbsence.note && activeAbsence.note.toLowerCase().includes('regulärer freier wochentag'));
 
-        if (isSatsang && isBypassedType) {
-          // Bypassed for Satsangs
-        } else if (isWalk && isPranava && isRegularFreeDay) {
+        if (isWalk && isPranava && isRegularFreeDay) {
           // Pranava standardmäßig für meditativen Spaziergang eingeteilt
         } else {
           conflicts.push({
