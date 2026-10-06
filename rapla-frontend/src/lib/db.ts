@@ -3345,6 +3345,12 @@ export function reconcilePlansWithDefaults(plans: WeekPlan[]): { plans: WeekPlan
         } else if (plan.hasManualEdits) {
           const newCourses: any[] = [];
           for (const defC of defPlan.courses) {
+            if (plan.deletedCourseIds?.includes(defC.id)) {
+              if (plan.courses.some(c => c.id === defC.id)) {
+                hasChanges = true;
+              }
+              continue;
+            }
             const extC = plan.courses.find(c => c.id === defC.id || (c.dayOfWeek === defC.dayOfWeek && c.startTime === defC.startTime && c.roomId === defC.roomId));
             if (extC && extC.isManuallyEdited) {
               newCourses.push(extC);
@@ -4179,7 +4185,7 @@ export const db = {
           const nameLower = c.name.toLowerCase();
 
           // Saturday evening Satsang always lasts until 22:00 (Langer Satsang)
-          if (c.dayOfWeek === 6 && nameLower === 'satsang' && c.startTime === '20:00' && c.endTime !== '22:00') {
+          if (!c.isManuallyEdited && c.dayOfWeek === 6 && nameLower === 'satsang' && c.startTime === '20:00' && c.endTime !== '22:00') {
             c.endTime = '22:00';
             updated = true;
           }
@@ -4240,6 +4246,7 @@ export const db = {
         
         const preLen = p.courses.length;
         p.courses = p.courses.filter(c => {
+          if (c.isManuallyEdited) return true;
           const isPranayama = c.name.toLowerCase().includes('pranayama') || c.style.toLowerCase().includes('pranayama');
           if (isPranayama) {
             const courseDate = getLocalDateForDay(p.targetWeekCode!, c.dayOfWeek);
@@ -4257,13 +4264,14 @@ export const db = {
       // Migration: On Tuesday 08.09 (2026-W37), remove Tuesday Meditativer Spaziergang, keep Om Namo Narayanaya in room-2 (19:30-20:00), and add Swami Sivanandas Geburtstag Puja (20:00-21:30)
       if (p.targetWeekCode === '2026-W37') {
         const preCoursesLen = p.courses.length;
-        p.courses = p.courses.filter(c => !(c.dayOfWeek === 2 && c.name.toLowerCase().includes('spaziergang')));
+        p.courses = p.courses.filter(c => c.isManuallyEdited || !(c.dayOfWeek === 2 && c.name.toLowerCase().includes('spaziergang')));
         
         // Ensure Om Namo Narayanaya is present on Tuesday in room-2
-        const onnCourse = p.courses.find(c => c.dayOfWeek === 2 && (c.name.toLowerCase().includes('om namo') || c.name.toLowerCase().includes('narayanaya')));
-        if (!onnCourse) {
+        const onnCourseId = 'course-2026-W37-44';
+        const onnCourse = p.courses.find(c => c.id === onnCourseId || (c.dayOfWeek === 2 && (c.name.toLowerCase().includes('om namo') || c.name.toLowerCase().includes('narayanaya'))));
+        if (!onnCourse && !p.deletedCourseIds?.includes(onnCourseId)) {
           p.courses.push({
-            id: 'course-2026-W37-44',
+            id: onnCourseId,
             name: 'Om Namo Narayanaya',
             style: 'Meditation',
             dayOfWeek: 2,
@@ -4275,7 +4283,7 @@ export const db = {
             status: p.status === 'approved' ? 'approved' : 'draft'
           });
           updated = true;
-        } else {
+        } else if (onnCourse && !onnCourse.isManuallyEdited) {
           if (onnCourse.teacherId === 'teacher-gen-christopher') {
             onnCourse.teacherId = 'teacher-gen-chandrashekara';
             updated = true;
@@ -4288,10 +4296,11 @@ export const db = {
           }
         }
 
-        const pujaCourse = p.courses.find(c => c.id === 'course-2026-W37-puja-sivananda' || (c.dayOfWeek === 2 && (c.name.toLowerCase().includes('sivananda') || c.name.toLowerCase().includes('shivananda')) && c.startTime === '20:00'));
-        if (!pujaCourse) {
+        const pujaCourseId = 'course-2026-W37-puja-sivananda';
+        const pujaCourse = p.courses.find(c => c.id === pujaCourseId || (c.dayOfWeek === 2 && (c.name.toLowerCase().includes('sivananda') || c.name.toLowerCase().includes('shivananda')) && c.startTime === '20:00'));
+        if (!pujaCourse && !p.deletedCourseIds?.includes(pujaCourseId)) {
           p.courses.push({
-            id: 'course-2026-W37-puja-sivananda',
+            id: pujaCourseId,
             name: 'Swami Sivanandas Geburtstag Puja',
             style: 'Puja',
             dayOfWeek: 2,
@@ -4303,7 +4312,7 @@ export const db = {
             status: p.status === 'approved' ? 'approved' : 'draft'
           });
           updated = true;
-        } else {
+        } else if (pujaCourse && !pujaCourse.isManuallyEdited) {
           if (pujaCourse.teacherId !== 'teacher-gen-karuna-wapke' || pujaCourse.roomId !== 'room-2' || pujaCourse.startTime !== '20:00' || pujaCourse.endTime !== '21:30') {
             pujaCourse.teacherId = 'teacher-gen-karuna-wapke';
             pujaCourse.roomId = 'room-2';
@@ -4325,10 +4334,11 @@ export const db = {
         }
       } else {
         // Migration: Ensure Tuesday 19:30 Meditativer Spaziergang is present in every week plan
-        const walkCourse = p.courses.find(c => c.dayOfWeek === 2 && (c.name.toLowerCase().includes('spaziergang') || c.roomId === 'room-7'));
-        if (!walkCourse) {
+        const walkId = `course-${p.targetWeekCode || p.id}-walk-tue`;
+        const walkCourse = p.courses.find(c => c.id === walkId || (c.dayOfWeek === 2 && (c.name.toLowerCase().includes('spaziergang') || c.roomId === 'room-7')));
+        if (!walkCourse && !p.deletedCourseIds?.includes(walkId)) {
           p.courses.push({
-            id: `course-${p.targetWeekCode || p.id}-walk-tue`,
+            id: walkId,
             name: 'Meditativer Spaziergang',
             style: 'Entspannung',
             dayOfWeek: 2,
@@ -4344,7 +4354,7 @@ export const db = {
             return a.startTime.localeCompare(b.startTime);
           });
           updated = true;
-        } else {
+        } else if (walkCourse && !walkCourse.isManuallyEdited) {
           let walkChanged = false;
           if (walkCourse.startTime !== '19:30' || walkCourse.endTime !== '20:30' || walkCourse.roomId !== 'room-7' || walkCourse.name !== 'Meditativer Spaziergang') {
             walkCourse.name = 'Meditativer Spaziergang';
@@ -4370,7 +4380,7 @@ export const db = {
       // Migration: Remove Entspannungsangebot on Thursday 17.09 (2026-W38)
       if (p.targetWeekCode === '2026-W38') {
         const preLen = p.courses.length;
-        p.courses = p.courses.filter(c => !(c.dayOfWeek === 4 && (c.name.toLowerCase().includes('entspannung') || c.style.toLowerCase().includes('entspannung'))));
+        p.courses = p.courses.filter(c => c.isManuallyEdited || !(c.dayOfWeek === 4 && (c.name.toLowerCase().includes('entspannung') || c.style.toLowerCase().includes('entspannung'))));
         if (p.courses.length !== preLen) {
           updated = true;
         }
@@ -4379,14 +4389,16 @@ export const db = {
       // Migration: Remove Mittelstufe Mantrayogastunde on Saturday 19.09 (2026-W39) and Anfänger/Mittelstufe on Tuesday 22.09 (2026-W39)
       if (p.targetWeekCode === '2026-W39') {
         const preLen = p.courses.length;
-        p.courses = p.courses.filter(c => 
+        p.courses = p.courses.filter(c => c.isManuallyEdited || (
           !(c.dayOfWeek === 6 && c.startTime === '16:15' && (c.name.toLowerCase().includes('mantra') || c.id === 'course-2026-W39-16')) &&
           !(c.dayOfWeek === 2 && c.startTime === '16:15' && (c.name.toLowerCase().includes('anfänger') || c.name.toLowerCase().includes('mittelstufe') || c.id === 'course-2026-W39-42' || c.id === 'course-2026-W39-43'))
-        );
-        const hasPranavaJoint = p.courses.some(c => c.dayOfWeek === 2 && c.startTime === '16:15' && (c.teacherId === 'teacher-gen-pranava-pauly' || c.name.toLowerCase().includes('gemeinsam')));
-        if (!hasPranavaJoint) {
+        ));
+        
+        const jointId = 'course-2026-W39-pranava-joint';
+        const hasPranavaJoint = p.courses.some(c => c.id === jointId || (c.dayOfWeek === 2 && c.startTime === '16:15' && (c.teacherId === 'teacher-gen-pranava-pauly' || c.name.toLowerCase().includes('gemeinsam'))));
+        if (!hasPranavaJoint && !p.deletedCourseIds?.includes(jointId)) {
           p.courses.push({
-            id: 'course-2026-W39-pranava-joint',
+            id: jointId,
             name: 'Gemeinsame Stunde',
             style: 'Hatha',
             dayOfWeek: 2,

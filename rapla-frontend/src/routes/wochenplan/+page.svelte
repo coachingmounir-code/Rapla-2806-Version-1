@@ -551,6 +551,7 @@
       
       courses = currentPlan.courses
         .filter(c => {
+          if (c.isManuallyEdited) return true;
           const courseDate = getLocalDateForDay(weekCode, c.dayOfWeek);
           const isPranayama = c.name.toLowerCase().includes('pranayama') || c.style.toLowerCase().includes('pranayama');
           if (isPranayama && isDateInYlaRange(courseDate)) return false;
