@@ -1369,25 +1369,13 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
-        "id": "course-2026-W41-44",
-        "name": "Anfänger Yin Yoga",
+        "id": "course-2026-W41-45",
+        "name": "Gemeinsame Stunde",
         "style": "Hatha",
         "dayOfWeek": 2,
         "startTime": "16:15",
         "endTime": "18:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-chandrashekara",
-        "isAiPlanned": true,
-        "status": "approved"
-      },
-      {
-        "id": "course-2026-W41-45",
-        "name": "Mittelstufe",
-        "style": "Hatha",
-        "dayOfWeek": 2,
-        "startTime": "16:15",
-        "endTime": "18:00",
-        "roomId": "room-5",
         "teacherId": "teacher-gen-narayani-kedenburg",
         "isAiPlanned": false,
         "status": "approved"
