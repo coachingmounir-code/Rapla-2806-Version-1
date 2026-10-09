@@ -458,6 +458,27 @@ const GENERATED_TEACHERS: Teacher[] = NEW_TEACHER_NAMES.map((name, index) => {
 
 const DEFAULT_TEACHERS: Teacher[] = [
   {
+    id: 'teacher-gen-satyam-bm',
+    name: 'Satyam Bad Meinberg',
+    email: '',
+    phone: '',
+    avatarColor: 'from-amber-500 to-orange-600',
+    specialties: ['Hatha', 'Anfänger', 'Mittelstufe', 'Meditation'],
+    isYogaTeacher: true,
+    availabilityMode: 'always',
+    roleType: 'external',
+    rules: {
+      preferredRooms: [],
+      preferredDays: [],
+      canLeadMeditation: true,
+      canLeadSatsang: true,
+      canLeadPranayama: false,
+      canLeadOnn: false,
+      canLeadHausfuehrung: false,
+      availability: []
+    }
+  },
+  {
     id: 'teacher-karma-marlene',
     name: 'Marlen',
     email: '',
@@ -3820,7 +3841,7 @@ export const db = {
         t.rules.preferredDays = [];
         updated = true;
       }
-      if (nameLower.includes('satyam')) {
+      if (nameLower.includes('satyam') && !nameLower.includes('meinberg')) {
         if (t.isYogaTeacher !== false) {
           t.isYogaTeacher = false;
           updated = true;
