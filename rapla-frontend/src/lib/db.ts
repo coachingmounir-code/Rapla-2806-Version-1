@@ -522,6 +522,29 @@ const DEFAULT_TEACHERS: Teacher[] = [
     }
   },
   {
+    id: 'teacher-karma-devani',
+    name: 'Devani',
+    email: '',
+    phone: '',
+    avatarColor: 'from-pink-500 to-rose-500',
+    specialties: ['Hatha', 'Meditation'],
+    isYogaTeacher: true,
+    availabilityMode: 'always',
+    roleType: 'karma_yogi',
+    stayNotes: 'Karma Yoga Frau, die unterrichten kann.',
+    rules: {
+      preferredRooms: [],
+      preferredDays: [],
+      canLeadMeditation: true,
+      canLeadSatsang: true,
+      canLeadPranayama: false,
+      canLeadOnn: true,
+      canLeadHausfuehrung: false,
+      prefersMittelstufe: false,
+      availability: []
+    }
+  },
+  {
     id: 'teacher-karma-swantje',
     name: 'Swantje',
     email: 'swantje@yoga.de',
@@ -4396,7 +4419,7 @@ export const db = {
     }
     return list;
   },
-  saveWeekPlans: (plans: WeekPlan[]): void => { setStored('rapla_week_plans', plans); },
+  saveWeekPlans: (plans: WeekPlan[]): void => { setStored('rapla_week_plans', plans, true); },
   getWeekPlan: (id: string): WeekPlan | undefined => db.getWeekPlans().find(p => p.id === id),
   addWeekPlan: (plan: WeekPlan): void => {
     const list = db.getWeekPlans();

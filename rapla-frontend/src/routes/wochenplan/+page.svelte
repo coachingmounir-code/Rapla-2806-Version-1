@@ -418,7 +418,7 @@
         if (!readableName.trim()) return 'Gast Lehrer';
         return readableName.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
       }
-      return id;
+      return id.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
     });
     return names.join(', ');
   }
