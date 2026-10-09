@@ -3342,35 +3342,6 @@ export function reconcilePlansWithDefaults(plans: WeekPlan[]): { plans: WeekPlan
             plan.courses = JSON.parse(JSON.stringify(defPlan.courses));
             hasChanges = true;
           }
-        } else if (plan.hasManualEdits) {
-          const newCourses: any[] = [];
-          for (const defC of defPlan.courses) {
-            if (plan.deletedCourseIds?.includes(defC.id)) {
-              if (plan.courses.some(c => c.id === defC.id)) {
-                hasChanges = true;
-              }
-              continue;
-            }
-            const extC = plan.courses.find(c => c.id === defC.id || (c.dayOfWeek === defC.dayOfWeek && c.startTime === defC.startTime && c.roomId === defC.roomId));
-            if (extC && extC.isManuallyEdited) {
-              newCourses.push(extC);
-            } else {
-              if (!extC || JSON.stringify(extC) !== JSON.stringify(defC)) {
-                hasChanges = true;
-              }
-              newCourses.push(JSON.parse(JSON.stringify(defC)));
-            }
-          }
-          // Also keep any manually added courses that don't match a default slot
-          for (const extC of plan.courses) {
-            if (extC.isManuallyEdited && !newCourses.some(c => c.id === extC.id || (c.dayOfWeek === extC.dayOfWeek && c.startTime === extC.startTime && c.roomId === extC.roomId))) {
-              newCourses.push(extC);
-              hasChanges = true;
-            }
-          }
-          if (hasChanges) {
-            plan.courses = newCourses;
-          }
         }
       }
 

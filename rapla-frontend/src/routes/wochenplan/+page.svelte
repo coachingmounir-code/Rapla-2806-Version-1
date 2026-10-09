@@ -411,6 +411,13 @@
       if (id.toLowerCase().includes('tanja')) return 'Tanja';
       if (id.toLowerCase().includes('swantje')) return 'Swantje';
       if (id.toLowerCase().includes('gopala') || id === 'teacher-guest-1789207307944') return 'Gopala';
+      
+      if (id.startsWith('teacher-')) {
+        let readableName = id.replace('teacher-gen-', '').replace('teacher-guest-', '').replace('teacher-karma-', '').replace('teacher-', '');
+        readableName = readableName.replace(/-?\d+$/, '');
+        if (!readableName.trim()) return 'Gast Lehrer';
+        return readableName.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+      }
       return id;
     });
     return names.join(', ');
