@@ -4370,8 +4370,9 @@ export const db = {
           }
         }
       }
+    } // Close for (const p of list) loop
 
-          if (updated) {
+    if (updated) {
       db.saveWeekPlans(list);
     }
     if (isOutdated && typeof window !== 'undefined') {
