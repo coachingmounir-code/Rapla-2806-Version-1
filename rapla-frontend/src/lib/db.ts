@@ -4410,6 +4410,21 @@ export const db = {
           updated = true;
         }
       }
+      
+      // Fix KW 42 weekend morning classes
+      if (p.targetWeekCode === '2026-W42') {
+        const satClass = p.courses.find(c => c.dayOfWeek === 6 && c.startTime === '09:15' && c.name.toLowerCase().includes('anfänger'));
+        if (satClass && satClass.teacherId && satClass.teacherId.startsWith('teacher-guest-')) {
+          satClass.teacherId = 'teacher-gen-yl';
+          updated = true;
+        }
+        
+        const sunClass = p.courses.find(c => c.dayOfWeek === 0 && c.startTime === '09:15' && c.name.toLowerCase().includes('anfänger') && c.teacherId !== 'teacher-gen-burnie-bansemer');
+        if (sunClass && sunClass.teacherId && sunClass.teacherId.startsWith('teacher-guest-')) {
+          sunClass.teacherId = 'teacher-karma-devani';
+          updated = true;
+        }
+      }
     }
     if (updated) {
       db.saveWeekPlans(list);
