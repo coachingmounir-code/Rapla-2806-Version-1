@@ -3318,11 +3318,11 @@ export function reconcileTeachersWithCloud(
       } else {
         // Merge attributes, preserving custom stay dates and local updates
         const merged: Teacher = {
-          ...existing,
           ...locT,
+          ...existing, // Remote wins over local defaults
           rules: {
-            ...existing.rules,
-            ...locT.rules
+            ...locT.rules,
+            ...existing.rules
           }
         };
         if ((locT.stayStartDate || locT.stayEndDate) && (!existing.stayStartDate && !existing.stayEndDate)) {
@@ -4371,62 +4371,7 @@ export const db = {
         }
       }
 
-      // Migration: Remove Entspannungsangebot on Thursday 17.09 (2026-W38)
-      if (p.targetWeekCode === '2026-W38') {
-        const preLen = p.courses.length;
-        p.courses = p.courses.filter(c => c.isManuallyEdited || !(c.dayOfWeek === 4 && (c.name.toLowerCase().includes('entspannung') || c.style.toLowerCase().includes('entspannung'))));
-        if (p.courses.length !== preLen) {
-          updated = true;
-        }
-      }
-
-      // Migration: Remove Mittelstufe Mantrayogastunde on Saturday 19.09 (2026-W39) and Anfänger/Mittelstufe on Tuesday 22.09 (2026-W39)
-      if (p.targetWeekCode === '2026-W39') {
-        const preLen = p.courses.length;
-        p.courses = p.courses.filter(c => c.isManuallyEdited || (
-          !(c.dayOfWeek === 6 && c.startTime === '16:15' && (c.name.toLowerCase().includes('mantra') || c.id === 'course-2026-W39-16')) &&
-          !(c.dayOfWeek === 2 && c.startTime === '16:15' && (c.name.toLowerCase().includes('anfänger') || c.name.toLowerCase().includes('mittelstufe') || c.id === 'course-2026-W39-42' || c.id === 'course-2026-W39-43'))
-        ));
-        
-        const jointId = 'course-2026-W39-pranava-joint';
-        const hasPranavaJoint = p.courses.some(c => c.id === jointId || (c.dayOfWeek === 2 && c.startTime === '16:15' && (c.teacherId === 'teacher-gen-pranava-pauly' || c.name.toLowerCase().includes('gemeinsam'))));
-        if (!hasPranavaJoint && !p.deletedCourseIds?.includes(jointId)) {
-          p.courses.push({
-            id: jointId,
-            name: 'Gemeinsame Stunde',
-            style: 'Hatha',
-            dayOfWeek: 2,
-            startTime: '16:15',
-            endTime: '18:00',
-            roomId: 'room-3',
-            teacherId: 'teacher-gen-pranava-pauly',
-            isAiPlanned: false,
-            status: p.status === 'approved' ? 'approved' : 'draft'
-          });
-          updated = true;
-        }
-
-        if (p.courses.length !== preLen) {
-          updated = true;
-        }
-      }
-      
-      // Fix KW 42 weekend morning classes
-      if (p.targetWeekCode === '2026-W42') {
-        const satClass = p.courses.find(c => c.dayOfWeek === 6 && c.startTime === '09:15' && c.name.toLowerCase().includes('anfänger'));
-        if (satClass && satClass.teacherId && satClass.teacherId.startsWith('teacher-guest-')) {
-          satClass.teacherId = 'teacher-gen-yl';
-          updated = true;
-        }
-        
-        const sunClass = p.courses.find(c => c.dayOfWeek === 0 && c.startTime === '09:15' && c.name.toLowerCase().includes('anfänger') && c.teacherId !== 'teacher-gen-burnie-bansemer');
-        if (sunClass && sunClass.teacherId && sunClass.teacherId.startsWith('teacher-guest-')) {
-          sunClass.teacherId = 'teacher-karma-devani';
-          updated = true;
-        }
-      }
-    }
-    if (updated) {
+          if (updated) {
       db.saveWeekPlans(list);
     }
     if (isOutdated && typeof window !== 'undefined') {
