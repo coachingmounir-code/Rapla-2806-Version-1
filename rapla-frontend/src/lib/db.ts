@@ -346,20 +346,33 @@ function getTeacherAvailability(name: string, isSevaka: boolean): TimeSlot[] {
 
   // Check availabilityRestrictions
   if (tRules.availabilityRestrictions && tRules.availabilityRestrictions.length > 0) {
-    slots = slots.map(slot => {
+    const updatedSlots: TimeSlot[] = [];
+    for (const slot of slots) {
       const rest = tRules.availabilityRestrictions.find((r: any) => r.day === slot.day && r.allowed === false);
       if (rest) {
         if (rest.timeAfter) {
           // If not allowed after timeAfter, end is timeAfter
-          return { ...slot, end: rest.timeAfter };
-        }
-        if (rest.timeBefore) {
+          updatedSlots.push({ ...slot, end: rest.timeAfter });
+        } else if (rest.timeBefore) {
           // If not allowed before timeBefore, start is timeBefore
-          return { ...slot, start: rest.timeBefore };
+          updatedSlots.push({ ...slot, start: rest.timeBefore });
+        } else if ((rest.timeFrom && rest.timeTo) || (rest.start && rest.end)) {
+          const fromTime = rest.timeFrom || rest.start;
+          const toTime = rest.timeTo || rest.end;
+          if (fromTime > slot.start) {
+            updatedSlots.push({ ...slot, end: fromTime });
+          }
+          if (toTime < slot.end) {
+            updatedSlots.push({ ...slot, start: toTime });
+          }
+        } else {
+          updatedSlots.push(slot);
         }
+      } else {
+        updatedSlots.push(slot);
       }
-      return slot;
-    });
+    }
+    slots = updatedSlots;
   }
 
   return slots;
@@ -2231,7 +2244,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "16:15",
         "endTime": "18:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-chandrashekara",
+        "teacherId": "teacher-gen-narayani-kedenburg",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -3605,6 +3618,14 @@ export function reconcilePlansWithDefaults(plans: WeekPlan[]): { plans: WeekPlan
         hasChanges = true;
       }
 
+      // Ensure Chandrashekara is never scheduled on Tuesday afternoon
+      for (const c of plan.courses) {
+        if (c.dayOfWeek === 2 && c.teacherId === 'teacher-gen-chandrashekara' && c.startTime >= '12:00' && c.startTime < '18:30') {
+          c.teacherId = 'teacher-gen-narayani-kedenburg';
+          hasChanges = true;
+        }
+      }
+
       plan.courses.sort((a, b) => {
         if (a.dayOfWeek !== b.dayOfWeek) return a.dayOfWeek - b.dayOfWeek;
         return a.startTime.localeCompare(b.startTime);
@@ -3615,7 +3636,7 @@ export function reconcilePlansWithDefaults(plans: WeekPlan[]): { plans: WeekPlan
   return { plans: list, hasChanges };
 }
 
-const CURRENT_DB_VERSION = 134;
+const CURRENT_DB_VERSION = 135;
 
 // Database Actions
 export const db = {
@@ -3960,6 +3981,23 @@ export const db = {
           { day: 6, start: '06:00', end: '22:00' }  // Saturday
         ];
         updated = true;
+      }
+
+      // Migration for Chandrashekara's rules (Tuesday afternoon off: 12:00 - 18:30)
+      if (t.name.toLowerCase().includes('chandrashekara') || t.id === 'teacher-gen-chandrashekara') {
+        const hasTueAfternoon = t.rules.availability.some(
+          s => s.day === 2 && s.start <= '12:00' && s.end >= '18:00'
+        );
+        if (hasTueAfternoon || !t.rules.availability.some(s => s.day === 2 && s.end === '12:00')) {
+          t.rules.availability = t.rules.availability
+            .filter(s => s.day !== 2)
+            .concat([
+              { day: 2, start: '06:30', end: '12:00' },
+              { day: 2, start: '18:30', end: '22:00' }
+            ])
+            .sort((a, b) => a.day !== b.day ? a.day - b.day : a.start.localeCompare(b.start));
+          updated = true;
+        }
       }
 
       // Migration for Karuna's rules

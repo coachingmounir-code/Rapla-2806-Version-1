@@ -500,7 +500,14 @@
       "weekendAsBackupOnly": false,
       "prefersMittelstufe": false,
       "customCourseNames": [],
-      "availabilityRestrictions": [],
+      "availabilityRestrictions": [
+        {
+          "day": 2,
+          "timeFrom": "12:00",
+          "timeTo": "18:30",
+          "allowed": false
+        }
+      ],
       "preferredAvailability": [],
       "maxClassesPerDay": 2
     },

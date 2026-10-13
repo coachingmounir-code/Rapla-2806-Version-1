@@ -10,3 +10,6 @@ Bitte bei zukünftigen Zuweisungen und Planungen entsprechend beachten!
 
 # Allgemeine Planungsregeln
 Bitte stets darauf achten, dass alle Slots besetzt werden (kein Slot darf bei der endgültigen Planung unbesetzt bleiben).
+
+# Sevaka-Regeln
+- Chandrashekara kann dienstags nachmittags nicht eingeplant werden.

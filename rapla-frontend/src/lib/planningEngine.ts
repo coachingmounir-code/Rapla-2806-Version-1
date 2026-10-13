@@ -271,9 +271,23 @@ export function validateAssignment(
     const isPranava = teacherNameLower.includes('pranava');
     const isNarayaniSundayOnn = isOnnForSevaka && teacherNameLower.includes('narayani') && course.dayOfWeek === 0;
     if (!(isWalk && isPranava) && !isNarayaniSundayOnn) {
+      if (teacherNameLower.includes('chandrashekara') && course.dayOfWeek === 2 && courseStart >= timeToMinutes('12:00') && courseStart < timeToMinutes('18:30')) {
+        conflicts.push({
+          type: 'hard',
+          message: `${teacher.name} kann dienstags nachmittags laut Regeln nicht eingeplant werden.`
+        });
+      } else {
+        conflicts.push({
+          type: 'hard',
+          message: `${teacher.name} ist am ${getDayName(course.dayOfWeek)} zur Kurszeit (${course.startTime} - ${course.endTime}) laut Regeln/Freitagen nicht verfügbar.`
+        });
+      }
+    }
+  } else if (teacherNameLower.includes('chandrashekara') && course.dayOfWeek === 2) {
+    if (courseStart >= timeToMinutes('12:00') && courseStart < timeToMinutes('18:30')) {
       conflicts.push({
         type: 'hard',
-        message: `${teacher.name} ist am ${getDayName(course.dayOfWeek)} zur Kurszeit (${course.startTime} - ${course.endTime}) laut Regeln/Freitagen nicht verfügbar.`
+        message: `${teacher.name} kann dienstags nachmittags laut Regeln nicht eingeplant werden.`
       });
     }
   }
