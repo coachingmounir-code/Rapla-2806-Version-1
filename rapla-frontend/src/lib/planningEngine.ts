@@ -207,6 +207,12 @@ export function validateAssignment(
         message: `${teacher.name} ist nicht für das Leiten von Satsangs eingetragen.`
       });
     }
+    if (isOnnForSevaka && teacher.rules.canLeadOnn === false) {
+      conflicts.push({
+        type: 'hard',
+        message: `${teacher.name} ist nicht für das Leiten von Om Namo Narayanaya eingetragen.`
+      });
+    }
   }
 
   const otherSevakaAssignments = allCourses.filter(
@@ -654,6 +660,13 @@ export function validateAssignment(
     conflicts.push({
       type: 'hard',
       message: `${teacher.name} kann maximal ${teacher.rules.maxMeditationPerWeek} mal pro Woche für eine geführte Meditation eingeteilt werden.`
+    });
+  }
+
+  if (teacher.rules.maxOnnPerWeek !== undefined && teacher.rules.maxOnnPerWeek !== null && isOnnForSevaka && counts.onnCount > teacher.rules.maxOnnPerWeek) {
+    conflicts.push({
+      type: 'hard',
+      message: `${teacher.name} darf für maximal ${teacher.rules.maxOnnPerWeek} mal pro Woche für Om Namo Narayanaya eingeteilt werden.`
     });
   }
 

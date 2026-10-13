@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount, untrack } from 'svelte';
-  import { db, type Course, type Teacher, type Room, type WeekPlan } from '$lib/db';
+  import { db, generateTeacherId, type Course, type Teacher, type Room, type WeekPlan } from '$lib/db';
   import { validateAssignment, type ConflictMessage, getLocalDateForDay } from '$lib/planningEngine';
   import { EXCEL_ABSENCES } from '$lib/excel_absences';
   import { isDateInYlaRange } from '$lib/ylaData';
@@ -284,20 +284,35 @@
     return false;
   }
 
-  function getTeacherDisplayName(courseTeacherId: string | null | undefined): string {
+  function getTeacherDisplayName(courseTeacherId: string | null | undefined, courseTeacherName?: string | null): string {
+    if (courseTeacherName && courseTeacherName.trim() && courseTeacherName !== 'Unbesetzt' && courseTeacherName !== 'Offen') {
+      return courseTeacherName;
+    }
     if (!courseTeacherId || courseTeacherId === 'teacher-gen-yl') return 'Offen';
     const ids = courseTeacherId.split(',').map(s => s.trim());
     const names = ids.map(id => {
-      const found = teachers.find(t => t.id === id || (id.includes('tanja') && (t.id.includes('tanja') || t.name.toLowerCase().includes('tanja'))) || (id.includes('swantje') && (t.id.includes('swantje') || t.name.toLowerCase().includes('swantje'))) || (id.includes('gopala') && (t.id.includes('gopala') || t.name.toLowerCase().includes('gopala'))) || id === 'teacher-guest-1789207307944');
+      const found = teachers.find(t => 
+        t.id === id || 
+        (id.includes('tanja') && (t.id.includes('tanja') || t.name.toLowerCase().includes('tanja'))) || 
+        (id.includes('swantje') && (t.id.includes('swantje') || t.name.toLowerCase().includes('swantje'))) || 
+        (id.includes('gopala') && (t.id.includes('gopala') || t.name.toLowerCase().includes('gopala'))) || 
+        ((id.includes('krishnajyoti') || id === 'teacher-guest-1791727410561') && (t.id.includes('krishnajyoti') || t.name.toLowerCase().includes('krishnajyoti'))) ||
+        id === 'teacher-guest-1789207307944'
+      );
       if (found) return found.name;
       if (id.toLowerCase().includes('tanja')) return 'Tanja';
       if (id.toLowerCase().includes('swantje')) return 'Swantje';
       if (id.toLowerCase().includes('gopala') || id === 'teacher-guest-1789207307944') return 'Gopala';
+      if (id.toLowerCase().includes('krishnajyoti') || id === 'teacher-guest-1791727410561') return 'Krishnajyoti';
       
       if (id.startsWith('teacher-')) {
         let readableName = id.replace('teacher-gen-', '').replace('teacher-guest-', '').replace('teacher-karma-', '').replace('teacher-', '');
         readableName = readableName.replace(/-?\d+$/, '');
-        if (!readableName.trim()) return 'Gast Lehrer';
+        if (!readableName.trim()) {
+          const matchCourse = courses.find(c => c.teacherId === id && (c as any).teacherName);
+          if (matchCourse && (matchCourse as any).teacherName) return (matchCourse as any).teacherName;
+          return 'Gast Lehrer';
+        }
         return readableName.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
       }
       return id.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
@@ -569,6 +584,7 @@
       if (!proceed) return;
     }
 
+    const selectedTeacher = teachers.find(t => t.id === formTeacherId);
     const courseData: Course = {
       id: editingCourse?.id || 'course-' + Date.now(),
       name: formName,
@@ -578,6 +594,7 @@
       endTime: formEndTime,
       roomId: formRoomId,
       teacherId: formTeacherId,
+      teacherName: selectedTeacher ? selectedTeacher.name : (editingCourse?.teacherName || undefined),
       isAiPlanned: false,
       isManuallyEdited: true,
       status: editingCourse?.status || 'draft'
@@ -780,7 +797,7 @@
       const avatarColor = colors[Math.floor(Math.random() * colors.length)];
       
       const newTeacher: Teacher = {
-        id: `teacher-guest-${Date.now()}`,
+        id: generateTeacherId(quickName, quickRole),
         name: quickName.trim(),
         email: '',
         phone: '',
@@ -1074,7 +1091,7 @@
                       📍 {roomObj?.name || 'Radha-Krishna-Raum'} • 90 Min.
                     </div>
                     <div class="puja-teacher-line">
-                      👤 {getTeacherDisplayName(course.teacherId) === 'Unbesetzt' ? 'Karuna' : getTeacherDisplayName(course.teacherId)}
+                      👤 {getTeacherDisplayName(course.teacherId, course.teacherName) === 'Unbesetzt' ? 'Karuna' : getTeacherDisplayName(course.teacherId, course.teacherName)}
                     </div>
                   </div>
                 </div>
@@ -1100,7 +1117,7 @@
                 
                 <!-- Bottom line: Teacher Name -->
                 <div class="card-teacher-line" class:conflict-text={hasHard} title={hasHard ? courseConflicts.find(c => c.type === 'hard')?.message : ''}>
-                  {getTeacherDisplayName(course.teacherId)}
+                  {getTeacherDisplayName(course.teacherId, course.teacherName)}
                 </div>
               </div>
             {/if}

@@ -402,20 +402,35 @@
     return false;
   }
 
-  function getTeacherDisplayName(courseTeacherId: string | null | undefined): string {
+  function getTeacherDisplayName(courseTeacherId: string | null | undefined, courseTeacherName?: string | null): string {
+    if (courseTeacherName && courseTeacherName.trim() && courseTeacherName !== 'Unbesetzt' && courseTeacherName !== 'Offen') {
+      return courseTeacherName;
+    }
     if (!courseTeacherId || courseTeacherId === 'teacher-gen-yl') return 'Unbesetzt';
     const ids = courseTeacherId.split(',').map(s => s.trim());
     const names = ids.map(id => {
-      const found = teachers.find(t => t.id === id || (id.includes('tanja') && (t.id.includes('tanja') || t.name.toLowerCase().includes('tanja'))) || (id.includes('swantje') && (t.id.includes('swantje') || t.name.toLowerCase().includes('swantje'))) || (id.includes('gopala') && (t.id.includes('gopala') || t.name.toLowerCase().includes('gopala'))) || id === 'teacher-guest-1789207307944');
+      const found = teachers.find(t => 
+        t.id === id || 
+        (id.includes('tanja') && (t.id.includes('tanja') || t.name.toLowerCase().includes('tanja'))) || 
+        (id.includes('swantje') && (t.id.includes('swantje') || t.name.toLowerCase().includes('swantje'))) || 
+        (id.includes('gopala') && (t.id.includes('gopala') || t.name.toLowerCase().includes('gopala'))) || 
+        ((id.includes('krishnajyoti') || id === 'teacher-guest-1791727410561') && (t.id.includes('krishnajyoti') || t.name.toLowerCase().includes('krishnajyoti'))) ||
+        id === 'teacher-guest-1789207307944'
+      );
       if (found) return found.name;
       if (id.toLowerCase().includes('tanja')) return 'Tanja';
       if (id.toLowerCase().includes('swantje')) return 'Swantje';
       if (id.toLowerCase().includes('gopala') || id === 'teacher-guest-1789207307944') return 'Gopala';
+      if (id.toLowerCase().includes('krishnajyoti') || id === 'teacher-guest-1791727410561') return 'Krishnajyoti';
       
       if (id.startsWith('teacher-')) {
         let readableName = id.replace('teacher-gen-', '').replace('teacher-guest-', '').replace('teacher-karma-', '').replace('teacher-', '');
         readableName = readableName.replace(/-?\d+$/, '');
-        if (!readableName.trim()) return 'Gast Lehrer';
+        if (!readableName.trim()) {
+          const matchCourse = courses.find(c => c.teacherId === id && (c as any).teacherName);
+          if (matchCourse && (matchCourse as any).teacherName) return (matchCourse as any).teacherName;
+          return 'Gast Lehrer';
+        }
         return readableName.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
       }
       return id.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');

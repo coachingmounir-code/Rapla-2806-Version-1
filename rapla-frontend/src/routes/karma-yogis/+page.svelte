@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { db, type Teacher, type TimeSlot, type Room, getTeacherStayStatus } from '$lib/db';
+  import { db, generateTeacherId, type Teacher, type TimeSlot, type Room, getTeacherStayStatus } from '$lib/db';
 
   let teachers = $state<Teacher[]>([]);
   let rooms = $state<Room[]>([]);
@@ -213,7 +213,7 @@
     isSaving = true;
     try {
       const teacherData: Teacher = {
-        id: editingTeacher?.id || `teacher-guest-${Date.now()}`,
+        id: editingTeacher?.id || generateTeacherId(formName, formRoleType),
         name: formName.trim(),
         email: formEmail.trim(),
         phone: formPhone.trim(),

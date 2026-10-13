@@ -134,6 +134,26 @@ export function getTeacherStayStatus(teacher: Teacher, referenceDateStr?: string
   return 'active';
 }
 
+export function generateTeacherId(name: string, roleType: string = 'karma_yogi'): string {
+  const cleanName = (name || '')
+    .toLowerCase()
+    .trim()
+    .replace(/[äÄ]/g, 'ae')
+    .replace(/[öÖ]/g, 'oe')
+    .replace(/[üÜ]/g, 'ue')
+    .replace(/ß/g, 'ss')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+
+  const prefix = roleType === 'karma_yogi' ? 'teacher-karma' 
+               : roleType === 'guest_teacher' ? 'teacher-guest' 
+               : roleType === 'sevaka' ? 'teacher-gen' 
+               : 'teacher';
+  const slug = cleanName || 'person';
+  const suffix = Date.now().toString().slice(-6);
+  return `${prefix}-${slug}-${suffix}`;
+}
+
 export interface Room {
   id: string;
   name: string;
@@ -149,6 +169,7 @@ export interface Course {
   endTime: string; // "HH:MM"
   roomId: string;
   teacherId: string | null; // assigned teacher
+  teacherName?: string; // assigned teacher display name (safeguard against sync desync)
   additionalVisibilityTeacherIds?: string[]; // teachers for whom this course is additionally visible (e.g. mandatory participation / Schulung)
   isAiPlanned: boolean;
   status: 'draft' | 'approved';
@@ -649,6 +670,43 @@ const DEFAULT_TEACHERS: Teacher[] = [
       canLeadSatsang: false,
       canLeadHausfuehrung: false,
       prefersMittelstufe: false,
+      availability: [
+        { day: 1, start: '06:30', end: '22:00' },
+        { day: 2, start: '06:30', end: '22:00' },
+        { day: 3, start: '06:30', end: '22:00' },
+        { day: 4, start: '06:30', end: '22:00' },
+        { day: 5, start: '06:30', end: '22:00' },
+        { day: 6, start: '06:30', end: '22:00' },
+        { day: 0, start: '06:30', end: '22:00' }
+      ]
+    }
+  },
+  {
+    id: 'teacher-karma-krishnajyoti',
+    name: 'Krishnajyoti',
+    email: '',
+    phone: '',
+    avatarColor: 'from-amber-400 to-orange-500',
+    specialties: ['Hatha', 'Anfänger', 'Mittelstufe', 'Meditation'],
+    isYogaTeacher: true,
+    availabilityMode: 'always',
+    roleType: 'karma_yogi',
+    stayStartDate: '2026-10-10',
+    stayEndDate: '2026-10-17',
+    stayNotes: 'Karma Yogini bis zum 17.10. Einteilbar für 1x täglich eine Yogastunde und 2x für das Om Namo Narayana.',
+    customWishes: 'Einteilbar bis 17.10.: täglich max. 1 Yogastunde und 2x Om Namo Narayana.',
+    rules: {
+      preferredRooms: [],
+      preferredDays: [],
+      canLeadMeditation: true,
+      canLeadSatsang: false,
+      canLeadPranayama: false,
+      canLeadOnn: true,
+      canLeadHausfuehrung: false,
+      prefersMittelstufe: false,
+      noTwoYogaSameDay: true,
+      maxYogaClassesPerWeek: 7,
+      maxOnnPerWeek: 2,
       availability: [
         { day: 1, start: '06:30', end: '22:00' },
         { day: 2, start: '06:30', end: '22:00' },
@@ -3354,6 +3412,61 @@ export function reconcileTeachersWithCloud(
     }
   }
 
+  // 4. Auto-heal any teachers referenced in week plans
+  try {
+    const plans = getStored<WeekPlan[]>('rapla_week_plans', []);
+    if (Array.isArray(plans)) {
+      for (const p of plans) {
+        if (!Array.isArray(p.courses)) continue;
+        for (const c of p.courses) {
+          if (!c.teacherId || deletedIds.includes(c.teacherId) || c.teacherId === 'teacher-gen-yl') continue;
+          let tId = c.teacherId;
+          if (tId === 'teacher-guest-1791727410561') {
+            tId = 'teacher-karma-krishnajyoti';
+          }
+          if (!teacherMap.has(tId)) {
+            const derivedName = c.teacherName || (tId.includes('krishnajyoti') ? 'Krishnajyoti' : '');
+            if (derivedName || tId.startsWith('teacher-')) {
+              const cleanName = derivedName || tId.replace(/^teacher-(karma|guest|gen)-/, '').replace(/-?\d+$/, '');
+              const formattedName = cleanName ? cleanName.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') : 'Lehrer';
+              teacherMap.set(tId, {
+                id: tId,
+                name: formattedName,
+                email: '',
+                phone: '',
+                avatarColor: 'from-amber-400 to-orange-500',
+                specialties: ['Hatha', 'Meditation'],
+                isYogaTeacher: true,
+                availabilityMode: 'always',
+                roleType: tId.includes('karma') ? 'karma_yogi' : 'guest_teacher',
+                rules: {
+                  preferredRooms: [],
+                  preferredDays: [],
+                  canLeadMeditation: true,
+                  canLeadSatsang: false,
+                  canLeadPranayama: false,
+                  canLeadOnn: true,
+                  availability: [
+                    { day: 1, start: '06:30', end: '22:00' },
+                    { day: 2, start: '06:30', end: '22:00' },
+                    { day: 3, start: '06:30', end: '22:00' },
+                    { day: 4, start: '06:30', end: '22:00' },
+                    { day: 5, start: '06:30', end: '22:00' },
+                    { day: 6, start: '06:30', end: '22:00' },
+                    { day: 0, start: '06:30', end: '22:00' }
+                  ]
+                }
+              });
+              hasChanges = true;
+            }
+          }
+        }
+      }
+    }
+  } catch (err) {
+    console.warn('Error during auto-healing teachers from plans:', err);
+  }
+
   const result = Array.from(teacherMap.values());
   return { teachers: result, hasChanges };
 }
@@ -3472,6 +3585,16 @@ export function reconcilePlansWithDefaults(plans: WeekPlan[]): { plans: WeekPlan
       for (const c of plan.courses) {
         if (c.teacherId === 'teacher-guest-1789207307944') {
           c.teacherId = 'teacher-karma-gopala';
+          c.teacherName = 'Gopala';
+          hasChanges = true;
+        }
+        if (c.teacherId === 'teacher-guest-1791727410561') {
+          c.teacherId = 'teacher-karma-krishnajyoti';
+          c.teacherName = 'Krishnajyoti';
+          hasChanges = true;
+        }
+        if (c.teacherId === 'teacher-karma-krishnajyoti' && !c.teacherName) {
+          c.teacherName = 'Krishnajyoti';
           hasChanges = true;
         }
       }
@@ -3553,7 +3676,11 @@ export const db = {
               inMemoryStore['rapla_week_plans'] = reconciled;
 
               if (needsCloudPush && supabase) {
-                supabase.from('app_state').upsert({ key: 'rapla_week_plans', value: mergedStr }).then(() => {});
+                try {
+                  await supabase.from('app_state').upsert({ key: 'rapla_week_plans', value: mergedStr });
+                } catch (err) {
+                  console.error('Error syncing rapla_week_plans to cloud:', err);
+                }
               }
             } else if (row.key === 'rapla_teachers') {
               const remoteTeachers: Teacher[] = JSON.parse(row.value);
@@ -3570,7 +3697,11 @@ export const db = {
 
               if (teachersChanged && supabase) {
                 needsCloudPush = true;
-                supabase.from('app_state').upsert({ key: 'rapla_teachers', value: reconciledStr }).then(() => {});
+                try {
+                  await supabase.from('app_state').upsert({ key: 'rapla_teachers', value: reconciledStr });
+                } catch (err) {
+                  console.error('Error syncing rapla_teachers to cloud:', err);
+                }
               }
             } else {
               const currentStr = localStorage.getItem(row.key);
@@ -3738,6 +3869,61 @@ export const db = {
       });
       updated = true;
     }
+
+    // Clean up / migrate legacy teacher-guest-1791727410561 into Krishnajyoti
+    const legacyKjIndex = list.findIndex(t => t.id === "teacher-guest-1791727410561");
+    if (legacyKjIndex !== -1) {
+      list.splice(legacyKjIndex, 1);
+      updated = true;
+    }
+
+    // Auto-heal teachers from existing week plans to guarantee no assigned person is ever lost
+    try {
+      const plans = getStored<WeekPlan[]>('rapla_week_plans', []);
+      if (Array.isArray(plans)) {
+        for (const p of plans) {
+          if (!Array.isArray(p.courses)) continue;
+          for (const c of p.courses) {
+            if (!c.teacherId || c.teacherId === 'teacher-gen-yl') continue;
+            let targetId = c.teacherId === 'teacher-guest-1791727410561' ? 'teacher-karma-krishnajyoti' : c.teacherId;
+            const exists = list.some(t => t.id === targetId || (c.teacherName && t.name.toLowerCase() === c.teacherName.toLowerCase()));
+            if (!exists && targetId.startsWith('teacher-')) {
+              const cleanName = c.teacherName || targetId.replace(/^teacher-(karma|guest|gen)-/, '').replace(/-?\d+$/, '');
+              const formattedName = cleanName ? cleanName.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') : 'Lehrer';
+              list.push({
+                id: targetId,
+                name: formattedName,
+                email: '',
+                phone: '',
+                avatarColor: 'from-amber-400 to-orange-500',
+                specialties: ['Hatha', 'Meditation'],
+                isYogaTeacher: true,
+                availabilityMode: 'always',
+                roleType: targetId.includes('karma') ? 'karma_yogi' : 'guest_teacher',
+                rules: {
+                  preferredRooms: [],
+                  preferredDays: [],
+                  canLeadMeditation: true,
+                  canLeadSatsang: false,
+                  canLeadPranayama: false,
+                  canLeadOnn: true,
+                  availability: [
+                    { day: 1, start: '06:30', end: '22:00' },
+                    { day: 2, start: '06:30', end: '22:00' },
+                    { day: 3, start: '06:30', end: '22:00' },
+                    { day: 4, start: '06:30', end: '22:00' },
+                    { day: 5, start: '06:30', end: '22:00' },
+                    { day: 6, start: '06:30', end: '22:00' },
+                    { day: 0, start: '06:30', end: '22:00' }
+                  ]
+                }
+              });
+              updated = true;
+            }
+          }
+        }
+      }
+    } catch (e) {}
 
     for (const defT of DEFAULT_TEACHERS) {
       const existingIdx = list.findIndex(t => t.id === defT.id || t.name === defT.name);

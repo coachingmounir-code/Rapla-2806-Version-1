@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { db, type Teacher, type TimeSlot, type Room } from '$lib/db';
+  import { db, generateTeacherId, type Teacher, type TimeSlot, type Room } from '$lib/db';
 
   // Svelte 5 component prop
   let { roleType }: { roleType: 'sevaka' | 'external' } = $props();
@@ -208,7 +208,7 @@
     isSaving = true;
     try {
       const teacherData: Teacher = {
-        id: editingTeacher?.id || 'teacher-' + Date.now(),
+        id: editingTeacher?.id || generateTeacherId(formName, editingTeacher?.roleType || roleType),
         name: formName,
         email: formEmail,
         phone: formPhone,
