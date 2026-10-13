@@ -222,8 +222,22 @@ function planWeekWithAbsences(weekCode: string, standardCourses: any[]) {
     return courseCopy;
   });
 
-  // Run AI Planning - CORRECT PARAMETER ORDER: runAiPlanning(courses, teachers, ...)
-  const result = runAiPlanning(courses, teachers, [], weekCode);
+  const customConstraintsForWeek = weekCode === '2026-W43' ? [
+    { type: "include", dayOfWeek: 5, startTime: "16:30", courseName: "Mittelstufe Ankommensstunde", teacherId: "teacher-gen-anjali-gelzleichter" },
+    { type: "include", dayOfWeek: 6, startTime: "07:00", courseName: "Satsang", teacherId: "teacher-gen-alexander-melior" },
+    { type: "include", dayOfWeek: 6, startTime: "19:30", courseName: "Om Namo Narayanaya", teacherId: "teacher-gen-christopher" },
+    { type: "include", dayOfWeek: 0, startTime: "07:00", courseName: "Geführte Meditation", teacherId: "teacher-gen-hu-buerkle" },
+    { type: "include", dayOfWeek: 0, startTime: "19:00", courseName: "Hausführung", teacherId: "teacher-gen-christopher" },
+    { type: "include", dayOfWeek: 0, startTime: "19:30", courseName: "Om Namo Narayanaya", teacherId: "teacher-gen-burnie-bansemer" },
+    { type: "include", dayOfWeek: 2, startTime: "07:00", courseName: "Satsang", teacherId: "teacher-gen-anjali-gelzleichter" },
+    { type: "include", dayOfWeek: 3, startTime: "07:00", courseName: "Satsang", teacherId: "teacher-gen-alexander-melior" },
+    { type: "include", dayOfWeek: 3, startTime: "19:30", courseName: "Om Namo Narayanaya", teacherId: "teacher-gen-teresa-allgaeu" },
+    { type: "include", dayOfWeek: 3, startTime: "21:10", courseName: "Entspannungsangebot", teacherId: "teacher-gen-chandrashekara" },
+    { type: "include", dayOfWeek: 4, startTime: "07:00", courseName: "Satsang", teacherId: "teacher-gen-burnie-bansemer" }
+  ] : [];
+
+  // Run AI Planning - CORRECT PARAMETER ORDER: runAiPlanning(courses, teachers, seminarLeaderIds, targetWeekCode, customConstraints, absences)
+  const result = runAiPlanning(courses, teachers, [], weekCode, customConstraintsForWeek, sevafreiList);
   
   // Print replanned courses
   const replanned = result.plannedCourses.filter(c => c.isAiPlanned);
@@ -406,7 +420,7 @@ function getNext8WeekCodes(): string[] {
   return weeks;
 }
 
-const weeksToPlan = ["2026-W41", "2026-W42"];
+const weeksToPlan = ["2026-W41", "2026-W42", "2026-W43"];
 console.log(`[PREPLANNING] Planning for the next 8 weeks: ${weeksToPlan.join(', ')}`);
 
 const results: Record<string, any[]> = {};

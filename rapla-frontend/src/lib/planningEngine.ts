@@ -207,12 +207,13 @@ export function validateAssignment(
         message: `${teacher.name} ist nicht für das Leiten von Satsangs eingetragen.`
       });
     }
-    if (isOnnForSevaka && teacher.rules.canLeadOnn === false) {
-      conflicts.push({
-        type: 'hard',
-        message: `${teacher.name} ist nicht für das Leiten von Om Namo Narayanaya eingetragen.`
-      });
-    }
+  }
+
+  if (isOnnForSevaka && teacher.rules.canLeadOnn === false) {
+    conflicts.push({
+      type: 'hard',
+      message: `${teacher.name} ist nicht für das Leiten von Om Namo Narayanaya eingetragen.`
+    });
   }
 
   const otherSevakaAssignments = allCourses.filter(
@@ -686,12 +687,14 @@ export function validateAssignment(
 
   const courseDateForYla = targetWeekCode ? getLocalDateForDay(targetWeekCode, course.dayOfWeek) : '';
   const inYlaForSatsang = isDateInYlaRange(courseDateForYla);
-  if (!inYlaForSatsang && teacher.rules.maxMorningSatsangsPerWeek !== undefined && teacher.rules.maxMorningSatsangsPerWeek !== null && isSatsangForSevaka && course.startTime < '12:00') {
+  const canDoTwoMorning = wochenplanRules.satsang.morningMaxTwo.some((name: string) => teacherNameLower.includes(name));
+  const effectiveMaxMorning = canDoTwoMorning ? 2 : teacher.rules.maxMorningSatsangsPerWeek;
+  if (!inYlaForSatsang && effectiveMaxMorning !== undefined && effectiveMaxMorning !== null && isSatsangForSevaka && course.startTime < '12:00') {
     const morningSatsangs = otherSevakaAssignments.filter(c => c.name.toLowerCase().includes('satsang') && c.startTime < '12:00').length + 1;
-    if (morningSatsangs > teacher.rules.maxMorningSatsangsPerWeek) {
+    if (morningSatsangs > effectiveMaxMorning) {
       conflicts.push({
         type: 'hard',
-        message: `${teacher.name} kann maximal ${teacher.rules.maxMorningSatsangsPerWeek} mal pro Woche für einen Satsang am Morgen eingeteilt werden.`
+        message: `${teacher.name} kann maximal ${effectiveMaxMorning} mal pro Woche für einen Satsang am Morgen eingeteilt werden.`
       });
     }
   }
