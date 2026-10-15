@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount, untrack } from 'svelte';
-  import { db, generateTeacherId, type Course, type Teacher, type Room, type WeekPlan } from '$lib/db';
+  import { db, generateTeacherId, SPECIAL_SCHULUNG_COURSES, type Course, type Teacher, type Room, type WeekPlan } from '$lib/db';
   import { validateAssignment, type ConflictMessage, getLocalDateForDay } from '$lib/planningEngine';
   import { EXCEL_ABSENCES } from '$lib/excel_absences';
   import { isDateInYlaRange } from '$lib/ylaData';
@@ -209,6 +209,16 @@
       };
     }
 
+    const nameLower = course.name.toLowerCase();
+    const styleLower = course.style.toLowerCase();
+    
+    if (nameLower.includes('schulung') || styleLower.includes('schulung')) {
+      return {
+        bg: '#e0e7ff', // soft indigo
+        border: '#4338ca' // deep indigo
+      };
+    }
+
     const isUnassigned = !course.teacherId || course.teacherId === 'teacher-gen-yl';
     if (isUnassigned) {
       return {
@@ -216,9 +226,6 @@
         border: '#ef4444' // red
       };
     }
-
-    const nameLower = course.name.toLowerCase();
-    const styleLower = course.style.toLowerCase();
     
     if (nameLower.includes('hausführung')) {
       return {
@@ -387,6 +394,26 @@
             return { ...c, roomId, teacherId: null, isAiPlanned: false, status: 'draft' };
           }) : []
         };
+
+        const schulungenForWeek = SPECIAL_SCHULUNG_COURSES.filter(s => s.targetWeekCode === weekCode);
+        for (const s of schulungenForWeek) {
+          foundPlan.courses.push({
+            id: `course-${s.targetWeekCode}-schulung-${s.name.toLowerCase().replace(/[^a-z0-9]/g, '-')}`,
+            name: s.name,
+            style: s.style,
+            dayOfWeek: s.dayOfWeek,
+            startTime: s.startTime,
+            endTime: s.endTime,
+            roomId: s.roomId,
+            teacherId: null,
+            isAiPlanned: false,
+            status: 'draft'
+          });
+        }
+        foundPlan.courses.sort((a, b) => {
+          if (a.dayOfWeek !== b.dayOfWeek) return a.dayOfWeek - b.dayOfWeek;
+          return a.startTime.localeCompare(b.startTime);
+        });
       }
       currentPlan = foundPlan;
     }
@@ -1100,20 +1127,25 @@
                 </div>
               </div>
             {:else}
+              {@const isSchulung = course.name.toLowerCase().includes('schulung') || (course.style && course.style.toLowerCase().includes('schulung'))}
               <div 
                 class="course-card-rapla" 
-                class:unassigned-card={!course.teacherId || course.teacherId === 'teacher-gen-yl'}
-                style="background-color: {cardColors.bg}; border: 1px solid {cardColors.border};"
+                class:schulung-card={isSchulung}
+                class:unassigned-card={(!course.teacherId || course.teacherId === 'teacher-gen-yl') && !isSchulung}
+                style="background-color: {cardColors.bg}; border: 1px solid {cardColors.border}; border-left: {isSchulung ? '5px solid #4338ca' : '1px solid ' + cardColors.border};"
                 onclick={() => openEditModal(course)}
               >
                 <!-- Top line: Time and Room -->
                 <div class="card-top-line">
                   <span class="card-time">{course.startTime} - {course.endTime}</span>
+                  {#if isSchulung}
+                    <span class="schulung-badge-pill">🎓 YL-Schulung</span>
+                  {/if}
                   <span class="card-room" style="color: {roomObj?.color}">{roomObj?.name ? roomObj.name.split(' ')[0] : ''}</span>
                 </div>
                 
                 <!-- Middle line: Course Name -->
-                <div class="card-title-line">{course.name}</div>
+                <div class="card-title-line" class:schulung-title={isSchulung}>{course.name}</div>
                 
                 <!-- Bottom line: Teacher Name -->
                 <div class="card-teacher-line" class:conflict-text={hasHard} title={hasHard ? courseConflicts.find(c => c.type === 'hard')?.message : ''}>
@@ -2306,6 +2338,44 @@
       background-color: #fecdd3; /* rose-200 - strong alert red/rose */
       box-shadow: 0 0 12px rgba(225, 29, 72, 0.4);
     }
+  }
+
+  /* Dedicated Schulung Card Style */
+  .schulung-card {
+    box-shadow: 0 2px 6px rgba(67, 56, 202, 0.15) !important;
+    border: 1px solid #818cf8 !important;
+    border-left: 5px solid #4338ca !important;
+  }
+  .schulung-card .card-top-line {
+    color: #3730a3 !important;
+    font-weight: 700;
+  }
+  .schulung-card .card-room {
+    color: #4338ca !important;
+    font-weight: 700;
+  }
+  .schulung-card .card-title-line {
+    color: #1e1b4b !important;
+    font-weight: 700;
+  }
+  .schulung-card .card-teacher-line {
+    color: #4338ca !important;
+    font-weight: 600;
+  }
+  .schulung-badge-pill {
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 9999px;
+    background-color: #c7d2fe;
+    color: #312e81;
+    margin-left: 4px;
+  }
+  .schulung-title {
+    color: #1e1b4b !important;
+    font-weight: 700 !important;
   }
 
   .approval-status-pill {

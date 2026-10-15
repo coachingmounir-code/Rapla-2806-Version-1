@@ -176,7 +176,7 @@ export function validateAssignment(
   const isSatsangForSevaka = courseNameLower.includes('satsang') && !courseNameLower.includes('einführung') && !courseNameLower.includes('einfuehrung');
   const isSatsangEinfuehrungForSevaka = courseNameLower.includes('satsang') && (courseNameLower.includes('einführung') || courseNameLower.includes('einfuehrung'));
   const isEntspannungForSevaka = courseStyleLower.includes('entspannung') || courseNameLower.includes('entspannung') || courseNameLower.includes('spaziergang');
-  const isSonstigesForSevaka = courseStyleLower.includes('sonstiges') || courseNameLower.includes('hausführung') || courseNameLower.includes('hausfuehrung');
+  const isSonstigesForSevaka = courseStyleLower.includes('sonstiges') || courseStyleLower.includes('schulung') || courseNameLower.includes('schulung') || courseNameLower.includes('hausführung') || courseNameLower.includes('hausfuehrung');
   const isYogaClassForSevaka = !isMeditationForSevaka && !isSatsangForSevaka && !isSatsangEinfuehrungForSevaka && !isOnnForSevaka && !isEntspannungForSevaka && !isSonstigesForSevaka;
 
   // Complete exclusion for Satyam
@@ -294,13 +294,35 @@ export function validateAssignment(
   }
 
   // 2. Check Overlapping Classes (Hard)
-  const otherAssignments = allCourses.filter(
-    c => c.teacherId === teacher.id && c.id !== course.id && c.dayOfWeek === course.dayOfWeek
-  );
+  const otherAssignments = allCourses.filter(c => {
+    if (c.id === course.id || c.dayOfWeek !== course.dayOfWeek) return false;
+    if (c.teacherId) {
+      const ids = c.teacherId.split(',').map(s => s.trim());
+      if (ids.includes(teacher.id)) return true;
+    }
+    if (c.additionalVisibilityTeacherIds && c.additionalVisibilityTeacherIds.includes(teacher.id)) {
+      return true;
+    }
+    return false;
+  });
 
-  const hasOverlap = otherAssignments.some(other =>
-    isOverlapping(course.startTime, course.endTime, other.startTime, other.endTime)
-  );
+  const hasOverlap = otherAssignments.some(other => {
+    if (!isOverlapping(course.startTime, course.endTime, other.startTime, other.endTime)) {
+      return false;
+    }
+    // Check harmony between Schulung in Tripura and Mittelstufe in Tripura
+    const cIsSchulungTripura = (course.name.toLowerCase().includes('schulung') || course.style?.toLowerCase().includes('schulung')) && course.roomId === 'room-5';
+    const oIsSchulungTripura = (other.name.toLowerCase().includes('schulung') || other.style?.toLowerCase().includes('schulung')) && other.roomId === 'room-5';
+    const cIsMittelstufeTripura = course.name.toLowerCase().includes('mittelstufe') && course.roomId === 'room-5';
+    const oIsMittelstufeTripura = other.name.toLowerCase().includes('mittelstufe') && other.roomId === 'room-5';
+
+    if ((cIsSchulungTripura && oIsMittelstufeTripura) || (oIsSchulungTripura && cIsMittelstufeTripura)) {
+      // In harmony: Mittelstufenstunde in Tripura is part of the Schulung in Tripura!
+      return false;
+    }
+
+    return true;
+  });
 
   if (hasOverlap) {
     conflicts.push({
@@ -836,6 +858,11 @@ export function runAiPlanning(
   
   // Find which courses need planning: either unassigned, marked for AI planning, or having an active absence (sevafrei/urlaub) for their pre-assigned teacher
   const coursesToPlan = workingCourses.filter(c => {
+    // Schulungen are manual/voluntary slots that do not need automatic AI teacher assignment
+    const isSchulung = c.name.toLowerCase().includes('schulung') || (c.style && c.style.toLowerCase().includes('schulung'));
+    if (isSchulung) {
+      return false;
+    }
     if (c.teacherId === null || c.isAiPlanned) return true;
     const teacher = teachers.find(t => t.id === c.teacherId);
     if (!teacher) return true;

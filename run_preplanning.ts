@@ -9,7 +9,7 @@ import fs from 'fs';
 //   console.error('[PREPLANNING ERROR] Failed compiling rules:', e);
 // }
 
-import { db } from './rapla-frontend/src/lib/db.ts';
+import { db, SPECIAL_SCHULUNG_COURSES } from './rapla-frontend/src/lib/db.ts';
 import { runAiPlanning } from './rapla-frontend/src/lib/planningEngine.ts';
 import { EXCEL_ABSENCES } from './rapla-frontend/src/lib/excel_absences.ts';
 
@@ -220,6 +220,31 @@ function planWeekWithAbsences(weekCode: string, standardCourses: any[]) {
     }
 
     return courseCopy;
+  });
+
+  // Inject special Schulung courses for this week
+  const schulungenForWeek = SPECIAL_SCHULUNG_COURSES.filter(s => s.targetWeekCode === weekCode);
+  for (const s of schulungenForWeek) {
+    const courseId = `course-${s.targetWeekCode}-schulung-${s.name.toLowerCase().replace(/[^a-z0-9]/g, '-')}`;
+    const exists = courses.some(c => c.id === courseId || (c.dayOfWeek === s.dayOfWeek && c.startTime === s.startTime && c.name.toLowerCase().includes('schulung')));
+    if (!exists) {
+      courses.push({
+        id: courseId,
+        name: s.name,
+        style: s.style,
+        dayOfWeek: s.dayOfWeek,
+        startTime: s.startTime,
+        endTime: s.endTime,
+        roomId: s.roomId,
+        teacherId: null,
+        isAiPlanned: false,
+        status: 'approved'
+      });
+    }
+  }
+  courses.sort((a, b) => {
+    if (a.dayOfWeek !== b.dayOfWeek) return a.dayOfWeek - b.dayOfWeek;
+    return a.startTime.localeCompare(b.startTime);
   });
 
   const customConstraintsForWeek = weekCode === '2026-W43' ? [

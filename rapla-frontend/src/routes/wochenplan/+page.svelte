@@ -402,11 +402,11 @@
     return false;
   }
 
-  function getTeacherDisplayName(courseTeacherId: string | null | undefined, courseTeacherName?: string | null): string {
+  function getTeacherDisplayName(courseTeacherId: string | null | undefined, courseTeacherName?: string | null, isSchulung: boolean = false): string {
     if (courseTeacherName && courseTeacherName.trim() && courseTeacherName !== 'Unbesetzt' && courseTeacherName !== 'Offen') {
       return courseTeacherName;
     }
-    if (!courseTeacherId || courseTeacherId === 'teacher-gen-yl') return 'Unbesetzt';
+    if (!courseTeacherId || courseTeacherId === 'teacher-gen-yl') return isSchulung ? 'Offen' : 'Unbesetzt';
     const ids = courseTeacherId.split(',').map(s => s.trim());
     const names = ids.map(id => {
       const found = teachers.find(t => 
@@ -453,6 +453,17 @@
       };
     }
 
+    const nameLower = (course.name || '').toLowerCase();
+    const styleLower = ((course as Course).style || '').toLowerCase();
+
+    // Dedicated Schulung color: soft indigo background, deep indigo border
+    if (nameLower.includes('schulung') || styleLower.includes('schulung')) {
+      return {
+        bg: '#e0e7ff', // soft indigo
+        border: '#4338ca' // deep indigo / royal blue
+      };
+    }
+
     const isUnassigned = !course.teacherId || course.teacherId === 'teacher-gen-yl';
     if (isUnassigned) {
       return {
@@ -460,21 +471,11 @@
         border: '#db2777' // deep pink
       };
     }
-
-    const nameLower = course.name.toLowerCase();
-    const styleLower = course.style.toLowerCase();
     
     if (nameLower.includes('hausführung')) {
       return {
         bg: '#ecfeff', // cyan/teal (peacock/krishna vibe)
         border: '#06b6d4'
-      };
-    }
-
-    if (nameLower.includes('schulung')) {
-      return {
-        bg: '#eff6ff', // light blue
-        border: '#3b82f6'
       };
     }
 
@@ -940,9 +941,10 @@
               <div class="grid-content-cell">
                 {#each getFilteredCoursesForHour(day.value, hour) as course}
                   {@const isYla = (course as any).isYla === true}
+                  {@const isSchulung = !isYla && ((course as Course).name?.toLowerCase().includes('schulung') || (((course as Course).style || '').toLowerCase().includes('schulung')))}
                   {@const isHighlighted = selectedTeacher && (isTeacherVisibleForCourse(course, selectedTeacher.id) || isYla)}
                   {@const colors = getCourseColor(course)}
-                  {@const teacherName = isYla ? (course as any).teacherName : getTeacherDisplayName(course.teacherId)}
+                  {@const teacherName = isYla ? (course as any).teacherName : getTeacherDisplayName(course.teacherId, (course as any).teacherName, isSchulung)}
                   {@const roomName = isYla ? ((course as any).roomName || 'Sivananda Saal (YLA)') : (rooms.find(r => r.id === course.roomId)?.name || course.roomId || 'Raum?')}
                   
                   {#if isYla}
@@ -1008,16 +1010,20 @@
                   {:else}
                     <div 
                       class="course-card-rapla" 
+                      class:schulung-course-card={isSchulung}
                       class:highlighted-card={isHighlighted}
                       class:dimmed-card={selectedTeacher && !isHighlighted && !onlyMySlotsParam}
-                      class:unassigned-card={!course.teacherId || course.teacherId === 'teacher-gen-yl'}
-                      style="background-color: {colors.bg}; border-left: 4px solid {isHighlighted ? '#ea580c' : colors.border};"
+                      class:unassigned-card={(!course.teacherId || course.teacherId === 'teacher-gen-yl') && !isSchulung}
+                      style="background-color: {colors.bg}; border-left: {isSchulung ? '5px solid #4338ca' : (isHighlighted ? '4px solid #ea580c' : '4px solid ' + colors.border)};"
                     >
                       <div class="card-top-line">
                         <span class="card-time">{course.startTime} - {course.endTime}</span>
+                        {#if isSchulung}
+                          <span class="schulung-badge-pill">🎓 YL-Schulung</span>
+                        {/if}
                         <span class="card-room">{roomName}</span>
                       </div>
-                      <div class="card-title-line">{course.name}</div>
+                      <div class="card-title-line" class:schulung-title={isSchulung}>{course.name}</div>
                       <div class="card-teacher-line">
                         👤 {teacherName}
                       </div>
@@ -1117,9 +1123,10 @@
         {:else}
           {#each filteredMobileCourses as course}
             {@const isYla = (course as any).isYla === true}
+            {@const isSchulung = !isYla && ((course as Course).name?.toLowerCase().includes('schulung') || (((course as Course).style || '').toLowerCase().includes('schulung')))}
             {@const isHighlighted = selectedTeacher && (isTeacherVisibleForCourse(course, selectedTeacher.id) || isYla)}
             {@const colors = getCourseColor(course)}
-            {@const teacherName = isYla ? (course as any).teacherName : getTeacherDisplayName(course.teacherId)}
+            {@const teacherName = isYla ? (course as any).teacherName : getTeacherDisplayName((course as Course).teacherId, (course as Course).teacherName, isSchulung)}
             {@const roomName = isYla ? ((course as any).roomName || 'Sivananda Saal (YLA)') : (rooms.find(r => r.id === course.roomId)?.name || course.roomId || 'Raum?')}
 
             {#if isYla}
@@ -1175,16 +1182,20 @@
             {:else}
               <div 
                 class="mobile-agenda-card"
+                class:schulung-mobile-card={isSchulung}
                 class:highlighted-card={isHighlighted}
                 class:dimmed-card={selectedTeacher && !isHighlighted && !onlyMySlotsParam}
-                class:unassigned-card={!course.teacherId || course.teacherId === 'teacher-gen-yl'}
-                style="background-color: {colors.bg}; border-left: 5px solid {isHighlighted ? '#ea580c' : colors.border};"
+                class:unassigned-card={(!course.teacherId || course.teacherId === 'teacher-gen-yl') && !isSchulung}
+                style="background-color: {colors.bg}; border-left: {isSchulung ? '6px solid #4338ca' : (isHighlighted ? '5px solid #ea580c' : '5px solid ' + colors.border)};"
               >
                 <div class="agenda-time-room">
                   <span class="agenda-time">⏰ {course.startTime} - {course.endTime}</span>
+                  {#if isSchulung}
+                    <span class="schulung-badge-pill">🎓 YL-Schulung</span>
+                  {/if}
                   <span class="agenda-room">{roomName}</span>
                 </div>
-                <h3 class="agenda-title">{course.name}</h3>
+                <h3 class="agenda-title" class:schulung-title={isSchulung}>{course.name}</h3>
                 <div class="agenda-teacher">
                   👤 {teacherName}
                 </div>
@@ -2140,6 +2151,65 @@
       background-color: #fecdd3; /* rose-200 - strong alert red/rose */
       box-shadow: 0 0 12px rgba(225, 29, 72, 0.4);
     }
+  }
+
+  /* Dedicated Schulung Card Style (Desktop & Mobile) */
+  .schulung-course-card {
+    box-shadow: 0 2px 6px rgba(67, 56, 202, 0.15) !important;
+    border: 1px solid #818cf8 !important;
+    border-left: 5px solid #4338ca !important;
+  }
+  .schulung-course-card .card-top-line {
+    color: #3730a3 !important;
+    font-weight: 700;
+  }
+  .schulung-course-card .card-room {
+    color: #4338ca !important;
+    font-weight: 700;
+  }
+  .schulung-course-card .card-title-line {
+    color: #1e1b4b !important;
+    font-weight: 700;
+  }
+  .schulung-course-card .card-teacher-line {
+    color: #4338ca !important;
+    font-weight: 600;
+  }
+  .mobile-agenda-card.schulung-mobile-card {
+    box-shadow: 0 3px 8px rgba(67, 56, 202, 0.15) !important;
+    border: 1px solid #818cf8 !important;
+    border-left: 6px solid #4338ca !important;
+  }
+  .mobile-agenda-card.schulung-mobile-card .agenda-time {
+    color: #3730a3 !important;
+    font-weight: 700;
+  }
+  .mobile-agenda-card.schulung-mobile-card .agenda-room {
+    color: #4338ca !important;
+    font-weight: 700;
+  }
+  .mobile-agenda-card.schulung-mobile-card .agenda-title {
+    color: #1e1b4b !important;
+    font-weight: 700;
+  }
+  .mobile-agenda-card.schulung-mobile-card .agenda-teacher {
+    color: #4338ca !important;
+    font-weight: 600;
+  }
+  .schulung-badge-pill {
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 9999px;
+    background-color: #c7d2fe;
+    color: #312e81;
+    margin-left: 4px;
+  }
+  .schulung-title {
+    color: #1e1b4b !important;
+    font-weight: 700 !important;
   }
 
   /* Unapproved Notice Card */

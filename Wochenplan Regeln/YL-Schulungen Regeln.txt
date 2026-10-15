@@ -1,0 +1,17 @@
+Regeln für YL-Schulungen:
+
+1. Zeiten & Ort:
+- Donnerstags oder samstags jeweils von 15:00 bis 18:00 Uhr.
+- Raum: Tripura-Raum (room-5).
+
+2. Harmonie mit Mittelstufen-Yogastunden:
+- In der Zeit von 15:00 bis 18:00 Uhr ist die Teilnahme an der Yoga-Mittelstufenstunde im Tripura-Raum inbegriffen.
+- Es entsteht daher bewusst KEIN Raum- oder Lehrerkonflikt zwischen einer YL-Schulung und einer Mittelstufenstunde im Tripura-Raum.
+
+3. Besetzung:
+- Die KI plant diese Slots nicht automatisch ein (kein automatisches Besetzen erforderlich).
+- Manuelle Einteilung von Personen/Sevakas ist jederzeit möglich.
+- Wenn eine Person für einen YL-Schulungs-Slot manuell eingeteilt wird, wird sie für die restliche Planung (andere parallele Slots/Räume) blockiert, um Überschneidungen zu verhindern.
+
+4. Darstellung:
+- In der Wochenplanansicht und im Planungs-Schedule haben YL-Schulungen eine eigenständige Farbcodierung (Indigo/Blau-Violett mit Badge "🎓 YL-Schulung") und heben sich deutlich von regulären Stunden ab.
