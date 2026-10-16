@@ -4234,7 +4234,7 @@ async function upsertKeyToCloud(key: string, serializedValue: string): Promise<b
   const client = supabase;
   const task = (async () => {
     try {
-      const { error } = await client.from('app_state').upsert({ key, value: serializedValue });
+      const { error } = await client.from('app_state').upsert({ key, value: serializedValue }, { onConflict: 'key' });
       if (error) {
         console.error(`Failed to sync ${key} to cloud`, error);
         return false;
@@ -4665,11 +4665,11 @@ export function reconcileTeachersWithCloud(
         teacherMap.set(locT.id, JSON.parse(JSON.stringify(locT)));
       } else {
         const merged: Teacher = {
-          ...locT,
           ...existing,
+          ...locT,
           rules: {
-            ...locT.rules,
-            ...existing.rules
+            ...(existing.rules || {}),
+            ...(locT.rules || {})
           }
         };
         teacherMap.set(locT.id, merged);
@@ -5091,6 +5091,15 @@ export const db = {
 
     cloudSyncPromise = (async () => {
       try {
+        // Flush any pending debounce timers to ensure latest local edits are sent to cloud
+        for (const [key, timer] of Object.entries(syncDebounceTimers)) {
+          clearTimeout(timer);
+          delete syncDebounceTimers[key];
+          if (inMemoryStore[key] !== undefined) {
+            await upsertKeyToCloud(key, JSON.stringify(inMemoryStore[key]));
+          }
+        }
+
         // Wait for any in-flight local upserts to finish before pulling from cloud
         if (inFlightUpserts.size > 0) {
           await Promise.allSettled(Array.from(inFlightUpserts.values()));
@@ -5147,11 +5156,11 @@ export const db = {
                     return locPlan;
                   }
 
-                  // Case 2: Remote plan has never been timestamped yet (remTime === 0), and local browser has manual edits on individual courses
-                  if (remTime === 0 && (locPlan.hasManualEdits || locPlan.isManualOnly || locPlan.courses?.some(c => c.isManuallyEdited))) {
+                  // Case 2: Local browser has manual edits on individual courses or plan settings
+                  if (locPlan.hasManualEdits || locPlan.isManualOnly || locPlan.courses?.some(c => c.isManuallyEdited)) {
                     let anyCourseMerged = false;
                     const mergedCourses = remPlan.courses.map(rc => {
-                      const lc = locPlan.courses.find(c => c.id === rc.id || (c.dayOfWeek === rc.dayOfWeek && c.startTime === rc.startTime && c.roomId === rc.roomId));
+                      const lc = locPlan.courses?.find(c => c.id === rc.id || (c.dayOfWeek === rc.dayOfWeek && c.startTime === rc.startTime && c.roomId === rc.roomId));
                       if (lc && lc.isManuallyEdited && !rc.isManuallyEdited) {
                         anyCourseMerged = true;
                         return lc;
@@ -5167,13 +5176,15 @@ export const db = {
                         }
                       }
                     }
-                    if (anyCourseMerged) {
+                    const seminarLeadersChanged = locPlan.seminarLeaderIds && locPlan.seminarLeaderIds.length > 0 && JSON.stringify(locPlan.seminarLeaderIds) !== JSON.stringify(remPlan.seminarLeaderIds || []);
+                    if (anyCourseMerged || seminarLeadersChanged) {
                       needsCloudPush = true;
                       return {
                         ...remPlan,
                         hasManualEdits: true,
                         isManualOnly: locPlan.isManualOnly ?? remPlan.isManualOnly,
-                        lastEditedAt: locPlan.lastEditedAt || new Date().toISOString(),
+                        seminarLeaderIds: seminarLeadersChanged ? locPlan.seminarLeaderIds : (remPlan.seminarLeaderIds || []),
+                        lastEditedAt: locTime >= remTime ? (locPlan.lastEditedAt || new Date().toISOString()) : remPlan.lastEditedAt,
                         courses: mergedCourses
                       };
                     }
@@ -5193,10 +5204,6 @@ export const db = {
                 // Apply universal idempotent reconciliation with codebase defaults
                 const { plans: reconciled } = reconcilePlansWithDefaults(merged);
                 const mergedStr = JSON.stringify(reconciled);
-
-                if (mergedStr !== row.value) {
-                  needsCloudPush = true;
-                }
 
                 const currentStr = localStorage.getItem('rapla_week_plans');
                 if (currentStr !== mergedStr) {
@@ -5227,7 +5234,7 @@ export const db = {
                 }
                 inMemoryStore['rapla_teachers'] = reconciled;
 
-                if (reconciledStr !== row.value && supabase) {
+                if (allowLocalNew && reconciledStr !== row.value && supabase) {
                   await upsertKeyToCloud('rapla_teachers', reconciledStr);
                 } else {
                   clearKeyPendingSync('rapla_teachers');

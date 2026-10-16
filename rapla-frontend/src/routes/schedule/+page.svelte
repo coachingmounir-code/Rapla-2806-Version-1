@@ -292,10 +292,10 @@
   }
 
   function getTeacherDisplayName(courseTeacherId: string | null | undefined, courseTeacherName?: string | null): string {
+    if (!courseTeacherId || courseTeacherId === 'teacher-gen-yl') return 'Offen';
     if (courseTeacherName && courseTeacherName.trim() && courseTeacherName !== 'Unbesetzt' && courseTeacherName !== 'Offen') {
       return courseTeacherName;
     }
-    if (!courseTeacherId || courseTeacherId === 'teacher-gen-yl') return 'Offen';
     const ids = courseTeacherId.split(',').map(s => s.trim());
     const names = ids.map(id => {
       const found = teachers.find(t => 
@@ -623,7 +623,7 @@
       endTime: formEndTime,
       roomId: formRoomId,
       teacherId: formTeacherId,
-      teacherName: selectedTeacher ? selectedTeacher.name : (editingCourse?.teacherName || undefined),
+      teacherName: selectedTeacher ? selectedTeacher.name : undefined,
       isAiPlanned: false,
       isManuallyEdited: true,
       status: editingCourse?.status || 'draft'
@@ -757,6 +757,12 @@
     if (isSyncing) return;
     isSyncing = true;
     try {
+      if (currentPlan && (currentPlan.hasManualEdits || currentPlan.isManualOnly)) {
+        if (!currentPlan.lastEditedAt) {
+          currentPlan.lastEditedAt = new Date().toISOString();
+        }
+        db.updateWeekPlan(currentPlan);
+      }
       await db.syncWithServerAndCloud();
       loadData();
       syncFeedback = '✅ Daten erfolgreich synchronisiert! Alle manuellen Änderungen bleiben erhalten.';

@@ -403,10 +403,10 @@
   }
 
   function getTeacherDisplayName(courseTeacherId: string | null | undefined, courseTeacherName?: string | null, isSchulung: boolean = false): string {
+    if (!courseTeacherId || courseTeacherId === 'teacher-gen-yl') return isSchulung ? 'Offen' : 'Unbesetzt';
     if (courseTeacherName && courseTeacherName.trim() && courseTeacherName !== 'Unbesetzt' && courseTeacherName !== 'Offen') {
       return courseTeacherName;
     }
-    if (!courseTeacherId || courseTeacherId === 'teacher-gen-yl') return isSchulung ? 'Offen' : 'Unbesetzt';
     const ids = courseTeacherId.split(',').map(s => s.trim());
     const names = ids.map(id => {
       const found = teachers.find(t => 
