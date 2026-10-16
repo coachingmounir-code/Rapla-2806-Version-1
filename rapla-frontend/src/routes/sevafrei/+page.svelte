@@ -228,13 +228,12 @@
     if (saved) {
       sevafreiList = JSON.parse(saved);
       
+      const beforeJson = JSON.stringify(sevafreiList);
       // Clean up old excel entries to ensure we match the latest EXCEL_ABSENCES
-      const originalLen = sevafreiList.length;
       sevafreiList = sevafreiList.filter(e => !e.id.startsWith('excel-sf-'));
 
       // Auto-merge new Excel absences from EXCEL_ABSENCES
       const dbTeachers = db.getTeachers();
-      let updated = (sevafreiList.length !== originalLen);
       EXCEL_ABSENCES.forEach((abs, i) => {
         const match = findTeacherForExcelName(abs.excelName, dbTeachers);
         if (match) {
@@ -256,11 +255,10 @@
               status: abs.status,
               note: abs.note
             });
-            updated = true;
           }
         }
       });
-      if (updated) {
+      if (JSON.stringify(sevafreiList) !== beforeJson) {
         saveToStorage();
       }
     } else {

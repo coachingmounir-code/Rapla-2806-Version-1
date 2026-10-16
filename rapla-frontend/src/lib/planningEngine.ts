@@ -856,12 +856,26 @@ export function runAiPlanning(
     });
   }
   
-  // Find which courses need planning: either unassigned, marked for AI planning, or having an active absence (sevafrei/urlaub) for their pre-assigned teacher
+  // Find which courses need planning: either unassigned, marked for AI planning, targeted by customConstraints, or having an active absence (sevafrei/urlaub) for their pre-assigned teacher
   const coursesToPlan = workingCourses.filter(c => {
     // Schulungen are manual/voluntary slots that do not need automatic AI teacher assignment
     const isSchulung = c.name.toLowerCase().includes('schulung') || (c.style && c.style.toLowerCase().includes('schulung'));
     if (isSchulung) {
       return false;
+    }
+    if (customConstraints && customConstraints.length > 0) {
+      for (const rule of customConstraints) {
+        if (!rule.teacherId) continue;
+        let matchCourse = true;
+        if (rule.dayOfWeek !== undefined && rule.dayOfWeek !== null && c.dayOfWeek !== rule.dayOfWeek) matchCourse = false;
+        if (rule.startTime !== undefined && rule.startTime !== null && c.startTime !== rule.startTime) matchCourse = false;
+        if (rule.courseName !== undefined && rule.courseName !== null && !c.name.toLowerCase().includes(rule.courseName.toLowerCase())) matchCourse = false;
+        if (rule.courseStyle !== undefined && rule.courseStyle !== null && !c.style.toLowerCase().includes(rule.courseStyle.toLowerCase())) matchCourse = false;
+        if (matchCourse) {
+          if (rule.type === 'include' && c.teacherId !== rule.teacherId) return true;
+          if (rule.type === 'exclude' && c.teacherId === rule.teacherId) return true;
+        }
+      }
     }
     if (c.teacherId === null || c.isAiPlanned) return true;
     const teacher = teachers.find(t => t.id === c.teacherId);

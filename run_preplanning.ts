@@ -242,28 +242,33 @@ function planWeekWithAbsences(weekCode: string, standardCourses: any[]) {
       });
     }
   }
-  courses.sort((a, b) => {
-    if (a.dayOfWeek !== b.dayOfWeek) return a.dayOfWeek - b.dayOfWeek;
-    return a.startTime.localeCompare(b.startTime);
-  });
 
   const customConstraintsForWeek = weekCode === '2026-W43' ? [
+    { type: "include", dayOfWeek: 5, startTime: "16:30", courseName: "Anfänger Ankommensstunde", teacherId: "teacher-gen-chandrashekara" },
     { type: "include", dayOfWeek: 5, startTime: "16:30", courseName: "Mittelstufe Ankommensstunde", teacherId: "teacher-gen-anjali-gelzleichter" },
+    { type: "include", dayOfWeek: 5, startTime: "19:30", courseName: "Om Namo Narayanaya", teacherId: "teacher-gen-adam-zmuda" },
     { type: "include", dayOfWeek: 6, startTime: "07:00", courseName: "Satsang", teacherId: "teacher-gen-alexander-melior" },
     { type: "include", dayOfWeek: 6, startTime: "19:30", courseName: "Om Namo Narayanaya", teacherId: "teacher-gen-christopher" },
     { type: "include", dayOfWeek: 0, startTime: "07:00", courseName: "Geführte Meditation", teacherId: "teacher-gen-hu-buerkle" },
     { type: "include", dayOfWeek: 0, startTime: "19:00", courseName: "Hausführung", teacherId: "teacher-gen-christopher" },
     { type: "include", dayOfWeek: 0, startTime: "19:30", courseName: "Om Namo Narayanaya", teacherId: "teacher-gen-burnie-bansemer" },
     { type: "include", dayOfWeek: 2, startTime: "07:00", courseName: "Satsang", teacherId: "teacher-gen-anjali-gelzleichter" },
+    { type: "include", dayOfWeek: 2, startTime: "19:30", courseName: "Om Namo Narayanaya", teacherId: "teacher-gen-chandrashekara" },
     { type: "include", dayOfWeek: 3, startTime: "07:00", courseName: "Satsang", teacherId: "teacher-gen-alexander-melior" },
     { type: "include", dayOfWeek: 3, startTime: "19:30", courseName: "Om Namo Narayanaya", teacherId: "teacher-gen-teresa-allgaeu" },
     { type: "include", dayOfWeek: 3, startTime: "21:10", courseName: "Entspannungsangebot", teacherId: "teacher-gen-chandrashekara" },
-    { type: "include", dayOfWeek: 4, startTime: "07:00", courseName: "Satsang", teacherId: "teacher-gen-burnie-bansemer" }
+    { type: "include", dayOfWeek: 4, startTime: "07:00", courseName: "Satsang", teacherId: "teacher-gen-burnie-bansemer" },
+    { type: "include", dayOfWeek: 4, startTime: "19:30", courseName: "Om Namo Narayanaya", teacherId: "teacher-gen-christopher" }
   ] : [];
 
   // Run AI Planning - CORRECT PARAMETER ORDER: runAiPlanning(courses, teachers, seminarLeaderIds, targetWeekCode, customConstraints, absences)
   const result = runAiPlanning(courses, teachers, [], weekCode, customConstraintsForWeek, sevafreiList);
   
+  result.plannedCourses.sort((a, b) => {
+    if (a.dayOfWeek !== b.dayOfWeek) return a.dayOfWeek - b.dayOfWeek;
+    return a.startTime.localeCompare(b.startTime);
+  });
+
   // Print replanned courses
   const replanned = result.plannedCourses.filter(c => c.isAiPlanned);
   console.log(`Replanned ${replanned.length} courses:`);
@@ -364,7 +369,7 @@ const standardCoursesDefs = [
   { name: 'Anfänger', style: 'Hatha', dayOfWeek: 6, startTime: '16:15', endTime: '18:00', roomId: 'room-2', teacherName: '! YL' },
   { name: 'Mittelstufe Mantrayogastunde', style: 'Hatha', dayOfWeek: 6, startTime: '16:15', endTime: '18:00', roomId: 'room-5', teacherName: 'Anjali' },
   { name: 'Om Namo Narayanaya', style: 'Meditation', dayOfWeek: 6, startTime: '19:30', endTime: '20:00', roomId: 'room-2', teacherName: 'Anjali' },
-  { name: 'Satsang', style: 'Meditation', dayOfWeek: 6, startTime: '20:00', endTime: '21:00', roomId: 'room-2', teacherName: 'Karuna' },
+  { name: 'Satsang', style: 'Meditation', dayOfWeek: 6, startTime: '20:00', endTime: '22:00', roomId: 'room-2', teacherName: 'Karuna' },
 
   // Sunday (dayOfWeek: 0)
   { name: 'Hausführung', style: 'Sonstiges', dayOfWeek: 0, startTime: '19:00', endTime: '19:30', roomId: 'Rezeption', teacherName: '' },
@@ -483,6 +488,7 @@ const plansCodeParts = Object.entries(results).map(([week, courses]) => {
     id: "plan-pre-${week}",
     name: "Vorplanung ${week} (Automatisch)",
     status: "approved",
+    isApproved: true,
     targetWeekCode: "${week}",
     courses: ${formatPlanCoursesCode(courses)},
     createdAt: new Date().toISOString()

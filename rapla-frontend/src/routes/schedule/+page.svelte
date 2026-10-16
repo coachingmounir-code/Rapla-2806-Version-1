@@ -566,6 +566,8 @@
     } else {
       currentPlan.seminarLeaderIds = [...currentLeaders, teacherId];
     }
+    currentPlan.hasManualEdits = true;
+    currentPlan.lastEditedAt = new Date().toISOString();
     db.updateWeekPlan(currentPlan);
     loadData();
   }
@@ -730,6 +732,8 @@
     
     currentPlan.isApproved = approved;
     currentPlan.status = approved ? 'approved' : 'draft';
+    (currentPlan as any).manuallyUnapproved = !approved;
+    currentPlan.hasManualEdits = true;
     currentPlan.lastEditedAt = new Date().toISOString();
     
     if (approved) {
@@ -903,6 +907,8 @@
           onchange={(e) => {
             if(currentPlan) {
               currentPlan.isManualOnly = e.currentTarget.checked;
+              currentPlan.hasManualEdits = true;
+              currentPlan.lastEditedAt = new Date().toISOString();
               db.updateWeekPlan(currentPlan);
             }
           }}
