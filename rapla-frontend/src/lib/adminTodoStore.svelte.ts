@@ -416,7 +416,7 @@ export const DEFAULT_ADMIN_TODOS: AdminTodoItem[] = [
     completed: false,
     subtasks: [
       { id: 'sub-23-1', text: 'Seminarpläne + Teilnehmerlisten ausdrucken / bereitlegen', completed: false },
-      { id: 'sub-23-2', text: 'Räume checken: YME od. YFEWO Tüte Radha Krsna', completed: false },
+      { id: 'sub-23-2', text: 'Räume checken: YME od. YFEWO Tüte Radha Krishna', completed: false },
       { id: 'sub-23-3', text: 'Mit Seminarleiter reden (Ablauf, Raumbedarf klären)', completed: false },
       { id: 'sub-23-4', text: 'Seminare früh checken was gebraucht wird – Email Automatisierung einrichten', completed: false }
     ],

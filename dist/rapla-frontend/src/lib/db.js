@@ -79,7 +79,7 @@ function getTeacherStayStatus(teacher, referenceDateStr) {
 // Default Data
 const DEFAULT_ROOMS = [
     { id: 'room-1', name: 'Devi', color: '#d32f2f' },
-    { id: 'room-2', name: 'Radhakrisna', color: '#f57c00' },
+    { id: 'room-2', name: 'Radhakrishna', color: '#f57c00' },
     { id: 'room-3', name: 'Hanuman', color: '#388e3c' },
     { id: 'room-4', name: 'Sitaram', color: '#1976d2' },
     { id: 'room-5', name: 'Tripura', color: '#7b1fa2' }

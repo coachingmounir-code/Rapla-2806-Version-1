@@ -1706,7 +1706,7 @@ export function adjustRoomsForRules(courses: Course[], teachers: Teacher[], targ
 
     // 1. Pranayama rule
     if (nameLower.includes('pranayama') || styleLower.includes('pranayama')) {
-      course.roomId = 'room-2'; // Radhakrisna
+      course.roomId = 'room-2'; // Radhakrishna
       return;
     }
 
@@ -1725,7 +1725,7 @@ export function adjustRoomsForRules(courses: Course[], teachers: Teacher[], targ
       if (hasParallelPranavaKlang) {
         course.roomId = 'room-5'; // Tripura
       } else {
-        course.roomId = 'room-2'; // Radhakrisna
+        course.roomId = 'room-2'; // Radhakrishna
       }
     } else if (isIntermediate) {
       const isKlang = nameLower.includes('klang');
@@ -1738,7 +1738,7 @@ export function adjustRoomsForRules(courses: Course[], teachers: Teacher[], targ
       }
 
       if (isKlang && isPranava) {
-        course.roomId = 'room-2'; // Radhakrisna
+        course.roomId = 'room-2'; // Radhakrishna
       } else {
         course.roomId = 'room-5'; // Tripura
       }

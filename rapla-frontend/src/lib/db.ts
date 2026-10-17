@@ -196,7 +196,7 @@ export interface WeekPlan {
 // Default Data
 const DEFAULT_ROOMS: Room[] = [
   { id: 'room-1', name: 'Devi', color: '#d32f2f' },
-  { id: 'room-2', name: 'Radhakrisna', color: '#f57c00' },
+  { id: 'room-2', name: 'Radhakrishna', color: '#f57c00' },
   { id: 'room-3', name: 'Hanuman', color: '#388e3c' },
   { id: 'room-4', name: 'Sitaram', color: '#1976d2' },
   { id: 'room-5', name: 'Tripura', color: '#7b1fa2' },
@@ -5467,7 +5467,7 @@ export const db = {
   
   getRooms: (): Room[] => {
     const stored = getStored<Room[]>('rapla_rooms', DEFAULT_ROOMS);
-    const isOld = stored.length !== DEFAULT_ROOMS.length || stored.some(r => r.name === 'Sivananda Saal') || !stored.some(r => r.name === 'am Kamin') || !stored.some(r => r.name === 'vor dem Eingang');
+    const isOld = stored.length !== DEFAULT_ROOMS.length || stored.some(r => r.name === 'Sivananda Saal' || r.name === 'Radhakrisna') || !stored.some(r => r.name === 'am Kamin') || !stored.some(r => r.name === 'vor dem Eingang');
     if (isOld) {
       inMemoryStore['rapla_rooms'] = DEFAULT_ROOMS;
       if (typeof window !== 'undefined' && localStorage.getItem('rapla_rooms') !== null) {
@@ -5476,6 +5476,21 @@ export const db = {
         } catch {}
       }
       return DEFAULT_ROOMS;
+    }
+    let hasUpdated = false;
+    for (const r of stored) {
+      if (r.id === 'room-2' && r.name === 'Radhakrisna') {
+        r.name = 'Radhakrishna';
+        hasUpdated = true;
+      }
+    }
+    if (hasUpdated) {
+      inMemoryStore['rapla_rooms'] = stored;
+      if (typeof window !== 'undefined' && localStorage.getItem('rapla_rooms') !== null) {
+        try {
+          localStorage.setItem('rapla_rooms', JSON.stringify(stored));
+        } catch {}
+      }
     }
     return stored;
   },

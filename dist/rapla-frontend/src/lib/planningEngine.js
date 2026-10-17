@@ -1466,7 +1466,7 @@ function adjustRoomsForRules(courses, teachers, targetWeekCode) {
 
         // 1. Pranayama rule
         if (nameLower.includes('pranayama') || styleLower.includes('pranayama')) {
-            course.roomId = 'room-2'; // Radhakrisna
+            course.roomId = 'room-2'; // Radhakrishna
             return;
         }
         // 2. Beginner/Intermediate rules
@@ -1488,7 +1488,7 @@ function adjustRoomsForRules(courses, teachers, targetWeekCode) {
                 course.roomId = 'room-5'; // Tripura
             }
             else {
-                course.roomId = 'room-2'; // Radhakrisna
+                course.roomId = 'room-2'; // Radhakrishna
             }
         }
         else if (isIntermediate) {
@@ -1501,7 +1501,7 @@ function adjustRoomsForRules(courses, teachers, targetWeekCode) {
                 }
             }
             if (isKlang && isPranava) {
-                course.roomId = 'room-2'; // Radhakrisna
+                course.roomId = 'room-2'; // Radhakrishna
             }
             else {
                 course.roomId = 'room-5'; // Tripura
