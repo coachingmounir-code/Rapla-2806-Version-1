@@ -227,14 +227,7 @@
       };
     }
 
-    if (course.isFixedAgreement) {
-      return {
-        bg: '#ecfdf5', // gentle fresh emerald mint
-        border: '#059669' // deep emerald green
-      };
-    }
-
-    const isUnassigned = !course.teacherId || course.teacherId === 'teacher-gen-yl';
+    const isUnassigned = (!course.teacherId || course.teacherId === 'teacher-gen-yl') && !course.isFixedAgreement;
     if (isUnassigned) {
       return {
         bg: '#fee2e2', // light red/rose
@@ -265,11 +258,23 @@
       !nameLower.includes('ankommensstunde');
     
     if (isYellow) {
+      if (course.isFixedAgreement) {
+        return {
+          bg: '#fef08a', // warm golden yellow (subtle distinction in yellow family)
+          border: '#eab308'
+        };
+      }
       return {
         bg: '#ffffcc', // bright light yellow
         border: '#dddd66'
       };
     } else {
+      if (course.isFixedAgreement) {
+        return {
+          bg: '#fecdd3', // warm reddish-rose tone (same rosa family, but distinct nuance for agreed slots)
+          border: '#f43f5e' // deeper rose-red border
+        };
+      }
       return {
         bg: '#ffcce6', // bright light pink
         border: '#ff99cc'
@@ -1235,76 +1240,31 @@
                 class:schulung-card={isSchulung}
                 class:is-agreed-card={isAgreed}
                 class:unassigned-card={(!course.teacherId || course.teacherId === 'teacher-gen-yl') && !isSchulung && !isAgreed}
-                style="background-color: {cardColors.bg}; border: 1px solid {cardColors.border}; border-left: {isAgreed ? '5px solid #059669' : (isSchulung ? '5px solid #4338ca' : '1px solid ' + cardColors.border)};"
+                style="background-color: {cardColors.bg}; border: 1px solid {cardColors.border}; border-left: {isAgreed ? '4px solid #e11d48' : (isSchulung ? '5px solid #4338ca' : '1px solid ' + cardColors.border)};"
                 onclick={() => openEditModal(course)}
+                title={isAgreed ? (course.agreementNotes ? `Fest vereinbarte Stunde:\n${course.agreementNotes}` : 'Fest vereinbarte Stunde (Klicken zum Bearbeiten)') : (hasHard ? courseConflicts.find(c => c.type === 'hard')?.message : '')}
               >
-                <!-- Top line: Time, Badges, Room and Agreement Checkbox -->
+                <!-- Top line: Time and Room -->
                 <div class="card-top-line">
-                  <div class="card-top-left">
-                    <span class="card-time">{course.startTime} - {course.endTime}</span>
-                    {#if isSchulung}
-                      <span class="schulung-badge-pill">🎓 YL-Schulung</span>
-                    {/if}
-                    {#if isAgreed}
-                      <!-- svelte-ignore a11y_click_events_have_key_events -->
-                      <!-- svelte-ignore a11y_no_static_element_interactions -->
-                      <span 
-                        class="agreed-badge-pill" 
-                        title={course.agreementNotes ? `Fest vereinbarte Stunde:\n${course.agreementNotes}\n(Klicken für Notiz-Details)` : 'Fest vereinbarte Stunde (Klicken für Notizen)'}
-                        onclick={(e) => openQuickNoteModal(course, e)}
-                      >
-                        ✓ Vereinbart
-                      </span>
-                    {/if}
-                  </div>
-                  <div class="card-top-right">
-                    <span class="card-room" style="color: {roomObj?.color}">{roomObj?.name ? roomObj.name.split(' ')[0] : ''}</span>
-                    <button 
-                      type="button" 
-                      class="card-slot-checkbox-btn"
-                      class:checked={isAgreed}
-                      onclick={(e) => toggleFixedAgreement(course, e)}
-                      title={isAgreed ? 'Fest vereinbarte Stunde (Häkchen entfernen)' : 'Als fest vereinbarte Stunde markieren'}
-                    >
-                      {isAgreed ? '☑' : '☐'}
-                    </button>
-                  </div>
+                  <span class="card-time">{course.startTime} - {course.endTime}</span>
+                  {#if isSchulung}
+                    <span class="schulung-badge-pill">🎓 YL-Schulung</span>
+                  {/if}
+                  <span class="card-room" style="color: {roomObj?.color}">{roomObj?.name ? roomObj.name.split(' ')[0] : ''}</span>
                 </div>
                 
                 <!-- Middle line: Course Name -->
-                <div class="card-title-line" class:schulung-title={isSchulung} class:agreed-title={isAgreed}>
+                <div class="card-title-line" class:schulung-title={isSchulung}>
                   {course.name}
+                  {#if course.agreementNotes}
+                    <span class="note-indicator-dot" title="Notiz zur Vereinbarung: {course.agreementNotes}">📝</span>
+                  {/if}
                 </div>
                 
                 <!-- Bottom line: Teacher Name -->
                 <div class="card-teacher-line" class:conflict-text={hasHard} title={hasHard ? courseConflicts.find(c => c.type === 'hard')?.message : ''}>
                   {getTeacherDisplayName(course.teacherId, course.teacherName)}
                 </div>
-
-                <!-- Notes preview for agreed slot -->
-                {#if course.agreementNotes}
-                  <!-- svelte-ignore a11y_click_events_have_key_events -->
-                  <!-- svelte-ignore a11y_no_static_element_interactions -->
-                  <div 
-                    class="card-agreement-notes-preview"
-                    title="Notiz zur Vereinbarung: {course.agreementNotes} (Klicken zum Bearbeiten)"
-                    onclick={(e) => openQuickNoteModal(course, e)}
-                  >
-                    <span class="notes-icon">📝</span>
-                    <span class="notes-snippet">{course.agreementNotes}</span>
-                  </div>
-                {:else if isAgreed}
-                  <!-- svelte-ignore a11y_click_events_have_key_events -->
-                  <!-- svelte-ignore a11y_no_static_element_interactions -->
-                  <div 
-                    class="card-agreement-add-note"
-                    title="Notiz zur Vereinbarung hinterlegen"
-                    onclick={(e) => openQuickNoteModal(course, e)}
-                  >
-                    <span class="notes-icon">📝+</span>
-                    <span class="notes-add-text">Notiz hinterlegen</span>
-                  </div>
-                {/if}
               </div>
             {/if}
           {/each}
@@ -2113,131 +2073,21 @@
     color: #444;
   }
 
-  /* Agreed Slot Styling */
+  /* Agreed Slot Subtle Styling */
   .course-card-rapla.is-agreed-card {
-    border-left: 5px solid #059669 !important;
-    background: linear-gradient(135deg, #ecfdf5 0%, #f0fdf4 100%) !important;
-    box-shadow: 0 1px 4px rgba(5, 150, 105, 0.2) !important;
+    border-left: 4px solid #e11d48 !important;
+    box-shadow: 0 1px 3px rgba(225, 29, 72, 0.15) !important;
   }
 
   .course-card-rapla.is-agreed-card:hover {
-    box-shadow: 0 4px 8px rgba(5, 150, 105, 0.28) !important;
+    box-shadow: 0 3px 6px rgba(225, 29, 72, 0.25) !important;
   }
 
-  .card-top-left {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    flex-wrap: wrap;
-    min-width: 0;
-  }
-
-  .card-top-right {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    flex-shrink: 0;
-  }
-
-  .agreed-badge-pill {
-    background: #059669;
-    color: #ffffff;
-    font-size: 0.6rem;
-    font-weight: 700;
-    padding: 1px 5px;
-    border-radius: 4px;
-    white-space: nowrap;
-    display: inline-flex;
-    align-items: center;
-    gap: 2px;
-    box-shadow: 0 1px 2px rgba(5, 150, 105, 0.25);
-    cursor: pointer;
-    transition: background 0.15s ease;
-  }
-
-  .agreed-badge-pill:hover {
-    background: #047857;
-  }
-
-  .card-slot-checkbox-btn {
-    background: transparent;
-    border: 1px solid rgba(0, 0, 0, 0.18);
-    border-radius: 3px;
-    padding: 0 3px;
+  .note-indicator-dot {
     font-size: 0.72rem;
-    line-height: 1.1;
-    cursor: pointer;
-    color: #64748b;
-    transition: all 0.15s ease;
-  }
-
-  .card-slot-checkbox-btn:hover {
-    border-color: #059669;
-    color: #059669;
-    background: rgba(5, 150, 105, 0.08);
-  }
-
-  .card-slot-checkbox-btn.checked {
-    border-color: #059669;
-    color: #059669;
-    background: #d1fae5;
-    font-weight: 700;
-  }
-
-  .card-title-line.agreed-title {
-    color: #064e3b;
-  }
-
-  .card-agreement-notes-preview {
-    margin-top: 3px;
-    padding: 2px 4px;
-    background: rgba(5, 150, 105, 0.08);
-    border-left: 2px solid #059669;
-    border-radius: 2px;
-    font-size: 0.68rem;
-    color: #065f46;
-    display: flex;
-    align-items: flex-start;
-    gap: 3px;
-    line-height: 1.2;
-    cursor: pointer;
-    overflow: hidden;
-  }
-
-  .card-agreement-notes-preview:hover {
-    background: rgba(5, 150, 105, 0.16);
-  }
-
-  .card-agreement-notes-preview .notes-icon {
-    font-size: 0.7rem;
-    flex-shrink: 0;
-  }
-
-  .card-agreement-notes-preview .notes-snippet {
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    font-weight: 500;
-  }
-
-  .card-agreement-add-note {
-    margin-top: 2px;
-    font-size: 0.65rem;
-    color: #059669;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 2px;
-    opacity: 0.7;
-    font-style: italic;
-  }
-
-  .card-agreement-add-note:hover {
-    opacity: 1;
-    text-decoration: underline;
+    margin-left: 4px;
+    vertical-align: middle;
+    display: inline-block;
   }
 
   .btn-agreed-filter {
@@ -2248,28 +2098,28 @@
     font-size: 0.85rem;
     font-weight: 600;
     border-radius: 6px;
-    border: 1px solid #10b981;
-    background: #ecfdf5;
-    color: #065f46;
+    border: 1px solid #f43f5e;
+    background: #fff1f2;
+    color: #be123c;
     cursor: pointer;
     transition: all 0.15s ease;
   }
 
   .btn-agreed-filter:hover {
-    background: #d1fae5;
+    background: #ffe4e6;
   }
 
   .btn-agreed-filter.active {
-    background: #059669;
+    background: #e11d48;
     color: #ffffff;
-    border-color: #047857;
-    box-shadow: 0 2px 4px rgba(5, 150, 105, 0.25);
+    border-color: #be123c;
+    box-shadow: 0 2px 4px rgba(225, 29, 72, 0.25);
   }
 
   /* Agreement section in edit modal */
   .agreement-edit-box {
-    background: #f0fdf4;
-    border: 1.5px solid #86efac;
+    background: #fff1f2;
+    border: 1.5px solid #fecdd3;
     border-radius: 8px;
     padding: 1rem;
     margin-top: 0.5rem;
@@ -2286,7 +2136,7 @@
   .agreement-main-checkbox {
     width: 1.25rem;
     height: 1.25rem;
-    accent-color: #059669;
+    accent-color: #e11d48;
     margin-top: 0.15rem;
     cursor: pointer;
     flex-shrink: 0;
@@ -2294,14 +2144,14 @@
 
   .agreement-headline {
     font-weight: 700;
-    color: #065f46;
+    color: #9f1239;
     font-size: 0.95rem;
     display: block;
   }
 
   .agreement-subtext {
     font-size: 0.8rem;
-    color: #166534;
+    color: #be123c;
     display: block;
     margin-top: 0.25rem;
     line-height: 1.35;
@@ -2310,7 +2160,7 @@
   .agreement-notes-field {
     margin-top: 0.85rem;
     padding-top: 0.75rem;
-    border-top: 1px dashed #86efac;
+    border-top: 1px dashed #fecdd3;
   }
 
   .form-textarea {
