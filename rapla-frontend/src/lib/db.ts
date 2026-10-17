@@ -174,6 +174,8 @@ export interface Course {
   isAiPlanned: boolean;
   status: 'draft' | 'approved';
   isManuallyEdited?: boolean;
+  isFixedAgreement?: boolean; // Slot is firmly agreed upon (e.g. fixed recurring agreement with teacher)
+  agreementNotes?: string;   // Notes / context for this agreed slot
 }
 
 export interface WeekPlan {

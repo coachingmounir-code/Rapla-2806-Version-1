@@ -464,6 +464,13 @@
       };
     }
 
+    if ((course as Course).isFixedAgreement) {
+      return {
+        bg: '#ecfdf5', // gentle fresh emerald mint
+        border: '#059669' // deep emerald green
+      };
+    }
+
     const isUnassigned = !course.teacherId || course.teacherId === 'teacher-gen-yl';
     if (isUnassigned) {
       return {
@@ -1008,18 +1015,25 @@
                       </div>
                     </div>
                   {:else}
+                    {@const isAgreed = (course as Course).isFixedAgreement}
                     <div 
                       class="course-card-rapla" 
                       class:schulung-course-card={isSchulung}
+                      class:is-agreed-card={isAgreed}
                       class:highlighted-card={isHighlighted}
                       class:dimmed-card={selectedTeacher && !isHighlighted && !onlyMySlotsParam}
-                      class:unassigned-card={(!course.teacherId || course.teacherId === 'teacher-gen-yl') && !isSchulung}
-                      style="background-color: {colors.bg}; border-left: {isSchulung ? '5px solid #4338ca' : (isHighlighted ? '4px solid #ea580c' : '4px solid ' + colors.border)};"
+                      class:unassigned-card={(!course.teacherId || course.teacherId === 'teacher-gen-yl') && !isSchulung && !isAgreed}
+                      style="background-color: {colors.bg}; border-left: {isAgreed ? '5px solid #059669' : (isSchulung ? '5px solid #4338ca' : (isHighlighted ? '4px solid #ea580c' : '4px solid ' + colors.border))};"
                     >
                       <div class="card-top-line">
                         <span class="card-time">{course.startTime} - {course.endTime}</span>
                         {#if isSchulung}
                           <span class="schulung-badge-pill">🎓 YL-Schulung</span>
+                        {/if}
+                        {#if isAgreed}
+                          <span class="agreed-badge-pill" title={(course as Course).agreementNotes ? `Fest vereinbarte Stunde:\n${(course as Course).agreementNotes}` : 'Fest vereinbarte Stunde'}>
+                            ✓ Vereinbart
+                          </span>
                         {/if}
                         <span class="card-room">{roomName}</span>
                       </div>
@@ -1027,6 +1041,12 @@
                       <div class="card-teacher-line">
                         👤 {teacherName}
                       </div>
+                      {#if (course as Course).agreementNotes}
+                        <div class="card-agreement-notes-preview" title="Notiz zur Vereinbarung: {(course as Course).agreementNotes}">
+                          <span class="notes-icon">📝</span>
+                          <span class="notes-snippet">{(course as Course).agreementNotes}</span>
+                        </div>
+                      {/if}
                     </div>
                   {/if}
                 {/each}
@@ -1180,18 +1200,25 @@
                 </div>
               </div>
             {:else}
+              {@const isAgreed = (course as Course).isFixedAgreement}
               <div 
                 class="mobile-agenda-card"
                 class:schulung-mobile-card={isSchulung}
+                class:is-agreed-card={isAgreed}
                 class:highlighted-card={isHighlighted}
                 class:dimmed-card={selectedTeacher && !isHighlighted && !onlyMySlotsParam}
-                class:unassigned-card={(!course.teacherId || course.teacherId === 'teacher-gen-yl') && !isSchulung}
-                style="background-color: {colors.bg}; border-left: {isSchulung ? '6px solid #4338ca' : (isHighlighted ? '5px solid #ea580c' : '5px solid ' + colors.border)};"
+                class:unassigned-card={(!course.teacherId || course.teacherId === 'teacher-gen-yl') && !isSchulung && !isAgreed}
+                style="background-color: {colors.bg}; border-left: {isAgreed ? '6px solid #059669' : (isSchulung ? '6px solid #4338ca' : (isHighlighted ? '5px solid #ea580c' : '5px solid ' + colors.border))};"
               >
                 <div class="agenda-time-room">
                   <span class="agenda-time">⏰ {course.startTime} - {course.endTime}</span>
                   {#if isSchulung}
                     <span class="schulung-badge-pill">🎓 YL-Schulung</span>
+                  {/if}
+                  {#if isAgreed}
+                    <span class="agreed-badge-pill" title={(course as Course).agreementNotes ? `Fest vereinbarte Stunde:\n${(course as Course).agreementNotes}` : 'Fest vereinbarte Stunde'}>
+                      ✓ Vereinbart
+                    </span>
                   {/if}
                   <span class="agenda-room">{roomName}</span>
                 </div>
@@ -1199,6 +1226,12 @@
                 <div class="agenda-teacher">
                   👤 {teacherName}
                 </div>
+                {#if (course as Course).agreementNotes}
+                  <div class="card-agreement-notes-preview" title="Notiz zur Vereinbarung: {(course as Course).agreementNotes}">
+                    <span class="notes-icon">📝</span>
+                    <span class="notes-snippet">{(course as Course).agreementNotes}</span>
+                  </div>
+                {/if}
               </div>
             {/if}
           {/each}
@@ -1689,6 +1722,58 @@
     font-size: 0.7rem;
     font-weight: 600;
     color: #334155;
+  }
+
+  /* Agreed Slot Styling */
+  .course-card-rapla.is-agreed-card,
+  .mobile-agenda-card.is-agreed-card {
+    border-left: 5px solid #059669 !important;
+    background: linear-gradient(135deg, #ecfdf5 0%, #f0fdf4 100%) !important;
+    box-shadow: 0 1px 4px rgba(5, 150, 105, 0.18) !important;
+  }
+
+  .agreed-badge-pill {
+    background: #059669;
+    color: #ffffff;
+    font-size: 0.6rem;
+    font-weight: 700;
+    padding: 1px 5px;
+    border-radius: 4px;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    box-shadow: 0 1px 2px rgba(5, 150, 105, 0.25);
+  }
+
+  .card-agreement-notes-preview {
+    margin-top: 3px;
+    padding: 2px 4px;
+    background: rgba(5, 150, 105, 0.08);
+    border-left: 2px solid #059669;
+    border-radius: 2px;
+    font-size: 0.68rem;
+    color: #065f46;
+    display: flex;
+    align-items: flex-start;
+    gap: 3px;
+    line-height: 1.2;
+    overflow: hidden;
+  }
+
+  .card-agreement-notes-preview .notes-icon {
+    font-size: 0.7rem;
+    flex-shrink: 0;
+  }
+
+  .card-agreement-notes-preview .notes-snippet {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-weight: 500;
   }
 
   /* Highlight and Dim effects for personalized filters */

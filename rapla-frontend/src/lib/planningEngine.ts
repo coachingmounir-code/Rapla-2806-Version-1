@@ -863,6 +863,12 @@ export function runAiPlanning(
     if (isSchulung) {
       return false;
     }
+    // Fixed agreements (firmly agreed with a teacher) are preserved and never overridden or cleared by AI
+    if (c.isFixedAgreement && c.teacherId) {
+      const assignedTeacher = teachers.find(t => t.id === c.teacherId);
+      logs.push(`[Feste Vereinbarung] "${c.name}" am ${getDayName(c.dayOfWeek)} (${c.startTime}) bleibt für ${assignedTeacher?.name || c.teacherId} fest reserviert.`);
+      return false;
+    }
     if (customConstraints && customConstraints.length > 0) {
       for (const rule of customConstraints) {
         if (!rule.teacherId) continue;
