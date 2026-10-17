@@ -14,4 +14,4 @@ Regeln für YL-Schulungen:
 - Wenn eine Person für einen YL-Schulungs-Slot manuell eingeteilt wird, wird sie für die restliche Planung (andere parallele Slots/Räume) blockiert, um Überschneidungen zu verhindern.
 
 4. Darstellung:
-- In der Wochenplanansicht und im Planungs-Schedule haben YL-Schulungen eine eigenständige Farbcodierung (Indigo/Blau-Violett mit Badge "🎓 YL-Schulung") und heben sich deutlich von regulären Stunden ab.
+- In der Wochenplanansicht und im Planungs-Schedule haben YL-Schulungen eine eigenständige Farbcodierung (Indigo/Blau-Violett) und heben sich deutlich von regulären Stunden ab.

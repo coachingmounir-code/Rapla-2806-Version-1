@@ -1247,9 +1247,6 @@
                 <!-- Top line: Time and Room -->
                 <div class="card-top-line">
                   <span class="card-time">{course.startTime} - {course.endTime}</span>
-                  {#if isSchulung}
-                    <span class="schulung-badge-pill">🎓 YL-Schulung</span>
-                  {/if}
                   <span class="card-room" style="color: {roomObj?.color}">{roomObj?.name ? roomObj.name.split(' ')[0] : ''}</span>
                 </div>
                 
@@ -2684,17 +2681,6 @@
   .schulung-card .card-teacher-line {
     color: #4338ca !important;
     font-weight: 600;
-  }
-  .schulung-badge-pill {
-    display: inline-flex;
-    align-items: center;
-    font-size: 0.65rem;
-    font-weight: 700;
-    padding: 1px 6px;
-    border-radius: 9999px;
-    background-color: #c7d2fe;
-    color: #312e81;
-    margin-left: 4px;
   }
   .schulung-title {
     color: #1e1b4b !important;
