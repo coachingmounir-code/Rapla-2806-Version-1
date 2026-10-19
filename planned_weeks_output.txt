@@ -200,7 +200,7 @@
         "startTime": "16:15",
         "endTime": "18:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-narayani-kedenburg",
+        "teacherId": "teacher-gen-chandrashekara",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -320,7 +320,7 @@
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-chandrashekara",
+        "teacherId": "teacher-gen-teresa-allgaeu",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -464,7 +464,7 @@
         "startTime": "09:15",
         "endTime": "11:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-narayani-kedenburg",
+        "teacherId": "teacher-gen-chandrashekara",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -488,7 +488,7 @@
         "startTime": "16:15",
         "endTime": "18:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-chandrashekara",
+        "teacherId": "teacher-gen-alexander-melior",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -596,7 +596,7 @@
         "startTime": "16:30",
         "endTime": "18:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-chandrashekara",
+        "teacherId": "teacher-gen-abha-morkoetter",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -716,7 +716,7 @@
         "startTime": "09:15",
         "endTime": "11:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-karuna-wapke",
+        "teacherId": "teacher-gen-chandrashekara",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -762,7 +762,7 @@
         "style": "Meditation",
         "dayOfWeek": 6,
         "startTime": "20:00",
-        "endTime": "21:00",
+        "endTime": "22:00",
         "roomId": "room-2",
         "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
@@ -876,7 +876,7 @@
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-adam-zmuda",
+        "teacherId": "teacher-gen-teresa-allgaeu",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -1092,7 +1092,7 @@
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-teresa-allgaeu",
+        "teacherId": "teacher-gen-chandrashekara",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -1164,7 +1164,7 @@
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-chandrashekara",
+        "teacherId": "teacher-gen-narayani-kedenburg",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -1248,7 +1248,7 @@
         "startTime": "16:15",
         "endTime": "18:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-chandrashekara",
+        "teacherId": "teacher-gen-narayani-kedenburg",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -1356,7 +1356,7 @@
         "startTime": "16:30",
         "endTime": "18:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-chandrashekara",
+        "teacherId": "teacher-gen-alexander-melior",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -1392,7 +1392,7 @@
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-christopher",
+        "teacherId": "teacher-gen-adam-zmuda",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -1476,7 +1476,7 @@
         "startTime": "09:15",
         "endTime": "11:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-karuna-wapke",
+        "teacherId": "teacher-gen-chandrashekara",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -1500,7 +1500,7 @@
         "startTime": "16:15",
         "endTime": "18:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-pranava-pauly",
+        "teacherId": "teacher-gen-chandrashekara",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -1522,7 +1522,7 @@
         "style": "Meditation",
         "dayOfWeek": 6,
         "startTime": "20:00",
-        "endTime": "21:00",
+        "endTime": "22:00",
         "roomId": "room-2",
         "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
@@ -1570,7 +1570,7 @@
       },
       {
         "id": "course-2026-W43-24",
-        "name": "Pavanmukt Asana",
+        "name": "Anfänger",
         "style": "Hatha",
         "dayOfWeek": 0,
         "startTime": "09:15",
@@ -1708,7 +1708,7 @@
         "startTime": "09:15",
         "endTime": "11:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-pranava-pauly",
+        "teacherId": "teacher-gen-chandrashekara",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -1804,7 +1804,7 @@
         "startTime": "09:15",
         "endTime": "11:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-chandrashekara",
+        "teacherId": "teacher-gen-alexander-melior",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -1852,7 +1852,7 @@
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-teresa-allgaeu",
+        "teacherId": "teacher-gen-chandrashekara",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -1912,7 +1912,7 @@
         "startTime": "09:15",
         "endTime": "11:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-karuna-wapke",
+        "teacherId": "teacher-gen-chandrashekara",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -1924,8 +1924,8 @@
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": null,
-        "isAiPlanned": false,
+        "teacherId": "teacher-gen-teresa-allgaeu",
+        "isAiPlanned": true,
         "status": "approved"
       },
       {
@@ -1996,7 +1996,7 @@
         "startTime": "09:15",
         "endTime": "11:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-karuna-wapke",
+        "teacherId": "teacher-gen-chandrashekara",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -2014,13 +2014,13 @@
       },
       {
         "id": "course-2026-W43-59",
-        "name": "Anfänger",
+        "name": "Pavanmukt Asana",
         "style": "Hatha",
         "dayOfWeek": 4,
         "startTime": "16:15",
         "endTime": "18:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-chandrashekara",
+        "teacherId": "teacher-gen-burnie-bansemer",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -2044,7 +2044,7 @@
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-adam-zmuda",
+        "teacherId": "teacher-gen-christopher",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -2164,8 +2164,8 @@
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-adam-anjali",
-        "isAiPlanned": false,
+        "teacherId": "teacher-gen-adam-zmuda",
+        "isAiPlanned": true,
         "status": "approved"
       },
       {
@@ -2248,7 +2248,7 @@
         "startTime": "09:15",
         "endTime": "11:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-karuna-wapke",
+        "teacherId": "teacher-gen-chandrashekara",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -2296,8 +2296,8 @@
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-anjali-gelzleichter",
-        "isAiPlanned": false,
+        "teacherId": "teacher-gen-christopher",
+        "isAiPlanned": true,
         "status": "approved"
       },
       {
@@ -2306,7 +2306,7 @@
         "style": "Meditation",
         "dayOfWeek": 6,
         "startTime": "20:00",
-        "endTime": "21:00",
+        "endTime": "22:00",
         "roomId": "room-2",
         "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,

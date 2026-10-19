@@ -13,6 +13,8 @@ Bitte stets darauf achten, dass alle Slots besetzt werden (kein Slot darf bei de
 
 # Sevaka-Regeln
 - Chandrashekara kann dienstags nachmittags nicht eingeplant werden.
+- Chandrashekara unterrichtet bei den Yogastunden ausschließlich Mittelstufe (keine Anfänger-Yogastunden).
+- Chandrashekara kann hin und wieder auch für die geführte Meditation sowie für das Om Namo Narayana (ONN) eingeplant werden.
 
 # YL-Schulungen
 - Termine finden donnerstags oder samstags jeweils von 15:00 bis 18:00 Uhr im Tripura-Raum statt.

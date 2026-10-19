@@ -184,9 +184,33 @@
     return result;
   });
 
+  // Derived list of all courses assigned/visible to the selected teacher in the current week
+  let selectedTeacherAssignedCourses = $derived.by<(Course | YlaTeacherWeekSlot)[]>(() => {
+    if (!selectedTeacher) return [];
+    const regular = courses.filter(c => isTeacherVisibleForCourse(c, selectedTeacher!.id));
+    return [...regular, ...selectedTeacherYlaSlots];
+  });
+
+  // Grouped by day in DAYS order (Freitag -> Donnerstag) for the compact personal overview
+  let selectedTeacherAssignmentsByDay = $derived.by(() => {
+    if (!selectedTeacher) return [];
+    return DAYS.map(day => {
+      const daySlots = selectedTeacherAssignedCourses
+        .filter(c => c.dayOfWeek === day.value)
+        .sort((a, b) => a.startTime.localeCompare(b.startTime));
+      return {
+        day,
+        dateStr: getDayDateString(day.value),
+        slots: daySlots
+      };
+    }).filter(group => group.slots.length > 0);
+  });
+
   // Derived combined courses for total displayed hours and counting
   let allDisplayCourses = $derived<(Course | YlaTeacherWeekSlot)[]>(
-    selectedTeacher ? [...courses, ...selectedTeacherYlaSlots] : courses
+    selectedTeacher
+      ? (onlyMySlotsParam ? selectedTeacherAssignedCourses : [...courses, ...selectedTeacherYlaSlots])
+      : courses
   );
 
   // Derived filtered courses for the mobile agenda view
@@ -525,6 +549,9 @@
         activeHours.add(h);
       }
     });
+    if (selectedTeacher && onlyMySlotsParam && activeHours.size > 0) {
+      return Array.from(activeHours).sort((a, b) => a - b);
+    }
     const combined = new Set([...defaultHours, ...activeHours]);
     return Array.from(combined).sort((a, b) => a - b);
   }
@@ -742,11 +769,11 @@
         🚪 Abmelden
       </button>
 
-        <div class="user-badge" style="background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0;">
-          <span class="user-icon">👥</span>
+        <div class="user-badge" style="background: {selectedTeacher ? '#fff7ed' : '#f1f5f9'}; color: {selectedTeacher ? '#9a3412' : '#475569'}; border: 1px solid {selectedTeacher ? '#fed7aa' : '#e2e8f0'};">
+          <span class="user-icon">{selectedTeacher ? '🧘' : '👥'}</span>
           <div>
-            <div class="badge-title" style="color: #1e293b;">Team-Ansicht</div>
-            <div class="badge-subtitle">Gesamtübersicht</div>
+            <div class="badge-title" style="color: {selectedTeacher ? '#9a3412' : '#1e293b'};">Team-Ansicht</div>
+            <div class="badge-subtitle">{selectedTeacher ? selectedTeacher.name : 'Gesamtübersicht'}</div>
           </div>
         </div>
     </div>
@@ -774,75 +801,148 @@
   </div>
 
   {#if selectedTeacher}
+    {@const currentWeekNum = currentPlan?.targetWeekCode ? parseInt(currentPlan.targetWeekCode.split('-W')[1], 10) : getWeekNumber(getMondayOfCurrentWeek())}
     <div class="personal-teacher-header-banner animate-fade-in" class:yla-banner={activeTab === 'yla4' || activeTab === 'yla4_w3' || activeTab === 'yla4_w4'}>
-      <div class="teacher-avatar-badge" style="background-color: {selectedTeacher.avatarColor || (activeTab === 'yla4' || activeTab === 'yla4_w3' || activeTab === 'yla4_w4' ? '#9333ea' : '#ea580c')};">
-        {selectedTeacher.name.charAt(0)}
+      <div class="personal-banner-top-row">
+        <div class="teacher-avatar-badge" style="background-color: {selectedTeacher.avatarColor || (activeTab === 'yla4' || activeTab === 'yla4_w3' || activeTab === 'yla4_w4' ? '#9333ea' : '#ea580c')};">
+          {selectedTeacher.name.charAt(0)}
+        </div>
+        <div class="teacher-info-col">
+          <div class="teacher-name-row">
+            {#if activeTab === 'yla4'}
+              <h2>Persönlicher YLA4-Plan (Woche 2): <strong>{selectedTeacher.name}</strong></h2>
+              {#if selectedTeacherWeek2YlaSlots.length > 0}
+                <span class="yla-counter-pill yla-counter-pill-purple">
+                  🧘‍♂️ {selectedTeacherWeek2YlaSlots.length}x in YLA4 Woche 2 eingeteilt
+                </span>
+              {/if}
+            {:else if activeTab === 'yla4_w3'}
+              <h2>Persönlicher YLA4-Plan (Woche 3): <strong>{selectedTeacher.name}</strong></h2>
+              {#if selectedTeacherWeek3YlaSlots.length > 0}
+                <span class="yla-counter-pill yla-counter-pill-purple">
+                  🧘‍♂️ {selectedTeacherWeek3YlaSlots.length}x in YLA4 Woche 3 eingeteilt
+                </span>
+              {/if}
+            {:else if activeTab === 'yla4_w4'}
+              <h2>Persönlicher YLA4-Plan (Woche 4): <strong>{selectedTeacher.name}</strong></h2>
+              {#if selectedTeacherWeek4YlaSlots.length > 0}
+                <span class="yla-counter-pill yla-counter-pill-purple">
+                  🧘‍♀️ {selectedTeacherWeek4YlaSlots.length}x in YLA4 Woche 4 eingeteilt
+                </span>
+              {/if}
+            {:else}
+              <h2>Persönlicher Wochenplan: <strong>{selectedTeacher.name}</strong></h2>
+              {#if isWeekApproved}
+                <span class="personal-slots-counter-pill" class:zero-slots={selectedTeacherAssignedCourses.length === 0}>
+                  📋 {selectedTeacherAssignedCourses.length} {selectedTeacherAssignedCourses.length === 1 ? 'Einteilung' : 'Einteilungen'} in KW {currentWeekNum}
+                </span>
+              {/if}
+              {#if selectedTeacherYlaSlots.length > 0}
+                <span class="yla-counter-pill">
+                  🧘‍♂️ davon {selectedTeacherYlaSlots.length}x 4-Wochen YLA
+                </span>
+              {/if}
+            {/if}
+          </div>
+          <div class="teacher-details-row">
+            <span>Rolle: <strong>{selectedTeacher.roleType === 'sevaka' ? 'Sevaka (Team)' : selectedTeacher.roleType === 'karma_yogi' ? 'Karma-Yogi' : selectedTeacher.roleType === 'guest_teacher' ? 'Gast-Seminarleiter' : 'Unterrichtende/r'}</strong></span>
+            <span class="dot-separator">•</span>
+            <span>Woche: <strong>KW {currentWeekNum} ({getDayDateString(5)} – {getDayDateString(4)})</strong></span>
+            {#if activeTab === 'yla4'}
+              <span class="dot-separator">•</span>
+              <span class="yla-active-notice" style="color: #9333ea;">
+                ✨ Deine Unterrichtseinheiten für Woche 2 der Yogalehrerausbildung sind im Plan hervorgehoben!
+              </span>
+            {:else if activeTab === 'yla4_w3'}
+              <span class="dot-separator">•</span>
+              <span class="yla-active-notice" style="color: #9333ea;">
+                ✨ Deine Unterrichtseinheiten für Woche 3 der Yogalehrerausbildung sind im Plan hervorgehoben!
+              </span>
+            {:else if activeTab === 'yla4_w4'}
+              <span class="dot-separator">•</span>
+              <span class="yla-active-notice" style="color: #9333ea;">
+                ✨ Deine Unterrichtseinheiten für Woche 4 der Yogalehrerausbildung sind im Plan hervorgehoben!
+              </span>
+            {:else if selectedTeacherYlaSlots.length > 0}
+              <span class="dot-separator">•</span>
+              <span class="yla-active-notice">
+                ✨ Deine Einteilungen für die 4-wöchige Yogalehrerausbildung sind im Plan hervorgehoben!
+              </span>
+            {/if}
+          </div>
+        </div>
+        <button 
+          type="button" 
+          class="btn btn-secondary btn-small reset-filter-btn" 
+          onclick={() => selectTeacher('')}
+          title="Zurück zur Gesamtübersicht"
+        >
+          ✕ Gesamtübersicht
+        </button>
       </div>
-      <div class="teacher-info-col">
-        <div class="teacher-name-row">
-          {#if activeTab === 'yla4'}
-            <h2>Persönlicher YLA4-Plan (Woche 2): <strong>{selectedTeacher.name}</strong></h2>
-            {#if selectedTeacherWeek2YlaSlots.length > 0}
-              <span class="yla-counter-pill yla-counter-pill-purple">
-                🧘‍♂️ {selectedTeacherWeek2YlaSlots.length}x in YLA4 Woche 2 eingeteilt
-              </span>
-            {/if}
-          {:else if activeTab === 'yla4_w3'}
-            <h2>Persönlicher YLA4-Plan (Woche 3): <strong>{selectedTeacher.name}</strong></h2>
-            {#if selectedTeacherWeek3YlaSlots.length > 0}
-              <span class="yla-counter-pill yla-counter-pill-purple">
-                🧘‍♂️ {selectedTeacherWeek3YlaSlots.length}x in YLA4 Woche 3 eingeteilt
-              </span>
-            {/if}
-          {:else if activeTab === 'yla4_w4'}
-            <h2>Persönlicher YLA4-Plan (Woche 4): <strong>{selectedTeacher.name}</strong></h2>
-            {#if selectedTeacherWeek4YlaSlots.length > 0}
-              <span class="yla-counter-pill yla-counter-pill-purple">
-                🧘‍♀️ {selectedTeacherWeek4YlaSlots.length}x in YLA4 Woche 4 eingeteilt
-              </span>
-            {/if}
+
+      {#if activeTab === 'wochenplan' && isWeekApproved}
+        <div class="personal-compact-schedule">
+          <div class="compact-schedule-header">
+            <span class="compact-schedule-title">⚡ Kompakte Übersicht deiner Stunden (KW {currentWeekNum}):</span>
+          </div>
+          {#if selectedTeacherAssignmentsByDay.length === 0}
+            <div class="compact-empty-notice">
+              ✨ Für <strong>{selectedTeacher.name}</strong> sind in KW {currentWeekNum} ({getDayDateString(5)} – {getDayDateString(4)}) keine Stunden eingetragen.
+            </div>
           {:else}
-            <h2>Persönlicher Wochenplan: <strong>{selectedTeacher.name}</strong></h2>
-            {#if selectedTeacherYlaSlots.length > 0}
-              <span class="yla-counter-pill">
-                🧘‍♂️ {selectedTeacherYlaSlots.length}x 4-Wochen YLA eingeteilt
-              </span>
-            {/if}
+            <div class="personal-compact-days-grid">
+              {#each selectedTeacherAssignmentsByDay as group}
+                {@const isToday = new Date().getDay() === group.day.value && currentWeekOffset === 0}
+                <div 
+                  class="compact-day-card" 
+                  class:compact-day-today={isToday}
+                  role="button"
+                  tabindex="0"
+                  onclick={() => { activeMobileDay = group.day.value; }}
+                  onkeydown={(e) => { if (e.key === 'Enter' || e.key === ' ') activeMobileDay = group.day.value; }}
+                >
+                  <div class="compact-day-header">
+                    <span class="compact-day-name">
+                      {group.day.label}, {group.dateStr}
+                      {#if isToday}
+                        <span class="compact-today-badge">Heute</span>
+                      {/if}
+                    </span>
+                    <span class="compact-day-count">{group.slots.length} {group.slots.length === 1 ? 'Std.' : 'Std.'}</span>
+                  </div>
+                  <div class="compact-day-slots">
+                    {#each group.slots as slot}
+                      {@const isYla = (slot as any).isYla === true}
+                      {@const isSchulung = !isYla && ((slot as Course).name?.toLowerCase().includes('schulung') || (((slot as Course).style || '').toLowerCase().includes('schulung')))}
+                      {@const colors = getCourseColor(slot)}
+                      {@const roomName = isYla ? ((slot as any).roomName || 'Sivananda Saal (YLA)') : (rooms.find(r => r.id === slot.roomId)?.name || slot.roomId || 'Raum?')}
+                      {@const slotTitle = isYla ? (slot as any).name.replace('4-Wochen YLA: ', '') : slot.name}
+                      <div 
+                        class="compact-slot-row"
+                        style="background-color: {colors.bg}; border-left: 4px solid {isYla ? '#9333ea' : isSchulung ? '#4338ca' : colors.border};"
+                      >
+                        <div class="compact-slot-top">
+                          <span class="compact-slot-time">⏰ {slot.startTime} – {slot.endTime}</span>
+                          <span class="compact-slot-room">📍 {roomName}</span>
+                        </div>
+                        <div class="compact-slot-name">
+                          {#if isYla}
+                            <span class="compact-yla-tag">YLA</span>
+                          {:else if isSchulung}
+                            <span class="compact-schulung-tag">YL-Schulung</span>
+                          {/if}
+                          {slotTitle}
+                        </div>
+                      </div>
+                    {/each}
+                  </div>
+                </div>
+              {/each}
+            </div>
           {/if}
         </div>
-        <div class="teacher-details-row">
-          <span>Rolle: <strong>{selectedTeacher.roleType === 'sevaka' ? 'Sevaka (Team)' : selectedTeacher.roleType === 'karma_yogi' ? 'Karma-Yogi' : selectedTeacher.roleType === 'guest_teacher' ? 'Gast-Seminarleiter' : 'Unterrichtende/r'}</strong></span>
-          {#if activeTab === 'yla4'}
-            <span class="dot-separator">•</span>
-            <span class="yla-active-notice" style="color: #9333ea;">
-              ✨ Deine Unterrichtseinheiten für Woche 2 der Yogalehrerausbildung sind im Plan hervorgehoben!
-            </span>
-          {:else if activeTab === 'yla4_w3'}
-            <span class="dot-separator">•</span>
-            <span class="yla-active-notice" style="color: #9333ea;">
-              ✨ Deine Unterrichtseinheiten für Woche 3 der Yogalehrerausbildung sind im Plan hervorgehoben!
-            </span>
-          {:else if activeTab === 'yla4_w4'}
-            <span class="dot-separator">•</span>
-            <span class="yla-active-notice" style="color: #9333ea;">
-              ✨ Deine Unterrichtseinheiten für Woche 4 der Yogalehrerausbildung sind im Plan hervorgehoben!
-            </span>
-          {:else if selectedTeacherYlaSlots.length > 0}
-            <span class="dot-separator">•</span>
-            <span class="yla-active-notice">
-              ✨ Deine Einteilungen für die 4-wöchige Yogalehrerausbildung sind im Plan hervorgehoben!
-            </span>
-          {/if}
-        </div>
-      </div>
-      <button 
-        type="button" 
-        class="btn btn-secondary btn-small reset-filter-btn" 
-        onclick={() => selectTeacher('')}
-        title="Zurück zur Gesamtübersicht"
-      >
-        ✕ Gesamtübersicht
-      </button>
+      {/if}
     </div>
   {/if}
 
@@ -1087,18 +1187,25 @@
           {@const currentWeekCode = currentPlan?.targetWeekCode || getWeekCode(getMondayOfCurrentWeek())}
           {@const dayDateStr = getLocalDateForDay(currentWeekCode, day.value)}
           {@const isYlaWednesday = day.value === 3 && isDateInYlaRange(dayDateStr)}
+          {@const teacherDayCount = selectedTeacher ? selectedTeacherAssignedCourses.filter(c => c.dayOfWeek === day.value).length : 0}
           <button 
             type="button" 
             class="day-tab-btn" 
             class:active={activeMobileDay === day.value}
             class:is-today={isToday}
             class:tab-schweigetag={isYlaWednesday}
+            class:has-teacher-slots={selectedTeacher && teacherDayCount > 0}
             onclick={() => activeMobileDay = day.value}
           >
             {#if isYlaWednesday}
               <span class="schweigetag-tab-pill">🤫 Schweigetag</span>
             {/if}
-            <span class="day-tab-name">{day.label.substring(0, 2)}</span>
+            <span class="day-tab-name">
+              {day.label.substring(0, 2)}
+              {#if selectedTeacher && teacherDayCount > 0}
+                <span class="day-tab-slot-count">{teacherDayCount}</span>
+              {/if}
+            </span>
             <span class="day-tab-date">{getDayDateString(day.value)}</span>
           </button>
         {/each}
@@ -2246,25 +2353,33 @@
     gap: 1rem;
   }
 
-  /* Personal Teacher Banner & YLA Styling */
+  /* Personal Teacher Banner & Compact Weekly Schedule Styling */
   .personal-teacher-header-banner {
     display: flex;
-    align-items: center;
-    gap: 1.25rem;
+    flex-direction: column;
+    gap: 1rem;
     background: linear-gradient(135deg, #ffffff 0%, #fff7ed 100%);
     border: 2px solid #fed7aa;
     border-radius: 14px;
-    padding: 1rem 1.5rem;
+    padding: 1rem 1.25rem;
     margin-bottom: 1.5rem;
     box-shadow: 0 4px 12px rgba(234, 88, 12, 0.08);
   }
 
+  .personal-banner-top-row {
+    display: flex;
+    align-items: center;
+    gap: 1.15rem;
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
   .teacher-avatar-badge {
-    width: 48px;
-    height: 48px;
+    width: 46px;
+    height: 46px;
     border-radius: 50%;
     color: white;
-    font-size: 1.4rem;
+    font-size: 1.35rem;
     font-weight: 800;
     display: flex;
     align-items: center;
@@ -2277,18 +2392,19 @@
     display: flex;
     flex-direction: column;
     gap: 0.25rem;
-    flex-grow: 1;
+    flex: 1;
+    min-width: 220px;
   }
 
   .teacher-name-row {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
+    gap: 0.65rem;
     flex-wrap: wrap;
   }
 
   .teacher-name-row h2 {
-    font-size: 1.2rem;
+    font-size: 1.15rem;
     font-weight: 700;
     color: #1e293b;
     margin: 0;
@@ -2298,12 +2414,31 @@
     color: #ea580c;
   }
 
+  .personal-slots-counter-pill {
+    background: #ffedd5;
+    color: #9a3412;
+    font-size: 0.78rem;
+    font-weight: 800;
+    padding: 0.22rem 0.7rem;
+    border-radius: 20px;
+    border: 1px solid #fdba74;
+    box-shadow: 0 1px 3px rgba(234, 88, 12, 0.12);
+    white-space: nowrap;
+  }
+
+  .personal-slots-counter-pill.zero-slots {
+    background: #f1f5f9;
+    color: #64748b;
+    border-color: #cbd5e1;
+    box-shadow: none;
+  }
+
   .yla-counter-pill {
     background: #f3e8ff;
     color: #7e22ce;
     font-size: 0.78rem;
     font-weight: 800;
-    padding: 0.25rem 0.75rem;
+    padding: 0.22rem 0.7rem;
     border-radius: 20px;
     border: 1px solid #d8b4fe;
     box-shadow: 0 2px 4px rgba(126, 34, 206, 0.1);
@@ -2313,7 +2448,7 @@
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    font-size: 0.85rem;
+    font-size: 0.82rem;
     color: #64748b;
     flex-wrap: wrap;
   }
@@ -2329,6 +2464,199 @@
 
   .reset-filter-btn {
     flex-shrink: 0;
+    margin-left: auto;
+  }
+
+  .personal-compact-schedule {
+    border-top: 1px dashed #fed7aa;
+    padding-top: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  .compact-schedule-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .compact-schedule-title {
+    font-size: 0.8rem;
+    font-weight: 800;
+    color: #9a3412;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+
+  .compact-empty-notice {
+    background: #ffffff;
+    border: 1px dashed #cbd5e1;
+    border-radius: 8px;
+    padding: 0.65rem 1rem;
+    font-size: 0.85rem;
+    color: #64748b;
+    text-align: center;
+  }
+
+  .personal-compact-days-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(235px, 1fr));
+    gap: 0.6rem;
+  }
+
+  .compact-day-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 0.55rem 0.65rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+    cursor: pointer;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .compact-day-card:hover {
+    border-color: #fdba74;
+    box-shadow: 0 2px 6px rgba(234, 88, 12, 0.1);
+  }
+
+  .compact-day-card.compact-day-today {
+    border-color: #60a5fa;
+    background: #f8fbff;
+  }
+
+  .compact-day-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.4rem;
+    padding-bottom: 0.3rem;
+    border-bottom: 1px solid #f1f5f9;
+  }
+
+  .compact-day-name {
+    font-size: 0.8rem;
+    font-weight: 800;
+    color: #1e293b;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+
+  .compact-today-badge {
+    background: #dbeafe;
+    color: #1d4ed8;
+    font-size: 0.62rem;
+    font-weight: 800;
+    padding: 1px 5px;
+    border-radius: 999px;
+    text-transform: uppercase;
+  }
+
+  .compact-day-count {
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: #64748b;
+    background: #f1f5f9;
+    padding: 1px 6px;
+    border-radius: 999px;
+  }
+
+  .compact-day-slots {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .compact-slot-row {
+    padding: 0.35rem 0.5rem;
+    border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+
+  .compact-slot-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.35rem;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: #475569;
+  }
+
+  .compact-slot-time {
+    white-space: nowrap;
+    color: #0f172a;
+    font-weight: 800;
+  }
+
+  .compact-slot-room {
+    color: #c2410c;
+    font-weight: 700;
+    text-align: right;
+    font-size: 0.68rem;
+  }
+
+  .compact-slot-name {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #0f172a;
+    line-height: 1.25;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    flex-wrap: wrap;
+  }
+
+  .compact-yla-tag {
+    background: #f3e8ff;
+    color: #7e22ce;
+    font-size: 0.6rem;
+    font-weight: 800;
+    padding: 1px 4px;
+    border-radius: 4px;
+    border: 1px solid #d8b4fe;
+  }
+
+  .compact-schulung-tag {
+    background: #e0e7ff;
+    color: #4338ca;
+    font-size: 0.6rem;
+    font-weight: 800;
+    padding: 1px 4px;
+    border-radius: 4px;
+    border: 1px solid #a5b4fc;
+  }
+
+  .day-tab-btn.has-teacher-slots:not(.active) {
+    border-color: #fdba74;
+    background: #fff7ed;
+  }
+
+  .day-tab-slot-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #ea580c;
+    color: #ffffff;
+    font-size: 0.62rem;
+    font-weight: 800;
+    min-width: 16px;
+    height: 16px;
+    padding: 0 4px;
+    border-radius: 999px;
+    margin-left: 3px;
+    vertical-align: middle;
+  }
+
+  .day-tab-btn.active .day-tab-slot-count {
+    background: #ffffff;
+    color: #ea580c;
   }
 
   .yla-badge-pill {

@@ -244,7 +244,6 @@ function planWeekWithAbsences(weekCode: string, standardCourses: any[]) {
   }
 
   const customConstraintsForWeek = weekCode === '2026-W43' ? [
-    { type: "include", dayOfWeek: 5, startTime: "16:30", courseName: "Anfänger Ankommensstunde", teacherId: "teacher-gen-chandrashekara" },
     { type: "include", dayOfWeek: 5, startTime: "16:30", courseName: "Mittelstufe Ankommensstunde", teacherId: "teacher-gen-anjali-gelzleichter" },
     { type: "include", dayOfWeek: 5, startTime: "19:30", courseName: "Om Namo Narayanaya", teacherId: "teacher-gen-adam-zmuda" },
     { type: "include", dayOfWeek: 6, startTime: "07:00", courseName: "Satsang", teacherId: "teacher-gen-alexander-melior" },

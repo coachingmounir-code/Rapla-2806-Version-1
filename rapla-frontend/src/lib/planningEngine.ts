@@ -783,6 +783,17 @@ export function validateAssignment(
     }
   }
 
+  // Chandrashekara / onlyMittelstufeYoga rule: Only Mittelstufen yoga classes allowed
+  const isOnlyMittelstufe = teacherNameLower.includes('chandrashekara') || (tRules && tRules.onlyMittelstufeYoga) || teacher.rules?.onlyMittelstufeYoga;
+  if (isOnlyMittelstufe && isYogaClassForSevaka) {
+    if (!courseNameLower.includes('mittelstufe')) {
+      conflicts.push({
+        type: 'hard',
+        message: `${teacher.name} unterrichtet ausschließlich Mittelstufen-Yogastunden (keine Anfänger-Yogastunden).`
+      });
+    }
+  }
+
   // 10. Check Room Rules from Raum Regeln.txt (Hard)
   const roomConflicts = validateRoomRules(course, allCourses, teachers || db.getTeachers(), targetWeekCode);
   conflicts.push(...roomConflicts);
