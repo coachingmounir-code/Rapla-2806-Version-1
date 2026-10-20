@@ -24,6 +24,45 @@
     return name.includes('vollwert-buffet') || name.includes('vollwertbuffet') || style === 'buffet';
   }
 
+  export function isOpenDayCourse(course: Course): boolean {
+    if (!course) return false;
+    const id = (course.id || '').toLowerCase();
+    return id.includes('-tdot-');
+  }
+
+  // Collapse/expand states for Tag der offenen Tür (Saturday 24.10.2026)
+  let isTdotAllExpanded = $state(false);
+  let expandedTdotGroups = $state<Record<string, boolean>>({});
+  let expandedTdotSlotIds = $state<Record<string, boolean>>({});
+
+  function toggleTdotAll() {
+    isTdotAllExpanded = !isTdotAllExpanded;
+    expandedTdotGroups = {
+      'tdot-hour-9': isTdotAllExpanded,
+      'tdot-hour-15': isTdotAllExpanded,
+      'tdot-hour-16': isTdotAllExpanded,
+      'tdot-hour-19': isTdotAllExpanded
+    };
+  }
+
+  function toggleTdotGroup(groupKey: string, e?: MouseEvent) {
+    if (e) e.stopPropagation();
+    const nextVal = !expandedTdotGroups[groupKey];
+    expandedTdotGroups = {
+      ...expandedTdotGroups,
+      [groupKey]: nextVal
+    };
+    isTdotAllExpanded = Object.values(expandedTdotGroups).some(Boolean);
+  }
+
+  function toggleTdotSlotDetail(courseId: string, e: MouseEvent) {
+    e.stopPropagation();
+    expandedTdotSlotIds = {
+      ...expandedTdotSlotIds,
+      [courseId]: !expandedTdotSlotIds[courseId]
+    };
+  }
+
   let courses = $state<Course[]>([]);
   let teachers = $state<Teacher[]>([]);
   let rooms = $state<Room[]>([]);
@@ -304,12 +343,22 @@
     }
   }
 
+  function getEffectiveGridHour(course: Course): number {
+    const h = parseInt(course.startTime.split(':')[0], 10);
+    if (isOpenDayCourse(course)) {
+      if (h >= 9 && h <= 14) return 9;
+      if (h === 15) return 15;
+      if (h >= 16 && h <= 18) return 16;
+    }
+    return h;
+  }
+
   // Retrieve displaying hours dynamically to hide empty hours but show scheduled and core ones
   function getDisplayedHours(currentCourses: Course[]): number[] {
     const defaultHours = [6, 7, 9, 16, 19, 20, 21];
     const activeHours = new Set<number>();
     currentCourses.forEach(c => {
-      const h = parseInt(c.startTime.split(':')[0], 10);
+      const h = getEffectiveGridHour(c);
       if (!isNaN(h)) {
         activeHours.add(h);
       }
@@ -374,7 +423,7 @@
     return courses
       .filter(c => c.dayOfWeek === day)
       .filter(c => {
-        const startHour = parseInt(c.startTime.split(':')[0], 10);
+        const startHour = getEffectiveGridHour(c);
         return startHour === hour;
       })
       .filter(c => selectedRoomFilter === 'all' || c.roomId === selectedRoomFilter)
@@ -1202,11 +1251,25 @@
       {@const currentWeekCode = currentPlan?.targetWeekCode || getWeekCode(getMondayOfCurrentWeek())}
       {@const dayDateStr = getLocalDateForDay(currentWeekCode, day.value)}
       {@const isYlaWednesday = day.value === 3 && isDateInYlaRange(dayDateStr)}
-      <div class="grid-header-cell day-header" class:header-today={isToday} class:header-schweigetag={isYlaWednesday}>
+      {@const isOpenDaySaturday = day.value === 6 && dayDateStr === '2026-10-24'}
+      <div class="grid-header-cell day-header" class:header-today={isToday} class:header-schweigetag={isYlaWednesday} class:header-tdot={isOpenDaySaturday}>
         {#if isYlaWednesday}
           <div class="schweigetag-pill" title="Schweigen bis 12 Uhr wegen YLA">
             <div class="schweigetag-pill-title">🤫 Schweigetag</div>
             <div class="schweigetag-pill-sub">Schweigen bis 12 Uhr wegen YLA</div>
+          </div>
+        {/if}
+        {#if isOpenDaySaturday}
+          <div class="tdot-header-pill">
+            <span class="tdot-header-title">🚪 Tag d. offenen Tür</span>
+            <button
+              type="button"
+              class="tdot-header-toggle-btn"
+              onclick={toggleTdotAll}
+              title={isTdotAllExpanded ? 'Programm kompakt einklappen' : 'Alle Slots des Tags der offenen Tür aufklappen'}
+            >
+              {isTdotAllExpanded ? '▴ Kompakt' : '▾ Aufklappen'}
+            </button>
           </div>
         {/if}
         <span class="day-label-short">{day.label.substring(0, 2)}</span>
@@ -1229,9 +1292,102 @@
       </div>
       
       {#each DAYS as day}
+        {@const currentWeekCode = currentPlan?.targetWeekCode || getWeekCode(getMondayOfCurrentWeek())}
+        {@const dayDateStr = getLocalDateForDay(currentWeekCode, day.value)}
+        {@const isOpenDaySaturday = day.value === 6 && dayDateStr === '2026-10-24'}
         {@const coursesInSlot = getFilteredCoursesForHour(day.value, hour)}
-        <div class="grid-content-cell">
-          {#each coursesInSlot as course}
+        <div class="grid-content-cell" class:tdot-column-cell={isOpenDaySaturday}>
+          {#if isOpenDaySaturday}
+            {@const primaryCourses = coursesInSlot.filter(c => {
+              if (hour === 9) return c.startTime < '10:00' || selectedTeacherFilter !== 'all' || selectedRoomFilter !== 'all';
+              if (hour === 15) return selectedTeacherFilter !== 'all' || selectedRoomFilter !== 'all';
+              return true;
+            })}
+            {@const collapsibleCourses = coursesInSlot.filter(c => {
+              if (hour === 9) return c.startTime >= '10:00' && selectedTeacherFilter === 'all' && selectedRoomFilter === 'all';
+              if (hour === 15) return selectedTeacherFilter === 'all' && selectedRoomFilter === 'all';
+              return false;
+            })}
+            {@const groupKey = `tdot-hour-${hour}`}
+            {@const isGroupOpen = !!expandedTdotGroups[groupKey]}
+            {@const visibleTdotCourses = isGroupOpen ? coursesInSlot : primaryCourses}
+
+            {#each visibleTdotCourses as course}
+              {@const cardColors = getCourseColor(course)}
+              {@const roomObj = rooms.find(r => r.id === course.roomId)}
+              {@const isBuffet = isBuffetSlot(course)}
+              {@const isSlotExpanded = !!expandedTdotSlotIds[course.id]}
+              {@const teacherName = getTeacherDisplayName(course.teacherId, course.teacherName)}
+              <!-- svelte-ignore a11y_click_events_have_key_events -->
+              <!-- svelte-ignore a11y_no_static_element_interactions -->
+              <div
+                class="tdot-mini-card"
+                class:tdot-unassigned={(!course.teacherId || course.teacherId === 'teacher-gen-yl') && !isBuffet}
+                style="background-color: {cardColors.bg}; border-left: 3.5px solid {cardColors.border};"
+                onclick={() => openEditModal(course)}
+                title="{course.startTime} - {course.endTime}: {course.name} — Klicken zum Bearbeiten / Einteilen"
+              >
+                <div class="tdot-mini-main">
+                  <span class="tdot-mini-time">{course.startTime}</span>
+                  <span class="tdot-mini-title">{course.name}</span>
+                  <button
+                    type="button"
+                    class="tdot-mini-expand-btn"
+                    onclick={(e) => toggleTdotSlotDetail(course.id, e)}
+                    title={isSlotExpanded ? 'Details einklappen' : 'Details aufklappen'}
+                  >
+                    {isSlotExpanded ? '▴' : '▾'}
+                  </button>
+                </div>
+                <div class="tdot-mini-sub">
+                  <span class="tdot-mini-room">📍 {roomObj?.name ? roomObj.name.split(' ')[0] : course.roomId}</span>
+                  {#if isBuffet}
+                    <span class="tdot-mini-teacher" style="color: #3f6212;">🍽️ Buffet</span>
+                  {:else}
+                    <span class="tdot-mini-teacher">👤 {teacherName}</span>
+                  {/if}
+                </div>
+                {#if isSlotExpanded}
+                  <div class="tdot-mini-details">
+                    <div>⏰ <strong>{course.startTime} – {course.endTime} Uhr</strong></div>
+                    <div>📌 <strong>{course.name}</strong></div>
+                    <div>📍 Raum: {roomObj?.name || course.roomId}</div>
+                    {#if !isBuffet}
+                      <div class="tdot-mini-assign-hint">✏️ Klicken zum Bearbeiten ({teacherName})</div>
+                    {/if}
+                  </div>
+                {/if}
+              </div>
+            {/each}
+
+            {#if collapsibleCourses.length > 0}
+              {@const assignedInGroup = collapsibleCourses.filter(c => (c.teacherId && c.teacherId !== 'teacher-gen-yl') || isBuffetSlot(c)).length}
+              <button
+                type="button"
+                class="tdot-group-toggle-btn"
+                class:is-open={isGroupOpen}
+                onclick={(e) => toggleTdotGroup(groupKey, e)}
+              >
+                <span class="tdot-group-toggle-left">
+                  <span>🚪</span>
+                  <span>
+                    {#if isGroupOpen}
+                      {hour === 9 ? '10:00–15:00 Programm einklappen' : '15:00–16:15 Programm einklappen'}
+                    {:else}
+                      {hour === 9 ? `+ ${collapsibleCourses.length} Slots (10:00–15:00)` : `+ ${collapsibleCourses.length} Slots (15:00–16:15)`}
+                    {/if}
+                  </span>
+                </span>
+                <span class="tdot-group-toggle-right">
+                  {#if !isGroupOpen}
+                    <span class="tdot-group-count-pill">{assignedInGroup}/{collapsibleCourses.length}</span>
+                  {/if}
+                  <span class="tdot-group-chevron">{isGroupOpen ? '▴' : '▾'}</span>
+                </span>
+              </button>
+            {/if}
+          {:else}
+            {#each coursesInSlot as course}
             {@const cardColors = getCourseColor(course)}
             {@const roomObj = rooms.find(r => r.id === course.roomId)}
             {@const teacherObj = teachers.find(t => t.id === course.teacherId)}
@@ -1317,6 +1473,7 @@
               </div>
             {/if}
           {/each}
+          {/if}
         </div>
       {/each}
     {/each}
@@ -2003,6 +2160,224 @@
     min-height: 48px;
     font-family: inherit;
     border-top: 3px solid #8fd1f2; /* Cyan/blue accent top border from Rapla screenshot */
+  }
+
+  .header-tdot {
+    background: #fffbeb !important;
+    border-top: 3px solid #d97706 !important;
+  }
+
+  .tdot-header-pill {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 4px;
+    background: linear-gradient(135deg, #fef3c7, #fde68a);
+    border: 1px solid #f59e0b;
+    border-radius: 6px;
+    padding: 2px 5px;
+    margin-bottom: 3px;
+    width: 96%;
+    box-sizing: border-box;
+  }
+
+  .tdot-header-title {
+    font-size: 0.65rem;
+    font-weight: 800;
+    color: #92400e;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .tdot-header-toggle-btn {
+    background: #ffffff;
+    border: 1px solid #d97706;
+    color: #92400e;
+    border-radius: 4px;
+    font-size: 0.62rem;
+    font-weight: 800;
+    padding: 1px 5px;
+    cursor: pointer;
+    white-space: nowrap;
+    font-family: inherit;
+    transition: all 0.15s ease;
+  }
+
+  .tdot-header-toggle-btn:hover {
+    background: #d97706;
+    color: #ffffff;
+  }
+
+  .tdot-column-cell {
+    gap: 3px !important;
+    padding: 3px !important;
+    background: #fffdf9 !important;
+  }
+
+  .tdot-mini-card {
+    padding: 3px 6px;
+    border-radius: 5px;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    font-size: 0.72rem;
+    line-height: 1.2;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+  }
+
+  .tdot-mini-card:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+  }
+
+  .tdot-mini-card.tdot-unassigned {
+    border-style: dashed;
+    border-color: #ef4444;
+  }
+
+  .tdot-mini-main {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    width: 100%;
+  }
+
+  .tdot-mini-time {
+    font-size: 0.66rem;
+    font-weight: 800;
+    color: #475569;
+    flex-shrink: 0;
+  }
+
+  .tdot-mini-title {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: #1e293b;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .tdot-mini-expand-btn {
+    background: rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    border-radius: 3px;
+    font-size: 0.62rem;
+    line-height: 1;
+    padding: 1px 4px;
+    cursor: pointer;
+    color: #475569;
+    flex-shrink: 0;
+  }
+
+  .tdot-mini-expand-btn:hover {
+    background: #ffffff;
+    color: #0f172a;
+  }
+
+  .tdot-mini-sub {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 4px;
+    margin-top: 1px;
+    font-size: 0.65rem;
+    color: #475569;
+  }
+
+  .tdot-mini-room {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 48%;
+    opacity: 0.85;
+  }
+
+  .tdot-mini-teacher {
+    font-weight: 700;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 52%;
+  }
+
+  .tdot-mini-details {
+    margin-top: 4px;
+    padding-top: 4px;
+    border-top: 1px dashed rgba(0, 0, 0, 0.15);
+    font-size: 0.68rem;
+    color: #334155;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    white-space: normal;
+  }
+
+  .tdot-mini-assign-hint {
+    color: #c2410c;
+    font-weight: 700;
+    margin-top: 2px;
+  }
+
+  .tdot-group-toggle-btn {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 4px 6px;
+    border-radius: 5px;
+    border: 1px dashed #d97706;
+    background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+    color: #92400e;
+    font-size: 0.68rem;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.15s ease;
+    text-align: left;
+  }
+
+  .tdot-group-toggle-btn:hover {
+    background: #fde68a;
+    border-style: solid;
+  }
+
+  .tdot-group-toggle-btn.is-open {
+    background: #f8fafc;
+    border-color: #94a3b8;
+    color: #475569;
+  }
+
+  .tdot-group-toggle-left {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .tdot-group-toggle-right {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+  }
+
+  .tdot-group-count-pill {
+    background: rgba(217, 119, 6, 0.15);
+    color: #92400e;
+    padding: 0px 4px;
+    border-radius: 999px;
+    font-size: 0.62rem;
+    font-weight: 800;
+  }
+
+  .tdot-group-chevron {
+    font-size: 0.7rem;
   }
 
   .week-header {
