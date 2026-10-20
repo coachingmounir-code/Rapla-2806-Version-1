@@ -9,7 +9,7 @@ import fs from 'fs';
 //   console.error('[PREPLANNING ERROR] Failed compiling rules:', e);
 // }
 
-import { db, SPECIAL_SCHULUNG_COURSES } from './rapla-frontend/src/lib/db.ts';
+import { db, SPECIAL_SCHULUNG_COURSES, OPEN_DAY_2026_W44_SATURDAY_COURSES } from './rapla-frontend/src/lib/db.ts';
 import { runAiPlanning } from './rapla-frontend/src/lib/planningEngine.ts';
 import { EXCEL_ABSENCES } from './rapla-frontend/src/lib/excel_absences.ts';
 
@@ -139,8 +139,12 @@ function planWeekWithAbsences(weekCode: string, standardCourses: any[]) {
   console.log(`======================================================`);
 
   // Build working courses from standard week (excluding Pranayama during 4-week YLA: 30.08.2026 - 27.09.2026)
+  // For 2026-W44, Saturday (dayOfWeek === 6) is completely replaced by Tag der offenen Tür (OPEN_DAY_2026_W44_SATURDAY_COURSES)
   const courses = standardCourses
     .filter(c => {
+      if (weekCode === '2026-W44' && c.dayOfWeek === 6) {
+        return false;
+      }
       const isPranayama = c.name.toLowerCase().includes('pranayama') || c.style.toLowerCase().includes('pranayama');
       if (isPranayama) {
         const courseDate = getLocalDateForDay(weekCode, c.dayOfWeek);
@@ -262,6 +266,13 @@ function planWeekWithAbsences(weekCode: string, standardCourses: any[]) {
 
   // Run AI Planning - CORRECT PARAMETER ORDER: runAiPlanning(courses, teachers, seminarLeaderIds, targetWeekCode, customConstraints, absences)
   const result = runAiPlanning(courses, teachers, [], weekCode, customConstraintsForWeek, sevafreiList);
+
+  if (weekCode === '2026-W44') {
+    for (const openDayCourse of OPEN_DAY_2026_W44_SATURDAY_COURSES) {
+      result.plannedCourses.push({ ...openDayCourse });
+    }
+    console.log(`[OPEN DAY] Added ${OPEN_DAY_2026_W44_SATURDAY_COURSES.length} Tag der offenen Tür courses for Saturday 24.10.2026 (2026-W44).`);
+  }
   
   result.plannedCourses.sort((a, b) => {
     if (a.dayOfWeek !== b.dayOfWeek) return a.dayOfWeek - b.dayOfWeek;
@@ -449,7 +460,7 @@ function getNext8WeekCodes(): string[] {
   return weeks;
 }
 
-const weeksToPlan = ["2026-W41", "2026-W42", "2026-W43"];
+const weeksToPlan = ["2026-W41", "2026-W42", "2026-W43", "2026-W44"];
 console.log(`[PREPLANNING] Planning for the next 8 weeks: ${weeksToPlan.join(', ')}`);
 
 const results: Record<string, any[]> = {};

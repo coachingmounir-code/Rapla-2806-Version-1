@@ -176,7 +176,7 @@ export function validateAssignment(
   const isSatsangForSevaka = courseNameLower.includes('satsang') && !courseNameLower.includes('einführung') && !courseNameLower.includes('einfuehrung');
   const isSatsangEinfuehrungForSevaka = courseNameLower.includes('satsang') && (courseNameLower.includes('einführung') || courseNameLower.includes('einfuehrung'));
   const isEntspannungForSevaka = courseStyleLower.includes('entspannung') || courseNameLower.includes('entspannung') || courseNameLower.includes('spaziergang');
-  const isSonstigesForSevaka = courseStyleLower.includes('sonstiges') || courseStyleLower.includes('schulung') || courseNameLower.includes('schulung') || courseNameLower.includes('hausführung') || courseNameLower.includes('hausfuehrung');
+  const isSonstigesForSevaka = courseStyleLower.includes('sonstiges') || courseStyleLower.includes('buffet') || courseStyleLower.includes('schulung') || courseNameLower.includes('schulung') || courseNameLower.includes('hausführung') || courseNameLower.includes('hausfuehrung') || courseNameLower.includes('rezeption') || courseNameLower.includes('infopoint') || courseNameLower.includes('yoga-shop') || courseNameLower.includes('begrüßung') || courseNameLower.includes('ausbildung') || courseNameLower.includes('mantra-singen');
   const isYogaClassForSevaka = !isMeditationForSevaka && !isSatsangForSevaka && !isSatsangEinfuehrungForSevaka && !isOnnForSevaka && !isEntspannungForSevaka && !isSonstigesForSevaka;
 
   // Complete exclusion for Satyam
@@ -319,6 +319,18 @@ export function validateAssignment(
     if ((cIsSchulungTripura && oIsMittelstufeTripura) || (oIsSchulungTripura && cIsMittelstufeTripura)) {
       // In harmony: Mittelstufenstunde in Tripura is part of the Schulung in Tripura!
       return false;
+    }
+
+    // Check harmony for Tag der offenen Tür 10:00-18:00 stations ("nicht während der Yogastunden")
+    const cIsOpenDayStation = course.name.toLowerCase().includes('nicht während der yogastunden') || ['rezeption', 'infopoint', 'yoga-shop'].includes((course.roomId || '').toLowerCase());
+    const oIsOpenDayStation = other.name.toLowerCase().includes('nicht während der yogastunden') || ['rezeption', 'infopoint', 'yoga-shop'].includes((other.roomId || '').toLowerCase());
+    if ((cIsOpenDayStation && !oIsOpenDayStation) || (oIsOpenDayStation && !cIsOpenDayStation)) {
+      const otherCourse = cIsOpenDayStation ? other : course;
+      const otherStyle = (otherCourse.style || '').toLowerCase();
+      const otherName = (otherCourse.name || '').toLowerCase();
+      if (otherStyle === 'hatha' || otherName.includes('anfänger') || otherName.includes('mittelstufe') || otherName.includes('yoga')) {
+        return false;
+      }
     }
 
     return true;
@@ -594,7 +606,7 @@ export function validateAssignment(
 
   // 8.5 Hausführung rules
   const isHausfuehrung = courseNameLower.includes('hausführung') || courseNameLower.includes('hausfuehrung');
-  if (isHausfuehrung) {
+  if (isHausfuehrung && course.dayOfWeek !== 6) {
     const rules = (wochenplanRules as any).hausfuehrung;
     if (rules) {
       const isAllowed = rules.allowed.some((a: string) => teacherNameLower.includes(a));
@@ -869,9 +881,11 @@ export function runAiPlanning(
   
   // Find which courses need planning: either unassigned, marked for AI planning, targeted by customConstraints, or having an active absence (sevafrei/urlaub) for their pre-assigned teacher
   const coursesToPlan = workingCourses.filter(c => {
-    // Schulungen are manual/voluntary slots that do not need automatic AI teacher assignment
+    // Schulungen, Buffet slots, and Tag der offenen Tür manual slots do not need automatic AI teacher assignment
     const isSchulung = c.name.toLowerCase().includes('schulung') || (c.style && c.style.toLowerCase().includes('schulung'));
-    if (isSchulung) {
+    const isBuffet = c.name.toLowerCase().includes('buffet') || (c.style && c.style.toLowerCase().includes('buffet'));
+    const isTdot = (c.id || '').includes('-tdot-');
+    if (isSchulung || isBuffet || isTdot) {
       return false;
     }
     // Fixed agreements (firmly agreed with a teacher) are preserved and never overridden or cleared by AI
@@ -1551,6 +1565,10 @@ export function validateRoomRules(
   const nameLower = course.name.toLowerCase();
   const styleLower = course.style.toLowerCase();
 
+  if ((course.id || '').includes('-tdot-') || (targetWeekCode === '2026-W44' && course.dayOfWeek === 6)) {
+    return conflicts;
+  }
+
   const isBeginner = nameLower.includes('anfänger');
   const isIntermediate = nameLower.includes('mittelstufe');
   const isOnn = nameLower.includes('om namo') || nameLower.includes('narayanaya');
@@ -1678,6 +1696,9 @@ export function validateRoomRules(
 // Room auto-adjustment logic
 export function adjustRoomsForRules(courses: Course[], teachers: Teacher[], targetWeekCode?: string): Course[] {
   courses.forEach(course => {
+    if ((course.id || '').includes('-tdot-') || (targetWeekCode === '2026-W44' && course.dayOfWeek === 6)) {
+      return;
+    }
     const nameLower = course.name.toLowerCase();
     const styleLower = course.style.toLowerCase();
 

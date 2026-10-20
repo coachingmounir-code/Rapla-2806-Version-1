@@ -26,6 +26,64 @@
     return (isSivananda && isPuja) || id.includes('puja-sivananda');
   }
 
+  export function isBuffetSlot(course: Course | YlaTeacherWeekSlot): boolean {
+    if (!course) return false;
+    const name = (course.name || '').toLowerCase();
+    const style = ((course as Course).style || '').toLowerCase();
+    return name.includes('vollwert-buffet') || name.includes('vollwertbuffet') || style === 'buffet';
+  }
+
+  // Quick-assign modal state for assigning a person directly in Wochenplan
+  let assigningCourse = $state<Course | null>(null);
+  let assignSelectedTeacherId = $state<string | null>(null);
+  let assignCustomTeacherName = $state('');
+
+  function openAssignModal(course: Course | YlaTeacherWeekSlot) {
+    if ((course as any).isYla || isBuffetSlot(course)) return;
+    const c = course as Course;
+    assigningCourse = c;
+    assignSelectedTeacherId = c.teacherId || null;
+    const foundT = c.teacherId ? teachers.find(t => t.id === c.teacherId) : null;
+    assignCustomTeacherName = c.teacherName || (foundT ? foundT.name : '');
+  }
+
+  function saveAssignedTeacher() {
+    if (!assigningCourse || !currentPlan) return;
+    const customTrimmed = assignCustomTeacherName.trim();
+    const selectedT = teachers.find(t => t.id === assignSelectedTeacherId);
+    let finalId: string | null = assignSelectedTeacherId;
+    let finalName: string | undefined = customTrimmed
+      ? customTrimmed
+      : (selectedT ? selectedT.name : undefined);
+
+    if (!finalId && customTrimmed) {
+      const matched = teachers.find(t => t.name.toLowerCase() === customTrimmed.toLowerCase());
+      finalId = matched ? matched.id : `teacher-custom-${customTrimmed.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
+    }
+
+    const updatedCourse: Course = {
+      ...assigningCourse,
+      teacherId: finalId,
+      teacherName: finalName,
+      isAiPlanned: false,
+      isManuallyEdited: true
+    };
+
+    currentPlan.isManualOnly = true;
+    currentPlan.hasManualEdits = true;
+    currentPlan.lastEditedAt = new Date().toISOString();
+
+    const idx = currentPlan.courses.findIndex(c => c.id === updatedCourse.id);
+    if (idx !== -1) {
+      currentPlan.courses[idx] = updatedCourse;
+    }
+    db.updateWeekPlan(currentPlan);
+    assigningCourse = null;
+    loadData();
+    syncFeedback = `✅ Einteilung für "${updatedCourse.name}" gespeichert!`;
+    setTimeout(() => { syncFeedback = null; }, 3000);
+  }
+
   let courses = $state<Course[]>([]);
   let teachers = $state<Teacher[]>([]);
   let rooms = $state<Room[]>([]);
@@ -477,6 +535,13 @@
       };
     }
 
+    if (isBuffetSlot(course)) {
+      return {
+        bg: '#ecfccb', // fresh lime green for Vollwert-Buffet
+        border: '#65a30d'
+      };
+    }
+
     const nameLower = (course.name || '').toLowerCase();
     const styleLower = ((course as Course).style || '').toLowerCase();
 
@@ -496,7 +561,14 @@
       };
     }
     
-    if (nameLower.includes('hausführung')) {
+    if (
+      nameLower.includes('hausführung') ||
+      nameLower.includes('rezeption') ||
+      nameLower.includes('infopoint') ||
+      nameLower.includes('yoga-shop') ||
+      nameLower.includes('begrüßung') ||
+      nameLower.includes('ausbildung')
+    ) {
       return {
         bg: '#ecfeff', // cyan/teal (peacock/krishna vibe)
         border: '#06b6d4'
@@ -1108,13 +1180,18 @@
                       </div>
                     </div>
                   {:else}
+                    {@const isBuffet = isBuffetSlot(course)}
+                    <!-- svelte-ignore a11y_click_events_have_key_events -->
+                    <!-- svelte-ignore a11y_no_static_element_interactions -->
                     <div 
                       class="course-card-rapla" 
                       class:schulung-course-card={isSchulung}
                       class:highlighted-card={isHighlighted}
                       class:dimmed-card={selectedTeacher && !isHighlighted && !onlyMySlotsParam}
-                      class:unassigned-card={(!course.teacherId || course.teacherId === 'teacher-gen-yl') && !isSchulung}
-                      style="background-color: {colors.bg}; border-left: {isSchulung ? '5px solid #4338ca' : (isHighlighted ? '4px solid #ea580c' : '4px solid ' + colors.border)};"
+                      class:unassigned-card={(!course.teacherId || course.teacherId === 'teacher-gen-yl') && !isSchulung && !isBuffet}
+                      style="background-color: {colors.bg}; border-left: {isSchulung ? '5px solid #4338ca' : (isHighlighted ? '4px solid #ea580c' : '4px solid ' + colors.border)}; cursor: {isBuffet ? 'default' : 'pointer'};"
+                      onclick={() => !isBuffet && openAssignModal(course)}
+                      title={isBuffet ? 'Vollwert-Buffet im Speisesaal (Keine Personen-Einteilung)' : 'Klicken, um Person für diesen Slot einzuteilen'}
                     >
                       <div class="card-top-line">
                         <span class="card-time">{course.startTime} - {course.endTime}</span>
@@ -1124,9 +1201,15 @@
                         <span class="card-room">{roomName}</span>
                       </div>
                       <div class="card-title-line" class:schulung-title={isSchulung}>{course.name}</div>
-                      <div class="card-teacher-line">
-                        👤 {teacherName}
-                      </div>
+                      {#if isBuffet}
+                        <div class="card-teacher-line" style="color: #3f6212; font-weight: 600;">
+                          🍽️ Speisesaal
+                        </div>
+                      {:else}
+                        <div class="card-teacher-line">
+                          👤 {teacherName}
+                        </div>
+                      {/if}
                     </div>
                   {/if}
                 {/each}
@@ -1287,13 +1370,17 @@
                 </div>
               </div>
             {:else}
+              {@const isBuffet = isBuffetSlot(course)}
+              <!-- svelte-ignore a11y_click_events_have_key_events -->
+              <!-- svelte-ignore a11y_no_static_element_interactions -->
               <div 
                 class="mobile-agenda-card"
                 class:schulung-mobile-card={isSchulung}
                 class:highlighted-card={isHighlighted}
                 class:dimmed-card={selectedTeacher && !isHighlighted && !onlyMySlotsParam}
-                class:unassigned-card={(!course.teacherId || course.teacherId === 'teacher-gen-yl') && !isSchulung}
-                style="background-color: {colors.bg}; border-left: {isSchulung ? '6px solid #4338ca' : (isHighlighted ? '5px solid #ea580c' : '5px solid ' + colors.border)};"
+                class:unassigned-card={(!course.teacherId || course.teacherId === 'teacher-gen-yl') && !isSchulung && !isBuffet}
+                style="background-color: {colors.bg}; border-left: {isSchulung ? '6px solid #4338ca' : (isHighlighted ? '5px solid #ea580c' : '5px solid ' + colors.border)}; cursor: {isBuffet ? 'default' : 'pointer'};"
+                onclick={() => !isBuffet && openAssignModal(course)}
               >
                 <div class="agenda-time-room">
                   <span class="agenda-time">⏰ {course.startTime} - {course.endTime}</span>
@@ -1303,9 +1390,15 @@
                   <span class="agenda-room">{roomName}</span>
                 </div>
                 <h3 class="agenda-title" class:schulung-title={isSchulung}>{course.name}</h3>
-                <div class="agenda-teacher">
-                  👤 {teacherName}
-                </div>
+                {#if isBuffet}
+                  <div class="agenda-teacher" style="color: #3f6212; font-weight: 600;">
+                    🍽️ Speisesaal
+                  </div>
+                {:else}
+                  <div class="agenda-teacher">
+                    👤 {teacherName}
+                  </div>
+                {/if}
               </div>
             {/if}
           {/each}
@@ -1321,6 +1414,85 @@
       <button type="button" onclick={handleResetCurrentPlan} style="background: none; border: none; color: #3b82f6; cursor: pointer; text-decoration: underline; font-size: 0.8rem; padding: 0; font-family: inherit;">Aktuellen Plan auf Blanko-Vorlage zurücksetzen</button>
     {/if}
   </footer>
+
+  {#if assigningCourse}
+    <!-- svelte-ignore a11y_click_events_have_key_events -->
+    <!-- svelte-ignore a11y_no_static_element_interactions -->
+    <div style="position: fixed; inset: 0; background: rgba(15, 23, 42, 0.55); z-index: 2000; display: flex; align-items: center; justify-content: center; padding: 1rem;" onclick={() => assigningCourse = null}>
+      <!-- svelte-ignore a11y_click_events_have_key_events -->
+      <!-- svelte-ignore a11y_no_static_element_interactions -->
+      <div style="background: #ffffff; border-radius: 14px; max-width: 480px; width: 100%; padding: 1.5rem; box-shadow: 0 20px 40px rgba(0,0,0,0.2); border: 1px solid #fed7aa;" onclick={(e) => e.stopPropagation()}>
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+          <div>
+            <div style="font-size: 0.8rem; font-weight: 700; color: #ea580c; text-transform: uppercase;">Person einteilen</div>
+            <h3 style="margin: 0.2rem 0 0 0; font-size: 1.15rem; color: #1e293b;">{assigningCourse.name}</h3>
+            <div style="font-size: 0.85rem; color: #64748b; margin-top: 0.2rem;">
+              ⏰ {assigningCourse.startTime} – {assigningCourse.endTime} Uhr • 📍 {rooms.find(r => r.id === assigningCourse?.roomId)?.name || assigningCourse.roomId}
+            </div>
+          </div>
+          <button type="button" onclick={() => assigningCourse = null} style="background: none; border: none; font-size: 1.25rem; cursor: pointer; color: #64748b;">✕</button>
+        </div>
+
+        <div style="margin-bottom: 1rem;">
+          <label for="wp-assign-select" style="display: block; font-size: 0.85rem; font-weight: 700; color: #334155; margin-bottom: 0.4rem;">Person aus Liste auswählen:</label>
+          <select
+            id="wp-assign-select"
+            bind:value={assignSelectedTeacherId}
+            onchange={() => {
+              const t = teachers.find(item => item.id === assignSelectedTeacherId);
+              assignCustomTeacherName = t ? t.name : '';
+            }}
+            style="width: 100%; padding: 0.6rem 0.75rem; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 0.95rem; font-family: inherit;"
+          >
+            <option value={null}>-- Unbesetzt / Offen --</option>
+            <optgroup label="Sevakas (Kernteam)">
+              {#each sevakaTeachersList as t}
+                <option value={t.id}>🧘 {t.name}</option>
+              {/each}
+            </optgroup>
+            {#if karmaTeachersList.length > 0}
+              <optgroup label="Karma-Yogis & Gast-Seminarleiter">
+                {#each karmaTeachersList as t}
+                  <option value={t.id}>✨ {t.name}</option>
+                {/each}
+              </optgroup>
+            {/if}
+            {#if externalTeachersList.length > 0}
+              <optgroup label="Externe Yogalehrer">
+                {#each externalTeachersList as t}
+                  <option value={t.id}>👤 {t.name}</option>
+                {/each}
+              </optgroup>
+            {/if}
+          </select>
+        </div>
+
+        <div style="margin-bottom: 1.25rem;">
+          <label for="wp-assign-custom" style="display: block; font-size: 0.85rem; font-weight: 700; color: #334155; margin-bottom: 0.4rem;">Oder Name(n) frei eintragen / ergänzen:</label>
+          <input
+            id="wp-assign-custom"
+            type="text"
+            placeholder="z. B. Pranava oder mehrere Namen (Komma-getrennt)..."
+            bind:value={assignCustomTeacherName}
+            oninput={() => {
+              if (!assignCustomTeacherName.trim()) {
+                assignSelectedTeacherId = null;
+              } else {
+                const matched = teachers.find(t => t.name.toLowerCase() === assignCustomTeacherName.trim().toLowerCase());
+                if (matched) assignSelectedTeacherId = matched.id;
+              }
+            }}
+            style="width: 100%; padding: 0.6rem 0.75rem; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 0.95rem; font-family: inherit; box-sizing: border-box;"
+          />
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 0.75rem;">
+          <button type="button" onclick={() => assigningCourse = null} style="padding: 0.55rem 1rem; border-radius: 8px; border: 1px solid #cbd5e1; background: #f8fafc; color: #475569; font-weight: 600; cursor: pointer;">Abbrechen</button>
+          <button type="button" onclick={saveAssignedTeacher} style="padding: 0.55rem 1.25rem; border-radius: 8px; border: none; background: linear-gradient(135deg, #ea580c, #c2410c); color: #ffffff; font-weight: 700; cursor: pointer;">Speichern</button>
+        </div>
+      </div>
+    </div>
+  {/if}
 </div>
 
 <style>

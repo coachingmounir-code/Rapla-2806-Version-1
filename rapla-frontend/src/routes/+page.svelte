@@ -13,44 +13,124 @@
 
   const defaultOpenDayProgram: OpenDayProgramItem[] = [
     {
-      id: '1',
+      id: 'tdot-1',
+      time: '09:15 - 10:15',
+      title: 'Gemeinsame Stunde für alle Gäste',
+      instructor: 'Offen',
+      room: 'Radhakrishna',
+      description: 'Gemeinsame Yogastunde am Morgen für alle Hausgäste'
+    },
+    {
+      id: 'tdot-2',
+      time: '10:30 - 11:00',
+      title: 'Hausführung',
+      instructor: 'Offen',
+      room: 'Treffpunkt Rezeption',
+      description: 'Rundgang durch das Haus Yoga Vidya Nordsee'
+    },
+    {
+      id: 'tdot-3',
+      time: '11:00 - 11:30',
+      title: 'Begrüßung, Einführung in den Tag, Mantra-Singen',
+      instructor: 'Offen',
+      room: 'Radhakrishna',
+      description: 'Herzliches Willkommen, Vorstellung des Tagesprogramms und gemeinsames Mantra-Singen'
+    },
+    {
+      id: 'tdot-4',
       time: '11:00 - 12:00',
-      title: 'Hausführung & Begrüßung',
-      instructor: 'Karuna M. Wapke',
-      room: 'Foyer / Rezeption',
-      description: 'Herzlicher Empfang, Hausrundgang durch das Haus Yoga Vidya Nordsee & Vorstellung des Tagesablaufs'
+      title: 'Vollwert-Buffet (vegan/vegetarisch, Bio)',
+      instructor: 'Keine Einteilung',
+      room: 'Speisesaal',
+      description: 'Reichhaltiges biologisches Vollwert-Buffet'
     },
     {
-      id: '2',
-      time: '14:00 - 15:00',
-      title: 'Lachyoga-Stunde mit Antje',
-      instructor: 'Antje',
-      room: 'Shanti Raum',
-      description: 'Befreiendes Lachen, Atem- & Lachyoga-Übungen für pure Freude, Leichtigkeit und neue Lebensenergie'
+      id: 'tdot-5',
+      time: '12:00 - 13:30',
+      title: 'Yogastunde – Sanft / Anfänger',
+      instructor: 'Offen',
+      room: 'Radhakrishna',
+      description: 'Sanfte Hatha-Yogastunde für Einsteiger und Genießer'
     },
     {
-      id: '3',
-      time: '15:30 - 16:45',
-      title: 'Hatha Yoga Schnupperstunde (für alle Level)',
-      instructor: 'Sevaka-Team',
-      room: 'Großer Übungsraum',
-      description: 'Sanfte Asanas, Pranayama und geführte Tiefenentspannung'
+      id: 'tdot-6',
+      time: '12:00 - 13:30',
+      title: 'Yogastunde – Mittelstufe',
+      instructor: 'Offen',
+      room: 'Tripura',
+      description: 'Klassische Yoga Vidya Mittelstufenstunde'
     },
     {
-      id: '4',
-      time: '17:00 - 18:00',
-      title: 'Vortrag: Yoga als Lebensweg',
-      instructor: 'Karuna M. Wapke',
-      room: 'Satsang-Raum',
-      description: 'Einführung in die ganzheitliche Yoga-Philosophie, Meditation & gesunde Lebensführung'
+      id: 'tdot-7',
+      time: '14:00 - 14:45',
+      title: 'Entspannung (Body Scan) & Meditation',
+      instructor: 'Offen',
+      room: 'Tripura',
+      description: 'Geführte Tiefenentspannung mit Body Scan und anschließender Meditation'
     },
     {
-      id: '5',
-      time: '20:00 - 21:30',
-      title: 'Gemeinsamer Satsang & Kirtan',
-      instructor: 'Ashram Team',
-      room: 'Satsang-Raum',
-      description: 'Meditation, Mantrasingen, Friedensgebete & traditionelles Arati'
+      id: 'tdot-8',
+      time: '15:00 - 15:45',
+      title: 'Lachyoga',
+      instructor: 'Offen',
+      room: 'Tripura',
+      description: '45 Minuten Lachyoga im Tripura-Raum für Freude und Leichtigkeit'
+    },
+    {
+      id: 'tdot-9',
+      time: '16:00 - 16:30',
+      title: 'Hausführung',
+      instructor: 'Offen',
+      room: 'Treffpunkt Rezeption',
+      description: 'Nachmittags-Führung durch den Ashram'
+    },
+    {
+      id: 'tdot-10',
+      time: '16:30 - 18:00',
+      title: 'Klangyoga – Mittelstufe',
+      instructor: 'Offen',
+      room: 'Radhakrishna',
+      description: 'Yogastunde begleitet von heilsamen Klängen'
+    },
+    {
+      id: 'tdot-11',
+      time: '16:30 - 18:00',
+      title: 'Yogastunde – Anfänger',
+      instructor: 'Offen',
+      room: 'Tripura',
+      description: 'Hatha Yoga Grundstunde für Anfänger'
+    },
+    {
+      id: 'tdot-12',
+      time: '18:00 - 19:00',
+      title: 'Vollwert-Buffet (vegan/vegetarisch, Bio)',
+      instructor: 'Keine Einteilung',
+      room: 'Speisesaal',
+      description: 'Abendliches biologisches Vollwert-Buffet'
+    },
+    {
+      id: 'tdot-13',
+      time: '19:00 - 19:30',
+      title: 'Information Modelle Yoga-Ausbildung',
+      instructor: 'Offen',
+      room: 'Radhakrishna',
+      description: 'Vorstellung der verschiedenen Modelle der Yoga Vidya Yogalehrer-Ausbildung'
+    },
+    {
+      id: 'tdot-14',
+      time: '20:00 - 22:00',
+      title: 'Satsang – gemeinsames Meditieren, Mantrasingen, Lichtzeremonie',
+      instructor: 'Offen',
+      room: 'Radhakrishna',
+      description: 'Stille Meditation, freudiges Kirtan-Singen und traditionelles Arati'
+    },
+    {
+      id: 'tdot-15',
+      time: '10:00 - 18:00',
+      title: 'Durchgehend: Rezeption / Infopoint / Yoga-Shop (nicht während der Yogastunden)',
+      instructor: 'Offen (jeweils separat im Wochenplan einteilbar)',
+      room: 'Rezeption / Infopoint / Yoga-Shop',
+      description: 'Beratung, Information und Stöbern im Yoga-Shop über den gesamten Tag'
     }
   ];
 

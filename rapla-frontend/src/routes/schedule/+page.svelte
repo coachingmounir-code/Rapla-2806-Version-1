@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount, untrack } from 'svelte';
-  import { db, generateTeacherId, SPECIAL_SCHULUNG_COURSES, type Course, type Teacher, type Room, type WeekPlan } from '$lib/db';
+  import { db, generateTeacherId, SPECIAL_SCHULUNG_COURSES, OPEN_DAY_2026_W44_SATURDAY_COURSES, type Course, type Teacher, type Room, type WeekPlan } from '$lib/db';
   import { validateAssignment, type ConflictMessage, getLocalDateForDay } from '$lib/planningEngine';
   import { EXCEL_ABSENCES } from '$lib/excel_absences';
   import { isDateInYlaRange } from '$lib/ylaData';
@@ -15,6 +15,13 @@
     const isSivananda = name.includes('sivananda') || name.includes('shivananda');
     const isPuja = name.includes('puja') || course.style === 'Puja';
     return (isSivananda && isPuja) || id.includes('puja-sivananda');
+  }
+
+  export function isBuffetSlot(course: Course): boolean {
+    if (!course) return false;
+    const name = (course.name || '').toLowerCase();
+    const style = (course.style || '').toLowerCase();
+    return name.includes('vollwert-buffet') || name.includes('vollwertbuffet') || style === 'buffet';
   }
 
   let courses = $state<Course[]>([]);
@@ -60,6 +67,7 @@
   let formEndTime = $state('10:30');
   let formRoomId = $state('');
   let formTeacherId = $state<string | null>(null);
+  let formCustomTeacherName = $state('');
   let formIsFixedAgreement = $state(false);
   let formAgreementNotes = $state('');
 
@@ -76,7 +84,7 @@
     { value: 4, label: 'Donnerstag' }
   ];
 
-  const YOGA_STYLES = ['Hatha', 'Vinyasa', 'Yin', 'Meditation', 'Entspannung', 'Power Yoga', 'Kundalini'];
+  const YOGA_STYLES = ['Hatha', 'Vinyasa', 'Yin', 'Meditation', 'Entspannung', 'Power Yoga', 'Kundalini', 'Sonstiges', 'Buffet', 'Schulung'];
 
   onMount(() => {
     loadData();
@@ -217,6 +225,13 @@
       };
     }
 
+    if (isBuffetSlot(course)) {
+      return {
+        bg: '#ecfccb', // fresh lime green for Vollwert-Buffet
+        border: '#65a30d'
+      };
+    }
+
     const nameLower = course.name.toLowerCase();
     const styleLower = course.style.toLowerCase();
     
@@ -235,7 +250,14 @@
       };
     }
     
-    if (nameLower.includes('hausführung')) {
+    if (
+      nameLower.includes('hausführung') ||
+      nameLower.includes('rezeption') ||
+      nameLower.includes('infopoint') ||
+      nameLower.includes('yoga-shop') ||
+      nameLower.includes('begrüßung') ||
+      nameLower.includes('ausbildung')
+    ) {
       return {
         bg: '#e0f2fe',
         border: '#38bdf8'
@@ -393,6 +415,7 @@
           targetWeekCode: weekCode,
           courses: template ? template.courses
             .filter(c => {
+              if (weekCode === '2026-W44' && c.dayOfWeek === 6) return false;
               const isPranayama = c.name.toLowerCase().includes('pranayama') || c.style.toLowerCase().includes('pranayama');
               if (isPranayama) {
                 const courseDate = getLocalDateForDay(weekCode, c.dayOfWeek);
@@ -415,6 +438,12 @@
             return { ...c, roomId, teacherId: null, isAiPlanned: false, status: 'draft' };
           }) : []
         };
+
+        if (weekCode === '2026-W44') {
+          for (const openDayCourse of OPEN_DAY_2026_W44_SATURDAY_COURSES) {
+            foundPlan.courses.push({ ...openDayCourse });
+          }
+        }
 
         const schulungenForWeek = SPECIAL_SCHULUNG_COURSES.filter(s => s.targetWeekCode === weekCode);
         for (const s of schulungenForWeek) {
@@ -602,6 +631,7 @@
     formEndTime = '10:30';
     formRoomId = rooms[0]?.id || '';
     formTeacherId = null;
+    formCustomTeacherName = '';
     formIsFixedAgreement = false;
     formAgreementNotes = '';
     isModalOpen = true;
@@ -616,6 +646,8 @@
     formEndTime = course.endTime;
     formRoomId = course.roomId;
     formTeacherId = course.teacherId;
+    const foundT = course.teacherId ? teachers.find(t => t.id === course.teacherId) : null;
+    formCustomTeacherName = course.teacherName || (foundT ? foundT.name : '');
     formIsFixedAgreement = course.isFixedAgreement || false;
     formAgreementNotes = course.agreementNotes || '';
     isModalOpen = true;
@@ -692,7 +724,19 @@
       if (!proceed) return;
     }
 
+    const isBuffetForm = formStyle.toLowerCase() === 'buffet' || formName.toLowerCase().includes('vollwert-buffet') || formName.toLowerCase().includes('vollwertbuffet');
     const selectedTeacher = teachers.find(t => t.id === formTeacherId);
+    const customNameTrimmed = formCustomTeacherName.trim();
+    let finalTeacherId: string | null = isBuffetForm ? null : formTeacherId;
+    let finalTeacherName: string | undefined = isBuffetForm
+      ? undefined
+      : (customNameTrimmed ? customNameTrimmed : (selectedTeacher ? selectedTeacher.name : undefined));
+
+    if (!isBuffetForm && !finalTeacherId && customNameTrimmed) {
+      const matchedByName = teachers.find(t => t.name.toLowerCase() === customNameTrimmed.toLowerCase());
+      finalTeacherId = matchedByName ? matchedByName.id : `teacher-custom-${customNameTrimmed.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
+    }
+
     const courseData: Course = {
       id: editingCourse?.id || 'course-' + Date.now(),
       name: formName,
@@ -701,8 +745,8 @@
       startTime: formStartTime,
       endTime: formEndTime,
       roomId: formRoomId,
-      teacherId: formTeacherId,
-      teacherName: selectedTeacher ? selectedTeacher.name : undefined,
+      teacherId: finalTeacherId,
+      teacherName: finalTeacherName,
       isAiPlanned: false,
       isManuallyEdited: true,
       status: editingCourse?.status || 'draft',
@@ -952,6 +996,7 @@
 
       if (assignToCurrentCourseOnSave) {
         formTeacherId = newTeacher.id;
+        formCustomTeacherName = newTeacher.name;
         syncFeedback = `✅ Person "${newTeacher.name}" erfolgreich in der Cloud gespeichert und dem aktuellen Kurs zugewiesen!`;
       } else {
         syncFeedback = `✅ Person "${newTeacher.name}" erfolgreich in der Cloud gespeichert und einsatzbereit!`;
@@ -1234,20 +1279,21 @@
               </div>
             {:else}
               {@const isSchulung = course.name.toLowerCase().includes('schulung') || (course.style && course.style.toLowerCase().includes('schulung'))}
+              {@const isBuffet = isBuffetSlot(course)}
               {@const isAgreed = course.isFixedAgreement}
               <div 
                 class="course-card-rapla" 
                 class:schulung-card={isSchulung}
                 class:is-agreed-card={isAgreed}
-                class:unassigned-card={(!course.teacherId || course.teacherId === 'teacher-gen-yl') && !isSchulung && !isAgreed}
+                class:unassigned-card={(!course.teacherId || course.teacherId === 'teacher-gen-yl') && !isSchulung && !isAgreed && !isBuffet}
                 style="background-color: {cardColors.bg}; border: 1px solid {cardColors.border}; border-left: {isAgreed ? '4px solid #e11d48' : (isSchulung ? '5px solid #4338ca' : '1px solid ' + cardColors.border)};"
                 onclick={() => openEditModal(course)}
-                title={isAgreed ? (course.agreementNotes ? `Fest vereinbarte Stunde:\n${course.agreementNotes}` : 'Fest vereinbarte Stunde (Klicken zum Bearbeiten)') : (hasHard ? courseConflicts.find(c => c.type === 'hard')?.message : '')}
+                title={isBuffet ? 'Vollwert-Buffet im Speisesaal (Keine Personen-Einteilung)' : (isAgreed ? (course.agreementNotes ? `Fest vereinbarte Stunde:\n${course.agreementNotes}` : 'Fest vereinbarte Stunde (Klicken zum Bearbeiten)') : (hasHard ? courseConflicts.find(c => c.type === 'hard')?.message : 'Klicken zum Einteilen / Bearbeiten'))}
               >
                 <!-- Top line: Time and Room -->
                 <div class="card-top-line">
                   <span class="card-time">{course.startTime} - {course.endTime}</span>
-                  <span class="card-room" style="color: {roomObj?.color}">{roomObj?.name ? roomObj.name.split(' ')[0] : ''}</span>
+                  <span class="card-room" style="color: {roomObj?.color}">{roomObj?.name ? roomObj.name.split(' ')[0] : course.roomId}</span>
                 </div>
                 
                 <!-- Middle line: Course Name -->
@@ -1259,9 +1305,15 @@
                 </div>
                 
                 <!-- Bottom line: Teacher Name -->
-                <div class="card-teacher-line" class:conflict-text={hasHard} title={hasHard ? courseConflicts.find(c => c.type === 'hard')?.message : ''}>
-                  {getTeacherDisplayName(course.teacherId, course.teacherName)}
-                </div>
+                {#if isBuffet}
+                  <div class="card-teacher-line" style="color: #3f6212; font-weight: 600;">
+                    🍽️ Speisesaal
+                  </div>
+                {:else}
+                  <div class="card-teacher-line" class:conflict-text={hasHard} title={hasHard ? courseConflicts.find(c => c.type === 'hard')?.message : ''}>
+                    {getTeacherDisplayName(course.teacherId, course.teacherName)}
+                  </div>
+                {/if}
               </div>
             {/if}
           {/each}
@@ -1434,72 +1486,105 @@
         </div>
 
         <div class="divider"></div>
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; flex-wrap: wrap; gap: 0.5rem;">
-          <div class="section-title" style="margin-bottom: 0;">👤 Yogalehrer-Zuweisung</div>
-          <button 
-            type="button" 
-            class="btn-quick-add-teacher"
-            onclick={() => openQuickAddPersonModal(true)}
-            title="Neue Person / Karma-Yogi anlegen und direkt diesem Kurs zuweisen"
-          >
-            <span>➕</span> Neue Person / Karma-Yogi anlegen
-          </button>
-        </div>
-
-        <div class="form-group">
-          <label class="form-label" for="assign-teacher">Yogalehrer auswählen:</label>
-          <select id="assign-teacher" class="form-select" bind:value={formTeacherId}>
-            <option value={null}>-- Unbesetzt (Später per KI einteilen) --</option>
-            <optgroup label="Sevakas (Kernteam)">
-              {#each teachers.filter(t => t.roleType === 'sevaka') as t}
-                <option value={t.id}>🧘 {t.name}</option>
-              {/each}
-            </optgroup>
-            {#if getActiveKarmaInHouseForCourse().length > 0}
-              <optgroup label="✨ Karma-Yogis & externe Seminarleiter (Aktuell im Haus)">
-                {#each getActiveKarmaInHouseForCourse() as t}
-                  <option value={t.id}>
-                    ✨ {t.name} ({t.roleType === 'guest_teacher' ? 'Gast-SL' : 'Karma-Yogi'} | {formatStayLabel(t)}{t.isYogaTeacher ? ' | Yoga ✓' : ''}{t.rules.canLeadMeditation ? ' | Medi ✓' : ''})
-                  </option>
-                {/each}
-              </optgroup>
-            {/if}
-            {#if getOtherKarmaGuestsForCourse().length > 0}
-              <optgroup label="⏳ Weitere Karma-Yogis & externe Seminarleiter (Anderes Zeitfenster)">
-                {#each getOtherKarmaGuestsForCourse() as t}
-                  <option value={t.id}>
-                    ⏳ {t.name} ({t.roleType === 'guest_teacher' ? 'Gast-SL' : 'Karma-Yogi'} | {formatStayLabel(t)})
-                  </option>
-                {/each}
-              </optgroup>
-            {/if}
-            <optgroup label="Externe Yogalehrer / Seminarleiter">
-              {#each teachers.filter(t => t.roleType !== 'sevaka' && t.roleType !== 'karma_yogi' && t.roleType !== 'guest_teacher' && !t.stayStartDate && !t.stayEndDate) as t}
-                <option value={t.id}>👤 {t.name}</option>
-              {/each}
-            </optgroup>
-          </select>
-        </div>
-
-        <!-- Live Validation Alert Box -->
-        {#if formTeacherId}
-          <div class="live-validation-box">
-            <h4>Planungsprüfung für den Lehrer:</h4>
-            {#if activeConflicts.length === 0}
-              <div class="validation-status status-ok">
-                <span>✓</span> Lehrer ist für diese Zuweisung voll qualifiziert und konfliktfrei verfügbar.
-              </div>
-            {:else}
-              <div class="validation-conflicts-list">
-                {#each activeConflicts as c}
-                  <div class="conflict-detail {c.type === 'hard' ? 'c-hard' : 'c-soft'}">
-                    <span>{c.type === 'hard' ? '🚨 Hartes Limit:' : '⚠️ Präferenz:'}</span>
-                    {c.message}
-                  </div>
-                {/each}
-              </div>
-            {/if}
+        {#if formStyle.toLowerCase() === 'buffet' || formName.toLowerCase().includes('vollwert-buffet') || formName.toLowerCase().includes('vollwertbuffet')}
+          <div style="background: #f7fee7; border: 1px solid #a3e635; color: #365314; padding: 0.85rem 1rem; border-radius: 8px; font-size: 0.9rem;">
+            <strong>🍽️ Vollwert-Buffet (Speisesaal):</strong> Für diesen Slot ist keine Personen-Einteilung vorgesehen.
           </div>
+        {:else}
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; flex-wrap: wrap; gap: 0.5rem;">
+            <div class="section-title" style="margin-bottom: 0;">👤 Personen- / Yogalehrer-Zuweisung</div>
+            <button 
+              type="button" 
+              class="btn-quick-add-teacher"
+              onclick={() => openQuickAddPersonModal(true)}
+              title="Neue Person / Karma-Yogi anlegen und direkt diesem Kurs zuweisen"
+            >
+              <span>➕</span> Neue Person / Karma-Yogi anlegen
+            </button>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="assign-teacher">Person aus Liste auswählen:</label>
+            <select
+              id="assign-teacher"
+              class="form-select"
+              bind:value={formTeacherId}
+              onchange={() => {
+                const t = teachers.find(item => item.id === formTeacherId);
+                formCustomTeacherName = t ? t.name : '';
+              }}
+            >
+              <option value={null}>-- Unbesetzt / Offen --</option>
+              <optgroup label="Sevakas (Kernteam)">
+                {#each teachers.filter(t => t.roleType === 'sevaka') as t}
+                  <option value={t.id}>🧘 {t.name}</option>
+                {/each}
+              </optgroup>
+              {#if getActiveKarmaInHouseForCourse().length > 0}
+                <optgroup label="✨ Karma-Yogis & externe Seminarleiter (Aktuell im Haus)">
+                  {#each getActiveKarmaInHouseForCourse() as t}
+                    <option value={t.id}>
+                      ✨ {t.name} ({t.roleType === 'guest_teacher' ? 'Gast-SL' : 'Karma-Yogi'} | {formatStayLabel(t)}{t.isYogaTeacher ? ' | Yoga ✓' : ''}{t.rules.canLeadMeditation ? ' | Medi ✓' : ''})
+                    </option>
+                  {/each}
+                </optgroup>
+              {/if}
+              {#if getOtherKarmaGuestsForCourse().length > 0}
+                <optgroup label="⏳ Weitere Karma-Yogis & externe Seminarleiter (Anderes Zeitfenster)">
+                  {#each getOtherKarmaGuestsForCourse() as t}
+                    <option value={t.id}>
+                      ⏳ {t.name} ({t.roleType === 'guest_teacher' ? 'Gast-SL' : 'Karma-Yogi'} | {formatStayLabel(t)})
+                    </option>
+                  {/each}
+                </optgroup>
+              {/if}
+              <optgroup label="Externe Yogalehrer / Seminarleiter">
+                {#each teachers.filter(t => t.roleType !== 'sevaka' && t.roleType !== 'karma_yogi' && t.roleType !== 'guest_teacher' && !t.stayStartDate && !t.stayEndDate) as t}
+                  <option value={t.id}>👤 {t.name}</option>
+                {/each}
+              </optgroup>
+            </select>
+          </div>
+
+          <div class="form-group" style="margin-top: 0.5rem;">
+            <label class="form-label" for="assign-teacher-custom">Oder Name(n) direkt eintragen / ergänzen:</label>
+            <input
+              id="assign-teacher-custom"
+              type="text"
+              class="form-input"
+              placeholder="z. B. Pranava oder mehrere Namen (Komma-getrennt)"
+              bind:value={formCustomTeacherName}
+              oninput={() => {
+                if (!formCustomTeacherName.trim()) {
+                  formTeacherId = null;
+                } else {
+                  const matched = teachers.find(t => t.name.toLowerCase() === formCustomTeacherName.trim().toLowerCase());
+                  if (matched) formTeacherId = matched.id;
+                }
+              }}
+            />
+          </div>
+
+          <!-- Live Validation Alert Box -->
+          {#if formTeacherId}
+            <div class="live-validation-box">
+              <h4>Planungsprüfung für den Lehrer:</h4>
+              {#if activeConflicts.length === 0}
+                <div class="validation-status status-ok">
+                  <span>✓</span> Lehrer ist für diese Zuweisung voll qualifiziert und konfliktfrei verfügbar.
+                </div>
+              {:else}
+                <div class="validation-conflicts-list">
+                  {#each activeConflicts as c}
+                    <div class="conflict-detail {c.type === 'hard' ? 'c-hard' : 'c-soft'}">
+                      <span>{c.type === 'hard' ? '🚨 Hartes Limit:' : '⚠️ Präferenz:'}</span>
+                      {c.message}
+                    </div>
+                  {/each}
+                </div>
+              {/if}
+            </div>
+          {/if}
         {/if}
 
         <div class="divider" style="margin: 1.25rem 0 1rem 0;"></div>
