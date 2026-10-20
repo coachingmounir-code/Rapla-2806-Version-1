@@ -13,6 +13,22 @@
 
   const defaultOpenDayProgram: OpenDayProgramItem[] = [
     {
+      id: 'tdot-0a',
+      time: '07:00 - 07:30',
+      title: 'Geführte Meditation',
+      instructor: 'Offen',
+      room: 'Tripura',
+      description: 'Morgendliche geführte Meditation'
+    },
+    {
+      id: 'tdot-0b',
+      time: '07:00 - 08:00',
+      title: 'Satsang',
+      instructor: 'Offen',
+      room: 'Radhakrishna',
+      description: 'Morgendlicher Satsang mit Meditation, Mantrasingen und Arati'
+    },
+    {
       id: 'tdot-1',
       time: '09:15 - 10:15',
       title: 'Gemeinsame Stunde für alle Gäste',
@@ -23,38 +39,38 @@
     {
       id: 'tdot-2',
       time: '10:30 - 11:00',
-      title: 'Hausführung',
+      title: 'Begrüßung',
       instructor: 'Offen',
-      room: 'Treffpunkt Rezeption',
-      description: 'Rundgang durch das Haus Yoga Vidya Nordsee'
+      room: 'Radhakrishna',
+      description: 'Herzliches Willkommen und Einführung in den Tag der offenen Tür'
     },
     {
       id: 'tdot-3',
-      time: '11:00 - 11:30',
-      title: 'Begrüßung, Einführung in den Tag, Mantra-Singen',
-      instructor: 'Offen',
-      room: 'Radhakrishna',
-      description: 'Herzliches Willkommen, Vorstellung des Tagesprogramms und gemeinsames Mantra-Singen'
-    },
-    {
-      id: 'tdot-4',
       time: '11:00 - 12:00',
-      title: 'Vollwert-Buffet (vegan/vegetarisch, Bio)',
+      title: 'Vollwert-Buffet',
       instructor: 'Keine Einteilung',
       room: 'Speisesaal',
       description: 'Reichhaltiges biologisches Vollwert-Buffet'
     },
     {
-      id: 'tdot-5',
-      time: '12:00 - 13:30',
-      title: 'Yogastunde – Sanft / Anfänger',
+      id: 'tdot-4',
+      time: '12:15 - 13:15',
+      title: 'Einführung in ganzheitliches Yoga mit Vorführung',
       instructor: 'Offen',
       room: 'Radhakrishna',
-      description: 'Sanfte Hatha-Yogastunde für Einsteiger und Genießer'
+      description: 'Einführung in das ganzheitliche Yoga mit praktischer Vorführung'
+    },
+    {
+      id: 'tdot-5',
+      time: '13:30 - 15:00',
+      title: 'Yogastunde – Anfänger',
+      instructor: 'Offen',
+      room: 'Radhakrishna',
+      description: 'Sanfte Hatha-Yogastunde für Einsteiger'
     },
     {
       id: 'tdot-6',
-      time: '12:00 - 13:30',
+      time: '13:30 - 15:00',
       title: 'Yogastunde – Mittelstufe',
       instructor: 'Offen',
       room: 'Tripura',
@@ -62,11 +78,11 @@
     },
     {
       id: 'tdot-7',
-      time: '14:00 - 14:45',
-      title: 'Entspannung (Body Scan) & Meditation',
+      time: '15:00 - 15:30',
+      title: 'Hausführung',
       instructor: 'Offen',
-      room: 'Tripura',
-      description: 'Geführte Tiefenentspannung mit Body Scan und anschließender Meditation'
+      room: 'Treffpunkt Rezeption',
+      description: 'Rundgang durch das Haus Yoga Vidya Nordsee'
     },
     {
       id: 'tdot-8',
@@ -74,15 +90,15 @@
       title: 'Lachyoga',
       instructor: 'Offen',
       room: 'Tripura',
-      description: '45 Minuten Lachyoga im Tripura-Raum für Freude und Leichtigkeit'
+      description: '45 Minuten Lachyoga im Tripura-Raum'
     },
     {
       id: 'tdot-9',
-      time: '16:00 - 16:30',
-      title: 'Hausführung',
+      time: '15:45 - 16:15',
+      title: 'Einführung in die Meditation',
       instructor: 'Offen',
-      room: 'Treffpunkt Rezeption',
-      description: 'Nachmittags-Führung durch den Ashram'
+      room: 'Radhakrishna',
+      description: 'Einführung und praktische Anleitung zur Meditation'
     },
     {
       id: 'tdot-10',
@@ -103,7 +119,7 @@
     {
       id: 'tdot-12',
       time: '18:00 - 19:00',
-      title: 'Vollwert-Buffet (vegan/vegetarisch, Bio)',
+      title: 'Vollwert-Buffet',
       instructor: 'Keine Einteilung',
       room: 'Speisesaal',
       description: 'Abendliches biologisches Vollwert-Buffet'
@@ -118,6 +134,14 @@
     },
     {
       id: 'tdot-14',
+      time: '19:30 - 20:00',
+      title: 'Mantra-Singen',
+      instructor: 'Offen',
+      room: 'Radhakrishna',
+      description: 'Gemeinsames Mantra-Singen im Radhakrishna-Raum'
+    },
+    {
+      id: 'tdot-15',
       time: '20:00 - 22:00',
       title: 'Satsang – gemeinsames Meditieren, Mantrasingen, Lichtzeremonie',
       instructor: 'Offen',
@@ -125,7 +149,7 @@
       description: 'Stille Meditation, freudiges Kirtan-Singen und traditionelles Arati'
     },
     {
-      id: 'tdot-15',
+      id: 'tdot-16',
       time: '10:00 - 18:00',
       title: 'Durchgehend: Rezeption / Infopoint / Yoga-Shop (nicht während der Yogastunden)',
       instructor: 'Offen (jeweils separat im Wochenplan einteilbar)',

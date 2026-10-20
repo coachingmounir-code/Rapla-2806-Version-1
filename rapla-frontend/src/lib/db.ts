@@ -979,6 +979,30 @@ export const SPECIAL_SCHULUNG_COURSES: SpecialSchulungCourse[] = [
 
 export const OPEN_DAY_2026_W44_SATURDAY_COURSES: Course[] = [
   {
+    id: 'course-2026-W44-tdot-gefuehrte-meditation',
+    name: 'Geführte Meditation',
+    style: 'Meditation',
+    dayOfWeek: 6,
+    startTime: '07:00',
+    endTime: '07:30',
+    roomId: 'room-5',
+    teacherId: null,
+    isAiPlanned: false,
+    status: 'approved'
+  },
+  {
+    id: 'course-2026-W44-tdot-satsang-morgen',
+    name: 'Satsang',
+    style: 'Meditation',
+    dayOfWeek: 6,
+    startTime: '07:00',
+    endTime: '08:00',
+    roomId: 'room-2',
+    teacherId: null,
+    isAiPlanned: false,
+    status: 'approved'
+  },
+  {
     id: 'course-2026-W44-tdot-gemeinsame-stunde',
     name: 'Gemeinsame Stunde für alle Gäste',
     style: 'Hatha',
@@ -1213,7 +1237,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
     createdAt: '2026-08-01T08:00:00.000Z'
   },
   // --- PREPLANNED WEEKS ---
-        {
+          {
     id: "plan-pre-2026-W41",
     name: "Vorplanung 2026-W41 (Automatisch)",
     status: "approved",
@@ -4215,6 +4239,30 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "status": "approved"
       },
       {
+        "id": "course-2026-W44-tdot-gefuehrte-meditation",
+        "name": "Geführte Meditation",
+        "style": "Meditation",
+        "dayOfWeek": 6,
+        "startTime": "07:00",
+        "endTime": "07:30",
+        "roomId": "room-5",
+        "teacherId": null,
+        "isAiPlanned": false,
+        "status": "approved"
+      },
+      {
+        "id": "course-2026-W44-tdot-satsang-morgen",
+        "name": "Satsang",
+        "style": "Meditation",
+        "dayOfWeek": 6,
+        "startTime": "07:00",
+        "endTime": "08:00",
+        "roomId": "room-2",
+        "teacherId": null,
+        "isAiPlanned": false,
+        "status": "approved"
+      },
+      {
         "id": "course-2026-W44-tdot-gemeinsame-stunde",
         "name": "Gemeinsame Stunde für alle Gäste",
         "style": "Hatha",
@@ -6229,7 +6277,7 @@ export function reconcilePlansWithDefaults(plans: WeekPlan[]): { plans: WeekPlan
   return { plans: list, hasChanges: beforeJson !== afterJson };
 }
 
-const CURRENT_DB_VERSION = 143;
+const CURRENT_DB_VERSION = 144;
 
 // Database Actions
 export const db = {

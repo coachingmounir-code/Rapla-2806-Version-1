@@ -2977,6 +2977,30 @@
         "status": "approved"
       },
       {
+        "id": "course-2026-W44-tdot-gefuehrte-meditation",
+        "name": "Geführte Meditation",
+        "style": "Meditation",
+        "dayOfWeek": 6,
+        "startTime": "07:00",
+        "endTime": "07:30",
+        "roomId": "room-5",
+        "teacherId": null,
+        "isAiPlanned": false,
+        "status": "approved"
+      },
+      {
+        "id": "course-2026-W44-tdot-satsang-morgen",
+        "name": "Satsang",
+        "style": "Meditation",
+        "dayOfWeek": 6,
+        "startTime": "07:00",
+        "endTime": "08:00",
+        "roomId": "room-2",
+        "teacherId": null,
+        "isAiPlanned": false,
+        "status": "approved"
+      },
+      {
         "id": "course-2026-W44-tdot-gemeinsame-stunde",
         "name": "Gemeinsame Stunde für alle Gäste",
         "style": "Hatha",
