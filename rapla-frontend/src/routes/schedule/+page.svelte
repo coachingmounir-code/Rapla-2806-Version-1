@@ -30,6 +30,24 @@
     return id.includes('-tdot-');
   }
 
+  export function isNormalOpenDaySlot(course: Course): boolean {
+    if (!course) return false;
+    const id = (course.id || '').toLowerCase();
+    const name = (course.name || '').toLowerCase();
+    if (
+      id === 'course-2026-w44-tdot-gefuehrte-meditation' ||
+      id === 'course-2026-w44-tdot-satsang-morgen' ||
+      id === 'course-2026-w44-tdot-gemeinsame-stunde' ||
+      id === 'course-2026-w44-tdot-satsang'
+    ) {
+      return true;
+    }
+    if (course.startTime === '07:00' && (name.includes('geführte meditation') || name.includes('satsang'))) return true;
+    if (course.startTime === '09:15' && name.includes('gemeinsame stunde')) return true;
+    if (course.startTime === '20:00' && name.includes('satsang')) return true;
+    return false;
+  }
+
   // Collapse/expand states for Tag der offenen Tür (Saturday 24.10.2026)
   let isTdotAllExpanded = $state(false);
   let expandedTdotGroups = $state<Record<string, boolean>>({});
@@ -1318,46 +1336,89 @@
               {@const isBuffet = isBuffetSlot(course)}
               {@const isSlotExpanded = !!expandedTdotSlotIds[course.id]}
               {@const teacherName = getTeacherDisplayName(course.teacherId, course.teacherName)}
-              <!-- svelte-ignore a11y_click_events_have_key_events -->
-              <!-- svelte-ignore a11y_no_static_element_interactions -->
-              <div
-                class="tdot-mini-card"
-                class:tdot-unassigned={(!course.teacherId || course.teacherId === 'teacher-gen-yl') && !isBuffet}
-                style="background-color: {cardColors.bg}; border-left: 3.5px solid {cardColors.border};"
-                onclick={() => openEditModal(course)}
-                title="{course.startTime} - {course.endTime}: {course.name} — Klicken zum Bearbeiten / Einteilen"
-              >
-                <div class="tdot-mini-main">
-                  <span class="tdot-mini-time">{course.startTime}</span>
-                  <span class="tdot-mini-title">{course.name}</span>
-                  <button
-                    type="button"
-                    class="tdot-mini-expand-btn"
-                    onclick={(e) => toggleTdotSlotDetail(course.id, e)}
-                    title={isSlotExpanded ? 'Details einklappen' : 'Details aufklappen'}
-                  >
-                    {isSlotExpanded ? '▴' : '▾'}
-                  </button>
-                </div>
-                <div class="tdot-mini-sub">
-                  <span class="tdot-mini-room">📍 {roomObj?.name ? roomObj.name.split(' ')[0] : course.roomId}</span>
-                  {#if isBuffet}
-                    <span class="tdot-mini-teacher" style="color: #3f6212;">🍽️ Buffet</span>
-                  {:else}
-                    <span class="tdot-mini-teacher">👤 {teacherName}</span>
-                  {/if}
-                </div>
-                {#if isSlotExpanded}
-                  <div class="tdot-mini-details">
-                    <div>⏰ <strong>{course.startTime} – {course.endTime} Uhr</strong></div>
-                    <div>📌 <strong>{course.name}</strong></div>
-                    <div>📍 Raum: {roomObj?.name || course.roomId}</div>
-                    {#if !isBuffet}
-                      <div class="tdot-mini-assign-hint">✏️ Klicken zum Bearbeiten ({teacherName})</div>
+              {#if isNormalOpenDaySlot(course)}
+                {@const isSchulung = course.name.toLowerCase().includes('schulung') || (course.style && course.style.toLowerCase().includes('schulung'))}
+                {@const isAgreed = course.isFixedAgreement}
+                {@const courseConflicts = getCourseConflicts(course)}
+                {@const hasHard = courseConflicts.some(c => c.type === 'hard')}
+                <!-- svelte-ignore a11y_click_events_have_key_events -->
+                <!-- svelte-ignore a11y_no_static_element_interactions -->
+                <div 
+                  class="course-card-rapla" 
+                  class:schulung-card={isSchulung}
+                  class:is-agreed-card={isAgreed}
+                  class:unassigned-card={(!course.teacherId || course.teacherId === 'teacher-gen-yl') && !isSchulung && !isAgreed && !isBuffet}
+                  style="background-color: {cardColors.bg}; border: 1px solid {cardColors.border}; border-left: {isAgreed ? '4px solid #e11d48' : (isSchulung ? '5px solid #4338ca' : '1px solid ' + cardColors.border)};"
+                  onclick={() => openEditModal(course)}
+                  title={isBuffet ? 'Vollwert-Buffet im Speisesaal (Keine Personen-Einteilung)' : (isAgreed ? (course.agreementNotes ? `Fest vereinbarte Stunde:\n${course.agreementNotes}` : 'Fest vereinbarte Stunde (Klicken zum Bearbeiten)') : (hasHard ? courseConflicts.find(c => c.type === 'hard')?.message : 'Klicken zum Einteilen / Bearbeiten'))}
+                >
+                  <!-- Top line: Time and Room -->
+                  <div class="card-top-line">
+                    <span class="card-time">{course.startTime} - {course.endTime}</span>
+                    <span class="card-room" style="color: {roomObj?.color}">{roomObj?.name ? roomObj.name.split(' ')[0] : course.roomId}</span>
+                  </div>
+                  
+                  <!-- Middle line: Course Name -->
+                  <div class="card-title-line" class:schulung-title={isSchulung}>
+                    {course.name}
+                    {#if course.agreementNotes}
+                      <span class="note-indicator-dot" title="Notiz zur Vereinbarung: {course.agreementNotes}">📝</span>
                     {/if}
                   </div>
-                {/if}
-              </div>
+                  
+                  <!-- Bottom line: Teacher Name -->
+                  {#if isBuffet}
+                    <div class="card-teacher-line" style="color: #3f6212; font-weight: 600;">
+                      🍽️ Speisesaal
+                    </div>
+                  {:else}
+                    <div class="card-teacher-line" class:conflict-text={hasHard} title={hasHard ? courseConflicts.find(c => c.type === 'hard')?.message : ''}>
+                      {teacherName}
+                    </div>
+                  {/if}
+                </div>
+              {:else}
+                <!-- svelte-ignore a11y_click_events_have_key_events -->
+                <!-- svelte-ignore a11y_no_static_element_interactions -->
+                <div
+                  class="tdot-mini-card"
+                  class:tdot-unassigned={(!course.teacherId || course.teacherId === 'teacher-gen-yl') && !isBuffet}
+                  style="background-color: {cardColors.bg}; border-left: 3.5px solid {cardColors.border};"
+                  onclick={() => openEditModal(course)}
+                  title="{course.startTime} - {course.endTime}: {course.name} — Klicken zum Bearbeiten / Einteilen"
+                >
+                  <div class="tdot-mini-main">
+                    <span class="tdot-mini-time">{course.startTime}</span>
+                    <span class="tdot-mini-title">{course.name}</span>
+                    <button
+                      type="button"
+                      class="tdot-mini-expand-btn"
+                      onclick={(e) => toggleTdotSlotDetail(course.id, e)}
+                      title={isSlotExpanded ? 'Details einklappen' : 'Details aufklappen'}
+                    >
+                      {isSlotExpanded ? '▴' : '▾'}
+                    </button>
+                  </div>
+                  <div class="tdot-mini-sub">
+                    <span class="tdot-mini-room">📍 {roomObj?.name ? roomObj.name.split(' ')[0] : course.roomId}</span>
+                    {#if isBuffet}
+                      <span class="tdot-mini-teacher" style="color: #3f6212;">🍽️ Buffet</span>
+                    {:else}
+                      <span class="tdot-mini-teacher">👤 {teacherName}</span>
+                    {/if}
+                  </div>
+                  {#if isSlotExpanded}
+                    <div class="tdot-mini-details">
+                      <div>⏰ <strong>{course.startTime} – {course.endTime} Uhr</strong></div>
+                      <div>📌 <strong>{course.name}</strong></div>
+                      <div>📍 Raum: {roomObj?.name || course.roomId}</div>
+                      {#if !isBuffet}
+                        <div class="tdot-mini-assign-hint">✏️ Klicken zum Bearbeiten ({teacherName})</div>
+                      {/if}
+                    </div>
+                  {/if}
+                </div>
+              {/if}
             {/each}
 
             {#if collapsibleCourses.length > 0}
