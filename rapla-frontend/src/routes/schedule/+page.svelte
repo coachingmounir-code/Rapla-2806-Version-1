@@ -537,7 +537,6 @@
     
     if (currentPlan) {
       const weekCode = currentPlan.targetWeekCode || getWeekCode(getMondayOfCurrentWeek());
-      const sevafreiList = cachedAbsences;
       
       courses = currentPlan.courses
         .filter(c => {
@@ -548,54 +547,7 @@
             if (isDateInYlaRange(courseDate)) return false;
           }
           return true;
-        })
-        .map(c => {
-        if (!c.teacherId) return c;
-        const teacher = teachers.find(t => t.id === c.teacherId);
-        if (!teacher) return c;
-        
-        const courseDate = getLocalDateForDay(weekCode, c.dayOfWeek);
-        
-        // Support composite teacher names (e.g. "Adam, Anjali")
-        const namesToCheck: string[] = [];
-        if (teacher.name.includes(',')) {
-          teacher.name.split(',').forEach(n => namesToCheck.push(n.trim().toLowerCase()));
-        } else {
-          namesToCheck.push(teacher.name.toLowerCase().trim());
-        }
-        
-        let isAbsent = false;
-        for (const name of namesToCheck) {
-          const activeAbsence = sevafreiList.find((entry: any) => {
-            if (!entry) return false;
-            const rawName = entry.teacherName || entry.excelName || '';
-            const entryName = rawName.toLowerCase().trim();
-            const isMatch = entryName.includes(name) || name.includes(entryName.split(' ')[0]);
-            return isMatch && courseDate >= entry.startDate && courseDate <= entry.endDate;
-          });
-          if (activeAbsence) {
-            const isSatsang = c.name.toLowerCase().includes('satsang');
-            const isBypassedType = ['seminartage'].includes(activeAbsence.type.toLowerCase());
-            const isWalk = c.name.toLowerCase().includes('spaziergang');
-            const isPranava = teacher.name.toLowerCase().includes('pranava');
-            const isRegularFreeDay = activeAbsence.type?.toLowerCase() === 'frei' || (activeAbsence.note && activeAbsence.note.toLowerCase().includes('regulärer freier wochentag'));
-
-            if (isSatsang && isBypassedType) {
-              // Bypassed for Satsangs
-            } else if (isWalk && isPranava && isRegularFreeDay) {
-              // Pranava standardmäßig für meditativen Spaziergang eingeteilt
-            } else {
-              isAbsent = true;
-              break;
-            }
-          }
-        }
-        
-        if (isAbsent && (c.isAiPlanned || !c.isManuallyEdited)) {
-          return { ...c, teacherId: null };
-        }
-        return c;
-      });
+        });
     } else {
       courses = [];
     }
@@ -677,15 +629,16 @@
 
   function toggleSeminarLeader(teacherId: string) {
     if (!currentPlan) return;
-    const currentLeaders = currentPlan.seminarLeaderIds || [];
+    const latestPlan = db.getWeekPlan(currentPlan.id) || currentPlan;
+    const currentLeaders = latestPlan.seminarLeaderIds || [];
     if (currentLeaders.includes(teacherId)) {
-      currentPlan.seminarLeaderIds = currentLeaders.filter(id => id !== teacherId);
+      latestPlan.seminarLeaderIds = currentLeaders.filter(id => id !== teacherId);
     } else {
-      currentPlan.seminarLeaderIds = [...currentLeaders, teacherId];
+      latestPlan.seminarLeaderIds = [...currentLeaders, teacherId];
     }
-    currentPlan.hasManualEdits = true;
-    currentPlan.lastEditedAt = new Date().toISOString();
-    db.updateWeekPlan(currentPlan);
+    latestPlan.hasManualEdits = true;
+    latestPlan.lastEditedAt = new Date().toISOString();
+    db.updateWeekPlan(latestPlan);
     loadData();
   }
 
@@ -721,25 +674,17 @@
   }
 
   function saveCourseDirectly(courseData: Course) {
+    const nowIso = new Date().toISOString();
+    const stampedCourse: Course = {
+      ...courseData,
+      isManuallyEdited: true,
+      isAiPlanned: false,
+      lastEditedAt: nowIso
+    };
     if (currentPlan) {
-      currentPlan.isManualOnly = true;
-      currentPlan.hasManualEdits = true;
-      currentPlan.lastEditedAt = new Date().toISOString();
-      
-      const courseIndex = currentPlan.courses.findIndex(c => c.id === courseData.id);
-      if (courseIndex !== -1) {
-        currentPlan.courses[courseIndex] = courseData;
-      } else {
-        currentPlan.courses.push(courseData);
-      }
-
-      if (!db.getWeekPlan(currentPlan.id)) {
-        db.addWeekPlan(currentPlan);
-      } else {
-        db.updateWeekPlan(currentPlan);
-      }
+      db.upsertCourseInWeekPlan(currentPlan.id, stampedCourse, currentPlan);
     } else {
-      db.updateCourse(courseData);
+      db.updateCourse(stampedCourse);
     }
     loadData();
   }
@@ -804,6 +749,7 @@
       finalTeacherId = matchedByName ? matchedByName.id : `teacher-custom-${customNameTrimmed.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
     }
 
+    const nowIso = new Date().toISOString();
     const courseData: Course = {
       id: editingCourse?.id || 'course-' + Date.now(),
       name: formName,
@@ -816,28 +762,14 @@
       teacherName: finalTeacherName,
       isAiPlanned: false,
       isManuallyEdited: true,
-      status: editingCourse?.status || 'draft',
+      lastEditedAt: nowIso,
+      status: (currentPlan?.isApproved || currentPlan?.status === 'approved') ? 'approved' : (editingCourse?.status || 'draft'),
       isFixedAgreement: formIsFixedAgreement,
       agreementNotes: formAgreementNotes ? formAgreementNotes.trim() : undefined
     };
 
     if (currentPlan) {
-      currentPlan.isManualOnly = true;
-      currentPlan.hasManualEdits = true;
-      currentPlan.lastEditedAt = new Date().toISOString();
-      
-      const courseIndex = currentPlan.courses.findIndex(c => c.id === courseData.id);
-      if (courseIndex !== -1) {
-        currentPlan.courses[courseIndex] = courseData;
-      } else {
-        currentPlan.courses.push(courseData);
-      }
-
-      if (!db.getWeekPlan(currentPlan.id)) {
-        db.addWeekPlan(currentPlan);
-      } else {
-        db.updateWeekPlan(currentPlan);
-      }
+      db.upsertCourseInWeekPlan(currentPlan.id, courseData, currentPlan);
     } else {
       if (editingCourse) {
         db.updateCourse(courseData);
@@ -853,19 +785,7 @@
   function handleDelete(id: string) {
     if (confirm('Möchten Sie diesen Kurs wirklich löschen?')) {
       if (currentPlan) {
-        currentPlan.isManualOnly = true;
-        currentPlan.hasManualEdits = true;
-        currentPlan.lastEditedAt = new Date().toISOString();
-        if (!currentPlan.deletedCourseIds) currentPlan.deletedCourseIds = [];
-        if (!currentPlan.deletedCourseIds.includes(id)) {
-          currentPlan.deletedCourseIds.push(id);
-        }
-        currentPlan.courses = currentPlan.courses.filter(c => c.id !== id);
-        if (!db.getWeekPlan(currentPlan.id)) {
-          db.addWeekPlan(currentPlan);
-        } else {
-          db.updateWeekPlan(currentPlan);
-        }
+        db.removeCourseFromWeekPlan(currentPlan.id, id, currentPlan);
       } else {
         db.deleteCourse(id);
       }
@@ -919,23 +839,23 @@
 
   function togglePublishPlan(approved: boolean) {
     if (!currentPlan) return;
-    const monday = getMondayOfCurrentWeek();
-    const weekCode = currentPlan.targetWeekCode || getWeekCode(monday);
+    const latestPlan = db.getWeekPlan(currentPlan.id) || currentPlan;
+    const nowIso = new Date().toISOString();
     
-    currentPlan.isApproved = approved;
-    currentPlan.status = approved ? 'approved' : 'draft';
-    (currentPlan as any).manuallyUnapproved = !approved;
-    currentPlan.hasManualEdits = true;
-    currentPlan.lastEditedAt = new Date().toISOString();
+    latestPlan.isApproved = approved;
+    latestPlan.status = approved ? 'approved' : 'draft';
+    (latestPlan as any).manuallyUnapproved = !approved;
+    latestPlan.hasManualEdits = true;
+    latestPlan.lastEditedAt = nowIso;
     
     if (approved) {
-      currentPlan.courses = currentPlan.courses.map(c => ({ ...c, status: 'approved' }));
+      latestPlan.courses = latestPlan.courses.map(c => ({ ...c, status: 'approved', lastEditedAt: c.lastEditedAt || nowIso }));
     }
     
-    if (!db.getWeekPlan(currentPlan.id)) {
-      db.addWeekPlan(currentPlan);
+    if (!db.getWeekPlan(latestPlan.id)) {
+      db.addWeekPlan(latestPlan);
     } else {
-      db.updateWeekPlan(currentPlan);
+      db.updateWeekPlan(latestPlan);
     }
     
     window.dispatchEvent(new CustomEvent('rapla-data-synced'));
@@ -949,12 +869,6 @@
     if (isSyncing) return;
     isSyncing = true;
     try {
-      if (currentPlan && (currentPlan.hasManualEdits || currentPlan.isManualOnly)) {
-        if (!currentPlan.lastEditedAt) {
-          currentPlan.lastEditedAt = new Date().toISOString();
-        }
-        db.updateWeekPlan(currentPlan);
-      }
       await db.syncWithServerAndCloud();
       loadData();
       syncFeedback = '✅ Daten erfolgreich synchronisiert! Alle manuellen Änderungen bleiben erhalten.';
@@ -1105,10 +1019,12 @@
           checked={currentPlan.isManualOnly || false} 
           onchange={(e) => {
             if(currentPlan) {
-              currentPlan.isManualOnly = e.currentTarget.checked;
-              currentPlan.hasManualEdits = true;
-              currentPlan.lastEditedAt = new Date().toISOString();
-              db.updateWeekPlan(currentPlan);
+              const latestPlan = db.getWeekPlan(currentPlan.id) || currentPlan;
+              latestPlan.isManualOnly = e.currentTarget.checked;
+              latestPlan.hasManualEdits = true;
+              latestPlan.lastEditedAt = new Date().toISOString();
+              db.updateWeekPlan(latestPlan);
+              loadData();
             }
           }}
           style="accent-color: #ea580c;"

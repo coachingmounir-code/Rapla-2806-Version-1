@@ -684,9 +684,6 @@
     currentPlan = foundPlan || null;
     
     if (approved && currentPlan) {
-      // Dynamically filter out absent teachers & remove Pranayama during YLA
-      const sevafreiList = [...db.getSevafrei(), ...EXCEL_ABSENCES];
-      
       courses = currentPlan.courses
         .filter(c => {
           if (c.isManuallyEdited) return true;
@@ -698,54 +695,7 @@
             return false;
           }
           return true;
-        })
-        .map(c => {
-        if (!c.teacherId) return c;
-        const teacher = teachers.find(t => t.id === c.teacherId);
-        if (!teacher) return c;
-        
-        const courseDate = getLocalDateForDay(weekCode, c.dayOfWeek);
-        
-        // Support composite teacher names (e.g. "Adam, Anjali")
-        const namesToCheck: string[] = [];
-        if (teacher.name.includes(',')) {
-          teacher.name.split(',').forEach(n => namesToCheck.push(n.trim().toLowerCase()));
-        } else {
-          namesToCheck.push(teacher.name.toLowerCase().trim());
-        }
-        
-        let isAbsent = false;
-        for (const name of namesToCheck) {
-          const activeAbsence = sevafreiList.find((entry: any) => {
-            if (!entry) return false;
-            const rawName = entry.teacherName || entry.excelName || '';
-            const entryName = rawName.toLowerCase().trim();
-            const isMatch = entryName.includes(name) || name.includes(entryName.split(' ')[0]);
-            return isMatch && courseDate >= entry.startDate && courseDate <= entry.endDate;
-          });
-          if (activeAbsence) {
-            const isSatsang = c.name.toLowerCase().includes('satsang');
-            const isBypassedType = ['seminartage'].includes(activeAbsence.type.toLowerCase());
-            const isWalk = c.name.toLowerCase().includes('spaziergang');
-            const isPranava = teacher.name.toLowerCase().includes('pranava');
-            const isRegularFreeDay = activeAbsence.type?.toLowerCase() === 'frei' || (activeAbsence.note && activeAbsence.note.toLowerCase().includes('regulärer freier wochentag'));
-
-            if (isSatsang && isBypassedType) {
-              // Bypassed for Satsangs
-            } else if (isWalk && isPranava && isRegularFreeDay) {
-              // Pranava standardmäßig für meditativen Spaziergang eingeteilt
-            } else {
-              isAbsent = true;
-              break;
-            }
-          }
-        }
-        
-        if (isAbsent && (c.isAiPlanned || !c.isManuallyEdited)) {
-          return { ...c, teacherId: null };
-        }
-        return c;
-      });
+        });
     } else {
       courses = [];
     }

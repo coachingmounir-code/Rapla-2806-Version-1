@@ -463,25 +463,39 @@ function getNext8WeekCodes(): string[] {
 const weeksToPlan = ["2026-W41", "2026-W42", "2026-W43", "2026-W44"];
 console.log(`[PREPLANNING] Planning for the next 8 weeks: ${weeksToPlan.join(', ')}`);
 
+const existingWeekPlans = db.getWeekPlans();
 const results: Record<string, any[]> = {};
 for (const week of weeksToPlan) {
-  results[week] = planWeekWithAbsences(week, standardCourses);
+  const existingPlan = existingWeekPlans.find(p => p.targetWeekCode === week);
+  if (existingPlan && (existingPlan.hasManualEdits || existingPlan.isManualOnly || existingPlan.isApproved || existingPlan.status === 'approved')) {
+    console.log(`[PREPLANNING] Preserving existing approved/manually-edited plan for ${week} (${existingPlan.courses.length} courses).`);
+    results[week] = existingPlan.courses;
+  } else {
+    results[week] = planWeekWithAbsences(week, standardCourses);
+  }
 }
 
 // Let's print out the exact TS code structure to put into db.ts
 function formatPlanCoursesCode(courses: any[]): string {
   const lines = courses.map(c => {
+    const extraFields: string[] = [];
+    if (c.teacherName) extraFields.push(`        "teacherName": ${JSON.stringify(c.teacherName)}`);
+    if (c.isManuallyEdited !== undefined) extraFields.push(`        "isManuallyEdited": ${Boolean(c.isManuallyEdited)}`);
+    if (c.lastEditedAt) extraFields.push(`        "lastEditedAt": ${JSON.stringify(c.lastEditedAt)}`);
+    if (c.isFixedAgreement) extraFields.push(`        "isFixedAgreement": true`);
+    if (c.agreementNotes) extraFields.push(`        "agreementNotes": ${JSON.stringify(c.agreementNotes)}`);
+    const extraStr = extraFields.length > 0 ? ',\n' + extraFields.join(',\n') : '';
     return `      {
         "id": "${c.id}",
-        "name": "${c.name}",
-        "style": "${c.style}",
+        "name": ${JSON.stringify(c.name)},
+        "style": ${JSON.stringify(c.style)},
         "dayOfWeek": ${c.dayOfWeek},
         "startTime": "${c.startTime}",
         "endTime": "${c.endTime}",
         "roomId": "${c.roomId}",
         "teacherId": ${c.teacherId ? `"${c.teacherId}"` : 'null'},
-        "isAiPlanned": ${c.isAiPlanned},
-        "status": "approved"
+        "isAiPlanned": ${Boolean(c.isAiPlanned)},
+        "status": "approved"${extraStr}
       }`;
   });
   return '[\n' + lines.join(',\n') + '\n    ]';

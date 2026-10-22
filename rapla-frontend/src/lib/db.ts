@@ -176,6 +176,7 @@ export interface Course {
   isAiPlanned: boolean;
   status: 'draft' | 'approved';
   isManuallyEdited?: boolean;
+  lastEditedAt?: string; // ISO timestamp of the latest manual or approved edit to this individual course
   isFixedAgreement?: boolean; // Slot is firmly agreed upon (e.g. fixed recurring agreement with teacher)
   agreementNotes?: string;   // Notes / context for this agreed slot
 }
@@ -1242,7 +1243,11 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
     name: "Vorplanung 2026-W41 (Automatisch)",
     status: "approved",
     isApproved: true,
+    isManualOnly: true,
+    hasManualEdits: true,
     targetWeekCode: "2026-W41",
+    lastEditedAt: "2026-10-22T18:56:03.136Z",
+    deletedCourseIds: ["course-2026-W41-44","course-2026-W41-36","course-2026-W41-45","course-2026-W41-43"],
     courses: [
       {
         "id": "course-2026-W41-21",
@@ -1254,7 +1259,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-burnie-bansemer",
         "isAiPlanned": true,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W41-22",
@@ -1264,9 +1270,11 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "07:00",
         "endTime": "07:30",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-harishakti",
+        "teacherId": "teacher-guest-1790942126763",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W41-23",
@@ -1276,21 +1284,25 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "07:00",
         "endTime": "08:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-burnie-bansemer",
+        "teacherId": "teacher-gen-anjali-gelzleichter",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W41-24",
-        "name": "Pavanmukt Asana",
+        "name": "Anfänger",
         "style": "Hatha",
         "dayOfWeek": 0,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-2",
-        "teacherId": "teacher-gen-burnie-bansemer",
+        "roomId": "room-4",
+        "teacherId": "teacher-gen-parashakti-kuettner",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W41-25",
@@ -1300,9 +1312,11 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "09:15",
         "endTime": "11:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-anjali-gelzleichter",
+        "teacherId": "teacher-gen-burnie-bansemer",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W41-26",
@@ -1314,7 +1328,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W41-27",
@@ -1324,9 +1339,11 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "16:30",
         "endTime": "18:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-karuna-wapke",
+        "teacherId": "teacher-gen-narayani-kedenburg",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W41-20",
@@ -1336,9 +1353,11 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "19:00",
         "endTime": "19:30",
         "roomId": "Rezeption",
-        "teacherId": "teacher-gen-christopher",
-        "isAiPlanned": true,
-        "status": "approved"
+        "teacherId": "teacher-gen-hu-buerkle",
+        "isAiPlanned": false,
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W41-28",
@@ -1348,9 +1367,11 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-burnie-narayani",
+        "teacherId": "teacher-gen-narayani-kedenburg",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W41-29",
@@ -1360,9 +1381,11 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "20:00",
         "endTime": "20:35",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-hu-buerkle",
-        "isAiPlanned": true,
-        "status": "approved"
+        "teacherId": "teacher-gen-christopher",
+        "isAiPlanned": false,
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W41-30",
@@ -1374,7 +1397,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W41-31",
@@ -1386,7 +1410,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-5",
         "teacherId": "teacher-gen-hu-buerkle",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W41-32",
@@ -1396,9 +1421,11 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "07:00",
         "endTime": "08:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-anjali-gelzleichter",
+        "teacherId": "teacher-gen-burnie-bansemer",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W41-33",
@@ -1410,7 +1437,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-burnie-bansemer",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W41-34",
@@ -1422,11 +1450,12 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-5",
         "teacherId": "teacher-gen-harishakti",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W41-35",
-        "name": "Anfänger Rückenstunde",
+        "name": "Gemeinsame Stunde",
         "style": "Hatha",
         "dayOfWeek": 1,
         "startTime": "16:15",
@@ -1434,19 +1463,23 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W41-36",
-        "name": "Mittelstufe",
+        "name": "Nichts",
         "style": "Hatha",
         "dayOfWeek": 1,
         "startTime": "16:15",
         "endTime": "18:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-chandrashekara",
-        "isAiPlanned": true,
-        "status": "approved"
+        "teacherId": "teacher-gen-yl",
+        "isAiPlanned": false,
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W41-37",
@@ -1458,7 +1491,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-nirmaya-fodor",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W41-38",
@@ -1470,7 +1504,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-narayani-kedenburg",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W41-39",
@@ -1479,10 +1514,12 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 1,
         "startTime": "21:10",
         "endTime": "22:00",
-        "roomId": "room-5",
+        "roomId": "room-2",
         "teacherId": "teacher-gen-pranava-pauly",
-        "isAiPlanned": true,
-        "status": "approved"
+        "isAiPlanned": false,
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W41-40",
@@ -1492,9 +1529,11 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "07:00",
         "endTime": "07:30",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-alexander-melior",
+        "teacherId": "teacher-guest-1790942126763",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W41-41",
@@ -1506,7 +1545,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-harishakti",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W41-42",
@@ -1518,43 +1558,22 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-harishakti",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
-        "id": "course-2026-W41-43",
-        "name": "Mittelstufe",
-        "style": "Hatha",
-        "dayOfWeek": 2,
-        "startTime": "09:15",
-        "endTime": "11:00",
-        "roomId": "room-5",
-        "teacherId": "teacher-gen-anjali-gelzleichter",
-        "isAiPlanned": false,
-        "status": "approved"
-      },
-      {
-        "id": "course-2026-W41-44",
-        "name": "Anfänger Yin Yoga",
+        "id": "course-2026-W41-45",
+        "name": "Gemeinsame Stunde",
         "style": "Hatha",
         "dayOfWeek": 2,
         "startTime": "16:15",
         "endTime": "18:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-abha-morkoetter",
-        "isAiPlanned": true,
-        "status": "approved"
-      },
-      {
-        "id": "course-2026-W41-45",
-        "name": "Mittelstufe",
-        "style": "Hatha",
-        "dayOfWeek": 2,
-        "startTime": "16:15",
-        "endTime": "18:00",
-        "roomId": "room-5",
         "teacherId": "teacher-gen-narayani-kedenburg",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W41-46",
@@ -1564,9 +1583,11 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-teresa-allgaeu",
-        "isAiPlanned": true,
-        "status": "approved"
+        "teacherId": "teacher-gen-mouniir-jaber",
+        "isAiPlanned": false,
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W41-47",
@@ -1578,7 +1599,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-7",
         "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W41-48",
@@ -1588,9 +1610,11 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "07:00",
         "endTime": "07:30",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-mouniir-jaber",
-        "isAiPlanned": true,
-        "status": "approved"
+        "teacherId": "teacher-guest-1790942126763",
+        "isAiPlanned": false,
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W41-49",
@@ -1602,7 +1626,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-narayani-kedenburg",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W41-50",
@@ -1612,9 +1637,11 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "09:15",
         "endTime": "11:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-alexander-melior",
+        "teacherId": "teacher-gen-burnie-bansemer",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W41-51",
@@ -1626,7 +1653,9 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-5",
         "teacherId": "teacher-gen-narayani-kedenburg",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W41-52",
@@ -1638,7 +1667,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-adam-zmuda",
         "isAiPlanned": true,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W41-53",
@@ -1650,7 +1680,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W41-54",
@@ -1662,7 +1693,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-6",
         "teacherId": "teacher-gen-hu-buerkle",
         "isAiPlanned": true,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W41-55",
@@ -1672,9 +1704,11 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "07:00",
         "endTime": "07:30",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-mouniir-jaber",
-        "isAiPlanned": true,
-        "status": "approved"
+        "teacherId": "teacher-guest-1790942126763",
+        "isAiPlanned": false,
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W41-56",
@@ -1686,7 +1720,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-alexander-melior",
         "isAiPlanned": true,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W41-57",
@@ -1696,9 +1731,11 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "09:15",
         "endTime": "11:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-alexander-melior",
+        "teacherId": "teacher-gen-nirmaya-fodor",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W41-58",
@@ -1708,9 +1745,11 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "09:15",
         "endTime": "11:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-chandrashekara",
-        "isAiPlanned": true,
-        "status": "approved"
+        "teacherId": "teacher-gen-alexander-melior",
+        "isAiPlanned": false,
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W41-schulung-yl-schulung--thema-1",
@@ -1722,7 +1761,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-5",
         "teacherId": null,
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W41-59",
@@ -1732,9 +1772,11 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "16:15",
         "endTime": "18:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-alexander-melior",
-        "isAiPlanned": true,
-        "status": "approved"
+        "teacherId": "teacher-gen-narayani-kedenburg",
+        "isAiPlanned": false,
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W41-60",
@@ -1744,9 +1786,11 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "16:15",
         "endTime": "18:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-nirmaya-fodor",
+        "teacherId": "teacher-gen-yl",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W41-61",
@@ -1758,7 +1802,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-harishakti",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W41-62",
@@ -1770,7 +1815,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W41-63",
@@ -1779,10 +1825,12 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 4,
         "startTime": "21:10",
         "endTime": "22:00",
-        "roomId": "room-5",
-        "teacherId": "teacher-gen-harishakti",
-        "isAiPlanned": true,
-        "status": "approved"
+        "roomId": "room-2",
+        "teacherId": "teacher-gen-burnie-bansemer",
+        "isAiPlanned": false,
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W41-2",
@@ -1792,9 +1840,11 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "07:00",
         "endTime": "07:30",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-pranava-pauly",
+        "teacherId": "teacher-gen-alexander-melior",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W41-3",
@@ -1806,7 +1856,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-nirmaya-fodor",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W41-4",
@@ -1818,7 +1869,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-5",
         "teacherId": "teacher-gen-harishakti",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W41-5",
@@ -1830,7 +1882,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W41-6",
@@ -1840,9 +1893,10 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "16:30",
         "endTime": "18:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-abha-morkoetter",
+        "teacherId": "teacher-gen-chandrashekara",
         "isAiPlanned": true,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W41-7",
@@ -1852,9 +1906,11 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "16:30",
         "endTime": "18:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-karuna-wapke",
+        "teacherId": "teacher-karma-irene",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W41-1",
@@ -1866,7 +1922,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "Rezeption",
         "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": true,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W41-8",
@@ -1876,21 +1933,11 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-adam-anjali",
+        "teacherId": "teacher-gen-anjali-gelzleichter",
         "isAiPlanned": false,
-        "status": "approved"
-      },
-      {
-        "id": "course-2026-W41-9",
-        "name": "Satsang Einführung",
-        "style": "Meditation",
-        "dayOfWeek": 5,
-        "startTime": "20:00",
-        "endTime": "20:35",
-        "roomId": "room-5",
-        "teacherId": "teacher-gen-pranava-pauly",
-        "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W41-10",
@@ -1902,7 +1949,21 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
+      },
+      {
+        "id": "course-2026-W41-9",
+        "name": "Satsang Einführung",
+        "style": "Meditation",
+        "dayOfWeek": 5,
+        "startTime": "20:00",
+        "endTime": "20:35",
+        "roomId": "room-5",
+        "teacherId": "teacher-gen-pranava-pauly",
+        "isAiPlanned": false,
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W41-11",
@@ -1912,9 +1973,11 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "06:00",
         "endTime": "06:50",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-abha-morkoetter",
-        "isAiPlanned": true,
-        "status": "approved"
+        "teacherId": "teacher-gen-karuna-wapke",
+        "isAiPlanned": false,
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W41-12",
@@ -1926,7 +1989,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-5",
         "teacherId": "teacher-gen-nirmaya-fodor",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W41-13",
@@ -1936,9 +2000,11 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "07:00",
         "endTime": "08:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-abha-morkoetter",
+        "teacherId": "teacher-gen-alexander-melior",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W41-14",
@@ -1947,10 +2013,12 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 6,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-2",
-        "teacherId": "teacher-gen-pranava-pauly",
+        "roomId": "room-4",
+        "teacherId": "teacher-gen-parashakti-kuettner",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W41-15",
@@ -1960,9 +2028,11 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "09:15",
         "endTime": "11:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-chandrashekara",
-        "isAiPlanned": true,
-        "status": "approved"
+        "teacherId": "teacher-gen-pranava-pauly",
+        "isAiPlanned": false,
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W41-16",
@@ -1971,10 +2041,12 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 6,
         "startTime": "16:15",
         "endTime": "18:00",
-        "roomId": "room-2",
-        "teacherId": "teacher-gen-yl",
+        "roomId": "room-4",
+        "teacherId": "teacher-gen-abha-morkoetter",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W41-17",
@@ -1983,10 +2055,12 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 6,
         "startTime": "16:15",
         "endTime": "18:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-anjali-gelzleichter",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W41-18",
@@ -1996,9 +2070,11 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-anjali-gelzleichter",
+        "teacherId": "teacher-gen-abha-morkoetter",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W41-19",
@@ -2010,17 +2086,22 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       }
     ],
-    createdAt: new Date().toISOString()
+    createdAt: "2026-08-29T10:03:59.366Z"
   },
   {
     id: "plan-pre-2026-W42",
     name: "Vorplanung 2026-W42 (Automatisch)",
     status: "approved",
     isApproved: true,
+    isManualOnly: true,
+    hasManualEdits: true,
     targetWeekCode: "2026-W42",
+    lastEditedAt: "2026-10-22T18:56:03.136Z",
+    deletedCourseIds: ["course-2026-W42-17","course-2026-W42-47"],
     courses: [
       {
         "id": "course-2026-W42-21",
@@ -2030,9 +2111,11 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "06:00",
         "endTime": "06:50",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-burnie-bansemer",
-        "isAiPlanned": true,
-        "status": "approved"
+        "teacherId": "teacher-gen-chandrashekara",
+        "isAiPlanned": false,
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W42-22",
@@ -2042,9 +2125,11 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "07:00",
         "endTime": "07:30",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-harishakti",
+        "teacherId": "teacher-guest-1790942126763",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W42-23",
@@ -2054,21 +2139,25 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "07:00",
         "endTime": "08:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-burnie-bansemer",
+        "teacherId": "teacher-gen-sukadev-bretz",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W42-24",
-        "name": "Pavanmukt Asana",
+        "name": "Anfänger Thema Glück",
         "style": "Hatha",
         "dayOfWeek": 0,
         "startTime": "09:15",
         "endTime": "11:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-burnie-bansemer",
+        "teacherId": "teacher-karma-devani",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W42-25",
@@ -2078,9 +2167,11 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "09:15",
         "endTime": "11:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-anjali-gelzleichter",
+        "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W42-26",
@@ -2090,9 +2181,11 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "16:30",
         "endTime": "18:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-pranava-pauly",
+        "teacherId": "teacher-gen-burnie-bansemer",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W42-27",
@@ -2102,9 +2195,11 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "16:30",
         "endTime": "18:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-karuna-wapke",
+        "teacherId": "teacher-gen-chandrashekara",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W42-20",
@@ -2114,9 +2209,11 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "19:00",
         "endTime": "19:30",
         "roomId": "Rezeption",
-        "teacherId": "teacher-gen-christopher",
-        "isAiPlanned": true,
-        "status": "approved"
+        "teacherId": "teacher-gen-mouniir-jaber",
+        "isAiPlanned": false,
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W42-28",
@@ -2126,9 +2223,11 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-teresa-allgaeu",
-        "isAiPlanned": true,
-        "status": "approved"
+        "teacherId": "teacher-guest-1791278735445",
+        "isAiPlanned": false,
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W42-29",
@@ -2138,9 +2237,11 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "20:00",
         "endTime": "20:35",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-pranava-pauly",
-        "isAiPlanned": true,
-        "status": "approved"
+        "teacherId": "teacher-gen-christopher",
+        "isAiPlanned": false,
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W42-30",
@@ -2152,7 +2253,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W42-31",
@@ -2164,7 +2266,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-5",
         "teacherId": "teacher-gen-hu-buerkle",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W42-32",
@@ -2174,9 +2277,11 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "07:00",
         "endTime": "08:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-anjali-gelzleichter",
+        "teacherId": "teacher-gen-burnie-bansemer",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W42-33",
@@ -2188,7 +2293,9 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-burnie-bansemer",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W42-34",
@@ -2198,21 +2305,26 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "09:15",
         "endTime": "11:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-harishakti",
+        "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W42-35",
-        "name": "Anfänger Rückenstunde",
+        "name": "Anfänger ",
         "style": "Hatha",
         "dayOfWeek": 1,
         "startTime": "16:15",
         "endTime": "18:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-pranava-pauly",
+        "teacherId": "teacher-karma-krishnajyoti",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Krishnajyoti",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W42-36",
@@ -2222,9 +2334,11 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "16:15",
         "endTime": "18:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-chandrashekara",
-        "isAiPlanned": true,
-        "status": "approved"
+        "teacherId": "teacher-gen-anjali-gelzleichter",
+        "isAiPlanned": false,
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W42-37",
@@ -2236,7 +2350,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-nirmaya-fodor",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W42-38",
@@ -2246,9 +2361,11 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "20:00",
         "endTime": "21:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-anjali-gelzleichter",
-        "isAiPlanned": true,
-        "status": "approved"
+        "teacherId": "teacher-gen-harishakti",
+        "isAiPlanned": false,
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W42-39",
@@ -2257,10 +2374,12 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 1,
         "startTime": "21:10",
         "endTime": "22:00",
-        "roomId": "room-5",
+        "roomId": "room-2",
         "teacherId": "teacher-gen-pranava-pauly",
-        "isAiPlanned": true,
-        "status": "approved"
+        "isAiPlanned": false,
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W42-40",
@@ -2270,9 +2389,11 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "07:00",
         "endTime": "07:30",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-alexander-melior",
+        "teacherId": "teacher-guest-1790942126763",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W42-41",
@@ -2282,9 +2403,11 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "07:00",
         "endTime": "08:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-harishakti",
+        "teacherId": "teacher-gen-alexander-melior",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W42-42",
@@ -2294,9 +2417,12 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "09:15",
         "endTime": "11:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-harishakti",
+        "teacherId": "teacher-karma-krishnajyoti",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Krishnajyoti",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W42-43",
@@ -2308,19 +2434,22 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-5",
         "teacherId": "teacher-gen-anjali-gelzleichter",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W42-44",
-        "name": "Anfänger Yin Yoga",
+        "name": "Anfänger",
         "style": "Hatha",
         "dayOfWeek": 2,
         "startTime": "16:15",
         "endTime": "18:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-alexander-melior",
-        "isAiPlanned": true,
-        "status": "approved"
+        "teacherId": "teacher-gen-narayani-kedenburg",
+        "isAiPlanned": false,
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W42-45",
@@ -2330,9 +2459,11 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "16:15",
         "endTime": "18:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-karuna-wapke",
-        "isAiPlanned": true,
-        "status": "approved"
+        "teacherId": "teacher-gen-alexander-melior",
+        "isAiPlanned": false,
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W42-46",
@@ -2342,12 +2473,14 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-chandrashekara",
-        "isAiPlanned": true,
-        "status": "approved"
+        "teacherId": "teacher-gen-mouniir-jaber",
+        "isAiPlanned": false,
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
-        "id": "course-2026-W42-47",
+        "id": "course-2026-W42-walk-tue",
         "name": "Meditativer Spaziergang",
         "style": "Entspannung",
         "dayOfWeek": 2,
@@ -2356,7 +2489,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-7",
         "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W42-48",
@@ -2366,9 +2500,11 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "07:00",
         "endTime": "07:30",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-mouniir-jaber",
-        "isAiPlanned": true,
-        "status": "approved"
+        "teacherId": "teacher-guest-1790942126763",
+        "isAiPlanned": false,
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W42-49",
@@ -2380,7 +2516,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-narayani-kedenburg",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W42-50",
@@ -2390,9 +2527,11 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "09:15",
         "endTime": "11:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-alexander-melior",
+        "teacherId": "teacher-gen-burnie-bansemer",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W42-51",
@@ -2404,7 +2543,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-5",
         "teacherId": "teacher-gen-narayani-kedenburg",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W42-52",
@@ -2414,9 +2554,10 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-narayani-kedenburg",
+        "teacherId": "teacher-gen-adam-zmuda",
         "isAiPlanned": true,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W42-53",
@@ -2428,7 +2569,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W42-54",
@@ -2440,7 +2582,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-6",
         "teacherId": "teacher-gen-hu-buerkle",
         "isAiPlanned": true,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W42-55",
@@ -2450,9 +2593,11 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "07:00",
         "endTime": "07:30",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-mouniir-jaber",
-        "isAiPlanned": true,
-        "status": "approved"
+        "teacherId": "teacher-guest-1790942126763",
+        "isAiPlanned": false,
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W42-56",
@@ -2462,9 +2607,10 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "07:00",
         "endTime": "08:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-burnie-bansemer",
+        "teacherId": "teacher-gen-alexander-melior",
         "isAiPlanned": true,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W42-57",
@@ -2474,9 +2620,11 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "09:15",
         "endTime": "11:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-alexander-melior",
+        "teacherId": "teacher-gen-nirmaya-fodor",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W42-58",
@@ -2486,9 +2634,12 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "09:15",
         "endTime": "11:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-narayani-kedenburg",
-        "isAiPlanned": true,
-        "status": "approved"
+        "teacherId": "teacher-gen-alexander-melior",
+        "isAiPlanned": false,
+        "status": "approved",
+        "teacherName": "Alexander",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W42-59",
@@ -2499,8 +2650,11 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "endTime": "18:00",
         "roomId": "room-2",
         "teacherId": "teacher-gen-narayani-kedenburg",
-        "isAiPlanned": true,
-        "status": "approved"
+        "isAiPlanned": false,
+        "status": "approved",
+        "teacherName": "Narayani",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W42-60",
@@ -2510,9 +2664,11 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "16:15",
         "endTime": "18:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-nirmaya-fodor",
+        "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W42-61",
@@ -2522,9 +2678,11 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-christopher",
-        "isAiPlanned": true,
-        "status": "approved"
+        "teacherId": "teacher-gen-burnie-bansemer",
+        "isAiPlanned": false,
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W42-62",
@@ -2536,7 +2694,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-narayani-kedenburg",
         "isAiPlanned": true,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W42-63",
@@ -2545,10 +2704,12 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "dayOfWeek": 4,
         "startTime": "21:10",
         "endTime": "22:00",
-        "roomId": "room-5",
+        "roomId": "room-2",
         "teacherId": "teacher-gen-burnie-bansemer",
-        "isAiPlanned": true,
-        "status": "approved"
+        "isAiPlanned": false,
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W42-2",
@@ -2558,9 +2719,11 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "07:00",
         "endTime": "07:30",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-pranava-pauly",
+        "teacherId": "teacher-guest-1790942126763",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W42-3",
@@ -2572,7 +2735,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-nirmaya-fodor",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W42-4",
@@ -2584,7 +2748,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-5",
         "teacherId": "teacher-gen-harishakti",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W42-5",
@@ -2596,7 +2761,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W42-6",
@@ -2606,9 +2772,10 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "16:30",
         "endTime": "18:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-alexander-melior",
+        "teacherId": "teacher-gen-chandrashekara",
         "isAiPlanned": true,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W42-7",
@@ -2620,7 +2787,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-5",
         "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W42-1",
@@ -2632,7 +2800,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "Rezeption",
         "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": true,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W42-8",
@@ -2642,9 +2811,25 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-adam-zmuda",
-        "isAiPlanned": true,
-        "status": "approved"
+        "teacherId": "teacher-gen-narayani-kedenburg",
+        "isAiPlanned": false,
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
+      },
+      {
+        "id": "course-2026-W42-10",
+        "name": "Satsang",
+        "style": "Meditation",
+        "dayOfWeek": 5,
+        "startTime": "20:00",
+        "endTime": "21:00",
+        "roomId": "room-2",
+        "teacherId": "teacher-gen-sukadev-bretz",
+        "isAiPlanned": false,
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W42-9",
@@ -2656,19 +2841,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-5",
         "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": false,
-        "status": "approved"
-      },
-      {
-        "id": "course-2026-W42-10",
-        "name": "Satsang",
-        "style": "Meditation",
-        "dayOfWeek": 5,
-        "startTime": "20:00",
-        "endTime": "21:00",
-        "roomId": "room-2",
-        "teacherId": "teacher-gen-karuna-wapke",
-        "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W42-11",
@@ -2680,7 +2854,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": true,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W42-12",
@@ -2690,9 +2865,11 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "07:00",
         "endTime": "07:30",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-nirmaya-fodor",
+        "teacherId": "teacher-guest-1790942126763",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W42-13",
@@ -2704,7 +2881,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-alexander-melior",
         "isAiPlanned": true,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W42-14",
@@ -2714,9 +2892,11 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "09:15",
         "endTime": "11:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-pranava-pauly",
+        "teacherId": "teacher-guest-1790942126763",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W42-15",
@@ -2726,9 +2906,24 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "09:15",
         "endTime": "11:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-chandrashekara",
+        "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": true,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
+      },
+      {
+        "id": "course-1791547991429",
+        "name": "Mittelstufe",
+        "style": "Hatha",
+        "dayOfWeek": 6,
+        "startTime": "16:15",
+        "endTime": "18:00",
+        "roomId": "room-5",
+        "teacherId": "teacher-gen-chandrashekara",
+        "isAiPlanned": false,
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W42-16",
@@ -2738,21 +2933,11 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "16:15",
         "endTime": "18:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-yl",
+        "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": false,
-        "status": "approved"
-      },
-      {
-        "id": "course-2026-W42-17",
-        "name": "Mittelstufe Mantrayogastunde",
-        "style": "Hatha",
-        "dayOfWeek": 6,
-        "startTime": "16:15",
-        "endTime": "18:00",
-        "roomId": "room-5",
-        "teacherId": "teacher-gen-chandrashekara",
-        "isAiPlanned": true,
-        "status": "approved"
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W42-18",
@@ -2762,9 +2947,11 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-christopher",
-        "isAiPlanned": true,
-        "status": "approved"
+        "teacherId": "teacher-guest-1791278735445",
+        "isAiPlanned": false,
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W42-19",
@@ -2774,19 +2961,25 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "20:00",
         "endTime": "22:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-karuna-wapke",
+        "teacherId": "teacher-gen-sukadev-bretz",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       }
     ],
-    createdAt: new Date().toISOString()
+    createdAt: "2026-08-29T10:03:59.366Z"
   },
   {
     id: "plan-pre-2026-W43",
-    name: "Vorplanung 2026-W43 (Automatisch)",
+    name: "Blankowoche Sommer",
     status: "approved",
     isApproved: true,
+    isManualOnly: true,
+    hasManualEdits: true,
     targetWeekCode: "2026-W43",
+    lastEditedAt: "2026-10-22T18:56:03.136Z",
+    deletedCourseIds: [],
     courses: [
       {
         "id": "course-2026-W43-21",
@@ -2798,7 +2991,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-burnie-bansemer",
         "isAiPlanned": true,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-22",
@@ -2808,9 +3002,12 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "07:00",
         "endTime": "07:30",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-hu-buerkle",
-        "isAiPlanned": true,
-        "status": "approved"
+        "teacherId": "teacher-gen-mouniir-jaber",
+        "isAiPlanned": false,
+        "status": "approved",
+        "teacherName": "Mounir",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-23",
@@ -2820,13 +3017,16 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "07:00",
         "endTime": "08:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-burnie-bansemer",
+        "teacherId": "teacher-gen-anjali-gelzleichter",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Anjali",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-24",
-        "name": "Anfänger",
+        "name": "Pavanmukt Asana",
         "style": "Hatha",
         "dayOfWeek": 0,
         "startTime": "09:15",
@@ -2834,7 +3034,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-burnie-bansemer",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-25",
@@ -2846,7 +3047,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-5",
         "teacherId": "teacher-gen-anjali-gelzleichter",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-26",
@@ -2858,7 +3060,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-27",
@@ -2868,9 +3071,12 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "16:30",
         "endTime": "18:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-karuna-wapke",
+        "teacherId": "teacher-karma-krishnajyoti",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Krishnajyoti",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-20",
@@ -2880,9 +3086,12 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "19:00",
         "endTime": "19:30",
         "roomId": "Rezeption",
-        "teacherId": "teacher-gen-christopher",
-        "isAiPlanned": true,
-        "status": "approved"
+        "teacherId": "teacher-gen-mouniir-jaber",
+        "isAiPlanned": false,
+        "status": "approved",
+        "teacherName": "Mounir",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-28",
@@ -2892,9 +3101,12 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-burnie-bansemer",
-        "isAiPlanned": true,
-        "status": "approved"
+        "teacherId": "teacher-guest-1791278735445",
+        "isAiPlanned": false,
+        "status": "approved",
+        "teacherName": "Suryani",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-29",
@@ -2904,9 +3116,12 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "20:00",
         "endTime": "20:35",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-mouniir-jaber",
-        "isAiPlanned": true,
-        "status": "approved"
+        "teacherId": "teacher-gen-christopher",
+        "isAiPlanned": false,
+        "status": "approved",
+        "teacherName": "Christopher",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-30",
@@ -2918,7 +3133,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-31",
@@ -2930,7 +3146,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-5",
         "teacherId": "teacher-gen-christopher",
         "isAiPlanned": true,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-32",
@@ -2940,9 +3157,12 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "07:00",
         "endTime": "08:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-anjali-gelzleichter",
+        "teacherId": "teacher-gen-nirmaya-fodor",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Nirmaya",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-33",
@@ -2954,7 +3174,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-burnie-bansemer",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-34",
@@ -2964,21 +3185,25 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "09:15",
         "endTime": "11:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-chandrashekara",
+        "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": true,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-35",
-        "name": "Anfänger Rückenstunde",
+        "name": "Anfänger ",
         "style": "Hatha",
         "dayOfWeek": 1,
         "startTime": "16:15",
         "endTime": "18:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-pranava-pauly",
+        "teacherId": "teacher-karma-krishnajyoti",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Krishnajyoti",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-36",
@@ -2990,7 +3215,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-5",
         "teacherId": "teacher-gen-chandrashekara",
         "isAiPlanned": true,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-37",
@@ -3002,7 +3228,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-nirmaya-fodor",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-38",
@@ -3013,20 +3240,26 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "endTime": "21:00",
         "roomId": "room-2",
         "teacherId": "teacher-gen-anjali-gelzleichter",
-        "isAiPlanned": true,
-        "status": "approved"
+        "isAiPlanned": false,
+        "status": "approved",
+        "teacherName": "Anjali",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-39",
-        "name": "Entspannungsangebot: Klangreise",
+        "name": "Entspannungsangebot Yoga Nidra",
         "style": "Entspannung",
         "dayOfWeek": 1,
         "startTime": "21:10",
         "endTime": "22:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-pranava-pauly",
-        "isAiPlanned": true,
-        "status": "approved"
+        "teacherId": "teacher-gen-burnie-bansemer",
+        "isAiPlanned": false,
+        "status": "approved",
+        "teacherName": "burnie",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-40",
@@ -3038,7 +3271,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-5",
         "teacherId": "teacher-gen-alexander-melior",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-41",
@@ -3050,19 +3284,23 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-anjali-gelzleichter",
         "isAiPlanned": true,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-42",
-        "name": "Anfänger",
+        "name": "Anfänger Räkelyoga",
         "style": "Hatha",
         "dayOfWeek": 2,
         "startTime": "09:15",
         "endTime": "11:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-alexander-melior",
-        "isAiPlanned": true,
-        "status": "approved"
+        "teacherId": "teacher-gen-erkan-batmaz",
+        "isAiPlanned": false,
+        "status": "approved",
+        "teacherName": "Erkan Batmaz",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-43",
@@ -3074,19 +3312,25 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-5",
         "teacherId": "teacher-gen-anjali-gelzleichter",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Anjali",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-44",
-        "name": "Anfänger Yin Yoga",
+        "name": "Anfänger ",
         "style": "Hatha",
         "dayOfWeek": 2,
         "startTime": "16:15",
         "endTime": "18:00",
         "roomId": "room-2",
         "teacherId": "teacher-gen-alexander-melior",
-        "isAiPlanned": true,
-        "status": "approved"
+        "isAiPlanned": false,
+        "status": "approved",
+        "teacherName": "Alexander",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-45",
@@ -3096,9 +3340,12 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "16:15",
         "endTime": "18:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-karuna-wapke",
-        "isAiPlanned": true,
-        "status": "approved"
+        "teacherId": "teacher-gen-pranava-pauly",
+        "isAiPlanned": false,
+        "status": "approved",
+        "teacherName": "Pranava",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-46",
@@ -3109,8 +3356,9 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "endTime": "20:00",
         "roomId": "room-2",
         "teacherId": "teacher-gen-chandrashekara",
-        "isAiPlanned": true,
-        "status": "approved"
+        "isAiPlanned": false,
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-47",
@@ -3122,7 +3370,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-7",
         "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-48",
@@ -3132,9 +3381,12 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "07:00",
         "endTime": "07:30",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-mouniir-jaber",
-        "isAiPlanned": true,
-        "status": "approved"
+        "teacherId": "teacher-gen-burnie-bansemer",
+        "isAiPlanned": false,
+        "status": "approved",
+        "teacherName": "burnie",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-49",
@@ -3146,7 +3398,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-alexander-melior",
         "isAiPlanned": true,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-50",
@@ -3158,7 +3411,11 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-alexander-melior",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Alexander",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z",
+        "isFixedAgreement": true
       },
       {
         "id": "course-2026-W43-51",
@@ -3168,9 +3425,12 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "09:15",
         "endTime": "11:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-chandrashekara",
-        "isAiPlanned": true,
-        "status": "approved"
+        "teacherId": "teacher-gen-burnie-bansemer",
+        "isAiPlanned": false,
+        "status": "approved",
+        "teacherName": "burnie",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-52",
@@ -3180,9 +3440,12 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-teresa-allgaeu",
-        "isAiPlanned": true,
-        "status": "approved"
+        "teacherId": "teacher-gen-yl",
+        "isAiPlanned": false,
+        "status": "approved",
+        "teacherName": "! YL #",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-53",
@@ -3194,7 +3457,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-54",
@@ -3204,9 +3468,12 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "21:10",
         "endTime": "22:00",
         "roomId": "room-6",
-        "teacherId": "teacher-gen-chandrashekara",
-        "isAiPlanned": true,
-        "status": "approved"
+        "teacherId": "teacher-gen-yl",
+        "isAiPlanned": false,
+        "status": "approved",
+        "teacherName": "! YL #",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-55",
@@ -3218,7 +3485,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-5",
         "teacherId": "teacher-gen-mouniir-jaber",
         "isAiPlanned": true,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-56",
@@ -3230,19 +3498,23 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-burnie-bansemer",
         "isAiPlanned": true,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-57",
-        "name": "Anfänger",
+        "name": "Anfänger Räkelyoga",
         "style": "Hatha",
         "dayOfWeek": 4,
         "startTime": "09:15",
         "endTime": "11:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-alexander-melior",
+        "teacherId": "teacher-gen-erkan-batmaz",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Erkan Batmaz",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-58",
@@ -3252,9 +3524,12 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "09:15",
         "endTime": "11:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-chandrashekara",
-        "isAiPlanned": true,
-        "status": "approved"
+        "teacherId": "teacher-gen-alexander-melior",
+        "isAiPlanned": false,
+        "status": "approved",
+        "teacherName": "Alexander",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-schulung-yl-schulung--thema-3",
@@ -3264,21 +3539,27 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "15:00",
         "endTime": "18:00",
         "roomId": "room-5",
-        "teacherId": null,
+        "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Karuna",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-59",
-        "name": "Pavanmukt Asana",
+        "name": "Anfänger",
         "style": "Hatha",
         "dayOfWeek": 4,
         "startTime": "16:15",
         "endTime": "18:00",
         "roomId": "room-2",
         "teacherId": "teacher-gen-burnie-bansemer",
-        "isAiPlanned": true,
-        "status": "approved"
+        "isAiPlanned": false,
+        "status": "approved",
+        "teacherName": "burnie",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-60",
@@ -3288,9 +3569,12 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "16:15",
         "endTime": "18:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-nirmaya-fodor",
+        "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Pranava",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-61",
@@ -3302,7 +3586,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-christopher",
         "isAiPlanned": true,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-62",
@@ -3314,19 +3599,23 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-63",
-        "name": "Entspannungsangebot: Peziebälle / Fantasiereise",
+        "name": "Entspannungsangebot: Klangreise",
         "style": "Entspannung",
         "dayOfWeek": 4,
         "startTime": "21:10",
         "endTime": "22:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-burnie-bansemer",
-        "isAiPlanned": true,
-        "status": "approved"
+        "teacherId": "teacher-gen-pranava-pauly",
+        "isAiPlanned": false,
+        "status": "approved",
+        "teacherName": "Pranava",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-2",
@@ -3336,9 +3625,12 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "07:00",
         "endTime": "07:30",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-pranava-pauly",
+        "teacherId": "teacher-gen-christopher",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Christopher",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-3",
@@ -3350,7 +3642,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-nirmaya-fodor",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-4",
@@ -3360,9 +3653,12 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "09:15",
         "endTime": "11:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-harishakti",
+        "teacherId": "teacher-karma-krishnajyoti",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Krishnajyoti",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-5",
@@ -3374,7 +3670,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-6",
@@ -3384,9 +3681,12 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "16:30",
         "endTime": "18:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-harishakti",
-        "isAiPlanned": true,
-        "status": "approved"
+        "teacherId": "teacher-gen-karuna-wapke",
+        "isAiPlanned": false,
+        "status": "approved",
+        "teacherName": "Karuna",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-7",
@@ -3396,9 +3696,12 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "16:30",
         "endTime": "18:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-anjali-gelzleichter",
-        "isAiPlanned": true,
-        "status": "approved"
+        "teacherId": "teacher-gen-chandrashekara",
+        "isAiPlanned": false,
+        "status": "approved",
+        "teacherName": "Chandrashekara",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-1",
@@ -3410,7 +3713,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "Rezeption",
         "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": true,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-8",
@@ -3421,20 +3725,9 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "endTime": "20:00",
         "roomId": "room-2",
         "teacherId": "teacher-gen-adam-zmuda",
-        "isAiPlanned": true,
-        "status": "approved"
-      },
-      {
-        "id": "course-2026-W43-9",
-        "name": "Satsang Einführung",
-        "style": "Meditation",
-        "dayOfWeek": 5,
-        "startTime": "20:00",
-        "endTime": "20:35",
-        "roomId": "room-5",
-        "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-10",
@@ -3446,7 +3739,21 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-anjali-gelzleichter",
         "isAiPlanned": true,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
+      },
+      {
+        "id": "course-2026-W43-9",
+        "name": "Satsang Einführung",
+        "style": "Meditation",
+        "dayOfWeek": 5,
+        "startTime": "20:00",
+        "endTime": "20:35",
+        "roomId": "room-5",
+        "teacherId": "teacher-gen-pranava-pauly",
+        "isAiPlanned": false,
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-11",
@@ -3458,7 +3765,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": true,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-12",
@@ -3470,7 +3778,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-5",
         "teacherId": "teacher-gen-nirmaya-fodor",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-13",
@@ -3482,7 +3791,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-alexander-melior",
         "isAiPlanned": true,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-14",
@@ -3494,7 +3804,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-15",
@@ -3504,9 +3815,10 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "09:15",
         "endTime": "11:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-chandrashekara",
+        "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": true,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-schulung-yl-schulung--thema-2",
@@ -3516,9 +3828,12 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "15:00",
         "endTime": "18:00",
         "roomId": "room-5",
-        "teacherId": null,
+        "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Karuna",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-16",
@@ -3528,9 +3843,12 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "16:15",
         "endTime": "18:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-yl",
+        "teacherId": "teacher-karma-krishnajyoti",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Krishnajyoti",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-17",
@@ -3542,7 +3860,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-5",
         "teacherId": "teacher-gen-anjali-gelzleichter",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-18",
@@ -3553,8 +3872,9 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "endTime": "20:00",
         "roomId": "room-2",
         "teacherId": "teacher-gen-christopher",
-        "isAiPlanned": true,
-        "status": "approved"
+        "isAiPlanned": false,
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-19",
@@ -3566,17 +3886,22 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       }
     ],
-    createdAt: new Date().toISOString()
+    createdAt: "2026-09-06T08:19:54.184Z"
   },
   {
     id: "plan-pre-2026-W44",
     name: "Vorplanung 2026-W44 (Automatisch)",
     status: "approved",
     isApproved: true,
+    isManualOnly: true,
+    hasManualEdits: true,
     targetWeekCode: "2026-W44",
+    lastEditedAt: "2026-10-22T18:56:03.136Z",
+    deletedCourseIds: ["course-2026-W44-33"],
     courses: [
       {
         "id": "course-2026-W44-12",
@@ -3588,7 +3913,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-burnie-bansemer",
         "isAiPlanned": true,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-13",
@@ -3598,9 +3924,12 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "07:00",
         "endTime": "07:30",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-chandrashekara",
-        "isAiPlanned": true,
-        "status": "approved"
+        "teacherId": "teacher-gen-pranava-pauly",
+        "isAiPlanned": false,
+        "status": "approved",
+        "teacherName": "Pranava",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-14",
@@ -3610,21 +3939,27 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "07:00",
         "endTime": "08:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-burnie-bansemer",
+        "teacherId": "teacher-gen-anjali-gelzleichter",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Anjali",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-15",
-        "name": "Pavanmukt Asana",
+        "name": "Anfänger",
         "style": "Hatha",
         "dayOfWeek": 0,
         "startTime": "09:15",
         "endTime": "11:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-burnie-bansemer",
+        "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Pranava",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-16",
@@ -3634,9 +3969,12 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "09:15",
         "endTime": "11:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-anjali-gelzleichter",
+        "teacherId": "teacher-gen-burnie-bansemer",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "burnie",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-17",
@@ -3648,7 +3986,10 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Pranava",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-18",
@@ -3660,7 +4001,10 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-5",
         "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Karuna",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-11",
@@ -3670,9 +4014,12 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "19:00",
         "endTime": "19:30",
         "roomId": "Rezeption",
-        "teacherId": "teacher-gen-christopher",
-        "isAiPlanned": true,
-        "status": "approved"
+        "teacherId": "teacher-gen-mouniir-jaber",
+        "isAiPlanned": false,
+        "status": "approved",
+        "teacherName": "Mounir",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-19",
@@ -3682,9 +4029,12 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-burnie-narayani",
+        "teacherId": "teacher-gen-nirmaya-fodor",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Nirmaya",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-20",
@@ -3694,9 +4044,12 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "20:00",
         "endTime": "20:35",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-burnie-bansemer",
-        "isAiPlanned": true,
-        "status": "approved"
+        "teacherId": "teacher-gen-christopher",
+        "isAiPlanned": false,
+        "status": "approved",
+        "teacherName": "Christopher",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-21",
@@ -3708,7 +4061,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-22",
@@ -3718,9 +4072,12 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "07:00",
         "endTime": "07:30",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-chandrashekara",
-        "isAiPlanned": true,
-        "status": "approved"
+        "teacherId": "teacher-gen-burnie-bansemer",
+        "isAiPlanned": false,
+        "status": "approved",
+        "teacherName": "burnie",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-23",
@@ -3732,7 +4089,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-anjali-gelzleichter",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-24",
@@ -3742,9 +4100,12 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "09:15",
         "endTime": "11:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-burnie-bansemer",
+        "teacherId": "teacher-gen-nirmaya-fodor",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Nirmaya",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-25",
@@ -3754,13 +4115,16 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "09:15",
         "endTime": "11:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-chandrashekara",
-        "isAiPlanned": true,
-        "status": "approved"
+        "teacherId": "teacher-gen-burnie-bansemer",
+        "isAiPlanned": false,
+        "status": "approved",
+        "teacherName": "burnie",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-26",
-        "name": "Anfänger Rückenstunde",
+        "name": "Anfänger ",
         "style": "Hatha",
         "dayOfWeek": 1,
         "startTime": "16:15",
@@ -3768,7 +4132,10 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Pranava",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-27",
@@ -3778,9 +4145,12 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "16:15",
         "endTime": "18:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-chandrashekara",
-        "isAiPlanned": true,
-        "status": "approved"
+        "teacherId": "teacher-gen-yl",
+        "isAiPlanned": false,
+        "status": "approved",
+        "teacherName": "! YL #",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-28",
@@ -3790,9 +4160,12 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-nirmaya-fodor",
+        "teacherId": "teacher-gen-christopher",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Christopher",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-29",
@@ -3804,7 +4177,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-narayani-kedenburg",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-30",
@@ -3816,7 +4190,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-5",
         "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": true,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-31",
@@ -3828,7 +4203,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-5",
         "teacherId": "teacher-gen-alexander-melior",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-32",
@@ -3840,35 +4216,27 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-abha-morkoetter",
         "isAiPlanned": true,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
-        "id": "course-2026-W44-33",
-        "name": "Anfänger",
+        "id": "course-2026-W44-34",
+        "name": "Gemeinsame Stunde",
         "style": "Hatha",
         "dayOfWeek": 2,
         "startTime": "09:15",
         "endTime": "11:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-abha-morkoetter",
-        "isAiPlanned": true,
-        "status": "approved"
-      },
-      {
-        "id": "course-2026-W44-34",
-        "name": "Mittelstufe",
-        "style": "Hatha",
-        "dayOfWeek": 2,
-        "startTime": "09:15",
-        "endTime": "11:00",
-        "roomId": "room-5",
-        "teacherId": "teacher-gen-anjali-gelzleichter",
+        "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Karuna",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-35",
-        "name": "Anfänger Yin Yoga",
+        "name": "Anfänger",
         "style": "Hatha",
         "dayOfWeek": 2,
         "startTime": "16:15",
@@ -3876,7 +4244,10 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-abha-morkoetter",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Abha",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-36",
@@ -3888,7 +4259,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-5",
         "teacherId": "teacher-gen-narayani-kedenburg",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-37",
@@ -3900,7 +4272,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-teresa-allgaeu",
         "isAiPlanned": true,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-38",
@@ -3912,7 +4285,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-7",
         "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-39",
@@ -3922,9 +4296,11 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "07:00",
         "endTime": "07:30",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-mouniir-jaber",
-        "isAiPlanned": true,
-        "status": "approved"
+        "teacherId": null,
+        "isAiPlanned": false,
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-40",
@@ -3936,7 +4312,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-narayani-kedenburg",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-41",
@@ -3948,7 +4325,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-alexander-melior",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-42",
@@ -3960,7 +4338,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-5",
         "teacherId": "teacher-gen-narayani-kedenburg",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-43",
@@ -3972,7 +4351,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-adam-zmuda",
         "isAiPlanned": true,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-44",
@@ -3984,19 +4364,23 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-45",
-        "name": "Entspannungsangebot: Yogageschichten am Kamin",
+        "name": "Entspannungsangebot: Klangschalen",
         "style": "Entspannung",
         "dayOfWeek": 3,
         "startTime": "21:10",
         "endTime": "22:00",
         "roomId": "room-6",
-        "teacherId": "teacher-gen-adam-zmuda",
-        "isAiPlanned": true,
-        "status": "approved"
+        "teacherId": "teacher-gen-alexander-melior",
+        "isAiPlanned": false,
+        "status": "approved",
+        "teacherName": "Alexander",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-46",
@@ -4008,7 +4392,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-5",
         "teacherId": "teacher-gen-mouniir-jaber",
         "isAiPlanned": true,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-47",
@@ -4020,7 +4405,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-alexander-melior",
         "isAiPlanned": true,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-48",
@@ -4030,9 +4416,12 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "09:15",
         "endTime": "11:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-alexander-melior",
+        "teacherId": "teacher-gen-nirmaya-fodor",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Nirmaya",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-49",
@@ -4042,9 +4431,12 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "09:15",
         "endTime": "11:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-abha-morkoetter",
+        "teacherId": "teacher-gen-alexander-melior",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Alexander",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-schulung-yl-schulung--thema-5",
@@ -4056,7 +4448,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-5",
         "teacherId": null,
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-50",
@@ -4068,7 +4461,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-narayani-kedenburg",
         "isAiPlanned": true,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-51",
@@ -4078,9 +4472,12 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "16:15",
         "endTime": "18:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-nirmaya-fodor",
+        "teacherId": "teacher-gen-abha-morkoetter",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Abha",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-52",
@@ -4090,9 +4487,12 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-christopher",
-        "isAiPlanned": true,
-        "status": "approved"
+        "teacherId": "teacher-gen-adam-zmuda",
+        "isAiPlanned": false,
+        "status": "approved",
+        "teacherName": "Adam",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-53",
@@ -4104,7 +4504,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-54",
@@ -4116,7 +4517,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-5",
         "teacherId": "teacher-gen-burnie-bansemer",
         "isAiPlanned": true,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-2",
@@ -4126,9 +4528,12 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "07:00",
         "endTime": "07:30",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-pranava-pauly",
+        "teacherId": "teacher-gen-alexander-melior",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Alexander",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-3",
@@ -4140,7 +4545,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-nirmaya-fodor",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-4",
@@ -4151,8 +4557,11 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "endTime": "11:00",
         "roomId": "room-5",
         "teacherId": "teacher-gen-alexander-melior",
-        "isAiPlanned": true,
-        "status": "approved"
+        "isAiPlanned": false,
+        "status": "approved",
+        "teacherName": "Alexander",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-5",
@@ -4164,7 +4573,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-6",
@@ -4174,9 +4584,12 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "16:30",
         "endTime": "18:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-anjali-gelzleichter",
-        "isAiPlanned": true,
-        "status": "approved"
+        "teacherId": "teacher-gen-karuna-wapke",
+        "isAiPlanned": false,
+        "status": "approved",
+        "teacherName": "Karuna",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-7",
@@ -4186,9 +4599,12 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "16:30",
         "endTime": "18:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-karuna-wapke",
+        "teacherId": "teacher-gen-anjali-gelzleichter",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Anjali",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-1",
@@ -4200,7 +4616,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "Rezeption",
         "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": true,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-8",
@@ -4210,21 +4627,12 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-adam-anjali",
+        "teacherId": "teacher-gen-anjali-gelzleichter",
         "isAiPlanned": false,
-        "status": "approved"
-      },
-      {
-        "id": "course-2026-W44-9",
-        "name": "Satsang Einführung",
-        "style": "Meditation",
-        "dayOfWeek": 5,
-        "startTime": "20:00",
-        "endTime": "20:35",
-        "roomId": "room-5",
-        "teacherId": "teacher-gen-pranava-pauly",
-        "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Anjali",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-10",
@@ -4236,7 +4644,21 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
+      },
+      {
+        "id": "course-2026-W44-9",
+        "name": "Satsang Einführung",
+        "style": "Meditation",
+        "dayOfWeek": 5,
+        "startTime": "20:00",
+        "endTime": "20:35",
+        "roomId": "room-5",
+        "teacherId": "teacher-gen-pranava-pauly",
+        "isAiPlanned": false,
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-tdot-gefuehrte-meditation",
@@ -4246,9 +4668,12 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "07:00",
         "endTime": "07:30",
         "roomId": "room-5",
-        "teacherId": null,
+        "teacherId": "teacher-gen-nirmaya-fodor",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Nirmaya",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-tdot-satsang-morgen",
@@ -4258,9 +4683,12 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "07:00",
         "endTime": "08:00",
         "roomId": "room-2",
-        "teacherId": null,
+        "teacherId": "teacher-gen-alexander-melior",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Alexander",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-tdot-gemeinsame-stunde",
@@ -4270,21 +4698,12 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "09:15",
         "endTime": "10:15",
         "roomId": "room-2",
-        "teacherId": null,
+        "teacherId": "teacher-gen-anjali-gelzleichter",
         "isAiPlanned": false,
-        "status": "approved"
-      },
-      {
-        "id": "course-2026-W44-tdot-rezeption",
-        "name": "Rezeption (nicht während der Yogastunden)",
-        "style": "Sonstiges",
-        "dayOfWeek": 6,
-        "startTime": "10:00",
-        "endTime": "18:00",
-        "roomId": "Rezeption",
-        "teacherId": null,
-        "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Anjali",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-tdot-infopoint",
@@ -4294,9 +4713,27 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "10:00",
         "endTime": "18:00",
         "roomId": "Infopoint",
-        "teacherId": null,
+        "teacherId": "teacher-gen-nirmaya-fodor",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Nirmaya , Mounir, Anjali",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
+      },
+      {
+        "id": "course-2026-W44-tdot-rezeption",
+        "name": "Rezeption (nicht während der Yogastunden)",
+        "style": "Sonstiges",
+        "dayOfWeek": 6,
+        "startTime": "10:00",
+        "endTime": "18:00",
+        "roomId": "Rezeption",
+        "teacherId": "teacher-custom-melanie-jyoti",
+        "isAiPlanned": false,
+        "status": "approved",
+        "teacherName": "Melanie , Jyoti",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-tdot-yogashop",
@@ -4306,9 +4743,12 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "10:00",
         "endTime": "18:00",
         "roomId": "Yoga-Shop",
-        "teacherId": null,
+        "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Pranava , Teresa",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-tdot-begruessung",
@@ -4318,9 +4758,12 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "10:30",
         "endTime": "11:00",
         "roomId": "room-2",
-        "teacherId": null,
+        "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Karuna",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-tdot-buffet-1",
@@ -4332,7 +4775,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "Speisesaal",
         "teacherId": null,
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-tdot-einfuehrung-yoga",
@@ -4342,9 +4786,12 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "12:15",
         "endTime": "13:15",
         "roomId": "room-2",
-        "teacherId": null,
+        "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Karuna",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-tdot-yoga-1330-anfaenger",
@@ -4354,9 +4801,12 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "13:30",
         "endTime": "15:00",
         "roomId": "room-2",
-        "teacherId": null,
+        "teacherId": "teacher-gen-yl",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "! YL #",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-tdot-yoga-1330-mittelstufe",
@@ -4366,9 +4816,12 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "13:30",
         "endTime": "15:00",
         "roomId": "room-5",
-        "teacherId": null,
+        "teacherId": "teacher-custom-kalipriya",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Kalipriya",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-tdot-hausfuehrung",
@@ -4378,9 +4831,12 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "15:00",
         "endTime": "15:30",
         "roomId": "Rezeption",
-        "teacherId": null,
+        "teacherId": "teacher-gen-mouniir-jaber",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Mounir",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-tdot-lachyoga",
@@ -4390,9 +4846,12 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "15:00",
         "endTime": "15:45",
         "roomId": "room-5",
-        "teacherId": null,
+        "teacherId": "teacher-custom-dashini",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Dashini",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-tdot-einfuehrung-meditation",
@@ -4402,21 +4861,12 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "15:45",
         "endTime": "16:15",
         "roomId": "room-2",
-        "teacherId": null,
+        "teacherId": "teacher-gen-mouniir-jaber",
         "isAiPlanned": false,
-        "status": "approved"
-      },
-      {
-        "id": "course-2026-W44-tdot-yoga-1630-klang",
-        "name": "Klangyoga – Mittelstufe",
-        "style": "Hatha",
-        "dayOfWeek": 6,
-        "startTime": "16:30",
-        "endTime": "18:00",
-        "roomId": "room-2",
-        "teacherId": null,
-        "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Mounir",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-tdot-yoga-1630-anfaenger",
@@ -4426,9 +4876,27 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "16:30",
         "endTime": "18:00",
         "roomId": "room-5",
-        "teacherId": null,
+        "teacherId": "teacher-gen-burnie-bansemer",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "burnie",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
+      },
+      {
+        "id": "course-2026-W44-tdot-yoga-1630-klang",
+        "name": "Klangyoga – Mittelstufe",
+        "style": "Hatha",
+        "dayOfWeek": 6,
+        "startTime": "16:30",
+        "endTime": "18:00",
+        "roomId": "room-2",
+        "teacherId": "teacher-gen-pranava-pauly",
+        "isAiPlanned": false,
+        "status": "approved",
+        "teacherName": "Pranava",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-tdot-buffet-2",
@@ -4440,7 +4908,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "Speisesaal",
         "teacherId": null,
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-tdot-info-yla",
@@ -4450,9 +4919,12 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "19:00",
         "endTime": "19:30",
         "roomId": "room-2",
-        "teacherId": null,
+        "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Karuna",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-tdot-mantra-singen",
@@ -4462,9 +4934,12 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": null,
+        "teacherId": "teacher-custom-shantara",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Shantara",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-tdot-satsang",
@@ -4474,12 +4949,15 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "20:00",
         "endTime": "22:00",
         "roomId": "room-2",
-        "teacherId": null,
+        "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Karuna",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       }
     ],
-    createdAt: new Date().toISOString()
+    createdAt: "2026-10-22T11:11:53.162Z"
   },
   {
     "id": "plan-pre-2026-W38",
@@ -5391,12 +5869,56 @@ function getStored<T>(key: string, defaultValue: T): T {
 const syncDebounceTimers: Record<string, any> = {};
 let eventDebounceTimer: any = null;
 
+function isReadOnlyUserRole(): boolean {
+  if (typeof window === 'undefined') return false;
+  try {
+    const role = localStorage.getItem('rapla_user_role');
+    return role === 'team' || role === 'viewer';
+  } catch {
+    return false;
+  }
+}
+
 async function upsertKeyToCloud(key: string, serializedValue: string): Promise<boolean> {
   if (!supabase) return true;
+  if (key === 'rapla_week_plans' && isReadOnlyUserRole()) {
+    clearKeyPendingSync(key);
+    return true;
+  }
   const client = supabase;
   const task = (async () => {
     try {
-      const { error } = await client.from('app_state').upsert({ key, value: serializedValue }, { onConflict: 'key' });
+      let finalValueToUpsert = serializedValue;
+
+      // For rapla_week_plans, ALWAYS perform an atomic Read-Merge-Write against Supabase
+      // so a stale tab or device can NEVER overwrite newer course edits in the cloud
+      if (key === 'rapla_week_plans') {
+        try {
+          const { data: remoteRow, error: fetchErr } = await client
+            .from('app_state')
+            .select('value')
+            .eq('key', 'rapla_week_plans')
+            .maybeSingle();
+
+          if (!fetchErr && remoteRow?.value) {
+            const remotePlans: WeekPlan[] = JSON.parse(remoteRow.value);
+            const localPlans: WeekPlan[] = JSON.parse(serializedValue);
+            const { plans: merged } = mergeWeekPlansLists(remotePlans, localPlans, true);
+            const { plans: reconciled } = reconcilePlansWithDefaults(merged);
+            finalValueToUpsert = JSON.stringify(reconciled);
+            inMemoryStore['rapla_week_plans'] = reconciled;
+            if (typeof window !== 'undefined') {
+              try {
+                localStorage.setItem('rapla_week_plans', finalValueToUpsert);
+              } catch {}
+            }
+          }
+        } catch (mergeErr) {
+          console.warn('Could not pre-merge rapla_week_plans before upsert:', mergeErr);
+        }
+      }
+
+      const { error } = await client.from('app_state').upsert({ key, value: finalValueToUpsert }, { onConflict: 'key' });
       if (error) {
         console.error(`Failed to sync ${key} to cloud`, error);
         return false;
@@ -5855,7 +6377,111 @@ function isSamePlanIdentity(a: WeekPlan, b: WeekPlan): boolean {
   return false;
 }
 
+function isSameCourseSlot(a: Course, b: Course): boolean {
+  if (a.id === b.id) return true;
+  if (a.dayOfWeek === b.dayOfWeek && a.startTime === b.startTime) {
+    if (a.name === b.name) return true;
+    if (a.roomId && b.roomId && a.roomId === b.roomId) return true;
+  }
+  return false;
+}
+
+// Per-course timestamp-aware merge between authoritative base plans (e.g. cloud) and incoming plans (e.g. local tab)
+export function mergeWeekPlansLists(
+  basePlans: WeekPlan[],
+  incomingPlans: WeekPlan[],
+  allowIncomingEdits: boolean
+): { plans: WeekPlan[]; hasMergedFromIncoming: boolean } {
+  if (!allowIncomingEdits || !incomingPlans || incomingPlans.length === 0) {
+    return { plans: JSON.parse(JSON.stringify(basePlans || [])), hasMergedFromIncoming: false };
+  }
+
+  let hasMergedFromIncoming = false;
+  const merged: WeekPlan[] = (basePlans || []).map(remPlan => {
+    const locPlan = incomingPlans.find(lp => isSamePlanIdentity(lp, remPlan));
+    if (!locPlan) return JSON.parse(JSON.stringify(remPlan));
+
+    const locPlanTime = locPlan.lastEditedAt ? new Date(locPlan.lastEditedAt).getTime() : 0;
+    const remPlanTime = remPlan.lastEditedAt ? new Date(remPlan.lastEditedAt).getTime() : 0;
+
+    // Merge deletedCourseIds (only accept newly deleted IDs if locPlanTime > remPlanTime)
+    const remDeleted = new Set(remPlan.deletedCourseIds || []);
+    if (locPlanTime > remPlanTime && Array.isArray(locPlan.deletedCourseIds)) {
+      for (const delId of locPlan.deletedCourseIds) {
+        if (!remDeleted.has(delId)) {
+          remDeleted.add(delId);
+          hasMergedFromIncoming = true;
+        }
+      }
+    }
+    const mergedDeletedIds = Array.from(remDeleted);
+
+    let anyCourseMerged = false;
+    const baseCourses = (remPlan.courses || []).filter(rc => !remDeleted.has(rc.id));
+    const mergedCourses: Course[] = baseCourses.map(rc => {
+      const lc = (locPlan.courses || []).find(c => isSameCourseSlot(c, rc));
+      if (!lc) return { ...rc };
+
+      const lcTime = lc.lastEditedAt ? new Date(lc.lastEditedAt).getTime() : 0;
+      const rcTime = rc.lastEditedAt ? new Date(rc.lastEditedAt).getTime() : remPlanTime;
+
+      // Incoming course ONLY wins if it is manually edited, has an explicit course timestamp,
+      // and that timestamp is strictly newer than the remote course's timestamp.
+      if (lc.isManuallyEdited && lcTime > 0 && lcTime > rcTime) {
+        if (JSON.stringify(lc) !== JSON.stringify(rc)) {
+          anyCourseMerged = true;
+          hasMergedFromIncoming = true;
+        }
+        return { ...lc };
+      }
+      return { ...rc };
+    });
+
+    // Also include newly created manual courses in locPlan that don't exist in remPlan yet
+    for (const lc of (locPlan.courses || [])) {
+      if (remDeleted.has(lc.id)) continue;
+      const existsInMerged = mergedCourses.some(mc => isSameCourseSlot(mc, lc));
+      if (!existsInMerged && lc.isManuallyEdited) {
+        const lcTime = lc.lastEditedAt ? new Date(lc.lastEditedAt).getTime() : 0;
+        if (lcTime > 0 && lcTime >= remPlanTime) {
+          mergedCourses.push({ ...lc });
+          anyCourseMerged = true;
+          hasMergedFromIncoming = true;
+        }
+      }
+    }
+
+    const useLocPlanMeta = (locPlan.hasManualEdits || locPlan.isManualOnly) && locPlanTime > remPlanTime;
+    if (useLocPlanMeta) {
+      hasMergedFromIncoming = true;
+    }
+
+    return {
+      ...remPlan,
+      isApproved: useLocPlanMeta ? locPlan.isApproved : remPlan.isApproved,
+      status: useLocPlanMeta ? locPlan.status : remPlan.status,
+      isManualOnly: (useLocPlanMeta ? locPlan.isManualOnly : remPlan.isManualOnly) || anyCourseMerged || remPlan.isManualOnly,
+      hasManualEdits: (useLocPlanMeta ? locPlan.hasManualEdits : remPlan.hasManualEdits) || anyCourseMerged || remPlan.hasManualEdits,
+      seminarLeaderIds: useLocPlanMeta && locPlan.seminarLeaderIds ? [...locPlan.seminarLeaderIds] : (remPlan.seminarLeaderIds || []),
+      deletedCourseIds: mergedDeletedIds,
+      lastEditedAt: locPlanTime > remPlanTime ? locPlan.lastEditedAt : remPlan.lastEditedAt,
+      courses: mergedCourses
+    };
+  });
+
+  // Include any completely new plans created locally with manual edits
+  for (const locPlan of incomingPlans) {
+    if ((locPlan.hasManualEdits || locPlan.isManualOnly) && locPlan.lastEditedAt && !merged.some(mp => isSamePlanIdentity(mp, locPlan))) {
+      merged.push(JSON.parse(JSON.stringify(locPlan)));
+      hasMergedFromIncoming = true;
+    }
+  }
+
+  return { plans: merged, hasMergedFromIncoming };
+}
+
 // Comprehensive, 100% Idempotent Reconciliation Function for Week Plans
+// STRICT INVARIANT: Never overwrite any course assignment on a manually edited course OR on an approved / manually-edited plan.
 export function reconcilePlansWithDefaults(plans: WeekPlan[]): { plans: WeekPlan[]; hasChanges: boolean } {
   const beforeJson = JSON.stringify(plans || []);
   const rawList: WeekPlan[] = JSON.parse(beforeJson);
@@ -5878,11 +6504,8 @@ export function reconcilePlansWithDefaults(plans: WeekPlan[]): { plans: WeekPlan
       list.push(candidate);
     } else {
       const existing = list[existingIdx];
-      const candTime = candidate.lastEditedAt ? new Date(candidate.lastEditedAt).getTime() : 0;
-      const existTime = existing.lastEditedAt ? new Date(existing.lastEditedAt).getTime() : 0;
-      if (candTime > existTime || (candidate.hasManualEdits && !existing.hasManualEdits)) {
-        list[existingIdx] = candidate;
-      }
+      const { plans: mergedPair } = mergeWeekPlansLists([existing], [candidate], true);
+      list[existingIdx] = mergedPair[0];
     }
   }
 
@@ -5905,7 +6528,9 @@ export function reconcilePlansWithDefaults(plans: WeekPlan[]): { plans: WeekPlan
         plan.courses = JSON.parse(JSON.stringify(defPlan.courses));
       }
 
-      // Sync courses from defPlan
+      const isPlanProtected = !!(plan.hasManualEdits || plan.isManualOnly || plan.isApproved || plan.status === 'approved');
+
+      // Sync missing courses from defPlan without ever overwriting existing course assignments
       for (const defC of defPlan.courses) {
         if (plan.deletedCourseIds?.includes(defC.id)) {
           continue;
@@ -5925,15 +6550,12 @@ export function reconcilePlansWithDefaults(plans: WeekPlan[]): { plans: WeekPlan
           continue;
         }
 
-        const existingC = plan.courses.find(c =>
-          c.id === defC.id ||
-          (c.dayOfWeek === defC.dayOfWeek && c.startTime === defC.startTime && c.name === defC.name)
-        );
+        const existingC = plan.courses.find(c => isSameCourseSlot(c, defC));
 
         if (!existingC) {
           const isSchulung = defC.name.toLowerCase().includes('schulung') || defC.style?.toLowerCase().includes('schulung');
           const isTdot = (defC.id || '').includes('-tdot-');
-          if ((plan.hasManualEdits || plan.isManualOnly) && !isSchulung && !isTdot && plan.targetWeekCode !== '2026-W43' && plan.targetWeekCode !== '2026-W44') {
+          if ((plan.hasManualEdits || plan.isManualOnly) && !isSchulung && !isTdot) {
             continue;
           }
           plan.courses.push(JSON.parse(JSON.stringify(defC)));
@@ -5943,42 +6565,12 @@ export function reconcilePlansWithDefaults(plans: WeekPlan[]): { plans: WeekPlan
               existingC.additionalVisibilityTeacherIds = [...defC.additionalVisibilityTeacherIds];
             }
           }
-          if (defC.id === 'course-2026-W36-sevaka-schulung') {
-            existingC.roomId = defC.roomId;
-            existingC.teacherId = defC.teacherId;
-            existingC.startTime = defC.startTime;
-            existingC.endTime = defC.endTime;
-          }
-          // For preplanned weeks W40-W44, ensure any unedited course matches the canonical default assignment
-          if (['2026-W40', '2026-W41', '2026-W42', '2026-W43', '2026-W44'].includes(plan.targetWeekCode || '') && !existingC.isManuallyEdited) {
+          // Only fill in missing default assignment if the plan is NOT protected and the course is NOT manually edited
+          if (!isPlanProtected && !existingC.isManuallyEdited && !existingC.teacherId && defC.teacherId) {
             const isSchulung = existingC.name.toLowerCase().includes('schulung') || existingC.style?.toLowerCase().includes('schulung');
-            const isTdot = (existingC.id || '').includes('-tdot-') || (defC.id || '').includes('-tdot-');
-            if (!isSchulung && !isTdot) {
-              if (!plan.hasManualEdits && !plan.isManualOnly) {
-                existingC.teacherId = defC.teacherId;
-                existingC.isAiPlanned = defC.isAiPlanned;
-                existingC.roomId = defC.roomId;
-                existingC.startTime = defC.startTime;
-                existingC.endTime = defC.endTime;
-                existingC.status = 'approved';
-              } else if (plan.targetWeekCode === '2026-W43') {
-                // Heal specific courses in 2026-W43 if they were affected by the eef40de regression or left unassigned without manual edit
-                const regressionIds: Record<string, string | null> = {
-                  'course-2026-W43-6': 'teacher-gen-harishakti',
-                  'course-2026-W43-8': 'teacher-gen-adam-anjali',
-                  'course-2026-W43-18': 'teacher-gen-anjali-gelzleichter',
-                  'course-2026-W43-46': 'teacher-gen-teresa-allgaeu',
-                  'course-2026-W43-52': null,
-                  'course-2026-W43-61': 'teacher-gen-adam-zmuda'
-                };
-                if (!existingC.teacherId || (existingC.id in regressionIds && existingC.teacherId === regressionIds[existingC.id])) {
-                  existingC.teacherId = defC.teacherId;
-                  existingC.isAiPlanned = defC.isAiPlanned;
-                }
-              } else if (plan.targetWeekCode === '2026-W44' && !existingC.teacherId && defC.teacherId) {
-                existingC.teacherId = defC.teacherId;
-                existingC.isAiPlanned = defC.isAiPlanned;
-              }
+            if (!isSchulung) {
+              existingC.teacherId = defC.teacherId;
+              existingC.isAiPlanned = defC.isAiPlanned;
             }
           }
         }
@@ -5986,7 +6578,7 @@ export function reconcilePlansWithDefaults(plans: WeekPlan[]): { plans: WeekPlan
     }
   }
 
-  // 3. Apply universal normalizations across all plans
+  // 3. Apply universal normalizations across all plans (strictly respecting manual edits & approved plans)
   const APPROVED_WEEKS = new Set(['2026-W36', '2026-W37', '2026-W38', '2026-W39', '2026-W40', '2026-W41', '2026-W42', '2026-W43', '2026-W44']);
 
   for (const p of list) {
@@ -6017,6 +6609,8 @@ export function reconcilePlansWithDefaults(plans: WeekPlan[]): { plans: WeekPlan
       p.courses = [];
     }
 
+    const isPlanProtected = !!(p.hasManualEdits || p.isManualOnly || p.isApproved || p.status === 'approved');
+
     // Remove legacy course-2026-W36-mittelstufe-pflicht and invalid Ankommensmed. days
     p.courses = p.courses.filter(c => {
       if (c.id === 'course-2026-W36-mittelstufe-pflicht') return false;
@@ -6037,8 +6631,8 @@ export function reconcilePlansWithDefaults(plans: WeekPlan[]): { plans: WeekPlan
       if (c.teacherId === 'teacher-karma-krishnajyoti' && !c.teacherName) {
         c.teacherName = 'Krishnajyoti';
       }
-      // Ensure Chandrashekara is never scheduled on Tuesday afternoon (12:00 - 18:30)
-      if (c.dayOfWeek === 2 && c.teacherId === 'teacher-gen-chandrashekara' && c.startTime >= '12:00' && c.startTime < '18:30') {
+      // Ensure Chandrashekara is never auto-scheduled on Tuesday afternoon (12:00 - 18:30) on unedited draft plans
+      if (!c.isManuallyEdited && !isPlanProtected && c.dayOfWeek === 2 && c.teacherId === 'teacher-gen-chandrashekara' && c.startTime >= '12:00' && c.startTime < '18:30') {
         c.teacherId = 'teacher-gen-narayani-kedenburg';
       }
       // Saturday evening Satsang always lasts until 22:00 (Langer Satsang)
@@ -6055,7 +6649,7 @@ export function reconcilePlansWithDefaults(plans: WeekPlan[]): { plans: WeekPlan
         const courseDate = getLocalDateForDay(p.targetWeekCode, c.dayOfWeek);
         const nameLower = c.name.toLowerCase();
 
-        if (isDateInYlaRange(courseDate) && !p.isManualOnly && !p.hasManualEdits) {
+        if (isDateInYlaRange(courseDate) && !isPlanProtected) {
           if (c.dayOfWeek !== 0 && !(p.targetWeekCode === '2026-W37' && c.dayOfWeek === 2) && (nameLower.includes('om namo') || nameLower.includes('narayanaya')) && c.roomId !== 'room-1' && !c.isManuallyEdited) {
             c.roomId = 'room-1';
           }
@@ -6128,7 +6722,7 @@ export function reconcilePlansWithDefaults(plans: WeekPlan[]): { plans: WeekPlan
         const existingTdot = p.courses.find(c => c.id === tdotC.id);
         if (!existingTdot) {
           p.courses.push(JSON.parse(JSON.stringify(tdotC)));
-        } else if (!existingTdot.isManuallyEdited) {
+        } else if (!existingTdot.isManuallyEdited && !isPlanProtected) {
           existingTdot.name = tdotC.name;
           existingTdot.style = tdotC.style;
           existingTdot.startTime = tdotC.startTime;
@@ -6146,7 +6740,7 @@ export function reconcilePlansWithDefaults(plans: WeekPlan[]): { plans: WeekPlan
         )
       );
       const hasPranavaJoint = p.courses.some(c => c.dayOfWeek === 2 && c.startTime === '16:15' && (c.teacherId === 'teacher-gen-pranava-pauly' || c.name.toLowerCase().includes('gemeinsam')));
-      if (!hasPranavaJoint) {
+      if (!hasPranavaJoint && !p.deletedCourseIds?.includes('course-2026-W39-pranava-joint')) {
         p.courses.push({
           id: 'course-2026-W39-pranava-joint',
           name: 'Gemeinsame Stunde',
@@ -6180,7 +6774,7 @@ export function reconcilePlansWithDefaults(plans: WeekPlan[]): { plans: WeekPlan
           isAiPlanned: false,
           status: p.status === 'approved' ? 'approved' : 'draft'
         });
-      } else if (onnCourse && !onnCourse.isManuallyEdited) {
+      } else if (onnCourse && !onnCourse.isManuallyEdited && !isPlanProtected) {
         if (onnCourse.teacherId === 'teacher-gen-christopher') {
           onnCourse.teacherId = 'teacher-gen-chandrashekara';
         }
@@ -6204,7 +6798,7 @@ export function reconcilePlansWithDefaults(plans: WeekPlan[]): { plans: WeekPlan
           isAiPlanned: false,
           status: p.status === 'approved' ? 'approved' : 'draft'
         });
-      } else if (pujaCourse && !pujaCourse.isManuallyEdited) {
+      } else if (pujaCourse && !pujaCourse.isManuallyEdited && !isPlanProtected) {
         pujaCourse.teacherId = 'teacher-gen-karuna-wapke';
         pujaCourse.roomId = 'room-2';
         pujaCourse.startTime = '20:00';
@@ -6228,7 +6822,7 @@ export function reconcilePlansWithDefaults(plans: WeekPlan[]): { plans: WeekPlan
           isAiPlanned: false,
           status: p.status === 'approved' ? 'approved' : 'draft'
         });
-      } else if (walkCourse && !walkCourse.isManuallyEdited) {
+      } else if (walkCourse && !walkCourse.isManuallyEdited && !isPlanProtected) {
         walkCourse.name = 'Meditativer Spaziergang';
         walkCourse.startTime = '19:30';
         walkCourse.endTime = '20:30';
@@ -6277,7 +6871,7 @@ export function reconcilePlansWithDefaults(plans: WeekPlan[]): { plans: WeekPlan
   return { plans: list, hasChanges: beforeJson !== afterJson };
 }
 
-const CURRENT_DB_VERSION = 144;
+const CURRENT_DB_VERSION = 145;
 
 // Database Actions
 export const db = {
@@ -6291,11 +6885,11 @@ export const db = {
 
     cloudSyncPromise = (async () => {
       try {
-        // Flush any pending debounce timers to ensure latest local edits are sent to cloud
+        // Flush pending debounce timers for non-plan keys; for rapla_week_plans, let the read-merge-write below handle it
         for (const [key, timer] of Object.entries(syncDebounceTimers)) {
           clearTimeout(timer);
           delete syncDebounceTimers[key];
-          if (inMemoryStore[key] !== undefined) {
+          if (key !== 'rapla_week_plans' && inMemoryStore[key] !== undefined) {
             await upsertKeyToCloud(key, JSON.stringify(inMemoryStore[key]));
           }
         }
@@ -6340,66 +6934,13 @@ export const db = {
                   ? getStored<WeekPlan[]>('rapla_week_plans', DEFAULT_WEEK_PLANS)
                   : [];
                 const isPendingLocalPlans = pendingKeys.has('rapla_week_plans');
+                const allowLocalPlanEdits = hadLocalPlansInStorage && isPendingLocalPlans && !isReadOnlyUserRole();
 
-                let needsCloudPush = false;
-
-                const merged: WeekPlan[] = remotePlans.map(remPlan => {
-                  const locPlan = localPlans.find(lp => isSamePlanIdentity(lp, remPlan));
-                  if (!locPlan) return remPlan;
-
-                  const locTime = locPlan.lastEditedAt ? new Date(locPlan.lastEditedAt).getTime() : 0;
-                  const remTime = remPlan.lastEditedAt ? new Date(remPlan.lastEditedAt).getTime() : 0;
-
-                  // Case 1: Local has a strictly newer timestamp (or unsynced pending edit)
-                  if ((locPlan.hasManualEdits || locPlan.isManualOnly) && (locTime > remTime || (isPendingLocalPlans && locTime >= remTime && locTime > 0))) {
-                    needsCloudPush = true;
-                    return locPlan;
-                  }
-
-                  // Case 2: Local browser has manual edits on individual courses or plan settings
-                  if (locPlan.hasManualEdits || locPlan.isManualOnly || locPlan.courses?.some(c => c.isManuallyEdited)) {
-                    let anyCourseMerged = false;
-                    const mergedCourses = remPlan.courses.map(rc => {
-                      const lc = locPlan.courses?.find(c => c.id === rc.id || (c.dayOfWeek === rc.dayOfWeek && c.startTime === rc.startTime && c.roomId === rc.roomId));
-                      if (lc && lc.isManuallyEdited && !rc.isManuallyEdited) {
-                        anyCourseMerged = true;
-                        return lc;
-                      }
-                      return rc;
-                    });
-                    // Also preserve any custom manually-added courses in locPlan not in remPlan
-                    for (const lc of (locPlan.courses || [])) {
-                      if (lc.isManuallyEdited && !mergedCourses.some(mc => mc.id === lc.id || (mc.dayOfWeek === lc.dayOfWeek && mc.startTime === lc.startTime && mc.name === lc.name))) {
-                        if (!remPlan.deletedCourseIds?.includes(lc.id)) {
-                          mergedCourses.push(lc);
-                          anyCourseMerged = true;
-                        }
-                      }
-                    }
-                    const seminarLeadersChanged = locPlan.seminarLeaderIds && locPlan.seminarLeaderIds.length > 0 && JSON.stringify(locPlan.seminarLeaderIds) !== JSON.stringify(remPlan.seminarLeaderIds || []);
-                    if (anyCourseMerged || seminarLeadersChanged) {
-                      needsCloudPush = true;
-                      return {
-                        ...remPlan,
-                        hasManualEdits: true,
-                        isManualOnly: locPlan.isManualOnly ?? remPlan.isManualOnly,
-                        seminarLeaderIds: seminarLeadersChanged ? locPlan.seminarLeaderIds : (remPlan.seminarLeaderIds || []),
-                        lastEditedAt: locTime >= remTime ? (locPlan.lastEditedAt || new Date().toISOString()) : remPlan.lastEditedAt,
-                        courses: mergedCourses
-                      };
-                    }
-                  }
-
-                  return remPlan;
-                });
-
-                // Include any locally created plans with manual edits that don't exist in remotePlans yet
-                for (const locPlan of localPlans) {
-                  if ((locPlan.hasManualEdits || locPlan.isManualOnly) && !merged.some(mp => isSamePlanIdentity(mp, locPlan))) {
-                    merged.push(locPlan);
-                    needsCloudPush = true;
-                  }
-                }
+                const { plans: merged, hasMergedFromIncoming: needsCloudPush } = mergeWeekPlansLists(
+                  remotePlans,
+                  localPlans,
+                  allowLocalPlanEdits
+                );
 
                 // Apply universal idempotent reconciliation with codebase defaults
                 const { plans: reconciled } = reconcilePlansWithDefaults(merged);
@@ -6724,15 +7265,116 @@ export const db = {
   updateWeekPlan: (plan: WeekPlan): void => {
     const list = db.getWeekPlans();
     const index = list.findIndex(p => p.id === plan.id || (plan.targetWeekCode && p.targetWeekCode === plan.targetWeekCode));
+    const nowIso = new Date().toISOString();
+    plan.lastEditedAt = nowIso;
     if (index !== -1) {
-      plan.lastEditedAt = new Date().toISOString();
-      list[index] = plan;
+      const existing = list[index];
+      const deletedSet = new Set([...(existing.deletedCourseIds || []), ...(plan.deletedCourseIds || [])]);
+      // Preserve any course in existing storage that has a strictly newer lastEditedAt than the incoming plan's copy
+      const mergedCourses: Course[] = (plan.courses || []).map(incC => {
+        const storedC = (existing.courses || []).find(sc => isSameCourseSlot(sc, incC));
+        if (!storedC) return incC;
+        const incTime = incC.lastEditedAt ? new Date(incC.lastEditedAt).getTime() : 0;
+        const storedTime = storedC.lastEditedAt ? new Date(storedC.lastEditedAt).getTime() : 0;
+        if (storedC.isManuallyEdited && storedTime > incTime) {
+          return storedC;
+        }
+        return incC;
+      });
+      for (const storedC of (existing.courses || [])) {
+        if (deletedSet.has(storedC.id)) continue;
+        if (storedC.isManuallyEdited && !mergedCourses.some(mc => isSameCourseSlot(mc, storedC))) {
+          mergedCourses.push(storedC);
+        }
+      }
+      list[index] = {
+        ...plan,
+        deletedCourseIds: Array.from(deletedSet),
+        courses: mergedCourses
+      };
       db.saveWeekPlans(list);
     } else {
-      plan.lastEditedAt = new Date().toISOString();
       list.push(plan);
       db.saveWeekPlans(list);
     }
+  },
+  upsertCourseInWeekPlan: (planIdOrWeekCode: string, course: Course, fallbackPlan?: WeekPlan): WeekPlan | undefined => {
+    const list = db.getWeekPlans();
+    const nowIso = new Date().toISOString();
+    const updatedCourse: Course = {
+      ...course,
+      isManuallyEdited: true,
+      isAiPlanned: false,
+      lastEditedAt: nowIso
+    };
+    let index = list.findIndex(p => p.id === planIdOrWeekCode || (p.targetWeekCode && p.targetWeekCode === planIdOrWeekCode));
+    if (index === -1 && fallbackPlan) {
+      const newPlan: WeekPlan = {
+        ...JSON.parse(JSON.stringify(fallbackPlan)),
+        isManualOnly: true,
+        hasManualEdits: true,
+        lastEditedAt: nowIso
+      };
+      const cIdx = newPlan.courses.findIndex(c => c.id === updatedCourse.id);
+      if (cIdx !== -1) {
+        newPlan.courses[cIdx] = updatedCourse;
+      } else {
+        newPlan.courses.push(updatedCourse);
+      }
+      list.push(newPlan);
+      db.saveWeekPlans(list);
+      return newPlan;
+    }
+    if (index !== -1) {
+      const plan = list[index];
+      plan.isManualOnly = true;
+      plan.hasManualEdits = true;
+      plan.lastEditedAt = nowIso;
+      if (plan.deletedCourseIds) {
+        plan.deletedCourseIds = plan.deletedCourseIds.filter(id => id !== updatedCourse.id);
+      }
+      const cIdx = plan.courses.findIndex(c => c.id === updatedCourse.id);
+      if (cIdx !== -1) {
+        plan.courses[cIdx] = updatedCourse;
+      } else {
+        plan.courses.push(updatedCourse);
+      }
+      db.saveWeekPlans(list);
+      return plan;
+    }
+    return undefined;
+  },
+  removeCourseFromWeekPlan: (planIdOrWeekCode: string, courseId: string, fallbackPlan?: WeekPlan): WeekPlan | undefined => {
+    const list = db.getWeekPlans();
+    const nowIso = new Date().toISOString();
+    let index = list.findIndex(p => p.id === planIdOrWeekCode || (p.targetWeekCode && p.targetWeekCode === planIdOrWeekCode));
+    if (index === -1 && fallbackPlan) {
+      const newPlan: WeekPlan = {
+        ...JSON.parse(JSON.stringify(fallbackPlan)),
+        isManualOnly: true,
+        hasManualEdits: true,
+        lastEditedAt: nowIso,
+        deletedCourseIds: Array.from(new Set([...(fallbackPlan.deletedCourseIds || []), courseId])),
+        courses: (fallbackPlan.courses || []).filter(c => c.id !== courseId)
+      };
+      list.push(newPlan);
+      db.saveWeekPlans(list);
+      return newPlan;
+    }
+    if (index !== -1) {
+      const plan = list[index];
+      plan.isManualOnly = true;
+      plan.hasManualEdits = true;
+      plan.lastEditedAt = nowIso;
+      if (!plan.deletedCourseIds) plan.deletedCourseIds = [];
+      if (!plan.deletedCourseIds.includes(courseId)) {
+        plan.deletedCourseIds.push(courseId);
+      }
+      plan.courses = plan.courses.filter(c => c.id !== courseId);
+      db.saveWeekPlans(list);
+      return plan;
+    }
+    return undefined;
   },
   deleteWeekPlan: (id: string): void => {
     const list = db.getWeekPlans();
@@ -6741,6 +7383,7 @@ export const db = {
   setWeekPlanApproval: (weekCodeOrPlanId: string, isApproved: boolean): WeekPlan | undefined => {
     const list = db.getWeekPlans();
     let plan = list.find(p => p.id === weekCodeOrPlanId || p.targetWeekCode === weekCodeOrPlanId);
+    const nowIso = new Date().toISOString();
     if (!plan) {
       const template = list.find(p => p.id === 'plan-template-1') || list[0];
       plan = {
@@ -6755,10 +7398,11 @@ export const db = {
           id: 'course-' + Math.random().toString(36).substr(2, 9),
           teacherId: null,
           isAiPlanned: false,
-          status: isApproved ? 'approved' : 'draft'
+          status: isApproved ? 'approved' : 'draft',
+          lastEditedAt: nowIso
         })) : [],
-        createdAt: new Date().toISOString(),
-        lastEditedAt: new Date().toISOString()
+        createdAt: nowIso,
+        lastEditedAt: nowIso
       };
       (plan as any).manuallyUnapproved = !isApproved;
 
@@ -6774,7 +7418,8 @@ export const db = {
           roomId: s.roomId,
           teacherId: null,
           isAiPlanned: false,
-          status: isApproved ? 'approved' : 'draft'
+          status: isApproved ? 'approved' : 'draft',
+          lastEditedAt: nowIso
         });
       }
       plan.courses.sort((a, b) => {
@@ -6789,9 +7434,9 @@ export const db = {
       plan.hasManualEdits = true;
       (plan as any).manuallyUnapproved = !isApproved;
       if (isApproved) {
-        plan.courses = plan.courses.map(c => ({ ...c, status: 'approved' }));
+        plan.courses = plan.courses.map(c => ({ ...c, status: 'approved', lastEditedAt: c.lastEditedAt || nowIso }));
       }
-      plan.lastEditedAt = new Date().toISOString();
+      plan.lastEditedAt = nowIso;
     }
     db.saveWeekPlans(list);
     return plan;
@@ -6821,63 +7466,32 @@ export const db = {
   addCourse: (course: Course, planId?: string): void => {
     const plans = db.getWeekPlans();
     const id = planId || plans.find(p => p.status === 'approved')?.id || plans[0]?.id || '';
-    const plan = db.getWeekPlan(id);
-    if (plan) {
-      course.isManuallyEdited = true;
-      course.isAiPlanned = false;
-      plan.courses.push(course);
-      plan.isManualOnly = true;
-      plan.hasManualEdits = true;
-      plan.lastEditedAt = new Date().toISOString();
-      db.updateWeekPlan(plan);
-    }
+    db.upsertCourseInWeekPlan(id, course);
   },
   updateCourse: (course: Course, planId?: string): void => {
     const plans = db.getWeekPlans();
     const id = planId || plans.find(p => p.status === 'approved')?.id || plans[0]?.id || '';
-    const plan = db.getWeekPlan(id);
-    if (plan) {
-      const index = plan.courses.findIndex(c => c.id === course.id);
-      if (index !== -1) {
-        course.isManuallyEdited = true;
-        course.isAiPlanned = false;
-        plan.courses[index] = course;
-        plan.isManualOnly = true;
-        plan.hasManualEdits = true;
-        plan.lastEditedAt = new Date().toISOString();
-        db.updateWeekPlan(plan);
-      }
-    }
+    db.upsertCourseInWeekPlan(id, course);
   },
   deleteCourse: (id: string, planId?: string): void => {
     const plans = db.getWeekPlans();
     const pId = planId || plans.find(p => p.status === 'approved')?.id || plans[0]?.id || '';
-    const plan = db.getWeekPlan(pId);
-    if (plan) {
-      if (!plan.deletedCourseIds) plan.deletedCourseIds = [];
-      if (!plan.deletedCourseIds.includes(id)) {
-        plan.deletedCourseIds.push(id);
-      }
-      plan.courses = plan.courses.filter(c => c.id !== id);
-      plan.isManualOnly = true;
-      plan.hasManualEdits = true;
-      plan.lastEditedAt = new Date().toISOString();
-      db.updateWeekPlan(plan);
-    }
+    db.removeCourseFromWeekPlan(pId, id);
   },
   
   // Clear all planner data for a specific plan
   resetSchedule: (planId?: string): void => {
-    const plans = db.getWeekPlans();
-    const pId = planId || plans.find(p => p.status === 'approved')?.id || plans[0]?.id || '';
-    const plan = db.getWeekPlan(pId);
+    const list = db.getWeekPlans();
+    const pId = planId || list.find(p => p.status === 'approved')?.id || list[0]?.id || '';
+    const plan = list.find(p => p.id === pId || p.targetWeekCode === pId);
     if (plan) {
-      plan.courses = plan.courses.map(c => ({ ...c, teacherId: null, isAiPlanned: false, isManuallyEdited: false, status: 'draft' }));
+      const nowIso = new Date().toISOString();
+      plan.courses = plan.courses.map(c => ({ ...c, teacherId: null, isAiPlanned: false, isManuallyEdited: false, status: 'draft', lastEditedAt: nowIso }));
       plan.deletedCourseIds = [];
       plan.isManualOnly = false;
       plan.hasManualEdits = false;
-      plan.lastEditedAt = new Date().toISOString();
-      db.updateWeekPlan(plan);
+      plan.lastEditedAt = nowIso;
+      db.saveWeekPlans(list);
     }
   },
 
