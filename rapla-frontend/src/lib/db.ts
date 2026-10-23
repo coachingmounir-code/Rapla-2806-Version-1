@@ -192,6 +192,7 @@ export interface WeekPlan {
   isManualOnly?: boolean;
   isApproved?: boolean;
   hasManualEdits?: boolean;
+  manuallyUnapproved?: boolean;
   lastEditedAt?: string;
   deletedCourseIds?: string[];
 }
@@ -498,6 +499,27 @@ const GENERATED_TEACHERS: Teacher[] = NEW_TEACHER_NAMES.map((name, index) => {
 });
 
 const DEFAULT_TEACHERS: Teacher[] = [
+  {
+    id: 'teacher-custom-christina-und-roland',
+    name: 'Christina und Roland',
+    email: '',
+    phone: '',
+    avatarColor: 'from-purple-500 to-indigo-600',
+    specialties: ['Qigong', 'Klangreise', 'Lachyoga', 'Entspannung', 'Hatha'],
+    isYogaTeacher: true,
+    availabilityMode: 'always',
+    roleType: 'external',
+    rules: {
+      preferredRooms: ['room-2'],
+      preferredDays: [],
+      canLeadMeditation: true,
+      canLeadSatsang: false,
+      canLeadPranayama: false,
+      canLeadOnn: false,
+      canLeadHausfuehrung: false,
+      availability: [0, 1, 2, 3, 4, 5, 6].map(d => ({ day: d, start: '08:00', end: '22:00' }))
+    }
+  },
   {
     id: 'teacher-gen-satyam-bm',
     name: 'Satyam Bad Meinberg',
@@ -11719,6 +11741,22 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
+        "id": "course-2026-W44-qigong-wed",
+        "name": "Qigong",
+        "style": "Entspannung",
+        "dayOfWeek": 3,
+        "startTime": "12:30",
+        "endTime": "13:30",
+        "roomId": "room-2",
+        "teacherId": "teacher-custom-christina-und-roland",
+        "teacherName": "Christina und Roland",
+        "isAiPlanned": false,
+        "isManuallyEdited": true,
+        "status": "approved",
+        "isFixedAgreement": false,
+        "lastEditedAt": "2026-10-23T14:35:00.000Z"
+      },
+      {
         "id": "course-2026-W44-43",
         "name": "Om Namo Narayanaya",
         "style": "Meditation",
@@ -11746,19 +11784,19 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W44-45",
-        "name": "Entspannungsangebot: Klangschalen",
+        "name": "Entspannungsangebot: Klangreise",
         "style": "Entspannung",
         "dayOfWeek": 3,
         "startTime": "21:10",
         "endTime": "22:00",
-        "roomId": "room-6",
-        "teacherId": "teacher-gen-alexander-melior",
-        "teacherName": "Alexander",
+        "roomId": "room-2",
+        "teacherId": "teacher-custom-christina-und-roland",
+        "teacherName": "Christina und Roland",
         "isAiPlanned": false,
         "isManuallyEdited": true,
         "status": "approved",
         "isFixedAgreement": false,
-        "lastEditedAt": "2026-10-22T18:56:03.136Z"
+        "lastEditedAt": "2026-10-23T14:35:00.000Z"
       },
       {
         "id": "course-2026-W44-46",
@@ -11891,16 +11929,19 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W44-54",
-        "name": "Entspannungsangebot: Peziebälle / Fantasiereise",
+        "name": "Entspannungsangebot: Lachyoga",
         "style": "Entspannung",
         "dayOfWeek": 4,
         "startTime": "21:10",
         "endTime": "22:00",
-        "roomId": "room-5",
-        "teacherId": "teacher-gen-burnie-bansemer",
-        "isAiPlanned": true,
+        "roomId": "room-2",
+        "teacherId": "teacher-custom-christina-und-roland",
+        "teacherName": "Christina und Roland",
+        "isAiPlanned": false,
+        "isManuallyEdited": true,
         "status": "approved",
-        "lastEditedAt": "2026-10-22T18:56:03.136Z"
+        "isFixedAgreement": false,
+        "lastEditedAt": "2026-10-23T14:35:00.000Z"
       },
       {
         "id": "course-2026-W44-2",
@@ -13029,8 +13070,16 @@ function isSamePlanIdentity(a: WeekPlan, b: WeekPlan): boolean {
 
 function isSameCourseSlot(a: Course, b: Course): boolean {
   if (a.id === b.id) return true;
-  if (a.dayOfWeek === b.dayOfWeek && a.startTime === b.startTime && (a.name || '').trim().toLowerCase() === (b.name || '').trim().toLowerCase()) {
-    if (!a.roomId || !b.roomId || a.roomId === b.roomId) return true;
+  if (a.dayOfWeek === b.dayOfWeek && a.startTime === b.startTime) {
+    const aName = (a.name || '').trim().toLowerCase();
+    const bName = (b.name || '').trim().toLowerCase();
+    if (aName === bName) {
+      if (!a.roomId || !b.roomId || a.roomId === b.roomId) return true;
+    }
+    // Also match slots where both are relaxation offers or general classes at the exact same hour
+    const isRelaxA = aName.includes('entspannung') || a.style?.toLowerCase().includes('entspannung') || aName.includes('klang') || aName.includes('lachyoga') || aName.includes('peziebälle') || aName.includes('fantasiereise');
+    const isRelaxB = bName.includes('entspannung') || b.style?.toLowerCase().includes('entspannung') || bName.includes('klang') || bName.includes('lachyoga') || bName.includes('peziebälle') || bName.includes('fantasiereise');
+    if (isRelaxA && isRelaxB) return true;
   }
   return false;
 }
@@ -13041,7 +13090,8 @@ export function mergeWeekPlansLists(
   incomingPlans: WeekPlan[],
   allowIncomingEdits: boolean
 ): { plans: WeekPlan[]; hasMergedFromIncoming: boolean } {
-  if (!allowIncomingEdits || !incomingPlans || incomingPlans.length === 0) {
+  const hasIncomingManualEdits = Array.isArray(incomingPlans) && incomingPlans.some(p => p.hasManualEdits || p.isManualOnly || p.courses?.some(c => c.isManuallyEdited));
+  if ((!allowIncomingEdits && !hasIncomingManualEdits) || !incomingPlans || incomingPlans.length === 0) {
     return { plans: JSON.parse(JSON.stringify(basePlans || [])), hasMergedFromIncoming: false };
   }
 
@@ -13053,9 +13103,9 @@ export function mergeWeekPlansLists(
     const locPlanTime = locPlan.lastEditedAt ? new Date(locPlan.lastEditedAt).getTime() : 0;
     const remPlanTime = remPlan.lastEditedAt ? new Date(remPlan.lastEditedAt).getTime() : 0;
 
-    // Merge deletedCourseIds (only accept newly deleted IDs if locPlanTime >= remPlanTime)
+    // Merge deletedCourseIds (only accept newly deleted IDs if locPlanTime >= remPlanTime or locPlan has manual edits)
     const remDeleted = new Set(remPlan.deletedCourseIds || []);
-    if (locPlanTime >= remPlanTime && Array.isArray(locPlan.deletedCourseIds)) {
+    if ((locPlanTime >= remPlanTime || locPlan.hasManualEdits) && Array.isArray(locPlan.deletedCourseIds)) {
       for (const delId of locPlan.deletedCourseIds) {
         if (!remDeleted.has(delId)) {
           remDeleted.add(delId);
@@ -13071,18 +13121,39 @@ export function mergeWeekPlansLists(
       const lc = (locPlan.courses || []).find(c => isSameCourseSlot(c, rc));
       if (!lc) return { ...rc };
 
-      const lcTime = lc.lastEditedAt ? new Date(lc.lastEditedAt).getTime() : 0;
-      const rcTime = rc.lastEditedAt ? new Date(rc.lastEditedAt).getTime() : remPlanTime;
+      const lcTime = lc.lastEditedAt ? new Date(lc.lastEditedAt).getTime() : locPlanTime;
+      const rcTime = rc.lastEditedAt ? new Date(rc.lastEditedAt).getTime() : 0;
 
-      // Incoming course ONLY wins if it is manually edited, has an explicit course timestamp,
-      // and that timestamp is strictly newer than the remote course's timestamp.
-      if (lc.isManuallyEdited && lcTime > 0 && lcTime > rcTime) {
+      // RULE 1: If local course is manually edited but remote is not manually edited: local manual edit ALWAYS wins!
+      if (lc.isManuallyEdited && !rc.isManuallyEdited) {
         if (JSON.stringify(lc) !== JSON.stringify(rc)) {
           anyCourseMerged = true;
           hasMergedFromIncoming = true;
         }
         return { ...lc };
       }
+
+      // RULE 2: If both are manually edited: the newer one wins (or local wins if equal/newer)
+      if (lc.isManuallyEdited && rc.isManuallyEdited) {
+        if (lcTime >= rcTime) {
+          if (JSON.stringify(lc) !== JSON.stringify(rc)) {
+            anyCourseMerged = true;
+            hasMergedFromIncoming = true;
+          }
+          return { ...lc };
+        }
+        return { ...rc };
+      }
+
+      // RULE 3: If local has a newer timestamp than remote:
+      if (lcTime > rcTime && lcTime > 0) {
+        if (JSON.stringify(lc) !== JSON.stringify(rc)) {
+          anyCourseMerged = true;
+          hasMergedFromIncoming = true;
+        }
+        return { ...lc };
+      }
+
       return { ...rc };
     });
 
@@ -13091,12 +13162,10 @@ export function mergeWeekPlansLists(
       if (remDeleted.has(lc.id)) continue;
       const existsInMerged = mergedCourses.some(mc => isSameCourseSlot(mc, lc));
       if (!existsInMerged && lc.isManuallyEdited) {
-        const lcTime = lc.lastEditedAt ? new Date(lc.lastEditedAt).getTime() : 0;
-        if (lcTime > 0 && lcTime >= remPlanTime) {
-          mergedCourses.push({ ...lc });
-          anyCourseMerged = true;
-          hasMergedFromIncoming = true;
-        }
+        // ALWAYS keep manually added courses - a user explicitly created this course!
+        mergedCourses.push({ ...lc });
+        anyCourseMerged = true;
+        hasMergedFromIncoming = true;
       }
     }
 
@@ -13370,6 +13439,65 @@ export function reconcilePlansWithDefaults(plans: WeekPlan[]): { plans: WeekPlan
     }
 
     if (p.targetWeekCode === '2026-W44') {
+      // Invariant protection for manual slots: Qigong (Wed 12:30), Klangreise (Wed 21:10), Lachyoga (Thu 21:10) with Christina und Roland in Radhakrishna
+      // 1. Wednesday 12:30 Qigong in Radhakrishna
+      const qigongId = 'course-2026-W44-qigong-wed';
+      const existingQigong = p.courses.find(c => c.id === qigongId || (c.dayOfWeek === 3 && c.startTime === '12:30' && c.name.toLowerCase().includes('qigong')));
+      if (!existingQigong && !p.deletedCourseIds?.includes(qigongId)) {
+        p.courses.push({
+          id: qigongId,
+          name: 'Qigong',
+          style: 'Entspannung',
+          dayOfWeek: 3,
+          startTime: '12:30',
+          endTime: '13:30',
+          roomId: 'room-2',
+          teacherId: 'teacher-custom-christina-und-roland',
+          teacherName: 'Christina und Roland',
+          isAiPlanned: false,
+          isManuallyEdited: true,
+          status: 'approved',
+          isFixedAgreement: false,
+          lastEditedAt: new Date().toISOString()
+        });
+      } else if (existingQigong) {
+        existingQigong.name = 'Qigong';
+        existingQigong.dayOfWeek = 3;
+        existingQigong.startTime = '12:30';
+        existingQigong.endTime = '13:30';
+        existingQigong.roomId = 'room-2';
+        existingQigong.teacherId = 'teacher-custom-christina-und-roland';
+        existingQigong.teacherName = 'Christina und Roland';
+        existingQigong.isManuallyEdited = true;
+        existingQigong.status = 'approved';
+      }
+
+      // 2. Wednesday 21:10 Klangreise in Radhakrishna
+      const wed2110Course = p.courses.find(c => c.id === 'course-2026-W44-45' || (c.dayOfWeek === 3 && c.startTime === '21:10'));
+      if (wed2110Course) {
+        if (!wed2110Course.teacherName || wed2110Course.teacherName === 'Alexander' || wed2110Course.teacherId === 'teacher-gen-alexander-melior' || wed2110Course.name.toLowerCase().includes('klangschalen')) {
+          wed2110Course.name = 'Entspannungsangebot: Klangreise';
+          wed2110Course.roomId = 'room-2';
+          wed2110Course.teacherId = 'teacher-custom-christina-und-roland';
+          wed2110Course.teacherName = 'Christina und Roland';
+          wed2110Course.isManuallyEdited = true;
+          wed2110Course.status = 'approved';
+        }
+      }
+
+      // 3. Thursday 21:10 Lachyoga in Radhakrishna
+      const thu2110Course = p.courses.find(c => c.id === 'course-2026-W44-54' || (c.dayOfWeek === 4 && c.startTime === '21:10'));
+      if (thu2110Course) {
+        if (!thu2110Course.teacherName || thu2110Course.teacherId === 'teacher-gen-burnie-bansemer' || thu2110Course.name.toLowerCase().includes('peziebälle') || thu2110Course.name.toLowerCase().includes('fantasiereise')) {
+          thu2110Course.name = 'Entspannungsangebot: Lachyoga';
+          thu2110Course.roomId = 'room-2';
+          thu2110Course.teacherId = 'teacher-custom-christina-und-roland';
+          thu2110Course.teacherName = 'Christina und Roland';
+          thu2110Course.isManuallyEdited = true;
+          thu2110Course.status = 'approved';
+        }
+      }
+
       // On Saturday 24.10.2026 (Tag der offenen Tür), keep all Tag der offenen Tür courses and any manually edited custom courses
       const tdotIds = new Set(OPEN_DAY_2026_W44_SATURDAY_COURSES.map(tc => tc.id));
       p.courses = p.courses.filter(c => {
@@ -13534,7 +13662,7 @@ export function reconcilePlansWithDefaults(plans: WeekPlan[]): { plans: WeekPlan
   return { plans: list, hasChanges: beforeJson !== afterJson };
 }
 
-const CURRENT_DB_VERSION = 146;
+const CURRENT_DB_VERSION = 148;
 
 // Database Actions
 export const db = {
@@ -13597,7 +13725,8 @@ export const db = {
                   ? getStored<WeekPlan[]>('rapla_week_plans', DEFAULT_WEEK_PLANS)
                   : [];
                 const isPendingLocalPlans = pendingKeys.has('rapla_week_plans');
-                const allowLocalPlanEdits = hadLocalPlansInStorage && isPendingLocalPlans && !isReadOnlyUserRole();
+                const hasLocalManualEdits = Array.isArray(localPlans) && localPlans.some(p => p.hasManualEdits || p.isManualOnly || p.courses?.some(c => c.isManuallyEdited));
+                const allowLocalPlanEdits = hadLocalPlansInStorage && (isPendingLocalPlans || hasLocalManualEdits) && !isReadOnlyUserRole();
 
                 const { plans: merged, hasMergedFromIncoming: needsCloudPush } = mergeWeekPlansLists(
                   remotePlans,
