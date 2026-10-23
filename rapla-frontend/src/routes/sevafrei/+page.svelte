@@ -219,52 +219,41 @@
   }
 
   function loadSevafreiData() {
-    sevakas = db.getTeachers().filter(t => t.roleType === 'sevaka');
+    const dbTeachers = db.getTeachers();
+    sevakas = dbTeachers.filter(t => t.roleType === 'sevaka');
     if (sevakas.length > 0 && !formTeacherId) {
       formTeacherId = sevakas[0].id;
     }
 
-    const saved = localStorage.getItem('rapla_sevafrei');
-    if (saved) {
-      sevafreiList = JSON.parse(saved);
-      
-      const beforeJson = JSON.stringify(sevafreiList);
-      // Clean up old excel entries to ensure we match the latest EXCEL_ABSENCES
-      sevafreiList = sevafreiList.filter(e => !e.id.startsWith('excel-sf-'));
+    const storedList = db.getSevafrei();
+    const list: SevafreiEntry[] = storedList.filter((e: any) => !e.id?.startsWith('excel-sf-'));
 
-      // Auto-merge new Excel absences from EXCEL_ABSENCES
-      const dbTeachers = db.getTeachers();
-      EXCEL_ABSENCES.forEach((abs, i) => {
-        const match = findTeacherForExcelName(abs.excelName, dbTeachers);
-        if (match) {
-          const exists = sevafreiList.some(e => 
-            e.teacherId === match.id && 
-            e.startDate === abs.startDate && 
-            e.endDate === abs.endDate && 
-            e.type === abs.type
-          );
-          if (!exists) {
-            sevafreiList.push({
-              id: `excel-sf-${i}`,
-              teacherId: match.id,
-              teacherName: match.name,
-              avatarColor: match.avatarColor || '#960040',
-              startDate: abs.startDate,
-              endDate: abs.endDate,
-              type: abs.type,
-              status: abs.status,
-              note: abs.note
-            });
-          }
+    // Merge Excel absences in memory without triggering cloud writes on read
+    EXCEL_ABSENCES.forEach((abs, i) => {
+      const match = findTeacherForExcelName(abs.excelName, dbTeachers);
+      if (match) {
+        const exists = list.some(e =>
+          e.teacherId === match.id &&
+          e.startDate === abs.startDate &&
+          e.endDate === abs.endDate &&
+          e.type === abs.type
+        );
+        if (!exists) {
+          list.push({
+            id: `excel-sf-${i}`,
+            teacherId: match.id,
+            teacherName: match.name,
+            avatarColor: match.avatarColor || '#960040',
+            startDate: abs.startDate,
+            endDate: abs.endDate,
+            type: abs.type,
+            status: abs.status,
+            note: abs.note
+          });
         }
-      });
-      if (JSON.stringify(sevafreiList) !== beforeJson) {
-        saveToStorage();
       }
-    } else {
-      // Seed Excel data automatically on first load!
-      importExcelData(false);
-    }
+    });
+    sevafreiList = list;
   }
 
   onMount(() => {

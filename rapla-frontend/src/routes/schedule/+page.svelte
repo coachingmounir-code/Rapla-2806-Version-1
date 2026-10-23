@@ -32,6 +32,7 @@
 
   export function isNormalOpenDaySlot(course: Course): boolean {
     if (!course) return false;
+    if (!isOpenDayCourse(course)) return true;
     const id = (course.id || '').toLowerCase();
     const name = (course.name || '').toLowerCase();
     if (
@@ -299,7 +300,8 @@
       };
     }
 
-    const isUnassigned = (!course.teacherId || course.teacherId === 'teacher-gen-yl') && !course.isFixedAgreement;
+    const hasValidTeacherName = !!(course.teacherName && course.teacherName.trim() && course.teacherName !== '! YL #' && course.teacherName !== 'Offen' && course.teacherName !== 'Unbesetzt');
+    const isUnassigned = (!course.teacherId || course.teacherId === 'teacher-gen-yl') && !hasValidTeacherName && !course.isFixedAgreement;
     if (isUnassigned) {
       return {
         bg: '#fee2e2', // light red/rose
@@ -390,6 +392,10 @@
     const ids = courseTeacherId.split(',').map(s => s.trim());
     if (ids.includes(targetTeacherId)) return true;
     if ((targetTeacherId === 'teacher-karma-gopala' || targetTeacherId.includes('gopala')) && ids.some(id => id === 'teacher-guest-1789207307944' || id.includes('gopala'))) return true;
+    if (targetTeacherId === 'teacher-guest-1790942126763' && ids.includes('teacher-guest-1790942064335')) return true;
+    if (ids.includes('teacher-gen-mouniir-christopher') && (targetTeacherId === 'teacher-gen-mounir' || targetTeacherId === 'teacher-gen-christopher')) return true;
+    if (ids.includes('teacher-gen-burnie-narayani') && (targetTeacherId === 'teacher-gen-burnie' || targetTeacherId === 'teacher-gen-narayani')) return true;
+    if (ids.includes('teacher-gen-adam-anjali') && (targetTeacherId === 'teacher-gen-adam' || targetTeacherId === 'teacher-gen-anjali')) return true;
     return false;
   }
 
@@ -397,16 +403,29 @@
     if (!course) return false;
     if (course.teacherId && isTeacherAssigned(course.teacherId, targetTeacherId)) return true;
     if (course.additionalVisibilityTeacherIds?.includes(targetTeacherId)) return true;
+    if (course.teacherName && course.teacherName.trim()) {
+      const targetTeacher = teachers.find(t => t.id === targetTeacherId);
+      if (targetTeacher) {
+        const targetNameLower = targetTeacher.name.trim().toLowerCase();
+        const nameParts = course.teacherName.split(/[,+/&]+/).map(s => s.trim().toLowerCase()).filter(Boolean);
+        if (nameParts.some(p => p === targetNameLower)) return true;
+        if (targetTeacherId === 'teacher-guest-1790942126763' && nameParts.some(p => p.includes('sathyam') || p.includes('meinberg'))) return true;
+      }
+    }
     return false;
   }
 
   function getTeacherDisplayName(courseTeacherId: string | null | undefined, courseTeacherName?: string | null): string {
-    if (!courseTeacherId || courseTeacherId === 'teacher-gen-yl') return 'Offen';
-    if (courseTeacherName && courseTeacherName.trim() && courseTeacherName !== 'Unbesetzt' && courseTeacherName !== 'Offen') {
-      return courseTeacherName;
+    if (courseTeacherName && courseTeacherName.trim() && courseTeacherName !== '! YL #' && courseTeacherName !== 'Unbesetzt' && courseTeacherName !== 'Offen') {
+      return courseTeacherName.trim();
     }
+    if (!courseTeacherId || courseTeacherId === 'teacher-gen-yl') return 'Offen';
     const ids = courseTeacherId.split(',').map(s => s.trim());
     const names = ids.map(id => {
+      if (id === 'teacher-gen-mouniir-christopher') return 'Mounir, Christopher';
+      if (id === 'teacher-gen-burnie-narayani') return 'burnie, Narayani';
+      if (id === 'teacher-gen-adam-anjali') return 'Adam, Anjali';
+      if (id === 'teacher-guest-1790942064335' || id === 'teacher-guest-1790942126763') return 'Sathyam Bad Meinberg';
       const found = teachers.find(t => 
         t.id === id || 
         (id.includes('tanja') && (t.id.includes('tanja') || t.name.toLowerCase().includes('tanja'))) || 
@@ -422,7 +441,7 @@
       if (id.toLowerCase().includes('krishnajyoti') || id === 'teacher-guest-1791727410561') return 'Krishnajyoti';
       
       if (id.startsWith('teacher-')) {
-        let readableName = id.replace('teacher-gen-', '').replace('teacher-guest-', '').replace('teacher-karma-', '').replace('teacher-', '');
+        let readableName = id.replace('teacher-custom-', '').replace('teacher-gen-', '').replace('teacher-guest-', '').replace('teacher-karma-', '').replace('teacher-', '');
         readableName = readableName.replace(/-?\d+$/, '');
         if (!readableName.trim()) {
           const matchCourse = courses.find(c => c.teacherId === id && (c as any).teacherName);
@@ -665,9 +684,16 @@
     formStartTime = course.startTime;
     formEndTime = course.endTime;
     formRoomId = course.roomId;
-    formTeacherId = course.teacherId;
-    const foundT = course.teacherId ? teachers.find(t => t.id === course.teacherId) : null;
-    formCustomTeacherName = course.teacherName || (foundT ? foundT.name : '');
+    const isPlaceholderTeacher =
+      course.teacherId === 'teacher-gen-yl' &&
+      (!course.teacherName || course.teacherName === '! YL #' || course.teacherName === 'Offen' || course.teacherName === 'Unbesetzt');
+    formTeacherId = isPlaceholderTeacher ? null : course.teacherId;
+    const foundT = formTeacherId ? teachers.find(t => t.id === formTeacherId) : null;
+    formCustomTeacherName = isPlaceholderTeacher
+      ? ''
+      : ((course.teacherName && course.teacherName !== '! YL #' && course.teacherName !== 'Offen' && course.teacherName !== 'Unbesetzt')
+          ? course.teacherName
+          : (foundT ? foundT.name : (formTeacherId ? getTeacherDisplayName(formTeacherId, course.teacherName) : '')));
     formIsFixedAgreement = course.isFixedAgreement || false;
     formAgreementNotes = course.agreementNotes || '';
     isModalOpen = true;
@@ -737,17 +763,32 @@
     }
 
     const isBuffetForm = formStyle.toLowerCase() === 'buffet' || formName.toLowerCase().includes('vollwert-buffet') || formName.toLowerCase().includes('vollwertbuffet');
-    const selectedTeacher = teachers.find(t => t.id === formTeacherId);
     const customNameTrimmed = formCustomTeacherName.trim();
-    let finalTeacherId: string | null = isBuffetForm ? null : formTeacherId;
-    let finalTeacherName: string | undefined = isBuffetForm
-      ? undefined
-      : (customNameTrimmed ? customNameTrimmed : (selectedTeacher ? selectedTeacher.name : undefined));
+    const isValidCustomName = customNameTrimmed && customNameTrimmed !== '! YL #' && customNameTrimmed !== 'Offen' && customNameTrimmed !== 'Unbesetzt';
 
-    if (!isBuffetForm && !finalTeacherId && customNameTrimmed) {
-      const matchedByName = teachers.find(t => t.name.toLowerCase() === customNameTrimmed.toLowerCase());
-      finalTeacherId = matchedByName ? matchedByName.id : `teacher-custom-${customNameTrimmed.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
+    let finalTeacherId: string | null = isBuffetForm ? null : (formTeacherId === 'teacher-gen-yl' ? null : formTeacherId);
+    const selectedTeacher = finalTeacherId ? teachers.find(t => t.id === finalTeacherId) : null;
+
+    if (!isBuffetForm) {
+      if (isValidCustomName) {
+        const matchedExact = teachers.find(t => t.name.trim().toLowerCase() === customNameTrimmed.toLowerCase());
+        if (matchedExact) {
+          finalTeacherId = matchedExact.id;
+        } else if (customNameTrimmed.includes(',')) {
+          const parts = customNameTrimmed.split(',').map(s => s.trim().toLowerCase()).filter(Boolean);
+          const matchedFirst = teachers.find(t => parts.includes(t.name.trim().toLowerCase()));
+          finalTeacherId = matchedFirst ? matchedFirst.id : `teacher-custom-${customNameTrimmed.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
+        } else if (!selectedTeacher || selectedTeacher.name.trim().toLowerCase() !== customNameTrimmed.toLowerCase()) {
+          finalTeacherId = `teacher-custom-${customNameTrimmed.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
+        }
+      } else if (!selectedTeacher) {
+        finalTeacherId = null;
+      }
     }
+
+    const finalTeacherName: string | undefined = isBuffetForm
+      ? undefined
+      : (isValidCustomName ? customNameTrimmed : (selectedTeacher ? selectedTeacher.name : undefined));
 
     const nowIso = new Date().toISOString();
     const courseData: Course = {
@@ -799,7 +840,7 @@
     return courses
       .filter(c => c.dayOfWeek === day)
       .filter(c => selectedRoomFilter === 'all' || c.roomId === selectedRoomFilter)
-      .filter(c => selectedTeacherFilter === 'all' || c.teacherId === selectedTeacherFilter)
+      .filter(c => selectedTeacherFilter === 'all' || isTeacherVisibleForCourse(c, selectedTeacherFilter))
       .sort((a, b) => a.startTime.localeCompare(b.startTime));
   }
   function getCourseDateForForm(): string {
@@ -1233,11 +1274,13 @@
         <div class="grid-content-cell" class:tdot-column-cell={isOpenDaySaturday}>
           {#if isOpenDaySaturday}
             {@const primaryCourses = coursesInSlot.filter(c => {
+              if (!isOpenDayCourse(c)) return true;
               if (hour === 9) return c.startTime < '10:00' || selectedTeacherFilter !== 'all' || selectedRoomFilter !== 'all';
               if (hour === 15) return selectedTeacherFilter !== 'all' || selectedRoomFilter !== 'all';
               return true;
             })}
             {@const collapsibleCourses = coursesInSlot.filter(c => {
+              if (!isOpenDayCourse(c)) return false;
               if (hour === 9) return c.startTime >= '10:00' && selectedTeacherFilter === 'all' && selectedRoomFilter === 'all';
               if (hour === 15) return selectedTeacherFilter === 'all' && selectedRoomFilter === 'all';
               return false;
@@ -1689,11 +1732,12 @@
               placeholder="z. B. Pranava oder mehrere Namen (Komma-getrennt)"
               bind:value={formCustomTeacherName}
               oninput={() => {
-                if (!formCustomTeacherName.trim()) {
+                const trimmed = formCustomTeacherName.trim();
+                if (!trimmed) {
                   formTeacherId = null;
                 } else {
-                  const matched = teachers.find(t => t.name.toLowerCase() === formCustomTeacherName.trim().toLowerCase());
-                  if (matched) formTeacherId = matched.id;
+                  const matched = teachers.find(t => t.name.trim().toLowerCase() === trimmed.toLowerCase());
+                  formTeacherId = matched ? matched.id : null;
                 }
               }}
             />

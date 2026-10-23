@@ -41,6 +41,7 @@
 
   export function isNormalOpenDaySlot(course: Course | YlaTeacherWeekSlot): boolean {
     if (!course) return false;
+    if (!isOpenDayCourse(course)) return true;
     const id = ((course as Course).id || '').toLowerCase();
     const name = (course.name || '').toLowerCase();
     if (
@@ -469,8 +470,12 @@
     const ids = courseTeacherId.split(',').map(s => s.trim());
     if (ids.includes(targetTeacherId)) return true;
     if ((targetTeacherId === 'teacher-karma-gopala' || targetTeacherId.includes('gopala')) && ids.some(id => id === 'teacher-guest-1789207307944' || id.includes('gopala'))) return true;
+    if (targetTeacherId === 'teacher-guest-1790942126763' && ids.includes('teacher-guest-1790942064335')) return true;
+    if (ids.includes('teacher-gen-mouniir-christopher') && (targetTeacherId === 'teacher-gen-mounir' || targetTeacherId === 'teacher-gen-christopher')) return true;
+    if (ids.includes('teacher-gen-burnie-narayani') && (targetTeacherId === 'teacher-gen-burnie' || targetTeacherId === 'teacher-gen-narayani')) return true;
+    if (ids.includes('teacher-gen-adam-anjali') && (targetTeacherId === 'teacher-gen-adam' || targetTeacherId === 'teacher-gen-anjali')) return true;
 
-    // Check composite assignments (e.g. teacher-gen-adam-anjali, teacher-gen-burnie-narayani)
+    // Check composite assignments
     const targetTeacher = teachers.find(t => t.id === targetTeacherId);
     if (targetTeacher) {
       const targetName = targetTeacher.name.toLowerCase().trim();
@@ -487,16 +492,30 @@
     if (!course) return false;
     if (course.teacherId && isTeacherAssigned(course.teacherId, targetTeacherId)) return true;
     if ((course as Course).additionalVisibilityTeacherIds?.includes(targetTeacherId)) return true;
+    const cName = (course as Course).teacherName;
+    if (cName && cName.trim()) {
+      const targetTeacher = teachers.find(t => t.id === targetTeacherId);
+      if (targetTeacher) {
+        const targetNameLower = targetTeacher.name.trim().toLowerCase();
+        const nameParts = cName.split(/[,+/&]+/).map(s => s.trim().toLowerCase()).filter(Boolean);
+        if (nameParts.some(p => p === targetNameLower)) return true;
+        if (targetTeacherId === 'teacher-guest-1790942126763' && nameParts.some(p => p.includes('sathyam') || p.includes('meinberg'))) return true;
+      }
+    }
     return false;
   }
 
   function getTeacherDisplayName(courseTeacherId: string | null | undefined, courseTeacherName?: string | null, isSchulung: boolean = false): string {
-    if (!courseTeacherId || courseTeacherId === 'teacher-gen-yl') return isSchulung ? 'Offen' : 'Unbesetzt';
-    if (courseTeacherName && courseTeacherName.trim() && courseTeacherName !== 'Unbesetzt' && courseTeacherName !== 'Offen') {
-      return courseTeacherName;
+    if (courseTeacherName && courseTeacherName.trim() && courseTeacherName !== '! YL #' && courseTeacherName !== 'Unbesetzt' && courseTeacherName !== 'Offen') {
+      return courseTeacherName.trim();
     }
+    if (!courseTeacherId || courseTeacherId === 'teacher-gen-yl') return isSchulung ? 'Offen' : 'Unbesetzt';
     const ids = courseTeacherId.split(',').map(s => s.trim());
     const names = ids.map(id => {
+      if (id === 'teacher-gen-mouniir-christopher') return 'Mounir, Christopher';
+      if (id === 'teacher-gen-burnie-narayani') return 'burnie, Narayani';
+      if (id === 'teacher-gen-adam-anjali') return 'Adam, Anjali';
+      if (id === 'teacher-guest-1790942064335' || id === 'teacher-guest-1790942126763') return 'Sathyam Bad Meinberg';
       const found = teachers.find(t => 
         t.id === id || 
         (id.includes('tanja') && (t.id.includes('tanja') || t.name.toLowerCase().includes('tanja'))) || 
@@ -512,7 +531,7 @@
       if (id.toLowerCase().includes('krishnajyoti') || id === 'teacher-guest-1791727410561') return 'Krishnajyoti';
       
       if (id.startsWith('teacher-')) {
-        let readableName = id.replace('teacher-gen-', '').replace('teacher-guest-', '').replace('teacher-karma-', '').replace('teacher-', '');
+        let readableName = id.replace('teacher-custom-', '').replace('teacher-gen-', '').replace('teacher-guest-', '').replace('teacher-karma-', '').replace('teacher-', '');
         readableName = readableName.replace(/-?\d+$/, '');
         if (!readableName.trim()) {
           const matchCourse = courses.find(c => c.teacherId === id && (c as any).teacherName);
@@ -559,7 +578,9 @@
       };
     }
 
-    const isUnassigned = !course.teacherId || course.teacherId === 'teacher-gen-yl';
+    const cTeacherName = (course as Course).teacherName;
+    const hasValidTeacherName = !!(cTeacherName && cTeacherName.trim() && cTeacherName !== '! YL #' && cTeacherName !== 'Offen' && cTeacherName !== 'Unbesetzt');
+    const isUnassigned = (!course.teacherId || course.teacherId === 'teacher-gen-yl') && !hasValidTeacherName;
     if (isUnassigned) {
       return {
         bg: '#fdf2f8', // light pink (lotus)
@@ -1097,11 +1118,13 @@
               <div class="grid-content-cell" class:tdot-column-cell={isOpenDaySaturday}>
                 {#if isOpenDaySaturday}
                   {@const primaryCourses = cellCourses.filter(c => {
+                    if (!isOpenDayCourse(c)) return true;
                     if (hour === 9) return c.startTime < '10:00' || (selectedTeacher && isTeacherVisibleForCourse(c, selectedTeacher.id));
                     if (hour === 15) return selectedTeacher ? isTeacherVisibleForCourse(c, selectedTeacher.id) : false;
                     return true;
                   })}
                   {@const collapsibleCourses = cellCourses.filter(c => {
+                    if (!isOpenDayCourse(c)) return false;
                     if (hour === 9) return c.startTime >= '10:00' && !(selectedTeacher && isTeacherVisibleForCourse(c, selectedTeacher.id));
                     if (hour === 15) return !(selectedTeacher && isTeacherVisibleForCourse(c, selectedTeacher.id));
                     return false;

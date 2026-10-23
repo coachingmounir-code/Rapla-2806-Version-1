@@ -179,8 +179,8 @@ export function validateAssignment(
   const isSonstigesForSevaka = courseStyleLower.includes('sonstiges') || courseStyleLower.includes('buffet') || courseStyleLower.includes('schulung') || courseNameLower.includes('schulung') || courseNameLower.includes('hausführung') || courseNameLower.includes('hausfuehrung') || courseNameLower.includes('rezeption') || courseNameLower.includes('infopoint') || courseNameLower.includes('yoga-shop') || courseNameLower.includes('begrüßung') || courseNameLower.includes('ausbildung') || courseNameLower.includes('mantra-singen');
   const isYogaClassForSevaka = !isMeditationForSevaka && !isSatsangForSevaka && !isSatsangEinfuehrungForSevaka && !isOnnForSevaka && !isEntspannungForSevaka && !isSonstigesForSevaka;
 
-  // Complete exclusion for Satyam
-  if (teacherNameLower.includes('satyam')) {
+  // Complete exclusion for Satyam (Sevaka), but NOT Guest Teacher Sathyam Bad Meinberg
+  if (teacherNameLower.includes('satyam') && !teacherNameLower.includes('meinberg')) {
     conflicts.push({
       type: 'hard',
       message: `${teacher.name} ist komplett herausgenommen und darf für keine Stunden oder Dienste eingeteilt werden.`
@@ -322,15 +322,10 @@ export function validateAssignment(
     }
 
     // Check harmony for Tag der offenen Tür 10:00-18:00 stations ("nicht während der Yogastunden")
-    const cIsOpenDayStation = course.name.toLowerCase().includes('nicht während der yogastunden') || ['rezeption', 'infopoint', 'yoga-shop'].includes((course.roomId || '').toLowerCase());
-    const oIsOpenDayStation = other.name.toLowerCase().includes('nicht während der yogastunden') || ['rezeption', 'infopoint', 'yoga-shop'].includes((other.roomId || '').toLowerCase());
+    const cIsOpenDayStation = course.name.toLowerCase().includes('nicht während der yogastunden') || ['rezeption', 'infopoint', 'yoga-shop', 'room-10', 'room-11'].includes((course.roomId || '').toLowerCase()) || (course.startTime === '10:00' && course.endTime === '18:00');
+    const oIsOpenDayStation = other.name.toLowerCase().includes('nicht während der yogastunden') || ['rezeption', 'infopoint', 'yoga-shop', 'room-10', 'room-11'].includes((other.roomId || '').toLowerCase()) || (other.startTime === '10:00' && other.endTime === '18:00');
     if ((cIsOpenDayStation && !oIsOpenDayStation) || (oIsOpenDayStation && !cIsOpenDayStation)) {
-      const otherCourse = cIsOpenDayStation ? other : course;
-      const otherStyle = (otherCourse.style || '').toLowerCase();
-      const otherName = (otherCourse.name || '').toLowerCase();
-      if (otherStyle === 'hatha' || otherName.includes('anfänger') || otherName.includes('mittelstufe') || otherName.includes('yoga')) {
-        return false;
-      }
+      return false;
     }
 
     return true;
@@ -1670,22 +1665,32 @@ export function validateRoomRules(
     }
   }
 
-  // 4. Yogageschichten am Kamin rule: always am Kamin (room-6)
-  if (nameLower.includes('yogageschichten am kamin') || nameLower.includes('am kamin')) {
+  // 4. Yogageschichten am Kamin rule: always im Kaminzimmer (room-6)
+  if (nameLower.includes('yogageschichten am kamin') || nameLower.includes('am kamin') || nameLower.includes('kaminzimmer')) {
     if (course.roomId !== 'room-6') {
       conflicts.push({
         type: 'soft',
-        message: `Yogageschichten am Kamin finden standardmäßig am Kamin statt.`
+        message: `Yogageschichten am Kamin finden standardmäßig im Kaminzimmer statt.`
       });
     }
   }
 
-  // 5. Meditativer Spaziergang rule: always vor dem Eingang (room-7)
-  if (nameLower.includes('spaziergang')) {
+  // 5. Meditativer Spaziergang rule: always im Eingangsbereich (room-7)
+  if (nameLower.includes('spaziergang') || nameLower.includes('eingangsbereich')) {
     if (course.roomId !== 'room-7') {
       conflicts.push({
         type: 'soft',
-        message: `Der meditative Spaziergang findet standardmäßig vor dem Eingang statt.`
+        message: `Der meditative Spaziergang findet standardmäßig im Eingangsbereich statt.`
+      });
+    }
+  }
+
+  // 6. Hausführung rule: always im Eingangsbereich (room-7)
+  if (nameLower.includes('hausführung') || nameLower.includes('hausfuehrung')) {
+    if (course.roomId !== 'room-7') {
+      conflicts.push({
+        type: 'soft',
+        message: `Hausführungen finden standardmäßig im Eingangsbereich statt.`
       });
     }
   }
@@ -1703,14 +1708,20 @@ export function adjustRoomsForRules(courses: Course[], teachers: Teacher[], targ
     const styleLower = course.style.toLowerCase();
 
     // 0. Yogageschichten am Kamin rule
-    if (nameLower.includes('yogageschichten am kamin') || nameLower.includes('am kamin')) {
-      course.roomId = 'room-6'; // am Kamin
+    if (nameLower.includes('yogageschichten am kamin') || nameLower.includes('am kamin') || nameLower.includes('kaminzimmer')) {
+      course.roomId = 'room-6'; // Kaminzimmer
       return;
     }
 
     // 0b. Meditativer Spaziergang rule
-    if (nameLower.includes('spaziergang')) {
-      course.roomId = 'room-7'; // vor dem Eingang
+    if (nameLower.includes('spaziergang') || nameLower.includes('eingangsbereich')) {
+      course.roomId = 'room-7'; // Eingangsbereich
+      return;
+    }
+
+    // 0c. Hausführung rule
+    if (nameLower.includes('hausführung') || nameLower.includes('hausfuehrung')) {
+      course.roomId = 'room-7'; // Eingangsbereich
       return;
     }
 

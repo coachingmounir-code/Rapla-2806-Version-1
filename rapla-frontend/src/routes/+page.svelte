@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import { todoManager } from '$lib/todoStore.svelte';
+  import { db } from '$lib/db';
 
   interface OpenDayProgramItem {
     id: string;
@@ -339,19 +340,50 @@
   let newProgRoom = $state('');
   let newProgDesc = $state('');
 
+  function syncOpenDayWithPlan() {
+    const plans = db.getWeekPlans();
+    const teachers = db.getTeachers();
+    const rooms = db.getRooms();
+    const w44 = plans.find(p => p.targetWeekCode === '2026-W44');
+    if (!w44) return;
+    const satCourses = w44.courses
+      .filter(c => c.dayOfWeek === 6)
+      .sort((a, b) => a.startTime.localeCompare(b.startTime));
+    if (satCourses.length === 0) return;
+
+    const getTeacherLabel = (c: any): string => {
+      if (c.style === 'Buffet' || c.name?.toLowerCase().includes('buffet')) return 'Keine Einteilung';
+      if (c.teacherName && c.teacherName.trim() && c.teacherName !== '! YL #' && c.teacherName !== 'Offen' && c.teacherName !== 'Unbesetzt') {
+        return c.teacherName.trim();
+      }
+      if (!c.teacherId || c.teacherId === 'teacher-gen-yl') return 'Offen';
+      const found = teachers.find(t => t.id === c.teacherId);
+      return found ? found.name : c.teacherId.replace('teacher-gen-', '').replace('teacher-custom-', '');
+    };
+
+    openDayProgram = satCourses.map(c => {
+      const roomObj = rooms.find(r => r.id === c.roomId);
+      return {
+        id: c.id,
+        time: `${c.startTime} - ${c.endTime}`,
+        title: c.name,
+        instructor: getTeacherLabel(c),
+        room: roomObj ? roomObj.name : c.roomId,
+        description: c.agreementNotes || undefined
+      };
+    });
+  }
+
   onMount(() => {
     if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('open_day_program_2026');
-      if (saved) {
-        try {
-          const parsed = JSON.parse(saved);
-          if (Array.isArray(parsed) && parsed.length > 0) {
-            openDayProgram = parsed;
-          }
-        } catch (e) {
-          console.error('Failed to parse open day program', e);
-        }
-      }
+      syncOpenDayWithPlan();
+      const handleSync = () => syncOpenDayWithPlan();
+      window.addEventListener('rapla-data-synced', handleSync);
+      window.addEventListener('storage', handleSync);
+      return () => {
+        window.removeEventListener('rapla-data-synced', handleSync);
+        window.removeEventListener('storage', handleSync);
+      };
     }
   });
 
