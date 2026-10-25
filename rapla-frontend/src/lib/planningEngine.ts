@@ -599,6 +599,40 @@ export function validateAssignment(
     }
   }
 
+  // 8.1 Saturday 09:15 Mittelstufe (Karuna erste Wahl)
+  const isSaturdayMorningMittelstufe = course.dayOfWeek === 6 &&
+                                       course.startTime === '09:15' &&
+                                       courseNameLower.includes('mittelstufe');
+  if (isSaturdayMorningMittelstufe) {
+    const primary = (wochenplanRules.yoga as any).saturdayMorningMittelstufe?.primary || 'karuna';
+    const isPrimaryAbsent = isTeacherAbsent(primary, course.dayOfWeek, targetWeekCode, absences);
+    if (!isPrimaryAbsent) {
+      if (!teacherNameLower.includes(primary)) {
+        conflicts.push({
+          type: 'soft',
+          message: `${primary.toUpperCase()} ist die erste Wahl für die Mittelstufe am Samstag um 09:15 Uhr, da sie laut sevafrei-Kalender verfügbar ist.`
+        });
+      }
+    }
+  }
+
+  // 8.2 Tuesday 09:15 Anfängerstunde (Karuna erste Wahl)
+  const isTuesdayMorningAnfaenger = course.dayOfWeek === 2 &&
+                                    course.startTime === '09:15' &&
+                                    courseNameLower.includes('anfänger');
+  if (isTuesdayMorningAnfaenger) {
+    const primary = (wochenplanRules.yoga as any).tuesdayMorningAnfaenger?.primary || 'karuna';
+    const isPrimaryAbsent = isTeacherAbsent(primary, course.dayOfWeek, targetWeekCode, absences);
+    if (!isPrimaryAbsent) {
+      if (!teacherNameLower.includes(primary)) {
+        conflicts.push({
+          type: 'soft',
+          message: `${primary.toUpperCase()} ist die erste Wahl für die Anfängerstunde am Dienstag um 09:15 Uhr, da sie laut sevafrei-Kalender verfügbar ist.`
+        });
+      }
+    }
+  }
+
   // 8.5 Hausführung rules
   const isHausfuehrung = courseNameLower.includes('hausführung') || courseNameLower.includes('hausfuehrung');
   if (isHausfuehrung && course.dayOfWeek !== 6) {
@@ -1082,6 +1116,22 @@ export function runAiPlanning(
       // Rule 9: Friday morning (09:15) Intermediate class from compiled rules
       if (course.dayOfWeek === 5 && course.startTime === '09:15' && course.name.toLowerCase().includes('mittelstufe')) {
         if (teacherNameLower.includes(yogaRules.fridayMorningMittelstufe.primary)) {
+          score += 10000;
+        }
+      }
+
+      // Saturday morning (09:15) Intermediate class: Karuna is primary
+      if (course.dayOfWeek === 6 && course.startTime === '09:15' && course.name.toLowerCase().includes('mittelstufe')) {
+        const primary = (yogaRules as any).saturdayMorningMittelstufe?.primary || 'karuna';
+        if (teacherNameLower.includes(primary)) {
+          score += 10000;
+        }
+      }
+
+      // Tuesday morning (09:15) Beginner class: Karuna is primary
+      if (course.dayOfWeek === 2 && course.startTime === '09:15' && course.name.toLowerCase().includes('anfänger')) {
+        const primary = (yogaRules as any).tuesdayMorningAnfaenger?.primary || 'karuna';
+        if (teacherNameLower.includes(primary)) {
           score += 10000;
         }
       }

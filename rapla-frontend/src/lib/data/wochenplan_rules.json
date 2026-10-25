@@ -660,6 +660,14 @@
     "fridayMorningMittelstufe": {
       "primary": "pranava"
     },
+    "saturdayMorningMittelstufe": {
+      "primary": "karuna",
+      "backup": "abha"
+    },
+    "tuesdayMorningAnfaenger": {
+      "primary": "karuna",
+      "backup": "harishakti"
+    },
     "sundayMittelstufeAnkommen": {
       "primary": "karuna",
       "backups": [

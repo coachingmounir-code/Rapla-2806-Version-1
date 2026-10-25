@@ -15,6 +15,12 @@ Bitte stets darauf achten, dass alle Slots besetzt werden (kein Slot darf bei de
 - Chandrashekara kann dienstags nachmittags nicht eingeplant werden.
 - Chandrashekara unterrichtet bei den Yogastunden ausschließlich Mittelstufe (keine Anfänger-Yogastunden).
 - Chandrashekara kann hin und wieder auch für die geführte Meditation sowie für das Om Namo Narayana (ONN) eingeplant werden.
+- Karuna:
+  - Freitag 16:30 Uhr: Mittelstufe (Ankommensstunde) – stets eingeplant / erste Wahl.
+  - Samstag Vormittag (09:15 Uhr): Mittelstufe – stets eingeplant / erste Wahl.
+  - Sonntag 16:30 Uhr: Mittelstufe (Ankommensstunde) – stets eingeplant / erste Wahl.
+  - Dienstag Vormittag (09:15 Uhr): Anfängerstunde – stets eingeplant / erste Wahl.
+  - Seva-Frei-Bedingung: Wenn sie im Seva-Frei-Kalender als abwesend / fehlend eingetragen ist, kann sie natürlich nicht eingeteilt werden. Ansonsten ist sie für diese 4 genannten Slots stets die erste Wahl.
 
 # YL-Schulungen
 - Termine finden donnerstags oder samstags jeweils von 15:00 bis 18:00 Uhr im Tripura-Raum statt.
