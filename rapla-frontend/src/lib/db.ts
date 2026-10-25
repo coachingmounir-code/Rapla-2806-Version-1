@@ -500,6 +500,31 @@ const GENERATED_TEACHERS: Teacher[] = NEW_TEACHER_NAMES.map((name, index) => {
 
 const DEFAULT_TEACHERS: Teacher[] = [
   {
+    id: 'teacher-gen-christian-bliedtner',
+    name: 'Christian Bliedtner',
+    email: 'christian.bliedtner@yoga.de',
+    phone: '',
+    avatarColor: 'from-amber-500 to-orange-600',
+    specialties: ['Hatha', 'Yin', 'Meditation', 'Vipassana'],
+    isYogaTeacher: true,
+    availabilityMode: 'seminar_only',
+    roleType: 'external',
+    stayStartDate: '2026-10-25',
+    stayEndDate: '2026-10-30',
+    stayNotes: 'Externer Seminarleiter: Yin Yoga meets Vipassana (25.-30.10.2026)',
+    customWishes: 'Seminarleiter 25.-30.10.2026 (Yin Yoga meets Vipassana)',
+    rules: {
+      preferredRooms: [],
+      preferredDays: [],
+      canLeadMeditation: true,
+      canLeadSatsang: false,
+      canLeadPranayama: false,
+      canLeadOnn: false,
+      canLeadHausfuehrung: false,
+      availability: [0, 1, 2, 3, 4, 5, 6].map(d => ({ day: d, start: '08:00', end: '22:00' }))
+    }
+  },
+  {
     id: 'teacher-custom-christina-und-roland',
     name: 'Christina und Roland',
     email: '',
@@ -867,6 +892,7 @@ const generateDefaultCourses = (): Course[] => {
     if (nameLower === 'swantje' || nameLower === 'karma yogini' || nameLower === 'karma-yogini' || nameLower === 'neue karma yogini') return 'teacher-karma-swantje';
     if (nameLower === 'gopala') return 'teacher-karma-gopala';
     if (nameLower === 'irene' || nameLower === 'irene hofmann') return 'teacher-karma-irene';
+    if (nameLower === 'christian' || nameLower === 'christian bliedtner') return 'teacher-gen-christian-bliedtner';
     return null;
   };
 
@@ -11283,6 +11309,9 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
     "status": "approved",
     "isApproved": true,
     "targetWeekCode": "2026-W44",
+    "seminarLeaderIds": [
+      "teacher-gen-christian-bliedtner"
+    ],
     "courses": [
       {
         "id": "course-2026-W44-12",
@@ -11539,13 +11568,13 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "16:15",
         "endTime": "18:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-yl",
-        "teacherName": "! YL #",
+        "teacherId": "teacher-gen-christian-bliedtner",
+        "teacherName": "Christian Bliedtner",
         "isAiPlanned": false,
         "isManuallyEdited": true,
         "status": "approved",
         "isFixedAgreement": false,
-        "lastEditedAt": "2026-10-22T18:56:03.136Z"
+        "lastEditedAt": "2026-10-25T13:00:00.000Z"
       },
       {
         "id": "course-2026-W44-28",
