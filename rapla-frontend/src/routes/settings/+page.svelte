@@ -1,6 +1,12 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import { goto } from '$app/navigation';
+  import {
+    getWhatsAppGatewayConfig,
+    saveWhatsAppGatewayConfig,
+    sendWhatsAppViaServerApi,
+    type WhatsAppGatewayConfig
+  } from '$lib/whatsappNotifier';
 
   let currentAdminPassword = $state('');
   let newAdminPassword = $state('');
@@ -12,6 +18,19 @@
 
   let userRole = $state('');
 
+  // WhatsApp Gateway Settings
+  let waProvider = $state<WhatsAppGatewayConfig['provider']>('wa_link_only');
+  let waGreenInstanceId = $state('');
+  let waGreenToken = $state('');
+  let waMetaPhoneId = $state('');
+  let waMetaToken = $state('');
+  let waWebhookUrl = $state('');
+  let waBaseAppUrl = $state('');
+  let waSaving = $state(false);
+  let waTestPhone = $state('');
+  let waTesting = $state(false);
+  let waFeedback = $state<{ type: 'ok' | 'err'; text: string } | null>(null);
+
   onMount(() => {
     // Basic verification just in case layout guard hasn't triggered
     const storedRole = localStorage.getItem('rapla_user_role');
@@ -19,7 +38,69 @@
     if (storedRole !== 'admin' && storedRole !== 'viewer') {
       goto('/wochenplan');
     }
+
+    const cfg = getWhatsAppGatewayConfig();
+    waProvider = cfg.provider || 'wa_link_only';
+    waGreenInstanceId = cfg.greenApiInstanceId || '';
+    waGreenToken = cfg.greenApiToken || '';
+    waMetaPhoneId = cfg.metaPhoneNumberId || '';
+    waMetaToken = cfg.metaAccessToken || '';
+    waWebhookUrl = cfg.customWebhookUrl || '';
+    waBaseAppUrl = cfg.baseAppUrl || '';
   });
+
+  async function handleSaveWhatsAppConfig(e: SubmitEvent) {
+    e.preventDefault();
+    waSaving = true;
+    waFeedback = null;
+    try {
+      await saveWhatsAppGatewayConfig({
+        provider: waProvider,
+        greenApiInstanceId: waGreenInstanceId.trim(),
+        greenApiToken: waGreenToken.trim(),
+        metaPhoneNumberId: waMetaPhoneId.trim(),
+        metaAccessToken: waMetaToken.trim(),
+        customWebhookUrl: waWebhookUrl.trim(),
+        baseAppUrl: waBaseAppUrl.trim()
+      });
+      waFeedback = { type: 'ok', text: 'WhatsApp-Einstellungen erfolgreich gespeichert!' };
+    } catch (err: any) {
+      waFeedback = { type: 'err', text: err?.message || 'Fehler beim Speichern.' };
+    } finally {
+      waSaving = false;
+    }
+  }
+
+  async function handleTestWhatsAppApi() {
+    if (!waTestPhone.trim()) {
+      waFeedback = { type: 'err', text: 'Bitte eine Test-Telefonnummer eingeben.' };
+      return;
+    }
+    waTesting = true;
+    waFeedback = null;
+    try {
+      await saveWhatsAppGatewayConfig({
+        provider: waProvider,
+        greenApiInstanceId: waGreenInstanceId.trim(),
+        greenApiToken: waGreenToken.trim(),
+        metaPhoneNumberId: waMetaPhoneId.trim(),
+        metaAccessToken: waMetaToken.trim(),
+        customWebhookUrl: waWebhookUrl.trim(),
+        baseAppUrl: waBaseAppUrl.trim()
+      });
+      const res = await sendWhatsAppViaServerApi(
+        waTestPhone.trim(),
+        'Namaste 🙏 Dies ist eine Test-Nachricht aus der Rapla Wochenplanung.'
+      );
+      if (res.success) {
+        waFeedback = { type: 'ok', text: 'Test-Nachricht erfolgreich über das Gateway versendet!' };
+      } else {
+        waFeedback = { type: 'err', text: res.error || 'Versand fehlgeschlagen.' };
+      }
+    } finally {
+      waTesting = false;
+    }
+  }
 
   async function updatePasswords(e: SubmitEvent) {
     e.preventDefault();
@@ -171,6 +252,137 @@
         </button>
       </form>
     </div>
+  </div>
+
+  <!-- WhatsApp Notification Gateway Configuration -->
+  <div class="glass-card form-card" style="margin-top: 0.5rem;">
+    <h2>📲 WhatsApp-Benachrichtigungen bei Plan-Abweichungen</h2>
+    <p style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.5; margin: 0;">
+      Sobald ein Wochenplan <strong>genehmigt</strong> ist und es bei einer Person Abweichungen von den als <strong>„🤝 Fest vereinbart“</strong> markierten Slots gibt, öffnet sich automatisch das Bestätigungsfenster. Der kostenlose 1-Klick-Versand über WhatsApp (`wa.me`) funktioniert sofort ohne Einrichtung. Optional kannst du hier ein kostenloses API-Gateway (z. B. Green-API Free Developer Plan) hinterlegen, um Nachrichten direkt im Hintergrund zu versenden.
+    </p>
+
+    <form onsubmit={handleSaveWhatsAppConfig} class="settings-form">
+      {#if waFeedback}
+        <div class="alert {waFeedback.type === 'ok' ? 'alert-success' : 'alert-danger'}">
+          <span>{waFeedback.type === 'ok' ? '✅' : '⚠️'}</span> {waFeedback.text}
+        </div>
+      {/if}
+
+      <div class="form-group">
+        <label for="waProviderSelect">Versand-Methode im Bestätigungsfenster</label>
+        <select
+          id="waProviderSelect"
+          class="form-select"
+          style="padding: 0.75rem 1rem; border-radius: 10px; border: 1.5px solid #cbd5e1; font-size: 0.95rem;"
+          bind:value={waProvider}
+          disabled={userRole === 'viewer'}
+        >
+          <option value="wa_link_only">💬 Kostenloser 1-Klick-Versand via WhatsApp App / Web (Standard, 0 € & ohne Setup)</option>
+          <option value="green_api">🚀 Green-API (Kostenloser Developer-Tarif – 1-Klick Hintergrundversand)</option>
+          <option value="meta_cloud">🏢 Offizielle Meta WhatsApp Cloud API</option>
+          <option value="custom_webhook">🔗 Eigener Webhook (Make / n8n / WAHA)</option>
+        </select>
+      </div>
+
+      {#if waProvider === 'green_api'}
+        <div class="settings-grid" style="gap: 1rem;">
+          <div class="form-group">
+            <label for="waGreenInstance">Green-API `idInstance`</label>
+            <input
+              id="waGreenInstance"
+              type="text"
+              placeholder="z. B. 7103948572"
+              bind:value={waGreenInstanceId}
+              disabled={userRole === 'viewer'}
+            />
+          </div>
+          <div class="form-group">
+            <label for="waGreenToken">Green-API `apiTokenInstance`</label>
+            <input
+              id="waGreenToken"
+              type="password"
+              placeholder="Dein Green-API Token"
+              bind:value={waGreenToken}
+              disabled={userRole === 'viewer'}
+            />
+          </div>
+        </div>
+      {:else if waProvider === 'meta_cloud'}
+        <div class="settings-grid" style="gap: 1rem;">
+          <div class="form-group">
+            <label for="waMetaPhoneId">Meta `Phone Number ID`</label>
+            <input
+              id="waMetaPhoneId"
+              type="text"
+              placeholder="z. B. 109283746512345"
+              bind:value={waMetaPhoneId}
+              disabled={userRole === 'viewer'}
+            />
+          </div>
+          <div class="form-group">
+            <label for="waMetaToken">Meta Permanent `Access Token`</label>
+            <input
+              id="waMetaToken"
+              type="password"
+              placeholder="EAAG..."
+              bind:value={waMetaToken}
+              disabled={userRole === 'viewer'}
+            />
+          </div>
+        </div>
+      {:else if waProvider === 'custom_webhook'}
+        <div class="form-group">
+          <label for="waWebhookUrl">Webhook POST-URL</label>
+          <input
+            id="waWebhookUrl"
+            type="url"
+            placeholder="https://hook.eu1.make.com/..."
+            bind:value={waWebhookUrl}
+            disabled={userRole === 'viewer'}
+          />
+        </div>
+      {/if}
+
+      <div class="form-group">
+        <label for="waBaseAppUrl">Öffentliche Basis-URL für den Wochenplan-Link in der Nachricht (optional)</label>
+        <input
+          id="waBaseAppUrl"
+          type="text"
+          placeholder="Leer lassen für automatische Erkennung"
+          bind:value={waBaseAppUrl}
+          disabled={userRole === 'viewer'}
+        />
+        <span class="input-help">Wird genutzt, um am Ende der WhatsApp-Nachricht den direkten Link zum persönlichen Wochenplan anzuhängen.</span>
+      </div>
+
+      {#if waProvider !== 'wa_link_only'}
+        <div style="display: flex; align-items: flex-end; gap: 0.75rem; flex-wrap: wrap; background: #f8fafc; padding: 0.85rem 1rem; border-radius: 10px; border: 1px solid #e2e8f0;">
+          <div class="form-group" style="flex: 1; min-width: 220px; margin: 0;">
+            <label for="waTestPhone">Test-Nachricht an Nummer senden:</label>
+            <input
+              id="waTestPhone"
+              type="text"
+              placeholder="z. B. 0170 1234567"
+              bind:value={waTestPhone}
+              disabled={userRole === 'viewer'}
+            />
+          </div>
+          <button
+            type="button"
+            class="save-btn"
+            style="background: #0284c7; padding: 0.75rem 1.25rem;"
+            onclick={handleTestWhatsAppApi}
+            disabled={waTesting || userRole === 'viewer'}
+          >
+            {waTesting ? 'Sende Test...' : '🚀 Gateway testen'}
+          </button>
+        </div>
+      {/if}
+
+      <button type="submit" class="save-btn" disabled={waSaving || userRole === 'viewer'}>
+        {waSaving ? 'Speichere...' : '💾 WhatsApp-Konfiguration speichern'}
+      </button>
+    </form>
   </div>
 </div>
 

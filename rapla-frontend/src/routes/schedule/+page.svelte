@@ -4,6 +4,15 @@
   import { validateAssignment, type ConflictMessage, getLocalDateForDay } from '$lib/planningEngine';
   import { EXCEL_ABSENCES } from '$lib/excel_absences';
   import { isDateInYlaRange } from '$lib/ylaData';
+  import {
+    detectDeviationsForPlan,
+    buildWhatsAppDeepLink,
+    markTeacherDeviationNotified,
+    propagateFixedAgreementAcrossPlans,
+    sendWhatsAppViaServerApi,
+    getWhatsAppGatewayConfig,
+    type TeacherDeviation
+  } from '$lib/whatsappNotifier';
   import sivanandaImg from '$lib/assets/sivananda.png';
   import { page } from '$app/state';
   import { goto } from '$app/navigation';
@@ -127,7 +136,26 @@
   let formTeacherId = $state<string | null>(null);
   let formCustomTeacherName = $state('');
   let formIsFixedAgreement = $state(false);
+  let formAgreedTeacherId = $state<string | null>(null);
   let formAgreementNotes = $state('');
+
+  // WhatsApp Deviation Confirmation Modal ("Bestätigungsfenster") states
+  let isWhatsAppModalOpen = $state(false);
+  let whatsappModalTrigger = $state<'approval' | 'edit_on_approved' | 'manual'>('manual');
+  let whatsappSelectedIds = $state<string[]>([]);
+  let whatsappMessageDrafts = $state<Record<string, string>>({});
+  let whatsappPhoneDrafts = $state<Record<string, string>>({});
+  let whatsappExpandedIds = $state<Record<string, boolean>>({});
+  let whatsappSendingIds = $state<Record<string, boolean>>({});
+  let whatsappBatchSending = $state(false);
+  let whatsappFeedback = $state<Record<string, { type: 'ok' | 'err'; text: string }>>({});
+
+  let planDeviations = $derived<TeacherDeviation[]>(
+    detectDeviationsForPlan(currentPlan, teachers, rooms)
+  );
+  let unnotifiedDeviations = $derived<TeacherDeviation[]>(
+    planDeviations.filter(d => !d.alreadyNotified)
+  );
 
   // Active validation conflicts for the selected teacher in the form
   let activeConflicts = $state<ConflictMessage[]>([]);
@@ -672,6 +700,7 @@
     formTeacherId = null;
     formCustomTeacherName = '';
     formIsFixedAgreement = false;
+    formAgreedTeacherId = null;
     formAgreementNotes = '';
     isModalOpen = true;
   }
@@ -695,31 +724,50 @@
           ? course.teacherName
           : (foundT ? foundT.name : (formTeacherId ? getTeacherDisplayName(formTeacherId, course.teacherName) : '')));
     formIsFixedAgreement = course.isFixedAgreement || false;
+    formAgreedTeacherId = course.isFixedAgreement
+      ? (course.agreedTeacherId || formTeacherId || null)
+      : (formTeacherId || null);
     formAgreementNotes = course.agreementNotes || '';
     isModalOpen = true;
   }
 
   function saveCourseDirectly(courseData: Course) {
     const nowIso = new Date().toISOString();
+    const agreedId = courseData.isFixedAgreement
+      ? (courseData.agreedTeacherId || courseData.teacherId || null)
+      : null;
+    const agreedTeacher = agreedId ? teachers.find(t => t.id === agreedId) : null;
     const stampedCourse: Course = {
       ...courseData,
+      agreedTeacherId: agreedId,
+      agreedTeacherName: courseData.isFixedAgreement ? (agreedTeacher?.name || courseData.agreedTeacherName || courseData.teacherName) : undefined,
       isManuallyEdited: true,
       isAiPlanned: false,
       lastEditedAt: nowIso
     };
+    const wasPlanApproved = !!(currentPlan?.isApproved || currentPlan?.status === 'approved');
     if (currentPlan) {
       db.upsertCourseInWeekPlan(currentPlan.id, stampedCourse, currentPlan);
+      propagateFixedAgreementAcrossPlans(stampedCourse, currentPlan.id);
     } else {
       db.updateCourse(stampedCourse);
     }
     loadData();
+    if (wasPlanApproved) {
+      maybeOpenWhatsAppModalAfterChange('edit_on_approved');
+    }
   }
 
   function toggleFixedAgreement(course: Course, e: MouseEvent) {
     e.stopPropagation();
+    const nextFixed = !course.isFixedAgreement;
+    const agreedId = nextFixed ? (course.agreedTeacherId || course.teacherId || null) : null;
+    const agreedTeacher = agreedId ? teachers.find(t => t.id === agreedId) : null;
     const updatedCourse: Course = {
       ...course,
-      isFixedAgreement: !course.isFixedAgreement,
+      isFixedAgreement: nextFixed,
+      agreedTeacherId: agreedId,
+      agreedTeacherName: nextFixed ? (agreedTeacher?.name || course.agreedTeacherName || course.teacherName) : undefined,
       isManuallyEdited: true
     };
     saveCourseDirectly(updatedCourse);
@@ -734,9 +782,13 @@
 
   function saveQuickNote() {
     if (!quickNoteCourse) return;
+    const agreedId = quickNoteCourse.agreedTeacherId || quickNoteCourse.teacherId || null;
+    const agreedTeacher = agreedId ? teachers.find(t => t.id === agreedId) : null;
     const updatedCourse: Course = {
       ...quickNoteCourse,
       isFixedAgreement: true,
+      agreedTeacherId: agreedId,
+      agreedTeacherName: agreedTeacher?.name || quickNoteCourse.agreedTeacherName || quickNoteCourse.teacherName,
       agreementNotes: quickNoteText.trim() ? quickNoteText.trim() : undefined,
       isManuallyEdited: true
     };
@@ -790,7 +842,13 @@
       ? undefined
       : (isValidCustomName ? customNameTrimmed : (selectedTeacher ? selectedTeacher.name : undefined));
 
+    const effectiveAgreedId = formIsFixedAgreement
+      ? (formAgreedTeacherId || editingCourse?.agreedTeacherId || finalTeacherId || null)
+      : null;
+    const agreedTeacherObj = effectiveAgreedId ? teachers.find(t => t.id === effectiveAgreedId) : null;
+
     const nowIso = new Date().toISOString();
+    const wasPlanApproved = !!(currentPlan?.isApproved || currentPlan?.status === 'approved');
     const courseData: Course = {
       id: editingCourse?.id || 'course-' + Date.now(),
       name: formName,
@@ -804,13 +862,18 @@
       isAiPlanned: false,
       isManuallyEdited: true,
       lastEditedAt: nowIso,
-      status: (currentPlan?.isApproved || currentPlan?.status === 'approved') ? 'approved' : (editingCourse?.status || 'draft'),
+      status: wasPlanApproved ? 'approved' : (editingCourse?.status || 'draft'),
       isFixedAgreement: formIsFixedAgreement,
+      agreedTeacherId: effectiveAgreedId,
+      agreedTeacherName: formIsFixedAgreement
+        ? (agreedTeacherObj?.name || editingCourse?.agreedTeacherName || finalTeacherName)
+        : undefined,
       agreementNotes: formAgreementNotes ? formAgreementNotes.trim() : undefined
     };
 
     if (currentPlan) {
       db.upsertCourseInWeekPlan(currentPlan.id, courseData, currentPlan);
+      propagateFixedAgreementAcrossPlans(courseData, currentPlan.id);
     } else {
       if (editingCourse) {
         db.updateCourse(courseData);
@@ -821,10 +884,14 @@
 
     isModalOpen = false;
     loadData();
+    if (wasPlanApproved) {
+      maybeOpenWhatsAppModalAfterChange('edit_on_approved');
+    }
   }
 
   function handleDelete(id: string) {
     if (confirm('Möchten Sie diesen Kurs wirklich löschen?')) {
+      const wasPlanApproved = !!(currentPlan?.isApproved || currentPlan?.status === 'approved');
       if (currentPlan) {
         db.removeCourseFromWeekPlan(currentPlan.id, id, currentPlan);
       } else {
@@ -832,6 +899,9 @@
       }
       isModalOpen = false;
       loadData();
+      if (wasPlanApproved) {
+        maybeOpenWhatsAppModalAfterChange('edit_on_approved');
+      }
     }
   }
 
@@ -878,6 +948,155 @@
     return teachers.filter(t => (t.roleType === 'karma_yogi' || t.roleType === 'guest_teacher' || t.stayStartDate || t.stayEndDate) && !isTeacherInHouseForCourse(t));
   }
 
+  function openWhatsAppModal(trigger: 'approval' | 'edit_on_approved' | 'manual' = 'manual') {
+    const devs = detectDeviationsForPlan(currentPlan, teachers, rooms);
+    whatsappModalTrigger = trigger;
+    const msgDrafts: Record<string, string> = {};
+    const phoneDrafts: Record<string, string> = {};
+    const selected: string[] = [];
+
+    for (const d of devs) {
+      msgDrafts[d.teacher.id] = d.messageText;
+      phoneDrafts[d.teacher.id] = d.teacher.phone || '';
+      if (!d.alreadyNotified) {
+        selected.push(d.teacher.id);
+      }
+    }
+    if (selected.length === 0 && devs.length > 0) {
+      selected.push(...devs.map(d => d.teacher.id));
+    }
+
+    whatsappMessageDrafts = msgDrafts;
+    whatsappPhoneDrafts = phoneDrafts;
+    whatsappSelectedIds = selected;
+    whatsappFeedback = {};
+    isWhatsAppModalOpen = true;
+  }
+
+  function maybeOpenWhatsAppModalAfterChange(trigger: 'approval' | 'edit_on_approved') {
+    const devs = detectDeviationsForPlan(currentPlan, teachers, rooms);
+    const pending = devs.filter(d => !d.alreadyNotified);
+    if (pending.length > 0) {
+      openWhatsAppModal(trigger);
+    }
+  }
+
+  async function ensureTeacherPhoneSaved(teacherId: string): Promise<string> {
+    const draftPhone = (whatsappPhoneDrafts[teacherId] || '').trim();
+    const found = teachers.find(t => t.id === teacherId);
+    if (found && draftPhone && draftPhone !== (found.phone || '').trim()) {
+      const updatedTeacher: Teacher = { ...found, phone: draftPhone };
+      await db.updateTeacherAsync(updatedTeacher);
+      teachers = db.getTeachers();
+    }
+    return draftPhone || found?.phone || '';
+  }
+
+  async function handleWhatsAppLinkSend(dev: TeacherDeviation) {
+    const phone = await ensureTeacherPhoneSaved(dev.teacher.id);
+    const text = whatsappMessageDrafts[dev.teacher.id] || dev.messageText;
+    const url = buildWhatsAppDeepLink(phone, text);
+    window.open(url, '_blank', 'noopener,noreferrer');
+
+    if (currentPlan) {
+      markTeacherDeviationNotified(currentPlan.id, dev.teacher.id, dev.signature);
+      loadData();
+    }
+    whatsappFeedback = {
+      ...whatsappFeedback,
+      [dev.teacher.id]: { type: 'ok', text: 'WhatsApp geöffnet & als benachrichtigt markiert' }
+    };
+  }
+
+  async function handleWhatsAppApiSend(dev: TeacherDeviation): Promise<boolean> {
+    const phone = await ensureTeacherPhoneSaved(dev.teacher.id);
+    const text = whatsappMessageDrafts[dev.teacher.id] || dev.messageText;
+    whatsappSendingIds = { ...whatsappSendingIds, [dev.teacher.id]: true };
+    try {
+      const result = await sendWhatsAppViaServerApi(phone, text);
+      if (result.success) {
+        if (currentPlan) {
+          markTeacherDeviationNotified(currentPlan.id, dev.teacher.id, dev.signature);
+          loadData();
+        }
+        whatsappFeedback = {
+          ...whatsappFeedback,
+          [dev.teacher.id]: { type: 'ok', text: 'Erfolgreich automatisch per WhatsApp-API gesendet!' }
+        };
+        return true;
+      } else {
+        whatsappFeedback = {
+          ...whatsappFeedback,
+          [dev.teacher.id]: { type: 'err', text: result.error || 'Fehler beim API-Versand' }
+        };
+        return false;
+      }
+    } finally {
+      whatsappSendingIds = { ...whatsappSendingIds, [dev.teacher.id]: false };
+    }
+  }
+
+  async function handleWhatsAppBatchApiSend() {
+    if (whatsappBatchSending) return;
+    whatsappBatchSending = true;
+    try {
+      for (const dev of planDeviations) {
+        if (whatsappSelectedIds.includes(dev.teacher.id)) {
+          await handleWhatsAppApiSend(dev);
+        }
+      }
+    } finally {
+      whatsappBatchSending = false;
+    }
+  }
+
+  function handleMarkDeviationDone(dev: TeacherDeviation) {
+    if (!currentPlan) return;
+    markTeacherDeviationNotified(currentPlan.id, dev.teacher.id, dev.signature);
+    loadData();
+    whatsappFeedback = {
+      ...whatsappFeedback,
+      [dev.teacher.id]: { type: 'ok', text: 'Als bereits informiert markiert' }
+    };
+  }
+
+  function handleMarkAllDeviationsDone() {
+    if (!currentPlan) return;
+    for (const dev of planDeviations) {
+      markTeacherDeviationNotified(currentPlan.id, dev.teacher.id, dev.signature);
+    }
+    loadData();
+    isWhatsAppModalOpen = false;
+  }
+
+  async function copyWhatsAppMessage(teacherId: string, fallbackText: string) {
+    const text = whatsappMessageDrafts[teacherId] || fallbackText;
+    try {
+      await navigator.clipboard.writeText(text);
+      whatsappFeedback = {
+        ...whatsappFeedback,
+        [teacherId]: { type: 'ok', text: 'Nachrichtentext in die Zwischenablage kopiert!' }
+      };
+    } catch {
+      // ignore
+    }
+  }
+
+  function toggleWhatsAppSelection(teacherId: string) {
+    if (whatsappSelectedIds.includes(teacherId)) {
+      whatsappSelectedIds = whatsappSelectedIds.filter(id => id !== teacherId);
+    } else {
+      whatsappSelectedIds = [...whatsappSelectedIds, teacherId];
+    }
+  }
+
+  function toggleWhatsAppPreviewExpand(teacherId: string) {
+    whatsappExpandedIds = {
+      ...whatsappExpandedIds,
+      [teacherId]: !whatsappExpandedIds[teacherId]
+    };
+  }
+
   function togglePublishPlan(approved: boolean) {
     if (!currentPlan) return;
     const latestPlan = db.getWeekPlan(currentPlan.id) || currentPlan;
@@ -901,6 +1120,9 @@
     
     window.dispatchEvent(new CustomEvent('rapla-data-synced'));
     loadData();
+    if (approved) {
+      maybeOpenWhatsAppModalAfterChange('approval');
+    }
   }
 
   let isSyncing = $state(false);
@@ -1129,7 +1351,7 @@
     </select>
   </div>
 
-  <div class="filter-group">
+  <div class="filter-group" style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
     <button 
       type="button" 
       class="btn-agreed-filter" 
@@ -1139,6 +1361,20 @@
     >
       <span>{showOnlyAgreedSlots ? '✓' : '🤝'}</span>
       <span>Fest vereinbart ({courses.filter(c => c.isFixedAgreement).length})</span>
+    </button>
+
+    <button
+      type="button"
+      class="btn-whatsapp-check"
+      class:has-pending={unnotifiedDeviations.length > 0 && (currentPlan?.isApproved || currentPlan?.status === 'approved')}
+      onclick={() => openWhatsAppModal('manual')}
+      title="Prüft Abweichungen von fest vereinbarten Slots und öffnet das WhatsApp-Bestätigungsfenster"
+    >
+      <span>📲</span>
+      <span>WhatsApp-Check ({planDeviations.length})</span>
+      {#if unnotifiedDeviations.length > 0 && (currentPlan?.isApproved || currentPlan?.status === 'approved')}
+        <span class="wa-pending-badge">{unnotifiedDeviations.length} offen</span>
+      {/if}
     </button>
   </div>
 
@@ -1773,27 +2009,64 @@
             <input 
               type="checkbox" 
               class="agreement-main-checkbox" 
-              bind:checked={formIsFixedAgreement} 
+              bind:checked={formIsFixedAgreement}
+              onchange={() => {
+                if (formIsFixedAgreement && !formAgreedTeacherId && formTeacherId) {
+                  formAgreedTeacherId = formTeacherId;
+                }
+              }}
             />
             <div class="agreement-label-text">
               <span class="agreement-headline">✓ Fest vereinbarte Stunde</span>
-              <span class="agreement-subtext">Häkchen setzen, wenn dieser Slot verbindlich und dauerhaft mit der Lehrkraft vereinbart ist. Erscheint in der Admin-Ansicht grün markiert und bleibt bei automatischer KI-Planung fest geschützt.</span>
+              <span class="agreement-subtext">Häkchen setzen, wenn dieser Slot verbindlich und dauerhaft mit der Lehrkraft vereinbart ist. Bei Abweichungen im genehmigten Wochenplan wird automatisch das WhatsApp-Bestätigungsfenster ausgelöst.</span>
             </div>
           </label>
 
           {#if formIsFixedAgreement}
-            <div class="agreement-notes-field">
-              <label class="form-label" for="agreement-notes">
-                📝 Notizen & Kontext zur Vereinbarung:
-              </label>
-              <textarea 
-                id="agreement-notes" 
-                class="form-textarea" 
-                rows="3" 
-                placeholder="z. B. Jeden Donnerstag vormittags mit Alexander fest vereinbart (Anfänger- oder Mittelstufe-Vertretung)." 
-                bind:value={formAgreementNotes}
-              ></textarea>
-              <span class="form-hint">Hier können Sie individuelle Notizen und Absprachen zu diesem Slot festhalten.</span>
+            <div class="agreement-notes-field" style="display: flex; flex-direction: column; gap: 0.75rem;">
+              <div>
+                <label class="form-label" for="agreement-owner-select">
+                  📌 Fest vereinbart für (Stamm-Person dieses Slots):
+                </label>
+                <select
+                  id="agreement-owner-select"
+                  class="form-select"
+                  bind:value={formAgreedTeacherId}
+                >
+                  <option value={null}>-- Wie aktuell zugewiesene Person --</option>
+                  <optgroup label="Sevakas (Kernteam)">
+                    {#each teachers.filter(t => t.roleType === 'sevaka') as t}
+                      <option value={t.id}>🧘 {t.name}</option>
+                    {/each}
+                  </optgroup>
+                  <optgroup label="Weitere Unterrichtende">
+                    {#each teachers.filter(t => t.roleType !== 'sevaka') as t}
+                      <option value={t.id}>👤 {t.name}</option>
+                    {/each}
+                  </optgroup>
+                </select>
+                {#if formAgreedTeacherId && formAgreedTeacherId !== formTeacherId}
+                  {@const ownerName = teachers.find(t => t.id === formAgreedTeacherId)?.name || 'Stamm-Person'}
+                  {@const currentName = formTeacherId ? (teachers.find(t => t.id === formTeacherId)?.name || formCustomTeacherName) : 'Unbesetzt'}
+                  <div style="margin-top: 0.4rem; padding: 0.45rem 0.65rem; background: #fffbeb; border: 1px solid #fcd34d; border-radius: 6px; color: #92400e; font-size: 0.8rem; font-weight: 600;">
+                    ⚡ Abweichung vom festen Slot erkannt: Fest vereinbart für <strong>{ownerName}</strong>, in dieser Woche eingeteilt: <strong>{currentName}</strong>.
+                  </div>
+                {/if}
+              </div>
+
+              <div>
+                <label class="form-label" for="agreement-notes">
+                  📝 Notizen & Kontext zur Vereinbarung:
+                </label>
+                <textarea 
+                  id="agreement-notes" 
+                  class="form-textarea" 
+                  rows="3" 
+                  placeholder="z. B. Jeden Donnerstag vormittags mit Alexander fest vereinbart (Anfänger- oder Mittelstufe-Vertretung)." 
+                  bind:value={formAgreementNotes}
+                ></textarea>
+                <span class="form-hint">Hier können Sie individuelle Notizen und Absprachen zu diesem Slot festhalten.</span>
+              </div>
             </div>
           {/if}
         </div>
@@ -1965,6 +2238,243 @@
         <button class="btn btn-primary" onclick={saveQuickNote}>
           💾 Notiz speichern
         </button>
+      </div>
+    </div>
+  </div>
+{/if}
+
+<!-- WhatsApp Deviation Confirmation Modal ("Bestätigungsfenster") -->
+{#if isWhatsAppModalOpen}
+  {@const gatewayConfig = getWhatsAppGatewayConfig()}
+  {@const hasServerApi = gatewayConfig.provider !== 'wa_link_only'}
+  <!-- svelte-ignore a11y_click_events_have_key_events -->
+  <!-- svelte-ignore a11y_no_static_element_interactions -->
+  <div class="modal-backdrop" style="z-index: 1080;" onclick={() => isWhatsAppModalOpen = false}>
+    <!-- svelte-ignore a11y_click_events_have_key_events -->
+    <!-- svelte-ignore a11y_no_static_element_interactions -->
+    <div class="modal-content glass-card wa-modal-container" onclick={(e) => e.stopPropagation()}>
+      <div class="modal-header wa-modal-header">
+        <div style="display: flex; align-items: center; gap: 0.65rem;">
+          <span style="font-size: 1.65rem;">📲</span>
+          <div>
+            <h2 style="margin: 0; font-size: 1.25rem;">WhatsApp-Benachrichtigung bei Plan-Abweichung</h2>
+            <div style="font-size: 0.82rem; color: #475569; margin-top: 0.15rem;">
+              {#if whatsappModalTrigger === 'approval'}
+                ✅ Wochenplan wurde soeben genehmigt – Abweichungen von fest vereinbarten Slots erkannt:
+              {:else if whatsappModalTrigger === 'edit_on_approved'}
+                ⚡ Änderung im genehmigten Wochenplan gespeichert – Abweichung von festen Slots erkannt:
+              {:else}
+                Übersicht der Abweichungen von „Fest vereinbarten“ Slots ({currentPlan?.name || 'Aktuelle Woche'})
+              {/if}
+            </div>
+          </div>
+        </div>
+        <button class="close-btn" onclick={() => isWhatsAppModalOpen = false}>✕</button>
+      </div>
+
+      <div class="modal-body wa-modal-body">
+        {#if !(currentPlan?.isApproved || currentPlan?.status === 'approved')}
+          <div class="wa-draft-banner">
+            <span>⏳</span>
+            <div>
+              <strong>Hinweis: Dieser Wochenplan ist aktuell noch ein Entwurf.</strong>
+              Automatische Benachrichtigungen werden regulär erst ausgelöst, sobald der Plan auf <em>„Genehmigt & Veröffentlicht“</em> steht. Du kannst die Vorschau hier aber bereits prüfen oder vorab senden.
+            </div>
+          </div>
+        {/if}
+
+        {#if planDeviations.length === 0}
+          <div class="wa-empty-state">
+            <div style="font-size: 2.2rem; margin-bottom: 0.5rem;">🎉</div>
+            <h3>Keine Abweichungen von festen Slots!</h3>
+            <p>
+              Alle als <strong>„🤝 Fest vereinbart“</strong> markierten Slots stimmen in dieser Woche exakt mit den eingeteilten Personen überein (oder es wurden in dieser Woche noch keine Kurse als „Fest vereinbart“ markiert).
+            </p>
+          </div>
+        {:else}
+          <div class="wa-list-container">
+            {#each planDeviations as dev (dev.teacher.id)}
+              {@const isSelected = whatsappSelectedIds.includes(dev.teacher.id)}
+              {@const isExpanded = !!whatsappExpandedIds[dev.teacher.id]}
+              {@const isSending = !!whatsappSendingIds[dev.teacher.id]}
+              {@const fb = whatsappFeedback[dev.teacher.id]}
+              <div class="wa-deviation-card" class:wa-card-notified={dev.alreadyNotified}>
+                <div class="wa-card-top">
+                  <label class="wa-person-check">
+                    <input
+                      type="checkbox"
+                      checked={isSelected}
+                      onchange={() => toggleWhatsAppSelection(dev.teacher.id)}
+                    />
+                    <span class="wa-person-name">{dev.teacher.name}</span>
+                  </label>
+
+                  <div class="wa-status-badges">
+                    {#if dev.alreadyNotified}
+                      <span class="wa-badge wa-badge-done" title="Für genau diesen Planungsstand wurde bereits benachrichtigt">
+                        ✓ Bereits benachrichtigt
+                      </span>
+                    {:else}
+                      <span class="wa-badge wa-badge-new">
+                        🔔 Neue Abweichung
+                      </span>
+                    {/if}
+                  </div>
+                </div>
+
+                <!-- Soll -> Ist Category Summary Pills -->
+                <div class="wa-category-pills">
+                  {#each dev.categoryBreakdown as cat}
+                    <div
+                      class="wa-cat-pill"
+                      class:wa-cat-plus={cat.diff > 0}
+                      class:wa-cat-minus={cat.diff < 0}
+                      class:wa-cat-equal={cat.diff === 0}
+                    >
+                      <span class="wa-cat-name">{cat.category}:</span>
+                      <strong>{cat.soll} → {cat.ist}</strong>
+                      {#if cat.diff > 0}
+                        <span class="wa-cat-delta">(+{cat.diff})</span>
+                      {:else if cat.diff < 0}
+                        <span class="wa-cat-delta">({cat.diff})</span>
+                      {:else}
+                        <span class="wa-cat-delta">(✓)</span>
+                      {/if}
+                    </div>
+                  {/each}
+                </div>
+
+                <!-- Concrete Slot Changes -->
+                <div class="wa-changes-list">
+                  {#each dev.missingFixedSlots as m}
+                    <div class="wa-change-item wa-change-missing">
+                      <span>❌ <strong>Fester Slot entfällt / Vertretung:</strong> {DAYS.find(d => d.value === m.course.dayOfWeek)?.label}, {m.course.startTime} – {m.course.name}</span>
+                      {#if m.substituteName}
+                        <span class="wa-sub-tag">übernommen von {m.substituteName}</span>
+                      {:else}
+                        <span class="wa-sub-tag">unbesetzt</span>
+                      {/if}
+                    </div>
+                  {/each}
+                  {#each dev.extraSlots as e}
+                    <div class="wa-change-item wa-change-extra">
+                      <span>➕ <strong>Zusätzlich (nicht fest vereinbart):</strong> {DAYS.find(d => d.value === e.dayOfWeek)?.label}, {e.startTime} – {e.name}</span>
+                    </div>
+                  {/each}
+                </div>
+
+                <!-- Phone input + Actions row -->
+                <div class="wa-card-controls">
+                  <div class="wa-phone-box">
+                    <label for="wa-phone-{dev.teacher.id}">📱 WhatsApp-Nr.:</label>
+                    <input
+                      id="wa-phone-{dev.teacher.id}"
+                      type="text"
+                      class="form-input wa-phone-input"
+                      placeholder="z. B. 0170 1234567"
+                      bind:value={whatsappPhoneDrafts[dev.teacher.id]}
+                    />
+                  </div>
+
+                  <div class="wa-action-buttons">
+                    <button
+                      type="button"
+                      class="btn-wa-preview"
+                      onclick={() => toggleWhatsAppPreviewExpand(dev.teacher.id)}
+                    >
+                      {isExpanded ? '▴ Text ausblenden' : '▾ Nachricht prüfen/bearbeiten'}
+                    </button>
+
+                    <button
+                      type="button"
+                      class="btn-wa-send-direct"
+                      onclick={() => handleWhatsAppLinkSend(dev)}
+                      title="Öffnet WhatsApp (Web/App) kostenlos mit fertig ausgefüllter Nachricht"
+                    >
+                      💬 Per WhatsApp senden
+                    </button>
+
+                    {#if hasServerApi}
+                      <button
+                        type="button"
+                        class="btn-wa-send-api"
+                        onclick={() => handleWhatsAppApiSend(dev)}
+                        disabled={isSending}
+                        title="Versendet die Nachricht automatisch im Hintergrund über das konfigurierte API-Gateway"
+                      >
+                        {isSending ? '⏳ Sendet...' : '🚀 Direkt-API'}
+                      </button>
+                    {/if}
+
+                    {#if !dev.alreadyNotified}
+                      <button
+                        type="button"
+                        class="btn-wa-mark-done"
+                        onclick={() => handleMarkDeviationDone(dev)}
+                        title="Ohne Senden als bereits informiert markieren"
+                      >
+                        ✓ Erledigt
+                      </button>
+                    {/if}
+                  </div>
+                </div>
+
+                {#if isExpanded}
+                  <div class="wa-message-editor">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
+                      <span style="font-size: 0.78rem; font-weight: 600; color: #475569;">Vorschau & Bearbeitung des WhatsApp-Textes:</span>
+                      <button
+                        type="button"
+                        class="btn-wa-copy"
+                        onclick={() => copyWhatsAppMessage(dev.teacher.id, dev.messageText)}
+                      >
+                        📋 Text kopieren
+                      </button>
+                    </div>
+                    <textarea
+                      class="form-textarea wa-message-textarea"
+                      rows="8"
+                      bind:value={whatsappMessageDrafts[dev.teacher.id]}
+                    ></textarea>
+                  </div>
+                {/if}
+
+                {#if fb}
+                  <div class="wa-feedback-row" class:wa-fb-ok={fb.type === 'ok'} class:wa-fb-err={fb.type === 'err'}>
+                    {fb.type === 'ok' ? '✅' : '⚠️'} {fb.text}
+                  </div>
+                {/if}
+              </div>
+            {/each}
+          </div>
+        {/if}
+      </div>
+
+      <div class="modal-footer wa-modal-footer">
+        <a href="/settings" class="wa-settings-link" title="Optionales kostenloses Auto-Gateway (Green-API / Meta / Webhook) einrichten">
+          ⚙️ Gateway-Einstellungen
+        </a>
+        <div style="display: flex; gap: 0.6rem; margin-left: auto; flex-wrap: wrap;">
+          {#if planDeviations.some(d => !d.alreadyNotified)}
+            <button type="button" class="btn btn-secondary" onclick={handleMarkAllDeviationsDone}>
+              ✓ Alle als informiert markieren
+            </button>
+          {/if}
+          {#if hasServerApi && planDeviations.length > 0}
+            <button
+              type="button"
+              class="btn btn-primary"
+              style="background: #16a34a; border-color: #15803d;"
+              onclick={handleWhatsAppBatchApiSend}
+              disabled={whatsappBatchSending || whatsappSelectedIds.length === 0}
+            >
+              {whatsappBatchSending ? '⏳ Sende Nachrichten...' : `🚀 Ausgewählte (${whatsappSelectedIds.length}) automatisch senden`}
+            </button>
+          {/if}
+          <button type="button" class="btn btn-secondary" onclick={() => isWhatsAppModalOpen = false}>
+            Schließen
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -3322,5 +3832,386 @@
   .checkbox-text-meta span {
     font-size: 0.78rem;
     color: var(--text-secondary);
+  }
+
+  /* WhatsApp Deviation Check Button & Confirmation Modal Styles */
+  .btn-whatsapp-check {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.45rem 0.9rem;
+    border-radius: 8px;
+    border: 1.5px solid #86efac;
+    background: #f0fdf4;
+    color: #166534;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .btn-whatsapp-check:hover {
+    background: #dcfce7;
+    border-color: #22c55e;
+    transform: translateY(-1px);
+  }
+
+  .btn-whatsapp-check.has-pending {
+    background: #dcfce7;
+    border-color: #16a34a;
+    box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.2);
+  }
+
+  .wa-pending-badge {
+    background: #16a34a;
+    color: #ffffff;
+    font-size: 0.72rem;
+    padding: 0.1rem 0.45rem;
+    border-radius: 999px;
+    font-weight: 800;
+  }
+
+  .wa-modal-container {
+    max-width: 780px;
+    width: 96%;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .wa-modal-body {
+    overflow-y: auto;
+    max-height: 68vh;
+    padding-right: 0.25rem;
+  }
+
+  .wa-draft-banner {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.65rem;
+    padding: 0.75rem 1rem;
+    background: #fffbeb;
+    border: 1px solid #fcd34d;
+    border-radius: 8px;
+    color: #92400e;
+    font-size: 0.85rem;
+    line-height: 1.4;
+  }
+
+  .wa-empty-state {
+    text-align: center;
+    padding: 2.25rem 1.5rem;
+    background: #f8fafc;
+    border: 1px dashed #cbd5e1;
+    border-radius: 12px;
+    color: #475569;
+  }
+
+  .wa-empty-state h3 {
+    margin: 0 0 0.5rem 0;
+    color: #0f172a;
+    font-size: 1.1rem;
+  }
+
+  .wa-empty-state p {
+    margin: 0;
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+
+  .wa-list-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .wa-deviation-card {
+    background: #ffffff;
+    border: 1.5px solid #cbd5e1;
+    border-left: 5px solid #16a34a;
+    border-radius: 10px;
+    padding: 1rem 1.15rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04);
+  }
+
+  .wa-deviation-card.wa-card-notified {
+    border-left-color: #94a3b8;
+    background: #f8fafc;
+  }
+
+  .wa-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .wa-person-check {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    cursor: pointer;
+  }
+
+  .wa-person-check input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: #16a34a;
+    cursor: pointer;
+  }
+
+  .wa-person-name {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #0f172a;
+  }
+
+  .wa-badge {
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.2rem 0.6rem;
+    border-radius: 999px;
+  }
+
+  .wa-badge-new {
+    background: #fef3c7;
+    color: #b45309;
+    border: 1px solid #fcd34d;
+  }
+
+  .wa-badge-done {
+    background: #e2e8f0;
+    color: #475569;
+  }
+
+  .wa-category-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+  }
+
+  .wa-cat-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.25rem 0.6rem;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    border: 1px solid #e2e8f0;
+    background: #f8fafc;
+    color: #334155;
+  }
+
+  .wa-cat-pill.wa-cat-plus {
+    background: #eff6ff;
+    border-color: #93c5fd;
+    color: #1e40af;
+  }
+
+  .wa-cat-pill.wa-cat-minus {
+    background: #fffbeb;
+    border-color: #fcd34d;
+    color: #92400e;
+  }
+
+  .wa-cat-pill.wa-cat-equal {
+    background: #f0fdf4;
+    border-color: #bbf7d0;
+    color: #166534;
+  }
+
+  .wa-changes-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .wa-change-item {
+    font-size: 0.83rem;
+    padding: 0.35rem 0.65rem;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .wa-change-missing {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #991b1b;
+  }
+
+  .wa-change-extra {
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    color: #1e40af;
+  }
+
+  .wa-sub-tag {
+    font-size: 0.75rem;
+    font-weight: 700;
+    background: rgba(255, 255, 255, 0.8);
+    padding: 0.1rem 0.45rem;
+    border-radius: 4px;
+  }
+
+  .wa-card-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    padding-top: 0.35rem;
+    border-top: 1px solid #f1f5f9;
+  }
+
+  .wa-phone-box {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #475569;
+  }
+
+  .wa-phone-input {
+    width: 175px;
+    padding: 0.35rem 0.6rem !important;
+    font-size: 0.83rem !important;
+  }
+
+  .wa-action-buttons {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    flex-wrap: wrap;
+  }
+
+  .btn-wa-preview {
+    background: #f1f5f9;
+    border: 1px solid #cbd5e1;
+    color: #334155;
+    padding: 0.38rem 0.7rem;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .btn-wa-preview:hover {
+    background: #e2e8f0;
+  }
+
+  .btn-wa-send-direct {
+    background: #16a34a;
+    border: 1px solid #15803d;
+    color: #ffffff;
+    padding: 0.38rem 0.85rem;
+    border-radius: 6px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.15s ease;
+  }
+
+  .btn-wa-send-direct:hover {
+    background: #15803d;
+  }
+
+  .btn-wa-send-api {
+    background: #0284c7;
+    border: 1px solid #0369a1;
+    color: #ffffff;
+    padding: 0.38rem 0.75rem;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .btn-wa-mark-done {
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    color: #475569;
+    padding: 0.38rem 0.65rem;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .btn-wa-mark-done:hover {
+    background: #f8fafc;
+    color: #0f172a;
+  }
+
+  .wa-message-editor {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 0.65rem;
+  }
+
+  .wa-message-textarea {
+    width: 100%;
+    font-family: inherit;
+    font-size: 0.82rem !important;
+    line-height: 1.45;
+  }
+
+  .btn-wa-copy {
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 5px;
+    padding: 0.2rem 0.55rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    color: #334155;
+  }
+
+  .wa-feedback-row {
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 0.35rem 0.65rem;
+    border-radius: 6px;
+  }
+
+  .wa-fb-ok {
+    background: #ecfdf5;
+    color: #065f46;
+    border: 1px solid #a7f3d0;
+  }
+
+  .wa-fb-err {
+    background: #fef2f2;
+    color: #991b1b;
+    border: 1px solid #fecaca;
+  }
+
+  .wa-modal-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .wa-settings-link {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #475569;
+    text-decoration: none;
+  }
+
+  .wa-settings-link:hover {
+    color: var(--primary);
+    text-decoration: underline;
   }
 </style>

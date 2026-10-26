@@ -178,6 +178,8 @@ export interface Course {
   isManuallyEdited?: boolean;
   lastEditedAt?: string; // ISO timestamp of the latest manual or approved edit to this individual course
   isFixedAgreement?: boolean; // Slot is firmly agreed upon (e.g. fixed recurring agreement with teacher)
+  agreedTeacherId?: string | null; // Original teacher ID for whom this slot is firmly agreed
+  agreedTeacherName?: string; // Original teacher name for whom this slot is firmly agreed
   agreementNotes?: string;   // Notes / context for this agreed slot
 }
 
@@ -195,6 +197,7 @@ export interface WeekPlan {
   manuallyUnapproved?: boolean;
   lastEditedAt?: string;
   deletedCourseIds?: string[];
+  whatsappNotifiedLog?: Record<string, { timestamp: string; signature: string }>;
 }
 
 // Default Data
@@ -13203,6 +13206,11 @@ export function mergeWeekPlansLists(
       hasMergedFromIncoming = true;
     }
 
+    const mergedNotifiedLog = {
+      ...(remPlan.whatsappNotifiedLog || {}),
+      ...(locPlan.whatsappNotifiedLog || {})
+    };
+
     return {
       ...remPlan,
       isApproved: useLocPlanMeta ? locPlan.isApproved : remPlan.isApproved,
@@ -13211,6 +13219,7 @@ export function mergeWeekPlansLists(
       hasManualEdits: (useLocPlanMeta ? locPlan.hasManualEdits : remPlan.hasManualEdits) || anyCourseMerged || remPlan.hasManualEdits,
       seminarLeaderIds: useLocPlanMeta && locPlan.seminarLeaderIds ? [...locPlan.seminarLeaderIds] : (remPlan.seminarLeaderIds || []),
       deletedCourseIds: mergedDeletedIds,
+      whatsappNotifiedLog: Object.keys(mergedNotifiedLog).length > 0 ? mergedNotifiedLog : undefined,
       lastEditedAt: locPlanTime > remPlanTime ? locPlan.lastEditedAt : remPlan.lastEditedAt,
       courses: mergedCourses
     };
