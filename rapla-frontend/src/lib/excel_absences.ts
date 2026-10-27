@@ -871,4 +871,7 @@ export const EXCEL_ABSENCES = [
   { excelName: "Christopher", startDate: "2026-10-21", endDate: "2026-10-21", type: "Frei" as const, status: "Genehmigt" as const, note: "Regulärer freier Tag" },
   { excelName: "Christopher", startDate: "2026-10-28", endDate: "2026-10-28", type: "Frei" as const, status: "Genehmigt" as const, note: "Regulärer freier Tag" },
   { excelName: "Christopher", startDate: "2026-10-31", endDate: "2026-10-31", type: "Urlaub" as const, status: "Genehmigt" as const, note: "Sevafrei" },
+  { excelName: "Alexander", startDate: "2026-10-28", endDate: "2026-10-30", type: "Urlaub" as const, status: "Genehmigt" as const, note: "Sevafrei" },
+  { excelName: "Alexander", startDate: "2026-11-19", endDate: "2026-11-24", type: "Urlaub" as const, status: "Genehmigt" as const, note: "Sevafrei" },
+  { excelName: "Christopher", startDate: "2026-12-13", endDate: "2026-12-13", type: "Urlaub" as const, status: "Genehmigt" as const, note: "Sevafrei" },
 ];

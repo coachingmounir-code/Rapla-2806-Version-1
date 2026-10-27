@@ -2068,12 +2068,12 @@
     "note": "Regulärer freier Tag"
   },
   {
-    "id": "sf-christopher-2026-10-31-2026-10-31-u",
+    "id": "sf-christopher-2026-10-31-2026-11-01-u",
     "teacherId": "teacher-gen-christopher",
     "teacherName": "Christopher",
     "avatarColor": "from-blue-400 to-indigo-500",
     "startDate": "2026-10-31",
-    "endDate": "2026-10-31",
+    "endDate": "2026-11-01",
     "type": "Urlaub",
     "status": "Genehmigt",
     "note": "Sevafrei"
@@ -2154,5 +2154,49 @@
     "type": "Sonstiges",
     "status": "Genehmigt",
     "note": "Generell nicht mehr einplanbar"
+  },
+  {
+    "id": "sf-alexander-2026-10-28-2026-10-30",
+    "teacherId": "teacher-gen-alexander-melior",
+    "teacherName": "Alexander",
+    "avatarColor": "from-emerald-400 to-teal-600",
+    "startDate": "2026-10-28",
+    "endDate": "2026-10-30",
+    "type": "Urlaub",
+    "status": "Genehmigt",
+    "note": "Sevafrei"
+  },
+  {
+    "id": "sf-alexander-2026-11-19-2026-11-24",
+    "teacherId": "teacher-gen-alexander-melior",
+    "teacherName": "Alexander",
+    "avatarColor": "from-emerald-400 to-teal-600",
+    "startDate": "2026-11-19",
+    "endDate": "2026-11-24",
+    "type": "Urlaub",
+    "status": "Genehmigt",
+    "note": "Sevafrei"
+  },
+  {
+    "id": "sf-christopher-2026-12-13-2026-12-13",
+    "teacherId": "teacher-gen-christopher",
+    "teacherName": "Christopher",
+    "avatarColor": "from-cyan-400 to-blue-500",
+    "startDate": "2026-12-13",
+    "endDate": "2026-12-13",
+    "type": "Urlaub",
+    "status": "Genehmigt",
+    "note": "Sevafrei"
+  },
+  {
+    "id": "sf-teresa-permanent-2026",
+    "teacherId": "teacher-gen-teresa-allgaeu",
+    "teacherName": "Teresa",
+    "avatarColor": "from-cyan-400 to-blue-500",
+    "startDate": "2026-01-01",
+    "endDate": "2099-12-31",
+    "type": "Sonstiges",
+    "status": "Genehmigt",
+    "note": "Bis auf weiteres nicht einplanbar"
   }
 ]

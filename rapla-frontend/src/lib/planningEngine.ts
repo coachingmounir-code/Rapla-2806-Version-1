@@ -187,6 +187,14 @@ export function validateAssignment(
     });
   }
 
+  // Teresa bis auf weiteres nicht einplanen
+  if (teacherNameLower.includes('teresa')) {
+    conflicts.push({
+      type: 'hard',
+      message: `${teacher.name} ist bis auf weiteres komplett herausgenommen und darf für keine Stunden oder Dienste eingeteilt werden.`
+    });
+  }
+
   // Qualifications for Karma-Yogis and Guest Teachers
   if (teacher.roleType === 'karma_yogi' || teacher.roleType === 'guest_teacher') {
     if (isYogaClassForSevaka && teacher.isYogaTeacher === false) {

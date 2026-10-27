@@ -69,13 +69,13 @@
       "maxSatsangsPerWeek": 0,
       "maxMorningSatsangsPerWeek": 0,
       "maxYogaClassesPerWeek": 0,
-      "maxOnnPerWeek": 1,
+      "maxOnnPerWeek": 0,
       "maxAnfaengerYogaPerWeek": 0,
       "isYogaTeacher": false,
       "canLeadSatsang": false,
       "canLeadPranayama": false,
       "canLeadSatsangEinfuehrung": false,
-      "canLeadOnn": true,
+      "canLeadOnn": false,
       "noYogaOnWeekend": false,
       "noTwoYogaSameDay": false,
       "weekendAfternoonOnly": false,
@@ -84,7 +84,7 @@
       "customCourseNames": [],
       "availabilityRestrictions": [],
       "preferredAvailability": [],
-      "maxClassesPerDay": 2
+      "maxClassesPerDay": 0
     },
     "abha": {
       "name": "Abha",
@@ -95,7 +95,7 @@
       "maxMeditationPerWeek": 0,
       "maxSatsangsPerWeek": null,
       "maxMorningSatsangsPerWeek": null,
-      "maxYogaClassesPerWeek": 3,
+      "maxYogaClassesPerWeek": null,
       "maxOnnPerWeek": null,
       "maxAnfaengerYogaPerWeek": 3,
       "isYogaTeacher": true,

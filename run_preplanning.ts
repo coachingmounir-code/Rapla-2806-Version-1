@@ -460,7 +460,7 @@ function getNext8WeekCodes(): string[] {
   return weeks;
 }
 
-const weeksToPlan = ["2026-W41", "2026-W42", "2026-W43", "2026-W44"];
+const weeksToPlan = ["2026-W41", "2026-W42", "2026-W43", "2026-W44", "2026-W45"];
 console.log(`[PREPLANNING] Planning for the next 8 weeks: ${weeksToPlan.join(', ')}`);
 
 const existingWeekPlans = db.getWeekPlans();

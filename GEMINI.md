@@ -12,6 +12,11 @@ Bitte bei zukünftigen Zuweisungen und Planungen entsprechend beachten!
 Bitte stets darauf achten, dass alle Slots besetzt werden (kein Slot darf bei der endgültigen Planung unbesetzt bleiben).
 
 # Sevaka-Regeln
+- Teresa: Bis auf weiteres komplett herausgenommen (wird für keine Stunden oder Dienste eingeteilt).
+- Alexander Melior:
+  - Seva-freie Zeiten: 28.10.2026 – 30.10.2026 (3 Kalendertage) sowie 19.11.2026 – 24.11.2026 (6 Kalendertage).
+- Christopher Mader:
+  - Seva-freie Zeiten: 31.10.2026 – 01.11.2026 sowie 13.12.2026 (1 Tag).
 - Chandrashekara kann dienstags nachmittags nicht eingeplant werden.
 - Chandrashekara unterrichtet bei den Yogastunden ausschließlich Mittelstufe (keine Anfänger-Yogastunden).
 - Chandrashekara kann hin und wieder auch für die geführte Meditation sowie für das Om Namo Narayana (ONN) eingeplant werden.
