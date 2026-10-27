@@ -1,8 +1,8 @@
 Regel 1: Jeden Freitag und Sonntag  findet eine Hausführung statt um 19.00Uhr. Sie geht 30 Minuten
 
 
-Regel 2: Folgende Personen können eingeteilt werden: Pranava, Ulrich, burnie, Christopher, Hu, Anjali
+Regel 2: Folgende Personen können eingeteilt werden: Pranava, burnie, Christopher, Hu, Anjali
 
-Regel 3: Pranava wird immer freitags eingeteilt. Nur wenn er sevafrei hat kann Ulrich eingeteilt werden. Wenn beide nicht können jemanden von Regel 2
+Regel 3: Pranava wird immer freitags eingeteilt. Wenn er sevafrei hat wird jemand von Regel 2 eingeteilt
 
-Regel 4: Sonntags wird immer zu erst Ulrich eingeteilt. Wenn Ulrich nicht kann wird jemand von Regel 2 eingeteilt
+Regel 4: Sonntags wird jemand von Regel 2 eingeteilt

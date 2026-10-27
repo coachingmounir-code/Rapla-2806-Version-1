@@ -13,6 +13,8 @@ Bitte stets darauf achten, dass alle Slots besetzt werden (kein Slot darf bei de
 
 # Sevaka-Regeln
 - Teresa: Bis auf weiteres komplett herausgenommen (wird für keine Stunden oder Dienste eingeteilt).
+- Harishakti: Komplett herausgenommen (nicht mehr Teil des Teams, kann nicht mehr unterrichten und wird für keine Stunden oder Dienste eingeteilt).
+- Ulrich: Komplett herausgenommen (nicht mehr Teil des Teams, kann nicht mehr unterrichten und wird für keine Stunden oder Dienste eingeteilt).
 - Alexander Melior:
   - Seva-freie Zeiten: 28.10.2026 – 30.10.2026 (3 Kalendertage) sowie 19.11.2026 – 24.11.2026 (6 Kalendertage).
 - Christopher Mader:

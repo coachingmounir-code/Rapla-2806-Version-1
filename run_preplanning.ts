@@ -274,6 +274,22 @@ function planWeekWithAbsences(weekCode: string, standardCourses: any[]) {
     console.log(`[OPEN DAY] Added ${OPEN_DAY_2026_W44_SATURDAY_COURSES.length} Tag der offenen Tür courses for Saturday 24.10.2026 (2026-W44).`);
   }
   
+  // Ensure teacherName matches the final assigned teacherId
+  result.plannedCourses.forEach(c => {
+    if (c.teacherId) {
+      if (c.teacherId === 'teacher-gen-yl') {
+        c.teacherName = '! YL';
+      } else {
+        const assignedTeacher = teachers.find(t => t.id === c.teacherId);
+        if (assignedTeacher) {
+          c.teacherName = assignedTeacher.name;
+        }
+      }
+    } else {
+      delete (c as any).teacherName;
+    }
+  });
+
   result.plannedCourses.sort((a, b) => {
     if (a.dayOfWeek !== b.dayOfWeek) return a.dayOfWeek - b.dayOfWeek;
     return a.startTime.localeCompare(b.startTime);
@@ -318,6 +334,7 @@ const getTeacherIdByName = (shortName: string): string | null => {
   if (nameLower === 'narayani') return 'teacher-gen-narayani-kedenburg';
   if (nameLower === 'mouniir') return 'teacher-gen-mouniir-jaber';
   if (nameLower === 'christopher') return 'teacher-gen-christopher';
+  if (nameLower === 'chandrashekara') return 'teacher-gen-chandrashekara';
   if (nameLower === 'satyam') return 'teacher-gen-satyam';
   if (nameLower === 'adam, anjali' || nameLower === 'adam,anjali') return 'teacher-gen-adam-anjali';
   if (nameLower === 'burnie, narayani' || nameLower === 'burnie,narayani') return 'teacher-gen-burnie-narayani';
@@ -362,7 +379,7 @@ const standardCoursesDefs = [
   { name: 'Hausführung', style: 'Sonstiges', dayOfWeek: 5, startTime: '19:00', endTime: '19:30', roomId: 'Rezeption', teacherName: '' },
   { name: 'Geführte Meditation', style: 'Meditation', dayOfWeek: 5, startTime: '07:00', endTime: '07:30', roomId: 'room-5', teacherName: 'Pranava' },
   { name: 'Satsang', style: 'Meditation', dayOfWeek: 5, startTime: '07:00', endTime: '08:00', roomId: 'room-2', teacherName: 'Nirmaya' },
-  { name: 'Anfänger', style: 'Hatha', dayOfWeek: 5, startTime: '09:15', endTime: '11:00', roomId: 'room-5', teacherName: 'Harishakti' },
+  { name: 'Anfänger', style: 'Hatha', dayOfWeek: 5, startTime: '09:15', endTime: '11:00', roomId: 'room-5', teacherName: 'Abha' },
   { name: 'Mittelstufe Klangyogastunde', style: 'Hatha', dayOfWeek: 5, startTime: '09:15', endTime: '11:00', roomId: 'room-2', teacherName: 'Pranava' },
   { name: 'Anfänger Ankommensstunde', style: 'Hatha', dayOfWeek: 5, startTime: '16:30', endTime: '18:00', roomId: 'room-2', teacherName: 'Abha' },
   { name: 'Mittelstufe Ankommensstunde', style: 'Hatha', dayOfWeek: 5, startTime: '16:30', endTime: '18:00', roomId: 'room-5', teacherName: 'Karuna' },
@@ -384,7 +401,7 @@ const standardCoursesDefs = [
   // Sunday (dayOfWeek: 0)
   { name: 'Hausführung', style: 'Sonstiges', dayOfWeek: 0, startTime: '19:00', endTime: '19:30', roomId: 'Rezeption', teacherName: '' },
   { name: 'Fortgeschrittenes Pranayama', style: 'Hatha', dayOfWeek: 0, startTime: '06:00', endTime: '06:50', roomId: 'room-2', teacherName: '' },
-  { name: 'Geführte Meditation', style: 'Meditation', dayOfWeek: 0, startTime: '07:00', endTime: '07:30', roomId: 'room-5', teacherName: 'Harishakti' },
+  { name: 'Geführte Meditation', style: 'Meditation', dayOfWeek: 0, startTime: '07:00', endTime: '07:30', roomId: 'room-5', teacherName: '' },
   { name: 'Satsang', style: 'Meditation', dayOfWeek: 0, startTime: '07:00', endTime: '08:00', roomId: 'room-2', teacherName: 'burnie' },
   { name: 'Anfänger', style: 'Hatha', dayOfWeek: 0, startTime: '09:15', endTime: '11:00', roomId: 'room-2', teacherName: 'burnie' },
   { name: 'Mittelstufe', style: 'Hatha', dayOfWeek: 0, startTime: '09:15', endTime: '11:00', roomId: 'room-5', teacherName: 'Anjali' },
@@ -398,16 +415,16 @@ const standardCoursesDefs = [
   { name: 'Geführte Meditation', style: 'Meditation', dayOfWeek: 1, startTime: '07:00', endTime: '07:30', roomId: 'room-5', teacherName: 'hu' },
   { name: 'Satsang', style: 'Meditation', dayOfWeek: 1, startTime: '07:00', endTime: '08:00', roomId: 'room-2', teacherName: 'Anjali' },
   { name: 'Anfänger', style: 'Hatha', dayOfWeek: 1, startTime: '09:15', endTime: '11:00', roomId: 'room-2', teacherName: 'burnie' },
-  { name: 'Mittelstufe', style: 'Hatha', dayOfWeek: 1, startTime: '09:15', endTime: '11:00', roomId: 'room-5', teacherName: 'Harishakti' },
+  { name: 'Mittelstufe', style: 'Hatha', dayOfWeek: 1, startTime: '09:15', endTime: '11:00', roomId: 'room-5', teacherName: '' },
   { name: 'Anfänger Rückenstunde', style: 'Hatha', dayOfWeek: 1, startTime: '16:15', endTime: '18:00', roomId: 'room-2', teacherName: 'Pranava' },
-  { name: 'Mittelstufe', style: 'Hatha', dayOfWeek: 1, startTime: '16:15', endTime: '18:00', roomId: 'room-5', teacherName: 'Ulrich' },
+  { name: 'Mittelstufe', style: 'Hatha', dayOfWeek: 1, startTime: '16:15', endTime: '18:00', roomId: 'room-5', teacherName: '' },
   { name: 'Om Namo Narayanaya', style: 'Meditation', dayOfWeek: 1, startTime: '19:30', endTime: '20:00', roomId: 'room-2', teacherName: 'Nirmaya' },
   { name: 'Satsang', style: 'Meditation', dayOfWeek: 1, startTime: '20:00', endTime: '21:00', roomId: 'room-2', teacherName: 'Narayani' },
   { name: 'Entspannungsangebot: Klangreise', style: 'Entspannung', dayOfWeek: 1, startTime: '21:10', endTime: '22:00', roomId: 'room-5', teacherName: '' },
 
   // Tuesday (dayOfWeek: 2)
   { name: 'Geführte Meditation', style: 'Meditation', dayOfWeek: 2, startTime: '07:00', endTime: '07:30', roomId: 'room-5', teacherName: 'Alexander' },
-  { name: 'Satsang', style: 'Meditation', dayOfWeek: 2, startTime: '07:00', endTime: '08:00', roomId: 'room-2', teacherName: 'Harishakti' },
+  { name: 'Satsang', style: 'Meditation', dayOfWeek: 2, startTime: '07:00', endTime: '08:00', roomId: 'room-2', teacherName: '' },
   { name: 'Anfänger', style: 'Hatha', dayOfWeek: 2, startTime: '09:15', endTime: '11:00', roomId: 'room-2', teacherName: 'Karuna' },
   { name: 'Mittelstufe', style: 'Hatha', dayOfWeek: 2, startTime: '09:15', endTime: '11:00', roomId: 'room-5', teacherName: 'Anjali' },
   { name: 'Anfänger Yin Yoga', style: 'Hatha', dayOfWeek: 2, startTime: '16:15', endTime: '18:00', roomId: 'room-2', teacherName: 'Abha' },
@@ -429,11 +446,11 @@ const standardCoursesDefs = [
   { name: 'Satsang', style: 'Meditation', dayOfWeek: 4, startTime: '07:00', endTime: '08:00', roomId: 'room-2', teacherName: 'Anjali' },
   { name: 'Anfänger', style: 'Hatha', dayOfWeek: 4, startTime: '09:15', endTime: '11:00', roomId: 'room-2', teacherName: 'Alexander' },
   { name: 'Mittelstufe', style: 'Hatha', dayOfWeek: 4, startTime: '09:15', endTime: '11:00', roomId: 'room-5', teacherName: 'Abha' },
-  { name: 'Anfänger', style: 'Hatha', dayOfWeek: 4, startTime: '16:15', endTime: '18:00', roomId: 'room-2', teacherName: 'Ulrich' },
+  { name: 'Anfänger', style: 'Hatha', dayOfWeek: 4, startTime: '16:15', endTime: '18:00', roomId: 'room-2', teacherName: '' },
   { name: 'Mittelstufe', style: 'Hatha', dayOfWeek: 4, startTime: '16:15', endTime: '18:00', roomId: 'room-5', teacherName: 'Nirmaya' },
-  { name: 'Om Namo Narayanaya', style: 'Meditation', dayOfWeek: 4, startTime: '19:30', endTime: '20:00', roomId: 'room-2', teacherName: 'Harishakti' },
+  { name: 'Om Namo Narayanaya', style: 'Meditation', dayOfWeek: 4, startTime: '19:30', endTime: '20:00', roomId: 'room-2', teacherName: '' },
   { name: 'Satsang', style: 'Meditation', dayOfWeek: 4, startTime: '20:00', endTime: '21:00', roomId: 'room-2', teacherName: 'Karuna' },
-  { name: 'Entspannungsangebot: Peziebälle / Fantasiereise', style: 'Entspannung', dayOfWeek: 4, startTime: '21:10', endTime: '22:00', roomId: 'room-5', teacherName: '' }
+  { name: 'Entspannungsangebot: Peziebälle', style: 'Entspannung', dayOfWeek: 4, startTime: '21:10', endTime: '22:00', roomId: 'room-5', teacherName: '' }
 ];
 
 const standardCourses = standardCoursesDefs.map((c, index) => ({
@@ -467,7 +484,7 @@ const existingWeekPlans = db.getWeekPlans();
 const results: Record<string, any[]> = {};
 for (const week of weeksToPlan) {
   const existingPlan = existingWeekPlans.find(p => p.targetWeekCode === week);
-  if (existingPlan && (existingPlan.hasManualEdits || existingPlan.isManualOnly || existingPlan.isApproved || existingPlan.status === 'approved')) {
+  if (week !== "2026-W45" && existingPlan && (existingPlan.hasManualEdits || existingPlan.isManualOnly || existingPlan.isApproved || existingPlan.status === 'approved')) {
     console.log(`[PREPLANNING] Preserving existing approved/manually-edited plan for ${week} (${existingPlan.courses.length} courses).`);
     results[week] = existingPlan.courses;
   } else {

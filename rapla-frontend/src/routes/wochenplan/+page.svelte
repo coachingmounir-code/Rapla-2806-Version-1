@@ -515,6 +515,8 @@
       if (id === 'teacher-gen-mouniir-christopher') return 'Mounir, Christopher';
       if (id === 'teacher-gen-burnie-narayani') return 'burnie, Narayani';
       if (id === 'teacher-gen-adam-anjali') return 'Adam, Anjali';
+      if (id === 'teacher-gen-ulrich-nebel') return 'Ulrich';
+      if (id === 'teacher-gen-harishakti') return 'Harishakti';
       if (id === 'teacher-guest-1790942064335' || id === 'teacher-guest-1790942126763') return 'Sathyam Bad Meinberg';
       const found = teachers.find(t => 
         t.id === id || 

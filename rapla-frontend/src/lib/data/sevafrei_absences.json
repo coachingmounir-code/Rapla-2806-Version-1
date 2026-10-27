@@ -2198,5 +2198,16 @@
     "type": "Sonstiges",
     "status": "Genehmigt",
     "note": "Bis auf weiteres nicht einplanbar"
+  },
+  {
+    "id": "sf-harishakti-permanent-2026",
+    "teacherId": "teacher-gen-harishakti",
+    "teacherName": "Harishakti",
+    "avatarColor": "from-cyan-400 to-blue-500",
+    "startDate": "2026-01-01",
+    "endDate": "2099-12-31",
+    "type": "Sonstiges",
+    "status": "Genehmigt",
+    "note": "Generell nicht mehr einplanbar"
   }
 ]

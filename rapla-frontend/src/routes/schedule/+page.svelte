@@ -170,7 +170,7 @@
     { value: 4, label: 'Donnerstag' }
   ];
 
-  const YOGA_STYLES = ['Hatha', 'Vinyasa', 'Yin', 'Meditation', 'Entspannung', 'Power Yoga', 'Kundalini', 'Sonstiges', 'Buffet', 'Schulung'];
+  const YOGA_STYLES = ['Hatha', 'Vinyasa', 'Yin', 'Meditation', 'Entspannung', 'Power Yoga', 'Kundalini', 'Sonstiges', 'Buffet', 'Schulung', 'Puja'];
 
   onMount(() => {
     loadData();
@@ -453,6 +453,8 @@
       if (id === 'teacher-gen-mouniir-christopher') return 'Mounir, Christopher';
       if (id === 'teacher-gen-burnie-narayani') return 'burnie, Narayani';
       if (id === 'teacher-gen-adam-anjali') return 'Adam, Anjali';
+      if (id === 'teacher-gen-ulrich-nebel') return 'Ulrich';
+      if (id === 'teacher-gen-harishakti') return 'Harishakti';
       if (id === 'teacher-guest-1790942064335' || id === 'teacher-guest-1790942126763') return 'Sathyam Bad Meinberg';
       const found = teachers.find(t => 
         t.id === id || 
@@ -708,11 +710,12 @@
   function openEditModal(course: Course) {
     editingCourse = course;
     formName = course.name;
-    formStyle = course.style;
+    formStyle = YOGA_STYLES.includes(course.style) ? course.style : 'Sonstiges';
     formDayOfWeek = course.dayOfWeek;
     formStartTime = course.startTime;
     formEndTime = course.endTime;
-    formRoomId = course.roomId;
+    const validRoom = rooms.find(r => r.id === course.roomId || r.name.toLowerCase() === (course.roomId || '').toLowerCase());
+    formRoomId = validRoom ? validRoom.id : (course.roomId || rooms[0]?.id || 'room-2');
     const isPlaceholderTeacher =
       course.teacherId === 'teacher-gen-yl' &&
       (!course.teacherName || course.teacherName === '! YL #' || course.teacherName === 'Offen' || course.teacherName === 'Unbesetzt');
@@ -747,7 +750,7 @@
     };
     const wasPlanApproved = !!(currentPlan?.isApproved || currentPlan?.status === 'approved');
     if (currentPlan) {
-      db.upsertCourseInWeekPlan(currentPlan.id, stampedCourse, currentPlan);
+      db.upsertCourseInWeekPlan(currentPlan.targetWeekCode || currentPlan.id, stampedCourse, currentPlan);
       propagateFixedAgreementAcrossPlans(stampedCourse, currentPlan.id);
     } else {
       db.updateCourse(stampedCourse);
@@ -798,18 +801,29 @@
   }
 
   function handleSave() {
+    formName = formName.trim();
     if (!formName) return alert('Bitte Kursnamen eingeben');
-    if (!formRoomId) return alert('Bitte Raum auswählen');
+    if (!formRoomId) {
+      formRoomId = editingCourse?.roomId || rooms[0]?.id || 'room-2';
+    }
     if (formStartTime >= formEndTime) return alert('Endzeit muss nach Startzeit liegen');
 
-    // If there are hard conflicts, confirm with user
+    // Only prompt for hard conflicts when assigning/changing the teacher or changing day/time,
+    // so simple course renames or room/note adjustments never get blocked by an unexpected confirm dialog
+    const teacherOrTimeChanged =
+      !editingCourse ||
+      formTeacherId !== editingCourse.teacherId ||
+      Number(formDayOfWeek) !== editingCourse.dayOfWeek ||
+      formStartTime !== editingCourse.startTime ||
+      formEndTime !== editingCourse.endTime;
+
     const hardConflicts = activeConflicts.filter(c => c.type === 'hard');
-    if (hardConflicts.length > 0) {
+    if (hardConflicts.length > 0 && teacherOrTimeChanged) {
       const reasons = hardConflicts.map(c => '- ' + c.message).join('\n');
       const proceed = confirm(
         'Achtung: Es gibt harte Konflikte bei dieser Zuweisung:\n' +
         reasons + '\n\n' +
-        'Möchtest du diese Person trotzdem einteilen?'
+        'Möchtest du diese Änderung trotzdem speichern?'
       );
       if (!proceed) return;
     }
@@ -872,8 +886,10 @@
     };
 
     if (currentPlan) {
-      db.upsertCourseInWeekPlan(currentPlan.id, courseData, currentPlan);
-      propagateFixedAgreementAcrossPlans(courseData, currentPlan.id);
+      db.upsertCourseInWeekPlan(currentPlan.targetWeekCode || currentPlan.id, courseData, currentPlan);
+      if (courseData.isFixedAgreement || editingCourse?.isFixedAgreement) {
+        propagateFixedAgreementAcrossPlans(courseData, currentPlan.id);
+      }
     } else {
       if (editingCourse) {
         db.updateCourse(courseData);
@@ -893,7 +909,7 @@
     if (confirm('Möchten Sie diesen Kurs wirklich löschen?')) {
       const wasPlanApproved = !!(currentPlan?.isApproved || currentPlan?.status === 'approved');
       if (currentPlan) {
-        db.removeCourseFromWeekPlan(currentPlan.id, id, currentPlan);
+        db.removeCourseFromWeekPlan(currentPlan.targetWeekCode || currentPlan.id, id, currentPlan);
       } else {
         db.deleteCourse(id);
       }
@@ -1857,7 +1873,14 @@
         
         <div class="form-group">
           <label class="form-label" for="course-name">Kursname</label>
-          <input id="course-name" type="text" class="form-input" placeholder="z. B. Vinyasa Power Flow" bind:value={formName} />
+          <input
+            id="course-name"
+            type="text"
+            class="form-input"
+            placeholder="z. B. Vinyasa Power Flow"
+            bind:value={formName}
+            onkeydown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleSave(); } }}
+          />
         </div>
 
         <div class="grid-cols-2" style="gap: 1rem;">
@@ -1967,6 +1990,7 @@
               class="form-input"
               placeholder="z. B. Pranava oder mehrere Namen (Komma-getrennt)"
               bind:value={formCustomTeacherName}
+              onkeydown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleSave(); } }}
               oninput={() => {
                 const trimmed = formCustomTeacherName.trim();
                 if (!trimmed) {

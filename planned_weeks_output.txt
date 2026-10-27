@@ -20,9 +20,11 @@
         "startTime": "07:00",
         "endTime": "07:30",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-harishakti",
+        "teacherId": "teacher-guest-1790942126763",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W41-23",
@@ -32,21 +34,25 @@
         "startTime": "07:00",
         "endTime": "08:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-burnie-bansemer",
+        "teacherId": "teacher-gen-anjali-gelzleichter",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W41-24",
-        "name": "Pavanmukt Asana",
+        "name": "Anfänger",
         "style": "Hatha",
         "dayOfWeek": 0,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-2",
-        "teacherId": "teacher-gen-burnie-bansemer",
+        "roomId": "room-4",
+        "teacherId": "teacher-gen-parashakti-kuettner",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W41-25",
@@ -56,9 +62,11 @@
         "startTime": "09:15",
         "endTime": "11:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-anjali-gelzleichter",
+        "teacherId": "teacher-gen-burnie-bansemer",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W41-26",
@@ -80,9 +88,11 @@
         "startTime": "16:30",
         "endTime": "18:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-karuna-wapke",
+        "teacherId": "teacher-gen-narayani-kedenburg",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W41-20",
@@ -91,10 +101,12 @@
         "dayOfWeek": 0,
         "startTime": "19:00",
         "endTime": "19:30",
-        "roomId": "Rezeption",
-        "teacherId": "teacher-gen-christopher",
-        "isAiPlanned": true,
-        "status": "approved"
+        "roomId": "room-7",
+        "teacherId": "teacher-gen-hu-buerkle",
+        "isAiPlanned": false,
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W41-28",
@@ -104,9 +116,11 @@
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-burnie-narayani",
+        "teacherId": "teacher-gen-narayani-kedenburg",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W41-29",
@@ -116,9 +130,11 @@
         "startTime": "20:00",
         "endTime": "20:35",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-hu-buerkle",
-        "isAiPlanned": true,
-        "status": "approved"
+        "teacherId": "teacher-gen-christopher",
+        "isAiPlanned": false,
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W41-30",
@@ -152,9 +168,11 @@
         "startTime": "07:00",
         "endTime": "08:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-anjali-gelzleichter",
+        "teacherId": "teacher-gen-burnie-bansemer",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W41-33",
@@ -182,7 +200,7 @@
       },
       {
         "id": "course-2026-W41-35",
-        "name": "Anfänger Rückenstunde",
+        "name": "Gemeinsame Stunde",
         "style": "Hatha",
         "dayOfWeek": 1,
         "startTime": "16:15",
@@ -190,19 +208,9 @@
         "roomId": "room-2",
         "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": false,
-        "status": "approved"
-      },
-      {
-        "id": "course-2026-W41-36",
-        "name": "Mittelstufe",
-        "style": "Hatha",
-        "dayOfWeek": 1,
-        "startTime": "16:15",
-        "endTime": "18:00",
-        "roomId": "room-5",
-        "teacherId": "teacher-gen-chandrashekara",
-        "isAiPlanned": true,
-        "status": "approved"
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W41-37",
@@ -235,10 +243,12 @@
         "dayOfWeek": 1,
         "startTime": "21:10",
         "endTime": "22:00",
-        "roomId": "room-5",
+        "roomId": "room-2",
         "teacherId": "teacher-gen-pranava-pauly",
-        "isAiPlanned": true,
-        "status": "approved"
+        "isAiPlanned": false,
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W41-40",
@@ -248,9 +258,11 @@
         "startTime": "07:00",
         "endTime": "07:30",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-alexander-melior",
+        "teacherId": "teacher-guest-1790942126763",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W41-41",
@@ -277,42 +289,6 @@
         "status": "approved"
       },
       {
-        "id": "course-2026-W41-43",
-        "name": "Mittelstufe",
-        "style": "Hatha",
-        "dayOfWeek": 2,
-        "startTime": "09:15",
-        "endTime": "11:00",
-        "roomId": "room-5",
-        "teacherId": "teacher-gen-anjali-gelzleichter",
-        "isAiPlanned": false,
-        "status": "approved"
-      },
-      {
-        "id": "course-2026-W41-44",
-        "name": "Anfänger Yin Yoga",
-        "style": "Hatha",
-        "dayOfWeek": 2,
-        "startTime": "16:15",
-        "endTime": "18:00",
-        "roomId": "room-2",
-        "teacherId": "teacher-gen-abha-morkoetter",
-        "isAiPlanned": true,
-        "status": "approved"
-      },
-      {
-        "id": "course-2026-W41-45",
-        "name": "Mittelstufe",
-        "style": "Hatha",
-        "dayOfWeek": 2,
-        "startTime": "16:15",
-        "endTime": "18:00",
-        "roomId": "room-5",
-        "teacherId": "teacher-gen-narayani-kedenburg",
-        "isAiPlanned": false,
-        "status": "approved"
-      },
-      {
         "id": "course-2026-W41-46",
         "name": "Om Namo Narayanaya",
         "style": "Meditation",
@@ -320,9 +296,11 @@
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-teresa-allgaeu",
-        "isAiPlanned": true,
-        "status": "approved"
+        "teacherId": "teacher-gen-mouniir-jaber",
+        "isAiPlanned": false,
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W41-47",
@@ -344,9 +322,11 @@
         "startTime": "07:00",
         "endTime": "07:30",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-mouniir-jaber",
-        "isAiPlanned": true,
-        "status": "approved"
+        "teacherId": "teacher-guest-1790942126763",
+        "isAiPlanned": false,
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W41-49",
@@ -368,9 +348,11 @@
         "startTime": "09:15",
         "endTime": "11:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-alexander-melior",
+        "teacherId": "teacher-gen-burnie-bansemer",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W41-51",
@@ -382,7 +364,9 @@
         "roomId": "room-5",
         "teacherId": "teacher-gen-narayani-kedenburg",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W41-52",
@@ -428,9 +412,11 @@
         "startTime": "07:00",
         "endTime": "07:30",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-mouniir-jaber",
-        "isAiPlanned": true,
-        "status": "approved"
+        "teacherId": "teacher-guest-1790942126763",
+        "isAiPlanned": false,
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W41-56",
@@ -452,9 +438,11 @@
         "startTime": "09:15",
         "endTime": "11:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-alexander-melior",
+        "teacherId": "teacher-gen-nirmaya-fodor",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W41-58",
@@ -464,21 +452,11 @@
         "startTime": "09:15",
         "endTime": "11:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-chandrashekara",
-        "isAiPlanned": true,
-        "status": "approved"
-      },
-      {
-        "id": "course-2026-W41-schulung-yl-schulung--thema-1",
-        "name": "YL-Schulung, Thema 1",
-        "style": "Schulung",
-        "dayOfWeek": 4,
-        "startTime": "15:00",
-        "endTime": "18:00",
-        "roomId": "room-5",
-        "teacherId": null,
+        "teacherId": "teacher-gen-alexander-melior",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W41-59",
@@ -488,9 +466,11 @@
         "startTime": "16:15",
         "endTime": "18:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-alexander-melior",
-        "isAiPlanned": true,
-        "status": "approved"
+        "teacherId": "teacher-gen-narayani-kedenburg",
+        "isAiPlanned": false,
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W41-60",
@@ -500,9 +480,11 @@
         "startTime": "16:15",
         "endTime": "18:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-nirmaya-fodor",
+        "teacherId": "teacher-gen-yl",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W41-61",
@@ -535,10 +517,12 @@
         "dayOfWeek": 4,
         "startTime": "21:10",
         "endTime": "22:00",
-        "roomId": "room-5",
-        "teacherId": "teacher-gen-harishakti",
-        "isAiPlanned": true,
-        "status": "approved"
+        "roomId": "room-2",
+        "teacherId": "teacher-gen-burnie-bansemer",
+        "isAiPlanned": false,
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W41-2",
@@ -548,9 +532,11 @@
         "startTime": "07:00",
         "endTime": "07:30",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-pranava-pauly",
+        "teacherId": "teacher-gen-alexander-melior",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W41-3",
@@ -596,7 +582,7 @@
         "startTime": "16:30",
         "endTime": "18:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-abha-morkoetter",
+        "teacherId": "teacher-gen-chandrashekara",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -608,9 +594,11 @@
         "startTime": "16:30",
         "endTime": "18:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-karuna-wapke",
+        "teacherId": "teacher-karma-irene",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W41-1",
@@ -619,7 +607,7 @@
         "dayOfWeek": 5,
         "startTime": "19:00",
         "endTime": "19:30",
-        "roomId": "Rezeption",
+        "roomId": "room-7",
         "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": true,
         "status": "approved"
@@ -632,7 +620,21 @@
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-adam-anjali",
+        "teacherId": "teacher-gen-anjali-gelzleichter",
+        "isAiPlanned": false,
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
+      },
+      {
+        "id": "course-2026-W41-10",
+        "name": "Satsang",
+        "style": "Meditation",
+        "dayOfWeek": 5,
+        "startTime": "20:00",
+        "endTime": "21:00",
+        "roomId": "room-2",
+        "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
         "status": "approved"
       },
@@ -649,18 +651,6 @@
         "status": "approved"
       },
       {
-        "id": "course-2026-W41-10",
-        "name": "Satsang",
-        "style": "Meditation",
-        "dayOfWeek": 5,
-        "startTime": "20:00",
-        "endTime": "21:00",
-        "roomId": "room-2",
-        "teacherId": "teacher-gen-karuna-wapke",
-        "isAiPlanned": false,
-        "status": "approved"
-      },
-      {
         "id": "course-2026-W41-11",
         "name": "Fortgeschrittenes Pranayama",
         "style": "Hatha",
@@ -668,9 +658,11 @@
         "startTime": "06:00",
         "endTime": "06:50",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-abha-morkoetter",
-        "isAiPlanned": true,
-        "status": "approved"
+        "teacherId": "teacher-gen-karuna-wapke",
+        "isAiPlanned": false,
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W41-12",
@@ -692,9 +684,11 @@
         "startTime": "07:00",
         "endTime": "08:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-abha-morkoetter",
+        "teacherId": "teacher-gen-alexander-melior",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W41-14",
@@ -703,10 +697,12 @@
         "dayOfWeek": 6,
         "startTime": "09:15",
         "endTime": "11:00",
-        "roomId": "room-2",
-        "teacherId": "teacher-gen-pranava-pauly",
+        "roomId": "room-4",
+        "teacherId": "teacher-gen-parashakti-kuettner",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W41-15",
@@ -716,9 +712,11 @@
         "startTime": "09:15",
         "endTime": "11:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-chandrashekara",
-        "isAiPlanned": true,
-        "status": "approved"
+        "teacherId": "teacher-gen-pranava-pauly",
+        "isAiPlanned": false,
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W41-16",
@@ -727,10 +725,12 @@
         "dayOfWeek": 6,
         "startTime": "16:15",
         "endTime": "18:00",
-        "roomId": "room-2",
-        "teacherId": "teacher-gen-yl",
+        "roomId": "room-4",
+        "teacherId": "teacher-gen-abha-morkoetter",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W41-17",
@@ -739,10 +739,12 @@
         "dayOfWeek": 6,
         "startTime": "16:15",
         "endTime": "18:00",
-        "roomId": "room-5",
+        "roomId": "room-3",
         "teacherId": "teacher-gen-anjali-gelzleichter",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W41-18",
@@ -752,9 +754,11 @@
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-anjali-gelzleichter",
+        "teacherId": "teacher-gen-abha-morkoetter",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W41-19",
@@ -762,7 +766,7 @@
         "style": "Meditation",
         "dayOfWeek": 6,
         "startTime": "20:00",
-        "endTime": "22:00",
+        "endTime": "21:00",
         "roomId": "room-2",
         "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
@@ -780,9 +784,11 @@
         "startTime": "06:00",
         "endTime": "06:50",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-burnie-bansemer",
-        "isAiPlanned": true,
-        "status": "approved"
+        "teacherId": "teacher-gen-chandrashekara",
+        "isAiPlanned": false,
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W42-22",
@@ -792,9 +798,11 @@
         "startTime": "07:00",
         "endTime": "07:30",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-harishakti",
+        "teacherId": "teacher-guest-1790942126763",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W42-23",
@@ -804,21 +812,25 @@
         "startTime": "07:00",
         "endTime": "08:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-burnie-bansemer",
+        "teacherId": "teacher-gen-sukadev-bretz",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W42-24",
-        "name": "Pavanmukt Asana",
+        "name": "Anfänger Thema Glück",
         "style": "Hatha",
         "dayOfWeek": 0,
         "startTime": "09:15",
         "endTime": "11:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-burnie-bansemer",
+        "teacherId": "teacher-karma-devani",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W42-25",
@@ -828,9 +840,11 @@
         "startTime": "09:15",
         "endTime": "11:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-anjali-gelzleichter",
+        "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W42-26",
@@ -840,9 +854,11 @@
         "startTime": "16:30",
         "endTime": "18:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-pranava-pauly",
+        "teacherId": "teacher-gen-burnie-bansemer",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W42-27",
@@ -852,9 +868,11 @@
         "startTime": "16:30",
         "endTime": "18:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-karuna-wapke",
+        "teacherId": "teacher-gen-chandrashekara",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W42-20",
@@ -863,10 +881,12 @@
         "dayOfWeek": 0,
         "startTime": "19:00",
         "endTime": "19:30",
-        "roomId": "Rezeption",
-        "teacherId": "teacher-gen-christopher",
-        "isAiPlanned": true,
-        "status": "approved"
+        "roomId": "room-7",
+        "teacherId": "teacher-gen-mouniir-jaber",
+        "isAiPlanned": false,
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W42-28",
@@ -876,9 +896,11 @@
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-teresa-allgaeu",
-        "isAiPlanned": true,
-        "status": "approved"
+        "teacherId": "teacher-guest-1791278735445",
+        "isAiPlanned": false,
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W42-29",
@@ -888,9 +910,11 @@
         "startTime": "20:00",
         "endTime": "20:35",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-pranava-pauly",
-        "isAiPlanned": true,
-        "status": "approved"
+        "teacherId": "teacher-gen-christopher",
+        "isAiPlanned": false,
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W42-30",
@@ -924,9 +948,11 @@
         "startTime": "07:00",
         "endTime": "08:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-anjali-gelzleichter",
+        "teacherId": "teacher-gen-burnie-bansemer",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W42-33",
@@ -938,7 +964,9 @@
         "roomId": "room-2",
         "teacherId": "teacher-gen-burnie-bansemer",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W42-34",
@@ -948,21 +976,26 @@
         "startTime": "09:15",
         "endTime": "11:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-harishakti",
+        "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W42-35",
-        "name": "Anfänger Rückenstunde",
+        "name": "Anfänger ",
         "style": "Hatha",
         "dayOfWeek": 1,
         "startTime": "16:15",
         "endTime": "18:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-pranava-pauly",
+        "teacherId": "teacher-karma-krishnajyoti",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Krishnajyoti",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W42-36",
@@ -972,9 +1005,11 @@
         "startTime": "16:15",
         "endTime": "18:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-chandrashekara",
-        "isAiPlanned": true,
-        "status": "approved"
+        "teacherId": "teacher-gen-anjali-gelzleichter",
+        "isAiPlanned": false,
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W42-37",
@@ -996,9 +1031,11 @@
         "startTime": "20:00",
         "endTime": "21:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-anjali-gelzleichter",
-        "isAiPlanned": true,
-        "status": "approved"
+        "teacherId": "teacher-gen-harishakti",
+        "isAiPlanned": false,
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W42-39",
@@ -1007,10 +1044,12 @@
         "dayOfWeek": 1,
         "startTime": "21:10",
         "endTime": "22:00",
-        "roomId": "room-5",
+        "roomId": "room-2",
         "teacherId": "teacher-gen-pranava-pauly",
-        "isAiPlanned": true,
-        "status": "approved"
+        "isAiPlanned": false,
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W42-40",
@@ -1020,9 +1059,11 @@
         "startTime": "07:00",
         "endTime": "07:30",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-alexander-melior",
+        "teacherId": "teacher-guest-1790942126763",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W42-41",
@@ -1032,9 +1073,11 @@
         "startTime": "07:00",
         "endTime": "08:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-harishakti",
+        "teacherId": "teacher-gen-alexander-melior",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W42-42",
@@ -1044,9 +1087,12 @@
         "startTime": "09:15",
         "endTime": "11:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-harishakti",
+        "teacherId": "teacher-karma-krishnajyoti",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Krishnajyoti",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W42-43",
@@ -1062,15 +1108,17 @@
       },
       {
         "id": "course-2026-W42-44",
-        "name": "Anfänger Yin Yoga",
+        "name": "Anfänger",
         "style": "Hatha",
         "dayOfWeek": 2,
         "startTime": "16:15",
         "endTime": "18:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-alexander-melior",
-        "isAiPlanned": true,
-        "status": "approved"
+        "teacherId": "teacher-gen-narayani-kedenburg",
+        "isAiPlanned": false,
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W42-45",
@@ -1080,9 +1128,11 @@
         "startTime": "16:15",
         "endTime": "18:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-karuna-wapke",
-        "isAiPlanned": true,
-        "status": "approved"
+        "teacherId": "teacher-gen-alexander-melior",
+        "isAiPlanned": false,
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W42-46",
@@ -1092,21 +1142,11 @@
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-chandrashekara",
-        "isAiPlanned": true,
-        "status": "approved"
-      },
-      {
-        "id": "course-2026-W42-47",
-        "name": "Meditativer Spaziergang",
-        "style": "Entspannung",
-        "dayOfWeek": 2,
-        "startTime": "19:30",
-        "endTime": "20:30",
-        "roomId": "room-7",
-        "teacherId": "teacher-gen-pranava-pauly",
+        "teacherId": "teacher-gen-mouniir-jaber",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W42-48",
@@ -1116,9 +1156,11 @@
         "startTime": "07:00",
         "endTime": "07:30",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-mouniir-jaber",
-        "isAiPlanned": true,
-        "status": "approved"
+        "teacherId": "teacher-guest-1790942126763",
+        "isAiPlanned": false,
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W42-49",
@@ -1140,9 +1182,11 @@
         "startTime": "09:15",
         "endTime": "11:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-alexander-melior",
+        "teacherId": "teacher-gen-burnie-bansemer",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W42-51",
@@ -1164,7 +1208,7 @@
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-narayani-kedenburg",
+        "teacherId": "teacher-gen-adam-zmuda",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -1200,9 +1244,11 @@
         "startTime": "07:00",
         "endTime": "07:30",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-mouniir-jaber",
-        "isAiPlanned": true,
-        "status": "approved"
+        "teacherId": "teacher-guest-1790942126763",
+        "isAiPlanned": false,
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W42-56",
@@ -1212,7 +1258,7 @@
         "startTime": "07:00",
         "endTime": "08:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-burnie-bansemer",
+        "teacherId": "teacher-gen-alexander-melior",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -1224,9 +1270,11 @@
         "startTime": "09:15",
         "endTime": "11:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-alexander-melior",
+        "teacherId": "teacher-gen-nirmaya-fodor",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W42-58",
@@ -1236,9 +1284,12 @@
         "startTime": "09:15",
         "endTime": "11:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-narayani-kedenburg",
-        "isAiPlanned": true,
-        "status": "approved"
+        "teacherId": "teacher-gen-alexander-melior",
+        "isAiPlanned": false,
+        "status": "approved",
+        "teacherName": "Alexander",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W42-59",
@@ -1249,8 +1300,11 @@
         "endTime": "18:00",
         "roomId": "room-2",
         "teacherId": "teacher-gen-narayani-kedenburg",
-        "isAiPlanned": true,
-        "status": "approved"
+        "isAiPlanned": false,
+        "status": "approved",
+        "teacherName": "Narayani",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W42-60",
@@ -1260,9 +1314,11 @@
         "startTime": "16:15",
         "endTime": "18:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-nirmaya-fodor",
+        "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W42-61",
@@ -1272,9 +1328,11 @@
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-christopher",
-        "isAiPlanned": true,
-        "status": "approved"
+        "teacherId": "teacher-gen-burnie-bansemer",
+        "isAiPlanned": false,
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W42-62",
@@ -1295,10 +1353,12 @@
         "dayOfWeek": 4,
         "startTime": "21:10",
         "endTime": "22:00",
-        "roomId": "room-5",
+        "roomId": "room-2",
         "teacherId": "teacher-gen-burnie-bansemer",
-        "isAiPlanned": true,
-        "status": "approved"
+        "isAiPlanned": false,
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W42-2",
@@ -1308,9 +1368,11 @@
         "startTime": "07:00",
         "endTime": "07:30",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-pranava-pauly",
+        "teacherId": "teacher-guest-1790942126763",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W42-3",
@@ -1356,7 +1418,7 @@
         "startTime": "16:30",
         "endTime": "18:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-alexander-melior",
+        "teacherId": "teacher-gen-chandrashekara",
         "isAiPlanned": true,
         "status": "approved"
       },
@@ -1379,7 +1441,7 @@
         "dayOfWeek": 5,
         "startTime": "19:00",
         "endTime": "19:30",
-        "roomId": "Rezeption",
+        "roomId": "room-7",
         "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": true,
         "status": "approved"
@@ -1392,9 +1454,25 @@
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-adam-zmuda",
-        "isAiPlanned": true,
-        "status": "approved"
+        "teacherId": "teacher-gen-narayani-kedenburg",
+        "isAiPlanned": false,
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
+      },
+      {
+        "id": "course-2026-W42-10",
+        "name": "Satsang",
+        "style": "Meditation",
+        "dayOfWeek": 5,
+        "startTime": "20:00",
+        "endTime": "21:00",
+        "roomId": "room-2",
+        "teacherId": "teacher-gen-sukadev-bretz",
+        "isAiPlanned": false,
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W42-9",
@@ -1405,18 +1483,6 @@
         "endTime": "20:35",
         "roomId": "room-5",
         "teacherId": "teacher-gen-pranava-pauly",
-        "isAiPlanned": false,
-        "status": "approved"
-      },
-      {
-        "id": "course-2026-W42-10",
-        "name": "Satsang",
-        "style": "Meditation",
-        "dayOfWeek": 5,
-        "startTime": "20:00",
-        "endTime": "21:00",
-        "roomId": "room-2",
-        "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
         "status": "approved"
       },
@@ -1440,9 +1506,11 @@
         "startTime": "07:00",
         "endTime": "07:30",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-nirmaya-fodor",
+        "teacherId": "teacher-guest-1790942126763",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W42-13",
@@ -1464,9 +1532,11 @@
         "startTime": "09:15",
         "endTime": "11:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-pranava-pauly",
+        "teacherId": "teacher-guest-1790942126763",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W42-15",
@@ -1476,9 +1546,23 @@
         "startTime": "09:15",
         "endTime": "11:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-chandrashekara",
+        "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": true,
         "status": "approved"
+      },
+      {
+        "id": "course-1791547991429",
+        "name": "Mittelstufe",
+        "style": "Hatha",
+        "dayOfWeek": 6,
+        "startTime": "16:15",
+        "endTime": "18:00",
+        "roomId": "room-5",
+        "teacherId": "teacher-gen-chandrashekara",
+        "isAiPlanned": false,
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W42-16",
@@ -1488,21 +1572,11 @@
         "startTime": "16:15",
         "endTime": "18:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-yl",
+        "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": false,
-        "status": "approved"
-      },
-      {
-        "id": "course-2026-W42-17",
-        "name": "Mittelstufe Mantrayogastunde",
-        "style": "Hatha",
-        "dayOfWeek": 6,
-        "startTime": "16:15",
-        "endTime": "18:00",
-        "roomId": "room-5",
-        "teacherId": "teacher-gen-chandrashekara",
-        "isAiPlanned": true,
-        "status": "approved"
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W42-18",
@@ -1512,9 +1586,11 @@
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-christopher",
-        "isAiPlanned": true,
-        "status": "approved"
+        "teacherId": "teacher-guest-1791278735445",
+        "isAiPlanned": false,
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W42-19",
@@ -1524,9 +1600,11 @@
         "startTime": "20:00",
         "endTime": "22:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-karuna-wapke",
+        "teacherId": "teacher-gen-sukadev-bretz",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       }
     ]
 
@@ -1542,7 +1620,8 @@
         "roomId": "room-2",
         "teacherId": "teacher-gen-burnie-bansemer",
         "isAiPlanned": true,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-22",
@@ -1552,9 +1631,12 @@
         "startTime": "07:00",
         "endTime": "07:30",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-hu-buerkle",
-        "isAiPlanned": true,
-        "status": "approved"
+        "teacherId": "teacher-gen-mouniir-jaber",
+        "isAiPlanned": false,
+        "status": "approved",
+        "teacherName": "Mounir",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-23",
@@ -1564,13 +1646,16 @@
         "startTime": "07:00",
         "endTime": "08:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-burnie-bansemer",
+        "teacherId": "teacher-gen-anjali-gelzleichter",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Anjali",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-24",
-        "name": "Anfänger",
+        "name": "Pavanmukt Asana",
         "style": "Hatha",
         "dayOfWeek": 0,
         "startTime": "09:15",
@@ -1578,7 +1663,8 @@
         "roomId": "room-2",
         "teacherId": "teacher-gen-burnie-bansemer",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-25",
@@ -1590,7 +1676,8 @@
         "roomId": "room-5",
         "teacherId": "teacher-gen-anjali-gelzleichter",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-26",
@@ -1602,7 +1689,8 @@
         "roomId": "room-2",
         "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-27",
@@ -1612,9 +1700,12 @@
         "startTime": "16:30",
         "endTime": "18:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-karuna-wapke",
+        "teacherId": "teacher-karma-krishnajyoti",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Krishnajyoti",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-20",
@@ -1623,10 +1714,13 @@
         "dayOfWeek": 0,
         "startTime": "19:00",
         "endTime": "19:30",
-        "roomId": "Rezeption",
-        "teacherId": "teacher-gen-christopher",
-        "isAiPlanned": true,
-        "status": "approved"
+        "roomId": "room-7",
+        "teacherId": "teacher-gen-mouniir-jaber",
+        "isAiPlanned": false,
+        "status": "approved",
+        "teacherName": "Mounir",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-28",
@@ -1636,9 +1730,12 @@
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-burnie-bansemer",
-        "isAiPlanned": true,
-        "status": "approved"
+        "teacherId": "teacher-guest-1791278735445",
+        "isAiPlanned": false,
+        "status": "approved",
+        "teacherName": "Suryani",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-29",
@@ -1648,9 +1745,12 @@
         "startTime": "20:00",
         "endTime": "20:35",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-mouniir-jaber",
-        "isAiPlanned": true,
-        "status": "approved"
+        "teacherId": "teacher-gen-christopher",
+        "isAiPlanned": false,
+        "status": "approved",
+        "teacherName": "Christopher",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-30",
@@ -1662,7 +1762,8 @@
         "roomId": "room-2",
         "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-31",
@@ -1674,7 +1775,8 @@
         "roomId": "room-5",
         "teacherId": "teacher-gen-christopher",
         "isAiPlanned": true,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-32",
@@ -1684,9 +1786,12 @@
         "startTime": "07:00",
         "endTime": "08:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-anjali-gelzleichter",
+        "teacherId": "teacher-gen-nirmaya-fodor",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Nirmaya",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-33",
@@ -1698,7 +1803,8 @@
         "roomId": "room-2",
         "teacherId": "teacher-gen-burnie-bansemer",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-34",
@@ -1708,21 +1814,25 @@
         "startTime": "09:15",
         "endTime": "11:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-chandrashekara",
+        "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": true,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-35",
-        "name": "Anfänger Rückenstunde",
+        "name": "Anfänger ",
         "style": "Hatha",
         "dayOfWeek": 1,
         "startTime": "16:15",
         "endTime": "18:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-pranava-pauly",
+        "teacherId": "teacher-karma-krishnajyoti",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Krishnajyoti",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-36",
@@ -1734,7 +1844,8 @@
         "roomId": "room-5",
         "teacherId": "teacher-gen-chandrashekara",
         "isAiPlanned": true,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-37",
@@ -1746,7 +1857,8 @@
         "roomId": "room-2",
         "teacherId": "teacher-gen-nirmaya-fodor",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-38",
@@ -1757,20 +1869,26 @@
         "endTime": "21:00",
         "roomId": "room-2",
         "teacherId": "teacher-gen-anjali-gelzleichter",
-        "isAiPlanned": true,
-        "status": "approved"
+        "isAiPlanned": false,
+        "status": "approved",
+        "teacherName": "Anjali",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-39",
-        "name": "Entspannungsangebot: Klangreise",
+        "name": "Entspannungsangebot Yoga Nidra",
         "style": "Entspannung",
         "dayOfWeek": 1,
         "startTime": "21:10",
         "endTime": "22:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-pranava-pauly",
-        "isAiPlanned": true,
-        "status": "approved"
+        "teacherId": "teacher-gen-burnie-bansemer",
+        "isAiPlanned": false,
+        "status": "approved",
+        "teacherName": "burnie",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-40",
@@ -1782,7 +1900,8 @@
         "roomId": "room-5",
         "teacherId": "teacher-gen-alexander-melior",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-41",
@@ -1794,19 +1913,23 @@
         "roomId": "room-2",
         "teacherId": "teacher-gen-anjali-gelzleichter",
         "isAiPlanned": true,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-42",
-        "name": "Anfänger",
+        "name": "Anfänger Räkelyoga",
         "style": "Hatha",
         "dayOfWeek": 2,
         "startTime": "09:15",
         "endTime": "11:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-alexander-melior",
-        "isAiPlanned": true,
-        "status": "approved"
+        "teacherId": "teacher-gen-erkan-batmaz",
+        "isAiPlanned": false,
+        "status": "approved",
+        "teacherName": "Erkan Batmaz",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-43",
@@ -1818,19 +1941,25 @@
         "roomId": "room-5",
         "teacherId": "teacher-gen-anjali-gelzleichter",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Anjali",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-44",
-        "name": "Anfänger Yin Yoga",
+        "name": "Anfänger ",
         "style": "Hatha",
         "dayOfWeek": 2,
         "startTime": "16:15",
         "endTime": "18:00",
         "roomId": "room-2",
         "teacherId": "teacher-gen-alexander-melior",
-        "isAiPlanned": true,
-        "status": "approved"
+        "isAiPlanned": false,
+        "status": "approved",
+        "teacherName": "Alexander",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-45",
@@ -1840,9 +1969,12 @@
         "startTime": "16:15",
         "endTime": "18:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-karuna-wapke",
-        "isAiPlanned": true,
-        "status": "approved"
+        "teacherId": "teacher-gen-pranava-pauly",
+        "isAiPlanned": false,
+        "status": "approved",
+        "teacherName": "Pranava",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-46",
@@ -1853,8 +1985,9 @@
         "endTime": "20:00",
         "roomId": "room-2",
         "teacherId": "teacher-gen-chandrashekara",
-        "isAiPlanned": true,
-        "status": "approved"
+        "isAiPlanned": false,
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-47",
@@ -1866,7 +1999,8 @@
         "roomId": "room-7",
         "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-48",
@@ -1876,9 +2010,12 @@
         "startTime": "07:00",
         "endTime": "07:30",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-mouniir-jaber",
-        "isAiPlanned": true,
-        "status": "approved"
+        "teacherId": "teacher-gen-burnie-bansemer",
+        "isAiPlanned": false,
+        "status": "approved",
+        "teacherName": "burnie",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-49",
@@ -1890,7 +2027,8 @@
         "roomId": "room-2",
         "teacherId": "teacher-gen-alexander-melior",
         "isAiPlanned": true,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-50",
@@ -1902,7 +2040,11 @@
         "roomId": "room-2",
         "teacherId": "teacher-gen-alexander-melior",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Alexander",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z",
+        "isFixedAgreement": true
       },
       {
         "id": "course-2026-W43-51",
@@ -1912,9 +2054,12 @@
         "startTime": "09:15",
         "endTime": "11:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-chandrashekara",
-        "isAiPlanned": true,
-        "status": "approved"
+        "teacherId": "teacher-gen-burnie-bansemer",
+        "isAiPlanned": false,
+        "status": "approved",
+        "teacherName": "burnie",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-52",
@@ -1924,9 +2069,12 @@
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-teresa-allgaeu",
-        "isAiPlanned": true,
-        "status": "approved"
+        "teacherId": "teacher-gen-yl",
+        "isAiPlanned": false,
+        "status": "approved",
+        "teacherName": "! YL #",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-53",
@@ -1938,7 +2086,8 @@
         "roomId": "room-2",
         "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-54",
@@ -1948,9 +2097,12 @@
         "startTime": "21:10",
         "endTime": "22:00",
         "roomId": "room-6",
-        "teacherId": "teacher-gen-chandrashekara",
-        "isAiPlanned": true,
-        "status": "approved"
+        "teacherId": "teacher-gen-yl",
+        "isAiPlanned": false,
+        "status": "approved",
+        "teacherName": "! YL #",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-55",
@@ -1962,7 +2114,8 @@
         "roomId": "room-5",
         "teacherId": "teacher-gen-mouniir-jaber",
         "isAiPlanned": true,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-56",
@@ -1974,19 +2127,23 @@
         "roomId": "room-2",
         "teacherId": "teacher-gen-burnie-bansemer",
         "isAiPlanned": true,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-57",
-        "name": "Anfänger",
+        "name": "Anfänger Räkelyoga",
         "style": "Hatha",
         "dayOfWeek": 4,
         "startTime": "09:15",
         "endTime": "11:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-alexander-melior",
+        "teacherId": "teacher-gen-erkan-batmaz",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Erkan Batmaz",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-58",
@@ -1996,9 +2153,12 @@
         "startTime": "09:15",
         "endTime": "11:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-chandrashekara",
-        "isAiPlanned": true,
-        "status": "approved"
+        "teacherId": "teacher-gen-alexander-melior",
+        "isAiPlanned": false,
+        "status": "approved",
+        "teacherName": "Alexander",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-schulung-yl-schulung--thema-3",
@@ -2008,21 +2168,27 @@
         "startTime": "15:00",
         "endTime": "18:00",
         "roomId": "room-5",
-        "teacherId": null,
+        "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Karuna",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-59",
-        "name": "Pavanmukt Asana",
+        "name": "Anfänger",
         "style": "Hatha",
         "dayOfWeek": 4,
         "startTime": "16:15",
         "endTime": "18:00",
         "roomId": "room-2",
         "teacherId": "teacher-gen-burnie-bansemer",
-        "isAiPlanned": true,
-        "status": "approved"
+        "isAiPlanned": false,
+        "status": "approved",
+        "teacherName": "burnie",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-60",
@@ -2032,9 +2198,12 @@
         "startTime": "16:15",
         "endTime": "18:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-nirmaya-fodor",
+        "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Pranava",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-61",
@@ -2046,7 +2215,8 @@
         "roomId": "room-2",
         "teacherId": "teacher-gen-christopher",
         "isAiPlanned": true,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-62",
@@ -2058,19 +2228,23 @@
         "roomId": "room-2",
         "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-63",
-        "name": "Entspannungsangebot: Peziebälle / Fantasiereise",
+        "name": "Entspannungsangebot: Klangreise",
         "style": "Entspannung",
         "dayOfWeek": 4,
         "startTime": "21:10",
         "endTime": "22:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-burnie-bansemer",
-        "isAiPlanned": true,
-        "status": "approved"
+        "teacherId": "teacher-gen-pranava-pauly",
+        "isAiPlanned": false,
+        "status": "approved",
+        "teacherName": "Pranava",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-2",
@@ -2080,9 +2254,12 @@
         "startTime": "07:00",
         "endTime": "07:30",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-pranava-pauly",
+        "teacherId": "teacher-gen-christopher",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Christopher",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-3",
@@ -2094,7 +2271,8 @@
         "roomId": "room-2",
         "teacherId": "teacher-gen-nirmaya-fodor",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-4",
@@ -2104,9 +2282,12 @@
         "startTime": "09:15",
         "endTime": "11:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-harishakti",
+        "teacherId": "teacher-karma-krishnajyoti",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Krishnajyoti",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-5",
@@ -2118,7 +2299,8 @@
         "roomId": "room-2",
         "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-6",
@@ -2128,9 +2310,12 @@
         "startTime": "16:30",
         "endTime": "18:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-harishakti",
-        "isAiPlanned": true,
-        "status": "approved"
+        "teacherId": "teacher-gen-karuna-wapke",
+        "isAiPlanned": false,
+        "status": "approved",
+        "teacherName": "Karuna",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-7",
@@ -2140,9 +2325,12 @@
         "startTime": "16:30",
         "endTime": "18:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-anjali-gelzleichter",
-        "isAiPlanned": true,
-        "status": "approved"
+        "teacherId": "teacher-gen-chandrashekara",
+        "isAiPlanned": false,
+        "status": "approved",
+        "teacherName": "Chandrashekara",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-1",
@@ -2151,10 +2339,11 @@
         "dayOfWeek": 5,
         "startTime": "19:00",
         "endTime": "19:30",
-        "roomId": "Rezeption",
+        "roomId": "room-7",
         "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": true,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-8",
@@ -2165,20 +2354,9 @@
         "endTime": "20:00",
         "roomId": "room-2",
         "teacherId": "teacher-gen-adam-zmuda",
-        "isAiPlanned": true,
-        "status": "approved"
-      },
-      {
-        "id": "course-2026-W43-9",
-        "name": "Satsang Einführung",
-        "style": "Meditation",
-        "dayOfWeek": 5,
-        "startTime": "20:00",
-        "endTime": "20:35",
-        "roomId": "room-5",
-        "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-10",
@@ -2190,7 +2368,21 @@
         "roomId": "room-2",
         "teacherId": "teacher-gen-anjali-gelzleichter",
         "isAiPlanned": true,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
+      },
+      {
+        "id": "course-2026-W43-9",
+        "name": "Satsang Einführung",
+        "style": "Meditation",
+        "dayOfWeek": 5,
+        "startTime": "20:00",
+        "endTime": "20:35",
+        "roomId": "room-5",
+        "teacherId": "teacher-gen-pranava-pauly",
+        "isAiPlanned": false,
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-11",
@@ -2202,7 +2394,8 @@
         "roomId": "room-2",
         "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": true,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-12",
@@ -2214,7 +2407,8 @@
         "roomId": "room-5",
         "teacherId": "teacher-gen-nirmaya-fodor",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-13",
@@ -2226,7 +2420,8 @@
         "roomId": "room-2",
         "teacherId": "teacher-gen-alexander-melior",
         "isAiPlanned": true,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-14",
@@ -2238,7 +2433,8 @@
         "roomId": "room-2",
         "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-15",
@@ -2248,9 +2444,10 @@
         "startTime": "09:15",
         "endTime": "11:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-chandrashekara",
+        "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": true,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-schulung-yl-schulung--thema-2",
@@ -2260,9 +2457,12 @@
         "startTime": "15:00",
         "endTime": "18:00",
         "roomId": "room-5",
-        "teacherId": null,
+        "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Karuna",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-16",
@@ -2272,9 +2472,12 @@
         "startTime": "16:15",
         "endTime": "18:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-yl",
+        "teacherId": "teacher-karma-krishnajyoti",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Krishnajyoti",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-17",
@@ -2286,7 +2489,8 @@
         "roomId": "room-5",
         "teacherId": "teacher-gen-anjali-gelzleichter",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-18",
@@ -2297,8 +2501,9 @@
         "endTime": "20:00",
         "roomId": "room-2",
         "teacherId": "teacher-gen-christopher",
-        "isAiPlanned": true,
-        "status": "approved"
+        "isAiPlanned": false,
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W43-19",
@@ -2310,7 +2515,8 @@
         "roomId": "room-2",
         "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       }
     ]
 
@@ -2326,7 +2532,8 @@
         "roomId": "room-2",
         "teacherId": "teacher-gen-burnie-bansemer",
         "isAiPlanned": true,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-13",
@@ -2336,9 +2543,12 @@
         "startTime": "07:00",
         "endTime": "07:30",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-chandrashekara",
-        "isAiPlanned": true,
-        "status": "approved"
+        "teacherId": "teacher-gen-mouniir-jaber",
+        "isAiPlanned": false,
+        "status": "approved",
+        "teacherName": "Mounir",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-23T07:21:04.642Z"
       },
       {
         "id": "course-2026-W44-14",
@@ -2348,21 +2558,27 @@
         "startTime": "07:00",
         "endTime": "08:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-burnie-bansemer",
+        "teacherId": "teacher-gen-anjali-gelzleichter",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Anjali",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-15",
-        "name": "Pavanmukt Asana",
+        "name": "Anfänger",
         "style": "Hatha",
         "dayOfWeek": 0,
         "startTime": "09:15",
         "endTime": "11:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-burnie-bansemer",
+        "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Pranava",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-16",
@@ -2372,9 +2588,12 @@
         "startTime": "09:15",
         "endTime": "11:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-anjali-gelzleichter",
+        "teacherId": "teacher-gen-burnie-bansemer",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "burnie",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-17",
@@ -2386,7 +2605,10 @@
         "roomId": "room-2",
         "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Pranava",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-18",
@@ -2398,7 +2620,10 @@
         "roomId": "room-5",
         "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Karuna",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-11",
@@ -2407,10 +2632,13 @@
         "dayOfWeek": 0,
         "startTime": "19:00",
         "endTime": "19:30",
-        "roomId": "Rezeption",
-        "teacherId": "teacher-gen-christopher",
-        "isAiPlanned": true,
-        "status": "approved"
+        "roomId": "room-7",
+        "teacherId": "teacher-gen-mouniir-jaber",
+        "isAiPlanned": false,
+        "status": "approved",
+        "teacherName": "Mounir",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-19",
@@ -2420,9 +2648,12 @@
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-burnie-narayani",
+        "teacherId": "teacher-gen-nirmaya-fodor",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Nirmaya",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-20",
@@ -2432,9 +2663,12 @@
         "startTime": "20:00",
         "endTime": "20:35",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-burnie-bansemer",
-        "isAiPlanned": true,
-        "status": "approved"
+        "teacherId": "teacher-gen-christopher",
+        "isAiPlanned": false,
+        "status": "approved",
+        "teacherName": "Christopher",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-21",
@@ -2446,7 +2680,8 @@
         "roomId": "room-2",
         "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-22",
@@ -2456,9 +2691,12 @@
         "startTime": "07:00",
         "endTime": "07:30",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-chandrashekara",
-        "isAiPlanned": true,
-        "status": "approved"
+        "teacherId": "teacher-gen-burnie-bansemer",
+        "isAiPlanned": false,
+        "status": "approved",
+        "teacherName": "burnie",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-23",
@@ -2470,7 +2708,8 @@
         "roomId": "room-2",
         "teacherId": "teacher-gen-anjali-gelzleichter",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-24",
@@ -2480,9 +2719,12 @@
         "startTime": "09:15",
         "endTime": "11:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-burnie-bansemer",
+        "teacherId": "teacher-gen-nirmaya-fodor",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Nirmaya",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-25",
@@ -2492,13 +2734,16 @@
         "startTime": "09:15",
         "endTime": "11:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-chandrashekara",
-        "isAiPlanned": true,
-        "status": "approved"
+        "teacherId": "teacher-gen-burnie-bansemer",
+        "isAiPlanned": false,
+        "status": "approved",
+        "teacherName": "burnie",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-26",
-        "name": "Anfänger Rückenstunde",
+        "name": "Anfänger ",
         "style": "Hatha",
         "dayOfWeek": 1,
         "startTime": "16:15",
@@ -2506,7 +2751,10 @@
         "roomId": "room-2",
         "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Pranava",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-27",
@@ -2517,9 +2765,11 @@
         "endTime": "18:00",
         "roomId": "room-5",
         "teacherId": "teacher-gen-christian-bliedtner",
-        "teacherName": "Christian Bliedtner",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Christian Bliedtner",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-25T13:00:00.000Z"
       },
       {
         "id": "course-2026-W44-28",
@@ -2529,9 +2779,12 @@
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-nirmaya-fodor",
+        "teacherId": "teacher-gen-christopher",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Christopher",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-29",
@@ -2543,7 +2796,8 @@
         "roomId": "room-2",
         "teacherId": "teacher-gen-narayani-kedenburg",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-30",
@@ -2555,7 +2809,8 @@
         "roomId": "room-5",
         "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": true,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-31",
@@ -2567,7 +2822,8 @@
         "roomId": "room-5",
         "teacherId": "teacher-gen-alexander-melior",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-32",
@@ -2579,35 +2835,27 @@
         "roomId": "room-2",
         "teacherId": "teacher-gen-abha-morkoetter",
         "isAiPlanned": true,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
-        "id": "course-2026-W44-33",
-        "name": "Anfänger",
+        "id": "course-2026-W44-34",
+        "name": "Gemeinsame Stunde",
         "style": "Hatha",
         "dayOfWeek": 2,
         "startTime": "09:15",
         "endTime": "11:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-abha-morkoetter",
-        "isAiPlanned": true,
-        "status": "approved"
-      },
-      {
-        "id": "course-2026-W44-34",
-        "name": "Mittelstufe",
-        "style": "Hatha",
-        "dayOfWeek": 2,
-        "startTime": "09:15",
-        "endTime": "11:00",
-        "roomId": "room-5",
-        "teacherId": "teacher-gen-anjali-gelzleichter",
+        "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Karuna",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-35",
-        "name": "Anfänger Yin Yoga",
+        "name": "Anfänger",
         "style": "Hatha",
         "dayOfWeek": 2,
         "startTime": "16:15",
@@ -2615,7 +2863,10 @@
         "roomId": "room-2",
         "teacherId": "teacher-gen-abha-morkoetter",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Abha",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-36",
@@ -2627,7 +2878,8 @@
         "roomId": "room-5",
         "teacherId": "teacher-gen-narayani-kedenburg",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-37",
@@ -2639,7 +2891,8 @@
         "roomId": "room-2",
         "teacherId": "teacher-gen-teresa-allgaeu",
         "isAiPlanned": true,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-38",
@@ -2651,7 +2904,8 @@
         "roomId": "room-7",
         "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-39",
@@ -2661,9 +2915,11 @@
         "startTime": "07:00",
         "endTime": "07:30",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-mouniir-jaber",
-        "isAiPlanned": true,
-        "status": "approved"
+        "teacherId": null,
+        "isAiPlanned": false,
+        "status": "approved",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-40",
@@ -2675,7 +2931,8 @@
         "roomId": "room-2",
         "teacherId": "teacher-gen-narayani-kedenburg",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-41",
@@ -2687,7 +2944,8 @@
         "roomId": "room-2",
         "teacherId": "teacher-gen-alexander-melior",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-42",
@@ -2699,7 +2957,23 @@
         "roomId": "room-5",
         "teacherId": "teacher-gen-narayani-kedenburg",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
+      },
+      {
+        "id": "course-2026-W44-qigong-wed",
+        "name": "Lachyoga",
+        "style": "Entspannung",
+        "dayOfWeek": 3,
+        "startTime": "12:30",
+        "endTime": "13:30",
+        "roomId": "room-2",
+        "teacherId": "teacher-custom-christina-und-roland",
+        "isAiPlanned": false,
+        "status": "approved",
+        "teacherName": "Christina und Roland",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-27T07:55:00.000Z"
       },
       {
         "id": "course-2026-W44-43",
@@ -2711,7 +2985,8 @@
         "roomId": "room-2",
         "teacherId": "teacher-gen-adam-zmuda",
         "isAiPlanned": true,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-44",
@@ -2723,19 +2998,23 @@
         "roomId": "room-2",
         "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-45",
-        "name": "Entspannungsangebot: Yogageschichten am Kamin",
+        "name": "Entspannungsangebot: Klangreise",
         "style": "Entspannung",
         "dayOfWeek": 3,
         "startTime": "21:10",
         "endTime": "22:00",
-        "roomId": "room-6",
-        "teacherId": "teacher-gen-adam-zmuda",
-        "isAiPlanned": true,
-        "status": "approved"
+        "roomId": "room-2",
+        "teacherId": "teacher-custom-christina-und-roland",
+        "isAiPlanned": false,
+        "status": "approved",
+        "teacherName": "Christina und Roland",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-23T14:35:00.000Z"
       },
       {
         "id": "course-2026-W44-46",
@@ -2747,7 +3026,8 @@
         "roomId": "room-5",
         "teacherId": "teacher-gen-mouniir-jaber",
         "isAiPlanned": true,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-47",
@@ -2759,7 +3039,8 @@
         "roomId": "room-2",
         "teacherId": "teacher-gen-alexander-melior",
         "isAiPlanned": true,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-48",
@@ -2769,9 +3050,12 @@
         "startTime": "09:15",
         "endTime": "11:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-alexander-melior",
+        "teacherId": "teacher-gen-nirmaya-fodor",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Nirmaya",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-49",
@@ -2781,9 +3065,12 @@
         "startTime": "09:15",
         "endTime": "11:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-abha-morkoetter",
+        "teacherId": "teacher-gen-alexander-melior",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Alexander",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-schulung-yl-schulung--thema-5",
@@ -2795,7 +3082,8 @@
         "roomId": "room-5",
         "teacherId": null,
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-50",
@@ -2807,7 +3095,8 @@
         "roomId": "room-2",
         "teacherId": "teacher-gen-narayani-kedenburg",
         "isAiPlanned": true,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-51",
@@ -2817,9 +3106,12 @@
         "startTime": "16:15",
         "endTime": "18:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-nirmaya-fodor",
+        "teacherId": "teacher-gen-abha-morkoetter",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Abha",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-52",
@@ -2829,9 +3121,12 @@
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-christopher",
-        "isAiPlanned": true,
-        "status": "approved"
+        "teacherId": "teacher-gen-adam-zmuda",
+        "isAiPlanned": false,
+        "status": "approved",
+        "teacherName": "Adam",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-53",
@@ -2843,19 +3138,23 @@
         "roomId": "room-2",
         "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-54",
-        "name": "Entspannungsangebot: Peziebälle / Fantasiereise",
+        "name": "Entspannungsangebot: Lachyoga",
         "style": "Entspannung",
         "dayOfWeek": 4,
         "startTime": "21:10",
         "endTime": "22:00",
-        "roomId": "room-5",
-        "teacherId": "teacher-gen-burnie-bansemer",
-        "isAiPlanned": true,
-        "status": "approved"
+        "roomId": "room-2",
+        "teacherId": "teacher-custom-christina-und-roland",
+        "isAiPlanned": false,
+        "status": "approved",
+        "teacherName": "Christina und Roland",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-23T14:35:00.000Z"
       },
       {
         "id": "course-2026-W44-2",
@@ -2865,9 +3164,12 @@
         "startTime": "07:00",
         "endTime": "07:30",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-pranava-pauly",
+        "teacherId": "teacher-gen-alexander-melior",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Alexander",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-3",
@@ -2879,7 +3181,8 @@
         "roomId": "room-2",
         "teacherId": "teacher-gen-nirmaya-fodor",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-4",
@@ -2890,8 +3193,11 @@
         "endTime": "11:00",
         "roomId": "room-5",
         "teacherId": "teacher-gen-alexander-melior",
-        "isAiPlanned": true,
-        "status": "approved"
+        "isAiPlanned": false,
+        "status": "approved",
+        "teacherName": "Alexander",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-5",
@@ -2903,7 +3209,8 @@
         "roomId": "room-2",
         "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-6",
@@ -2913,9 +3220,12 @@
         "startTime": "16:30",
         "endTime": "18:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-anjali-gelzleichter",
-        "isAiPlanned": true,
-        "status": "approved"
+        "teacherId": "teacher-gen-karuna-wapke",
+        "isAiPlanned": false,
+        "status": "approved",
+        "teacherName": "Karuna",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-7",
@@ -2925,9 +3235,12 @@
         "startTime": "16:30",
         "endTime": "18:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-karuna-wapke",
+        "teacherId": "teacher-gen-anjali-gelzleichter",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Anjali",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-1",
@@ -2936,10 +3249,11 @@
         "dayOfWeek": 5,
         "startTime": "19:00",
         "endTime": "19:30",
-        "roomId": "Rezeption",
+        "roomId": "room-7",
         "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": true,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-8",
@@ -2949,21 +3263,12 @@
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-adam-anjali",
+        "teacherId": "teacher-gen-anjali-gelzleichter",
         "isAiPlanned": false,
-        "status": "approved"
-      },
-      {
-        "id": "course-2026-W44-9",
-        "name": "Satsang Einführung",
-        "style": "Meditation",
-        "dayOfWeek": 5,
-        "startTime": "20:00",
-        "endTime": "20:35",
-        "roomId": "room-5",
-        "teacherId": "teacher-gen-pranava-pauly",
-        "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Anjali",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-10",
@@ -2975,7 +3280,21 @@
         "roomId": "room-2",
         "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
+      },
+      {
+        "id": "course-2026-W44-9",
+        "name": "Satsang Einführung",
+        "style": "Meditation",
+        "dayOfWeek": 5,
+        "startTime": "20:00",
+        "endTime": "20:35",
+        "roomId": "room-5",
+        "teacherId": "teacher-gen-pranava-pauly",
+        "isAiPlanned": false,
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-tdot-gefuehrte-meditation",
@@ -2985,9 +3304,12 @@
         "startTime": "07:00",
         "endTime": "07:30",
         "roomId": "room-5",
-        "teacherId": null,
+        "teacherId": "teacher-gen-nirmaya-fodor",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Nirmaya",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-tdot-satsang-morgen",
@@ -2997,9 +3319,12 @@
         "startTime": "07:00",
         "endTime": "08:00",
         "roomId": "room-2",
-        "teacherId": null,
+        "teacherId": "teacher-gen-alexander-melior",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Alexander",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-tdot-gemeinsame-stunde",
@@ -3009,21 +3334,12 @@
         "startTime": "09:15",
         "endTime": "10:15",
         "roomId": "room-2",
-        "teacherId": null,
+        "teacherId": "teacher-gen-anjali-gelzleichter",
         "isAiPlanned": false,
-        "status": "approved"
-      },
-      {
-        "id": "course-2026-W44-tdot-rezeption",
-        "name": "Rezeption (nicht während der Yogastunden)",
-        "style": "Sonstiges",
-        "dayOfWeek": 6,
-        "startTime": "10:00",
-        "endTime": "18:00",
-        "roomId": "Rezeption",
-        "teacherId": null,
-        "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Anjali",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-tdot-infopoint",
@@ -3032,10 +3348,28 @@
         "dayOfWeek": 6,
         "startTime": "10:00",
         "endTime": "18:00",
-        "roomId": "Infopoint",
-        "teacherId": null,
+        "roomId": "room-7",
+        "teacherId": "teacher-gen-nirmaya-fodor",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Nirmaya , Mounir, Anjali",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
+      },
+      {
+        "id": "course-2026-W44-tdot-rezeption",
+        "name": "Rezeption (nicht während der Yogastunden)",
+        "style": "Sonstiges",
+        "dayOfWeek": 6,
+        "startTime": "10:00",
+        "endTime": "18:00",
+        "roomId": "room-7",
+        "teacherId": "teacher-custom-melanie-jyoti",
+        "isAiPlanned": false,
+        "status": "approved",
+        "teacherName": "Melanie , Jyoti",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-tdot-yogashop",
@@ -3044,10 +3378,13 @@
         "dayOfWeek": 6,
         "startTime": "10:00",
         "endTime": "18:00",
-        "roomId": "Yoga-Shop",
-        "teacherId": null,
+        "roomId": "room-7",
+        "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Pranava , Teresa",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-tdot-begruessung",
@@ -3057,9 +3394,12 @@
         "startTime": "10:30",
         "endTime": "11:00",
         "roomId": "room-2",
-        "teacherId": null,
+        "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Karuna",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-tdot-buffet-1",
@@ -3068,10 +3408,11 @@
         "dayOfWeek": 6,
         "startTime": "11:00",
         "endTime": "12:00",
-        "roomId": "Speisesaal",
+        "roomId": "room-7",
         "teacherId": null,
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-tdot-einfuehrung-yoga",
@@ -3081,9 +3422,12 @@
         "startTime": "12:15",
         "endTime": "13:15",
         "roomId": "room-2",
-        "teacherId": null,
+        "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Karuna",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-tdot-yoga-1330-anfaenger",
@@ -3093,9 +3437,12 @@
         "startTime": "13:30",
         "endTime": "15:00",
         "roomId": "room-2",
-        "teacherId": null,
+        "teacherId": "teacher-gen-yl",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "! YL #",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-tdot-yoga-1330-mittelstufe",
@@ -3105,9 +3452,12 @@
         "startTime": "13:30",
         "endTime": "15:00",
         "roomId": "room-5",
-        "teacherId": null,
+        "teacherId": "teacher-custom-kalipriya",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Kalipriya",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-tdot-hausfuehrung",
@@ -3116,10 +3466,13 @@
         "dayOfWeek": 6,
         "startTime": "15:00",
         "endTime": "15:30",
-        "roomId": "Rezeption",
-        "teacherId": null,
+        "roomId": "room-7",
+        "teacherId": "teacher-gen-mouniir-jaber",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Mounir",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-tdot-lachyoga",
@@ -3129,9 +3482,12 @@
         "startTime": "15:00",
         "endTime": "15:45",
         "roomId": "room-5",
-        "teacherId": null,
+        "teacherId": "teacher-custom-dashini",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Dashini",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-tdot-einfuehrung-meditation",
@@ -3141,21 +3497,12 @@
         "startTime": "15:45",
         "endTime": "16:15",
         "roomId": "room-2",
-        "teacherId": null,
+        "teacherId": "teacher-gen-mouniir-jaber",
         "isAiPlanned": false,
-        "status": "approved"
-      },
-      {
-        "id": "course-2026-W44-tdot-yoga-1630-klang",
-        "name": "Klangyoga – Mittelstufe",
-        "style": "Hatha",
-        "dayOfWeek": 6,
-        "startTime": "16:30",
-        "endTime": "18:00",
-        "roomId": "room-2",
-        "teacherId": null,
-        "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Mounir",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-tdot-yoga-1630-anfaenger",
@@ -3165,9 +3512,27 @@
         "startTime": "16:30",
         "endTime": "18:00",
         "roomId": "room-5",
-        "teacherId": null,
+        "teacherId": "teacher-gen-burnie-bansemer",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "burnie",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
+      },
+      {
+        "id": "course-2026-W44-tdot-yoga-1630-klang",
+        "name": "Klangyoga – Mittelstufe",
+        "style": "Hatha",
+        "dayOfWeek": 6,
+        "startTime": "16:30",
+        "endTime": "18:00",
+        "roomId": "room-2",
+        "teacherId": "teacher-gen-pranava-pauly",
+        "isAiPlanned": false,
+        "status": "approved",
+        "teacherName": "Pranava",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-tdot-buffet-2",
@@ -3176,10 +3541,11 @@
         "dayOfWeek": 6,
         "startTime": "18:00",
         "endTime": "19:00",
-        "roomId": "Speisesaal",
+        "roomId": "room-7",
         "teacherId": null,
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-tdot-info-yla",
@@ -3189,9 +3555,12 @@
         "startTime": "19:00",
         "endTime": "19:30",
         "roomId": "room-2",
-        "teacherId": null,
+        "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Karuna",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-tdot-mantra-singen",
@@ -3201,9 +3570,12 @@
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": null,
+        "teacherId": "teacher-custom-shantara",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Shantara",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       },
       {
         "id": "course-2026-W44-tdot-satsang",
@@ -3213,9 +3585,12 @@
         "startTime": "20:00",
         "endTime": "22:00",
         "roomId": "room-2",
-        "teacherId": null,
+        "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Karuna",
+        "isManuallyEdited": true,
+        "lastEditedAt": "2026-10-22T18:56:03.136Z"
       }
     ]
 
@@ -3231,7 +3606,8 @@
         "roomId": "room-2",
         "teacherId": "teacher-gen-burnie-bansemer",
         "isAiPlanned": true,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "burnie"
       },
       {
         "id": "course-2026-W45-22",
@@ -3241,10 +3617,10 @@
         "startTime": "07:00",
         "endTime": "07:30",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-harishakti",
-        "isAiPlanned": false,
+        "teacherId": "teacher-gen-chandrashekara",
+        "isAiPlanned": true,
         "status": "approved",
-        "teacherName": "Harishakti"
+        "teacherName": "Chandrashekara"
       },
       {
         "id": "course-2026-W45-23",
@@ -3319,9 +3695,10 @@
         "startTime": "19:00",
         "endTime": "19:30",
         "roomId": "room-7",
-        "teacherId": "teacher-gen-hu-buerkle",
+        "teacherId": "teacher-gen-burnie-bansemer",
         "isAiPlanned": true,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "burnie"
       },
       {
         "id": "course-2026-W45-28",
@@ -3346,7 +3723,8 @@
         "roomId": "room-5",
         "teacherId": "teacher-gen-nirmaya-fodor",
         "isAiPlanned": true,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Nirmaya"
       },
       {
         "id": "course-2026-W45-30",
@@ -3372,7 +3750,7 @@
         "teacherId": "teacher-gen-hu-buerkle",
         "isAiPlanned": false,
         "status": "approved",
-        "teacherName": "hu"
+        "teacherName": "Hu"
       },
       {
         "id": "course-2026-W45-32",
@@ -3408,10 +3786,10 @@
         "startTime": "09:15",
         "endTime": "11:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-harishakti",
-        "isAiPlanned": false,
+        "teacherId": "teacher-gen-chandrashekara",
+        "isAiPlanned": true,
         "status": "approved",
-        "teacherName": "Harishakti"
+        "teacherName": "Chandrashekara"
       },
       {
         "id": "course-2026-W45-35",
@@ -3437,7 +3815,7 @@
         "teacherId": "teacher-gen-chandrashekara",
         "isAiPlanned": true,
         "status": "approved",
-        "teacherName": "Ulrich"
+        "teacherName": "Chandrashekara"
       },
       {
         "id": "course-2026-W45-37",
@@ -3475,7 +3853,8 @@
         "roomId": "room-5",
         "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": true,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Pranava"
       },
       {
         "id": "course-2026-W45-40",
@@ -3498,10 +3877,10 @@
         "startTime": "07:00",
         "endTime": "08:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-harishakti",
-        "isAiPlanned": false,
+        "teacherId": "teacher-gen-christopher",
+        "isAiPlanned": true,
         "status": "approved",
-        "teacherName": "Harishakti"
+        "teacherName": "Christopher"
       },
       {
         "id": "course-2026-W45-42",
@@ -3566,7 +3945,7 @@
         "teacherId": "teacher-gen-chandrashekara",
         "isAiPlanned": true,
         "status": "approved",
-        "teacherName": "Christopher"
+        "teacherName": "Chandrashekara"
       },
       {
         "id": "course-2026-W45-47",
@@ -3591,7 +3970,8 @@
         "roomId": "room-5",
         "teacherId": "teacher-gen-mouniir-jaber",
         "isAiPlanned": true,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Mounir"
       },
       {
         "id": "course-2026-W45-49",
@@ -3643,7 +4023,7 @@
         "teacherId": "teacher-gen-adam-zmuda",
         "isAiPlanned": true,
         "status": "approved",
-        "teacherName": "Abha"
+        "teacherName": "Adam"
       },
       {
         "id": "course-2026-W45-53",
@@ -3668,7 +4048,8 @@
         "roomId": "room-6",
         "teacherId": "teacher-gen-adam-zmuda",
         "isAiPlanned": true,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Adam"
       },
       {
         "id": "course-2026-W45-55",
@@ -3680,7 +4061,8 @@
         "roomId": "room-5",
         "teacherId": "teacher-gen-mouniir-jaber",
         "isAiPlanned": true,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Mounir"
       },
       {
         "id": "course-2026-W45-56",
@@ -3693,7 +4075,7 @@
         "teacherId": "teacher-gen-alexander-melior",
         "isAiPlanned": true,
         "status": "approved",
-        "teacherName": "Anjali"
+        "teacherName": "Alexander"
       },
       {
         "id": "course-2026-W45-57",
@@ -3741,10 +4123,10 @@
         "startTime": "16:15",
         "endTime": "18:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-harishakti",
+        "teacherId": "teacher-gen-alexander-melior",
         "isAiPlanned": true,
         "status": "approved",
-        "teacherName": "Ulrich"
+        "teacherName": "Alexander"
       },
       {
         "id": "course-2026-W45-60",
@@ -3767,10 +4149,10 @@
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-harishakti",
-        "isAiPlanned": false,
+        "teacherId": "teacher-gen-christopher",
+        "isAiPlanned": true,
         "status": "approved",
-        "teacherName": "Harishakti"
+        "teacherName": "Christopher"
       },
       {
         "id": "course-2026-W45-62",
@@ -3787,15 +4169,16 @@
       },
       {
         "id": "course-2026-W45-63",
-        "name": "Entspannungsangebot: Peziebälle / Fantasiereise",
+        "name": "Entspannungsangebot: Peziebälle",
         "style": "Entspannung",
         "dayOfWeek": 4,
         "startTime": "21:10",
         "endTime": "22:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-harishakti",
+        "teacherId": "teacher-gen-burnie-bansemer",
         "isAiPlanned": true,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "burnie"
       },
       {
         "id": "course-2026-W45-2",
@@ -3832,9 +4215,9 @@
         "endTime": "11:00",
         "roomId": "room-5",
         "teacherId": "teacher-gen-abha-morkoetter",
-        "isAiPlanned": true,
+        "isAiPlanned": false,
         "status": "approved",
-        "teacherName": "Harishakti"
+        "teacherName": "Abha"
       },
       {
         "id": "course-2026-W45-5",
@@ -3885,7 +4268,8 @@
         "roomId": "room-7",
         "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": true,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Pranava"
       },
       {
         "id": "course-2026-W45-8",
@@ -3936,7 +4320,8 @@
         "roomId": "room-2",
         "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": true,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Karuna"
       },
       {
         "id": "course-2026-W45-12",

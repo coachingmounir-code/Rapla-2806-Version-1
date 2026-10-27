@@ -244,7 +244,6 @@ const NEW_TEACHER_NAMES = [
   "Erkan Batmaz",
   "Gruppe Mudita",
   "Hagit Noam",
-  "Harishakti",
   "Hu",
   "Ingrid Seemann",
   "Jnanadev Wallaschkowski",
@@ -296,7 +295,6 @@ const NEW_TEACHER_NAMES = [
   "Swami Tattvarupananda",
   "Swami Yatidharmananda",
   "Teresa",
-  "Ulrich",
   "Venulo Broszinski",
   "Volker Horn",
   "Wolfgang Seemann",
@@ -313,7 +311,6 @@ const SEVAKA_NAMES = [
   "burnie",
   "Chandrashekara",
   "Christopher",
-  "Harishakti",
   "Hu",
   "Karuna",
   "Mounir",
@@ -321,8 +318,7 @@ const SEVAKA_NAMES = [
   "Nirmaya",
   "Pranava",
   "Satyam",
-  "Teresa",
-  "Ulrich"
+  "Teresa"
 ];
 
 function getTeacherAvailability(name: string, isSevaka: boolean): TimeSlot[] {
@@ -890,6 +886,7 @@ const generateDefaultCourses = (): Course[] => {
     if (nameLower === 'narayani') return 'teacher-gen-narayani-kedenburg';
     if (nameLower === 'mouniir' || nameLower === 'mounir') return 'teacher-gen-mouniir-jaber';
     if (nameLower === 'christopher') return 'teacher-gen-christopher';
+    if (nameLower === 'chandrashekara') return 'teacher-gen-chandrashekara';
     if (nameLower === 'marlen' || nameLower === 'marlene') return 'teacher-karma-marlene';
     if (nameLower === 'tanja' || nameLower === 'tanja eichenmüller' || nameLower === 'tanja eichenmueller') return 'teacher-karma-tanja-eichenmueller';
     if (nameLower === 'swantje' || nameLower === 'karma yogini' || nameLower === 'karma-yogini' || nameLower === 'neue karma yogini') return 'teacher-karma-swantje';
@@ -913,7 +910,7 @@ const generateDefaultCourses = (): Course[] => {
     // Friday (dayOfWeek: 5)
     { name: 'Geführte Meditation', style: 'Meditation', dayOfWeek: 5, startTime: '07:00', endTime: '07:30', roomId: 'room-5', teacherName: 'Pranava' },
     { name: 'Satsang', style: 'Meditation', dayOfWeek: 5, startTime: '07:00', endTime: '08:00', roomId: 'room-2', teacherName: 'Nirmaya' },
-    { name: 'Anfänger', style: 'Hatha', dayOfWeek: 5, startTime: '09:15', endTime: '11:00', roomId: 'room-5', teacherName: 'Harishakti' },
+    { name: 'Anfänger', style: 'Hatha', dayOfWeek: 5, startTime: '09:15', endTime: '11:00', roomId: 'room-5', teacherName: 'Abha' },
     { name: 'Mittelstufe Klangyogastunde', style: 'Hatha', dayOfWeek: 5, startTime: '09:15', endTime: '11:00', roomId: 'room-2', teacherName: 'Pranava' },
     { name: 'Anfänger Ankommensstunde', style: 'Hatha', dayOfWeek: 5, startTime: '16:30', endTime: '18:00', roomId: 'room-2', teacherName: 'Abha' },
     { name: 'Mittelstufe Ankommensstunde', style: 'Hatha', dayOfWeek: 5, startTime: '16:30', endTime: '18:00', roomId: 'room-5', teacherName: 'Karuna' },
@@ -934,7 +931,7 @@ const generateDefaultCourses = (): Course[] => {
 
     // Sunday (dayOfWeek: 0)
     { name: 'Fortgeschrittenes Pranayama', style: 'Hatha', dayOfWeek: 0, startTime: '06:00', endTime: '06:50', roomId: 'room-2', teacherName: 'burnie' },
-    { name: 'Geführte Meditation', style: 'Meditation', dayOfWeek: 0, startTime: '07:00', endTime: '07:30', roomId: 'room-5', teacherName: 'Harishakti' },
+    { name: 'Geführte Meditation', style: 'Meditation', dayOfWeek: 0, startTime: '07:00', endTime: '07:30', roomId: 'room-5', teacherName: '' },
     { name: 'Satsang', style: 'Meditation', dayOfWeek: 0, startTime: '07:00', endTime: '08:00', roomId: 'room-2', teacherName: 'burnie' },
     { name: 'Anfänger', style: 'Hatha', dayOfWeek: 0, startTime: '09:15', endTime: '11:00', roomId: 'room-2', teacherName: 'burnie' },
     { name: 'Mittelstufe', style: 'Hatha', dayOfWeek: 0, startTime: '09:15', endTime: '11:00', roomId: 'room-5', teacherName: 'Anjali' },
@@ -948,16 +945,16 @@ const generateDefaultCourses = (): Course[] => {
     { name: 'Geführte Meditation', style: 'Meditation', dayOfWeek: 1, startTime: '07:00', endTime: '07:30', roomId: 'room-5', teacherName: 'Hu' },
     { name: 'Satsang', style: 'Meditation', dayOfWeek: 1, startTime: '07:00', endTime: '08:00', roomId: 'room-2', teacherName: 'Anjali' },
     { name: 'Anfänger', style: 'Hatha', dayOfWeek: 1, startTime: '09:15', endTime: '11:00', roomId: 'room-2', teacherName: 'burnie' },
-    { name: 'Mittelstufe', style: 'Hatha', dayOfWeek: 1, startTime: '09:15', endTime: '11:00', roomId: 'room-5', teacherName: 'Harishakti' },
+    { name: 'Mittelstufe', style: 'Hatha', dayOfWeek: 1, startTime: '09:15', endTime: '11:00', roomId: 'room-5', teacherName: '' },
     { name: 'Anfänger Rückenstunde', style: 'Hatha', dayOfWeek: 1, startTime: '16:15', endTime: '18:00', roomId: 'room-2', teacherName: 'Pranava' },
-    { name: 'Mittelstufe', style: 'Hatha', dayOfWeek: 1, startTime: '16:15', endTime: '18:00', roomId: 'room-5', teacherName: 'Ulrich' },
+    { name: 'Mittelstufe', style: 'Hatha', dayOfWeek: 1, startTime: '16:15', endTime: '18:00', roomId: 'room-5', teacherName: '' },
     { name: 'Om Namo Narayanaya', style: 'Meditation', dayOfWeek: 1, startTime: '19:30', endTime: '20:00', roomId: 'room-2', teacherName: 'Nirmaya' },
     { name: 'Satsang', style: 'Meditation', dayOfWeek: 1, startTime: '20:00', endTime: '21:00', roomId: 'room-2', teacherName: 'Narayani' },
     { name: 'Entspannungsangebot: Klangreise', style: 'Entspannung', dayOfWeek: 1, startTime: '21:10', endTime: '22:00', roomId: 'room-2', teacherName: '' },
 
     // Tuesday (dayOfWeek: 2)
     { name: 'Geführte Meditation', style: 'Meditation', dayOfWeek: 2, startTime: '07:00', endTime: '07:30', roomId: 'room-5', teacherName: 'Alexander' },
-    { name: 'Satsang', style: 'Meditation', dayOfWeek: 2, startTime: '07:00', endTime: '08:00', roomId: 'room-2', teacherName: 'Harishakti' },
+    { name: 'Satsang', style: 'Meditation', dayOfWeek: 2, startTime: '07:00', endTime: '08:00', roomId: 'room-2', teacherName: '' },
     { name: 'Anfänger', style: 'Hatha', dayOfWeek: 2, startTime: '09:15', endTime: '11:00', roomId: 'room-2', teacherName: 'Karuna' },
     { name: 'Mittelstufe', style: 'Hatha', dayOfWeek: 2, startTime: '09:15', endTime: '11:00', roomId: 'room-5', teacherName: 'Anjali' },
     { name: 'Anfänger Yin Yoga', style: 'Hatha', dayOfWeek: 2, startTime: '16:15', endTime: '18:00', roomId: 'room-2', teacherName: 'Abha' },
@@ -979,11 +976,11 @@ const generateDefaultCourses = (): Course[] => {
     { name: 'Satsang', style: 'Meditation', dayOfWeek: 4, startTime: '07:00', endTime: '08:00', roomId: 'room-2', teacherName: 'Anjali' },
     { name: 'Anfänger', style: 'Hatha', dayOfWeek: 4, startTime: '09:15', endTime: '11:00', roomId: 'room-2', teacherName: 'Alexander' },
     { name: 'Mittelstufe', style: 'Hatha', dayOfWeek: 4, startTime: '09:15', endTime: '11:00', roomId: 'room-5', teacherName: 'Abha' },
-    { name: 'Anfänger', style: 'Hatha', dayOfWeek: 4, startTime: '16:15', endTime: '18:00', roomId: 'room-2', teacherName: 'Ulrich' },
+    { name: 'Anfänger', style: 'Hatha', dayOfWeek: 4, startTime: '16:15', endTime: '18:00', roomId: 'room-2', teacherName: '' },
     { name: 'Mittelstufe', style: 'Hatha', dayOfWeek: 4, startTime: '16:15', endTime: '18:00', roomId: 'room-5', teacherName: 'Nirmaya' },
-    { name: 'Om Namo Narayanaya', style: 'Meditation', dayOfWeek: 4, startTime: '19:30', endTime: '20:00', roomId: 'room-2', teacherName: 'Harishakti' },
+    { name: 'Om Namo Narayanaya', style: 'Meditation', dayOfWeek: 4, startTime: '19:30', endTime: '20:00', roomId: 'room-2', teacherName: '' },
     { name: 'Satsang', style: 'Meditation', dayOfWeek: 4, startTime: '20:00', endTime: '21:00', roomId: 'room-2', teacherName: 'Karuna' },
-    { name: 'Entspannungsangebot: Peziebälle / Fantasiereise', style: 'Entspannung', dayOfWeek: 4, startTime: '21:10', endTime: '22:00', roomId: 'room-2', teacherName: '' }
+    { name: 'Entspannungsangebot: Peziebälle', style: 'Entspannung', dayOfWeek: 4, startTime: '21:10', endTime: '22:00', roomId: 'room-2', teacherName: '' }
   ];
 
   return rawDefs.map((d, index) => ({
@@ -1368,7 +1365,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "07:00",
         "endTime": "07:30",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-harishakti",
+        "teacherId": "teacher-gen-chandrashekara",
         "isAiPlanned": false,
         "status": "draft"
       },
@@ -1512,7 +1509,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "09:15",
         "endTime": "11:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-harishakti",
+        "teacherId": "teacher-gen-chandrashekara",
         "isAiPlanned": false,
         "status": "draft"
       },
@@ -1536,7 +1533,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "16:15",
         "endTime": "18:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-ulrich-nebel",
+        "teacherId": "teacher-gen-chandrashekara",
         "isAiPlanned": false,
         "status": "draft"
       },
@@ -1596,7 +1593,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "07:00",
         "endTime": "08:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-harishakti",
+        "teacherId": "teacher-gen-christopher",
         "isAiPlanned": false,
         "status": "draft"
       },
@@ -1608,7 +1605,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "09:15",
         "endTime": "11:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-harishakti",
+        "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
         "status": "draft"
       },
@@ -1812,7 +1809,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "16:15",
         "endTime": "18:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-ulrich-nebel",
+        "teacherId": "teacher-gen-alexander-melior",
         "isAiPlanned": false,
         "status": "draft"
       },
@@ -1836,7 +1833,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-harishakti",
+        "teacherId": "teacher-gen-christopher",
         "isAiPlanned": false,
         "status": "draft"
       },
@@ -1896,7 +1893,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "09:15",
         "endTime": "11:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-harishakti",
+        "teacherId": "teacher-gen-abha-morkoetter",
         "isAiPlanned": false,
         "status": "draft"
       },
@@ -2112,7 +2109,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "07:00",
         "endTime": "07:30",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-harishakti",
+        "teacherId": "teacher-gen-chandrashekara",
         "isAiPlanned": false,
         "status": "approved",
         "lastEditedAt": "2026-10-22T18:56:03.136Z"
@@ -2268,7 +2265,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "09:15",
         "endTime": "11:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-harishakti",
+        "teacherId": "teacher-gen-chandrashekara",
         "isAiPlanned": false,
         "status": "approved",
         "lastEditedAt": "2026-10-22T18:56:03.136Z"
@@ -2294,7 +2291,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "16:15",
         "endTime": "18:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-ulrich-nebel",
+        "teacherId": "teacher-gen-chandrashekara",
         "isAiPlanned": false,
         "status": "approved",
         "lastEditedAt": "2026-10-22T18:56:03.136Z"
@@ -2359,7 +2356,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "07:00",
         "endTime": "08:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-harishakti",
+        "teacherId": "teacher-gen-christopher",
         "isAiPlanned": false,
         "status": "approved",
         "lastEditedAt": "2026-10-22T18:56:03.136Z"
@@ -2372,7 +2369,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "09:15",
         "endTime": "11:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-harishakti",
+        "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
         "status": "approved",
         "lastEditedAt": "2026-10-22T18:56:03.136Z"
@@ -2593,7 +2590,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "16:15",
         "endTime": "18:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-ulrich-nebel",
+        "teacherId": "teacher-gen-alexander-melior",
         "isAiPlanned": false,
         "status": "approved",
         "lastEditedAt": "2026-10-22T18:56:03.136Z"
@@ -2619,7 +2616,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-harishakti",
+        "teacherId": "teacher-gen-christopher",
         "isAiPlanned": false,
         "status": "approved",
         "lastEditedAt": "2026-10-22T18:56:03.136Z"
@@ -2684,7 +2681,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "09:15",
         "endTime": "11:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-harishakti",
+        "teacherId": "teacher-gen-abha-morkoetter",
         "isAiPlanned": false,
         "status": "approved",
         "lastEditedAt": "2026-10-22T18:56:03.136Z"
@@ -12460,7 +12457,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-burnie-bansemer",
         "isAiPlanned": true,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "burnie"
       },
       {
         "id": "course-2026-W45-22",
@@ -12470,10 +12468,10 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "07:00",
         "endTime": "07:30",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-harishakti",
-        "isAiPlanned": false,
+        "teacherId": "teacher-gen-chandrashekara",
+        "isAiPlanned": true,
         "status": "approved",
-        "teacherName": "Harishakti"
+        "teacherName": "Chandrashekara"
       },
       {
         "id": "course-2026-W45-23",
@@ -12548,9 +12546,10 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "19:00",
         "endTime": "19:30",
         "roomId": "room-7",
-        "teacherId": "teacher-gen-hu-buerkle",
+        "teacherId": "teacher-gen-burnie-bansemer",
         "isAiPlanned": true,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "burnie"
       },
       {
         "id": "course-2026-W45-28",
@@ -12575,7 +12574,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-5",
         "teacherId": "teacher-gen-nirmaya-fodor",
         "isAiPlanned": true,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Nirmaya"
       },
       {
         "id": "course-2026-W45-30",
@@ -12601,7 +12601,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "teacherId": "teacher-gen-hu-buerkle",
         "isAiPlanned": false,
         "status": "approved",
-        "teacherName": "hu"
+        "teacherName": "Hu"
       },
       {
         "id": "course-2026-W45-32",
@@ -12637,10 +12637,10 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "09:15",
         "endTime": "11:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-harishakti",
-        "isAiPlanned": false,
+        "teacherId": "teacher-gen-chandrashekara",
+        "isAiPlanned": true,
         "status": "approved",
-        "teacherName": "Harishakti"
+        "teacherName": "Chandrashekara"
       },
       {
         "id": "course-2026-W45-35",
@@ -12666,7 +12666,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "teacherId": "teacher-gen-chandrashekara",
         "isAiPlanned": true,
         "status": "approved",
-        "teacherName": "Ulrich"
+        "teacherName": "Chandrashekara"
       },
       {
         "id": "course-2026-W45-37",
@@ -12704,7 +12704,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-5",
         "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": true,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Pranava"
       },
       {
         "id": "course-2026-W45-40",
@@ -12727,10 +12728,10 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "07:00",
         "endTime": "08:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-harishakti",
-        "isAiPlanned": false,
+        "teacherId": "teacher-gen-christopher",
+        "isAiPlanned": true,
         "status": "approved",
-        "teacherName": "Harishakti"
+        "teacherName": "Christopher"
       },
       {
         "id": "course-2026-W45-42",
@@ -12795,7 +12796,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "teacherId": "teacher-gen-chandrashekara",
         "isAiPlanned": true,
         "status": "approved",
-        "teacherName": "Christopher"
+        "teacherName": "Chandrashekara"
       },
       {
         "id": "course-2026-W45-47",
@@ -12820,7 +12821,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-5",
         "teacherId": "teacher-gen-mouniir-jaber",
         "isAiPlanned": true,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Mounir"
       },
       {
         "id": "course-2026-W45-49",
@@ -12872,7 +12874,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "teacherId": "teacher-gen-adam-zmuda",
         "isAiPlanned": true,
         "status": "approved",
-        "teacherName": "Abha"
+        "teacherName": "Adam"
       },
       {
         "id": "course-2026-W45-53",
@@ -12897,7 +12899,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-6",
         "teacherId": "teacher-gen-adam-zmuda",
         "isAiPlanned": true,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Adam"
       },
       {
         "id": "course-2026-W45-55",
@@ -12909,7 +12912,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-5",
         "teacherId": "teacher-gen-mouniir-jaber",
         "isAiPlanned": true,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Mounir"
       },
       {
         "id": "course-2026-W45-56",
@@ -12922,7 +12926,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "teacherId": "teacher-gen-alexander-melior",
         "isAiPlanned": true,
         "status": "approved",
-        "teacherName": "Anjali"
+        "teacherName": "Alexander"
       },
       {
         "id": "course-2026-W45-57",
@@ -12970,10 +12974,10 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "16:15",
         "endTime": "18:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-harishakti",
+        "teacherId": "teacher-gen-alexander-melior",
         "isAiPlanned": true,
         "status": "approved",
-        "teacherName": "Ulrich"
+        "teacherName": "Alexander"
       },
       {
         "id": "course-2026-W45-60",
@@ -12996,10 +13000,10 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-harishakti",
-        "isAiPlanned": false,
+        "teacherId": "teacher-gen-christopher",
+        "isAiPlanned": true,
         "status": "approved",
-        "teacherName": "Harishakti"
+        "teacherName": "Christopher"
       },
       {
         "id": "course-2026-W45-62",
@@ -13016,15 +13020,16 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       },
       {
         "id": "course-2026-W45-63",
-        "name": "Entspannungsangebot: Peziebälle / Fantasiereise",
+        "name": "Entspannungsangebot: Peziebälle",
         "style": "Entspannung",
         "dayOfWeek": 4,
         "startTime": "21:10",
         "endTime": "22:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-harishakti",
+        "teacherId": "teacher-gen-burnie-bansemer",
         "isAiPlanned": true,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "burnie"
       },
       {
         "id": "course-2026-W45-2",
@@ -13061,9 +13066,9 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "endTime": "11:00",
         "roomId": "room-5",
         "teacherId": "teacher-gen-abha-morkoetter",
-        "isAiPlanned": true,
+        "isAiPlanned": false,
         "status": "approved",
-        "teacherName": "Harishakti"
+        "teacherName": "Abha"
       },
       {
         "id": "course-2026-W45-5",
@@ -13114,7 +13119,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-7",
         "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": true,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Pranava"
       },
       {
         "id": "course-2026-W45-8",
@@ -13165,7 +13171,8 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": true,
-        "status": "approved"
+        "status": "approved",
+        "teacherName": "Karuna"
       },
       {
         "id": "course-2026-W45-12",
@@ -13272,7 +13279,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "teacherName": "Karuna"
       }
     ],
-    "createdAt": "2026-10-27T07:57:29.640Z"
+    "createdAt": "2026-10-27T08:16:00.000Z"
   }
 ];
 
@@ -13398,8 +13405,14 @@ async function upsertKeyToCloud(key: string, serializedValue: string): Promise<b
     return true;
   }
   const client = supabase;
+  const previousTask = inFlightUpserts.get(key);
   const task = (async () => {
     try {
+      if (previousTask) {
+        try {
+          await previousTask;
+        } catch {}
+      }
       let finalValueToUpsert = serializedValue;
 
       // For rapla_week_plans, ALWAYS perform an atomic Read-Merge-Write against Supabase
@@ -13412,10 +13425,16 @@ async function upsertKeyToCloud(key: string, serializedValue: string): Promise<b
             .eq('key', 'rapla_week_plans')
             .maybeSingle();
 
+          // Always incorporate the latest in-memory plans in case another local edit occurred while awaiting network
+          let latestLocalPlans: WeekPlan[] = JSON.parse(serializedValue);
+          if (Array.isArray(inMemoryStore['rapla_week_plans'])) {
+            const { plans: combinedLocal } = mergeWeekPlansLists(latestLocalPlans, inMemoryStore['rapla_week_plans'], true);
+            latestLocalPlans = combinedLocal;
+          }
+
           if (!fetchErr && remoteRow?.value) {
             const remotePlans: WeekPlan[] = JSON.parse(remoteRow.value);
-            const localPlans: WeekPlan[] = JSON.parse(serializedValue);
-            const { plans: merged } = mergeWeekPlansLists(remotePlans, localPlans, true);
+            const { plans: merged } = mergeWeekPlansLists(remotePlans, latestLocalPlans, true);
             const { plans: reconciled } = reconcilePlansWithDefaults(merged);
             finalValueToUpsert = JSON.stringify(reconciled);
             inMemoryStore['rapla_week_plans'] = reconciled;
@@ -13424,6 +13443,9 @@ async function upsertKeyToCloud(key: string, serializedValue: string): Promise<b
                 localStorage.setItem('rapla_week_plans', finalValueToUpsert);
               } catch {}
             }
+          } else {
+            const { plans: reconciled } = reconcilePlansWithDefaults(latestLocalPlans);
+            finalValueToUpsert = JSON.stringify(reconciled);
           }
         } catch (mergeErr) {
           console.warn('Could not pre-merge rapla_week_plans before upsert:', mergeErr);
@@ -13464,7 +13486,9 @@ async function upsertKeyToCloud(key: string, serializedValue: string): Promise<b
       console.error(`Error syncing ${key} to cloud:`, err);
       return false;
     } finally {
-      inFlightUpserts.delete(key);
+      if (inFlightUpserts.get(key) === task) {
+        inFlightUpserts.delete(key);
+      }
     }
   })();
   inFlightUpserts.set(key, task);
@@ -13544,7 +13568,14 @@ function normalizeTeachersList(rawTeachers: Teacher[], plansForAutoHeal?: WeekPl
       t.id = 'teacher-karma-swantje';
     } else if (nameLowerInit === 'gopala' || t.id === 'teacher-karma-gopala' || t.id === 'teacher-guest-1789207307944') {
       t.id = 'teacher-karma-gopala';
-    } else if (t.id === 'teacher-guest-1791727410561' || t.id === 'teacher-guest-1790942064335') {
+    } else if (
+      t.id === 'teacher-guest-1791727410561' ||
+      t.id === 'teacher-guest-1790942064335' ||
+      t.id === 'teacher-gen-harishakti' ||
+      t.id === 'teacher-gen-ulrich-nebel' ||
+      nameLowerInit === 'harishakti' ||
+      nameLowerInit === 'ulrich'
+    ) {
       continue;
     }
 
@@ -13612,7 +13643,15 @@ function normalizeTeachersList(rawTeachers: Teacher[], plansForAutoHeal?: WeekPl
                            : rawId === 'teacher-guest-1789207307944' ? 'teacher-karma-gopala'
                            : rawId === 'teacher-guest-1790942064335' ? 'teacher-guest-1790942126763'
                            : rawId;
-            if (isBogusTeacherId(targetId) || deletedIds.includes(targetId) || targetId === 'teacher-gen-yl') continue;
+            if (
+              isBogusTeacherId(targetId) ||
+              deletedIds.includes(targetId) ||
+              targetId === 'teacher-gen-yl' ||
+              targetId === 'teacher-gen-harishakti' ||
+              targetId === 'teacher-gen-ulrich-nebel' ||
+              targetId.includes('harishakti') ||
+              targetId.includes('ulrich')
+            ) continue;
             const singleCourseTeacherName = individualIds.length === 1 ? c.teacherName : undefined;
             const exists = list.some(t => t.id === targetId || (singleCourseTeacherName && t.name.toLowerCase() === singleCourseTeacherName.toLowerCase()));
             if (!exists && targetId.startsWith('teacher-')) {
@@ -13692,8 +13731,8 @@ function normalizeTeachersList(rawTeachers: Teacher[], plansForAutoHeal?: WeekPl
     }
 
     if (correctRole === 'sevaka') {
-      // Harishakti & Christopher availability rules (free Wednesday, Tue after 11:00 off, Thu before 11:00 off)
-      if (nameLower.includes('harishakti') || nameLower.includes('christopher')) {
+      // Christopher availability rules (free Wednesday, Tue after 11:00 off, Thu before 11:00 off)
+      if (nameLower.includes('christopher')) {
         t.rules.availability = [
           { day: 0, start: '06:00', end: '22:00' },
           { day: 1, start: '06:00', end: '22:00' },
@@ -13760,8 +13799,8 @@ function normalizeTeachersList(rawTeachers: Teacher[], plansForAutoHeal?: WeekPl
         t.rules.canLeadOnn = false;
       }
 
-      t.rules.canLeadMeditation = ['pranava', 'harishakti', 'alexander', 'burnie', 'nirmaya', 'narayani', 'mounir', 'mouniir', 'hu', 'christopher', 'chandrashekara'].some(n => nameLower.includes(n));
-      t.rules.canLeadSatsang = !['adam', 'hu', 'mounir', 'mouniir', 'teresa', 'satyam', 'ulrich', 'pranava'].some(n => nameLower.includes(n));
+      t.rules.canLeadMeditation = ['pranava', 'alexander', 'burnie', 'nirmaya', 'narayani', 'mounir', 'mouniir', 'hu', 'christopher', 'chandrashekara'].some(n => nameLower.includes(n));
+      t.rules.canLeadSatsang = !['adam', 'hu', 'mounir', 'mouniir', 'teresa', 'satyam', 'ulrich', 'harishakti', 'pranava'].some(n => nameLower.includes(n));
     } else {
       if (t.isYogaTeacher === undefined) {
         t.isYogaTeacher = true;
@@ -13932,18 +13971,50 @@ function isSamePlanIdentity(a: WeekPlan, b: WeekPlan): boolean {
 
 function isSameCourseSlot(a: Course, b: Course): boolean {
   if (a.id === b.id) return true;
+  const aId = a.id || '';
+  const bId = b.id || '';
+  if (aId.includes('-tdot-') || bId.includes('-tdot-')) {
+    return false;
+  }
+  if (aId.includes('-schulung-') || bId.includes('-schulung-')) {
+    return a.dayOfWeek === b.dayOfWeek && a.startTime === b.startTime && aId.includes('-schulung-') && bId.includes('-schulung-');
+  }
   if (a.dayOfWeek === b.dayOfWeek && a.startTime === b.startTime) {
     const aName = (a.name || '').trim().toLowerCase();
     const bName = (b.name || '').trim().toLowerCase();
     if (aName === bName) {
       if (!a.roomId || !b.roomId || a.roomId === b.roomId) return true;
     }
-    // Also match slots where both are relaxation offers or general classes at the exact same hour
-    const isRelaxA = aName.includes('entspannung') || a.style?.toLowerCase().includes('entspannung') || aName.includes('klang') || aName.includes('lachyoga') || aName.includes('peziebälle') || aName.includes('fantasiereise');
-    const isRelaxB = bName.includes('entspannung') || b.style?.toLowerCase().includes('entspannung') || bName.includes('klang') || bName.includes('lachyoga') || bName.includes('peziebälle') || bName.includes('fantasiereise');
-    if (isRelaxA && isRelaxB) return true;
+    // Same studio room at the exact same day and start time represents the same physical room slot
+    if (a.roomId && b.roomId && a.roomId === b.roomId && a.roomId !== 'room-7') {
+      return true;
+    }
+    // Also match slots where both are relaxation offers at the exact same hour and room
+    const isRelaxA = aName.includes('entspannung') || a.style?.toLowerCase().includes('entspannung') || aName.includes('klang') || aName.includes('lachyoga') || aName.includes('qigong') || aName.includes('peziebälle') || aName.includes('fantasiereise');
+    const isRelaxB = bName.includes('entspannung') || b.style?.toLowerCase().includes('entspannung') || bName.includes('klang') || bName.includes('lachyoga') || bName.includes('qigong') || bName.includes('peziebälle') || bName.includes('fantasiereise');
+    if (isRelaxA && isRelaxB && (!a.roomId || !b.roomId || a.roomId === b.roomId)) return true;
   }
   return false;
+}
+
+// Finds a matching course in `candidates` for `target`, strictly prioritizing exact ID matches
+// so a heuristic slot match never steals a course that has its own exact ID match.
+function findMatchingCourse(
+  candidates: Course[],
+  target: Course,
+  otherListToRespectIds?: Course[]
+): Course | undefined {
+  if (!Array.isArray(candidates) || candidates.length === 0) return undefined;
+  // 1. Exact ID match ALWAYS takes priority (covers 100% of renames, time changes, room changes, and teacher edits)
+  const exact = candidates.find(c => c.id === target.id);
+  if (exact) return exact;
+
+  // 2. Fallback slot match only for candidates whose own ID does not exist as a distinct course in otherListToRespectIds
+  const reservedIds = otherListToRespectIds ? new Set(otherListToRespectIds.map(o => o.id)) : null;
+  return candidates.find(c => {
+    if (reservedIds && reservedIds.has(c.id)) return false;
+    return isSameCourseSlot(c, target);
+  });
 }
 
 // Per-course timestamp-aware merge between authoritative base plans (e.g. cloud) and incoming plans (e.g. local tab)
@@ -13979,9 +14050,13 @@ export function mergeWeekPlansLists(
 
     let anyCourseMerged = false;
     const baseCourses = (remPlan.courses || []).filter(rc => !remDeleted.has(rc.id));
+    const locCourses = (locPlan.courses || []).filter(lc => !remDeleted.has(lc.id));
+    const matchedLocalIds = new Set<string>();
+
     const mergedCourses: Course[] = baseCourses.map(rc => {
-      const lc = (locPlan.courses || []).find(c => isSameCourseSlot(c, rc));
+      const lc = findMatchingCourse(locCourses, rc, baseCourses);
       if (!lc) return { ...rc };
+      matchedLocalIds.add(lc.id);
 
       const lcTime = lc.lastEditedAt ? new Date(lc.lastEditedAt).getTime() : locPlanTime;
       const rcTime = rc.lastEditedAt ? new Date(rc.lastEditedAt).getTime() : 0;
@@ -14020,9 +14095,9 @@ export function mergeWeekPlansLists(
     });
 
     // Also include newly created manual courses in locPlan that don't exist in remPlan yet
-    for (const lc of (locPlan.courses || [])) {
-      if (remDeleted.has(lc.id)) continue;
-      const existsInMerged = mergedCourses.some(mc => isSameCourseSlot(mc, lc));
+    for (const lc of locCourses) {
+      if (matchedLocalIds.has(lc.id)) continue;
+      const existsInMerged = mergedCourses.some(mc => mc.id === lc.id);
       if (!existsInMerged && lc.isManuallyEdited) {
         // ALWAYS keep manually added courses - a user explicitly created this course!
         mergedCourses.push({ ...lc });
@@ -14141,7 +14216,7 @@ export function reconcilePlansWithDefaults(plans: WeekPlan[]): { plans: WeekPlan
           continue;
         }
 
-        const existingC = plan.courses.find(c => isSameCourseSlot(c, defC));
+        const existingC = findMatchingCourse(plan.courses, defC, defPlan.courses);
 
         if (!existingC) {
           if (isPlanProtected) {
@@ -14154,6 +14229,29 @@ export function reconcilePlansWithDefaults(plans: WeekPlan[]): { plans: WeekPlan
               existingC.additionalVisibilityTeacherIds = [...defC.additionalVisibilityTeacherIds];
             }
           }
+          // Migrate away from removed teachers (Harishakti & Ulrich) on template/active/future plans (e.g. 2026-W45+) when not manually edited
+          const isTemplateOrFuturePlan =
+            plan.id === 'plan-template-1' ||
+            plan.id === 'plan-active-1' ||
+            (plan.targetWeekCode && plan.targetWeekCode >= '2026-W45');
+          if (isTemplateOrFuturePlan && !existingC.isManuallyEdited) {
+            const hasRemovedTeacher =
+              existingC.teacherId === 'teacher-gen-harishakti' ||
+              existingC.teacherId === 'teacher-gen-ulrich-nebel' ||
+              existingC.teacherName?.toLowerCase().includes('harishakti') ||
+              existingC.teacherName?.toLowerCase().includes('ulrich');
+            const isStaleW45Preplan =
+              plan.targetWeekCode === '2026-W45' &&
+              (!existingC.lastEditedAt || existingC.lastEditedAt < '2026-10-27T08:16:00.000Z') &&
+              (existingC.teacherId !== defC.teacherId || existingC.teacherName !== defC.teacherName || existingC.name !== defC.name);
+            if (hasRemovedTeacher || isStaleW45Preplan) {
+              existingC.teacherId = defC.teacherId;
+              existingC.teacherName = defC.teacherName;
+              existingC.name = defC.name;
+              existingC.isAiPlanned = defC.isAiPlanned;
+            }
+          }
+
           // Only fill in missing default assignment if the plan is NOT protected and the course is NOT manually edited
           if (!isPlanProtected && !existingC.isManuallyEdited && !existingC.teacherId && defC.teacherId) {
             const isSchulung = existingC.name.toLowerCase().includes('schulung') || existingC.style?.toLowerCase().includes('schulung');
@@ -14198,6 +14296,23 @@ export function reconcilePlansWithDefaults(plans: WeekPlan[]): { plans: WeekPlan
       p.courses = [];
     }
 
+    // Deduplicate courses by id within the same plan (keeping the newer / manually edited one)
+    const dedupMap = new Map<string, Course>();
+    for (const c of p.courses) {
+      if (!c || !c.id) continue;
+      const prev = dedupMap.get(c.id);
+      if (!prev) {
+        dedupMap.set(c.id, c);
+      } else {
+        const prevTime = prev.lastEditedAt ? new Date(prev.lastEditedAt).getTime() : 0;
+        const curTime = c.lastEditedAt ? new Date(c.lastEditedAt).getTime() : 0;
+        if ((c.isManuallyEdited && !prev.isManuallyEdited) || curTime >= prevTime) {
+          dedupMap.set(c.id, c);
+        }
+      }
+    }
+    p.courses = Array.from(dedupMap.values());
+
     // Always filter out any course ID explicitly recorded in deletedCourseIds
     if (Array.isArray(p.deletedCourseIds) && p.deletedCourseIds.length > 0) {
       const delSet = new Set(p.deletedCourseIds);
@@ -14206,11 +14321,11 @@ export function reconcilePlansWithDefaults(plans: WeekPlan[]): { plans: WeekPlan
 
     const isPlanProtected = !!(p.hasManualEdits || p.isManualOnly || p.isApproved || p.status === 'approved');
 
-    // Remove legacy course-2026-W36-mittelstufe-pflicht and invalid Ankommensmed. days
+    // Remove legacy course-2026-W36-mittelstufe-pflicht and invalid unedited Ankommensmed. days
     p.courses = p.courses.filter(c => {
       if (c.id === 'course-2026-W36-mittelstufe-pflicht') return false;
       const isAnkommen = c.name === 'Ankommensmed.' || c.name.includes('Ankommen');
-      if (isAnkommen && c.dayOfWeek !== 5 && c.dayOfWeek !== 0) return false;
+      if (!c.isManuallyEdited && isAnkommen && c.dayOfWeek !== 5 && c.dayOfWeek !== 0) return false;
       return true;
     });
 
@@ -14307,14 +14422,25 @@ export function reconcilePlansWithDefaults(plans: WeekPlan[]): { plans: WeekPlan
     }
 
     if (p.targetWeekCode === '2026-W44') {
-      // Invariant protection for manual slots: Qigong (Wed 12:30), Klangreise (Wed 21:10), Lachyoga (Thu 21:10) with Christina und Roland in Radhakrishna
-      // 1. Wednesday 12:30 Qigong in Radhakrishna
+      // 1. Wednesday 28.10. 12:30 - 13:30 in Radhakrishna (renamed from Qigong to Lachyoga; respects any future manual edits)
       const qigongId = 'course-2026-W44-qigong-wed';
-      const existingQigong = p.courses.find(c => c.id === qigongId || (c.dayOfWeek === 3 && c.startTime === '12:30' && c.name.toLowerCase().includes('qigong')));
-      if (!existingQigong && !p.deletedCourseIds?.includes(qigongId)) {
+      const wed1230Matches = p.courses.filter(
+        c => c.id === qigongId || (c.dayOfWeek === 3 && c.startTime === '12:30' && c.roomId === 'room-2')
+      );
+      if (wed1230Matches.length > 1) {
+        // Deduplicate if an earlier rename created a second slot at Wed 12:30 in room-2
+        const preferred =
+          wed1230Matches.find(c => c.name.trim().toLowerCase() !== 'qigong') ||
+          wed1230Matches.sort((a, b) => (b.lastEditedAt || '').localeCompare(a.lastEditedAt || ''))[0];
+        p.courses = p.courses.filter(c => !wed1230Matches.includes(c) || c === preferred);
+      }
+      const existingWed1230 = p.courses.find(
+        c => c.id === qigongId || (c.dayOfWeek === 3 && c.startTime === '12:30' && c.roomId === 'room-2')
+      );
+      if (!existingWed1230 && !p.deletedCourseIds?.includes(qigongId) && !isPlanProtected) {
         p.courses.push({
           id: qigongId,
-          name: 'Qigong',
+          name: 'Lachyoga',
           style: 'Entspannung',
           dayOfWeek: 3,
           startTime: '12:30',
@@ -14326,52 +14452,53 @@ export function reconcilePlansWithDefaults(plans: WeekPlan[]): { plans: WeekPlan
           isManuallyEdited: true,
           status: 'approved',
           isFixedAgreement: false,
-          lastEditedAt: new Date().toISOString()
+          lastEditedAt: '2026-10-27T07:55:00.000Z'
         });
-      } else if (existingQigong) {
-        existingQigong.name = 'Qigong';
-        existingQigong.dayOfWeek = 3;
-        existingQigong.startTime = '12:30';
-        existingQigong.endTime = '13:30';
-        existingQigong.roomId = 'room-2';
-        existingQigong.teacherId = 'teacher-custom-christina-und-roland';
-        existingQigong.teacherName = 'Christina und Roland';
-        existingQigong.isManuallyEdited = true;
-        existingQigong.status = 'approved';
+      } else if (existingWed1230) {
+        // One-time migration: rename Qigong -> Lachyoga if it still has the pre-2026-10-27T07:55:00.000Z state
+        const editTs = existingWed1230.lastEditedAt || '';
+        if (existingWed1230.name.trim().toLowerCase() === 'qigong' && editTs < '2026-10-27T07:55:00.000Z') {
+          existingWed1230.name = 'Lachyoga';
+          existingWed1230.isManuallyEdited = true;
+          existingWed1230.status = 'approved';
+          existingWed1230.lastEditedAt = '2026-10-27T07:55:00.000Z';
+        }
       }
 
-      // 2. Wednesday 21:10 Klangreise in Radhakrishna
-      const wed2110Course = p.courses.find(c => c.id === 'course-2026-W44-45' || (c.dayOfWeek === 3 && c.startTime === '21:10'));
-      if (wed2110Course) {
-        if (!wed2110Course.teacherName || wed2110Course.teacherName === 'Alexander' || wed2110Course.teacherId === 'teacher-gen-alexander-melior' || wed2110Course.name.toLowerCase().includes('klangschalen')) {
+      // 2. Wednesday 21:10 Klangreise in Radhakrishna (only migrate legacy pre-2026-10-25 state; never overwrite user edits)
+      const wed2110Course = p.courses.find(c => c.id === 'course-2026-W44-45');
+      if (wed2110Course && (!wed2110Course.lastEditedAt || wed2110Course.lastEditedAt < '2026-10-25T00:00:00.000Z')) {
+        if (wed2110Course.teacherId === 'teacher-gen-alexander-melior' || wed2110Course.name.toLowerCase().includes('klangschalen')) {
           wed2110Course.name = 'Entspannungsangebot: Klangreise';
           wed2110Course.roomId = 'room-2';
           wed2110Course.teacherId = 'teacher-custom-christina-und-roland';
           wed2110Course.teacherName = 'Christina und Roland';
           wed2110Course.isManuallyEdited = true;
           wed2110Course.status = 'approved';
+          wed2110Course.lastEditedAt = '2026-10-25T00:00:00.000Z';
         }
       }
 
-      // 3. Thursday 21:10 Lachyoga in Radhakrishna
-      const thu2110Course = p.courses.find(c => c.id === 'course-2026-W44-54' || (c.dayOfWeek === 4 && c.startTime === '21:10'));
-      if (thu2110Course) {
-        if (!thu2110Course.teacherName || thu2110Course.teacherId === 'teacher-gen-burnie-bansemer' || thu2110Course.name.toLowerCase().includes('peziebälle') || thu2110Course.name.toLowerCase().includes('fantasiereise')) {
+      // 3. Thursday 21:10 Lachyoga in Radhakrishna (only migrate legacy pre-2026-10-25 state; never overwrite user edits)
+      const thu2110Course = p.courses.find(c => c.id === 'course-2026-W44-54');
+      if (thu2110Course && (!thu2110Course.lastEditedAt || thu2110Course.lastEditedAt < '2026-10-25T00:00:00.000Z')) {
+        if (thu2110Course.teacherId === 'teacher-gen-burnie-bansemer' || thu2110Course.name.toLowerCase().includes('peziebälle') || thu2110Course.name.toLowerCase().includes('fantasiereise')) {
           thu2110Course.name = 'Entspannungsangebot: Lachyoga';
           thu2110Course.roomId = 'room-2';
           thu2110Course.teacherId = 'teacher-custom-christina-und-roland';
           thu2110Course.teacherName = 'Christina und Roland';
           thu2110Course.isManuallyEdited = true;
           thu2110Course.status = 'approved';
+          thu2110Course.lastEditedAt = '2026-10-25T00:00:00.000Z';
         }
       }
 
-      // On Saturday 24.10.2026 (Tag der offenen Tür), keep all Tag der offenen Tür courses and any manually edited custom courses
+      // On Saturday 24.10.2026 (Tag der offenen Tür), keep all Tag der offenen Tür courses and any manually edited courses
       const tdotIds = new Set(OPEN_DAY_2026_W44_SATURDAY_COURSES.map(tc => tc.id));
       p.courses = p.courses.filter(c => {
         if (c.dayOfWeek !== 6) return true;
         if (tdotIds.has(c.id)) return true;
-        if (c.isManuallyEdited && !c.id.startsWith('course-2026-W44-') && !c.id.startsWith('course-def-')) {
+        if (c.isManuallyEdited && (!c.id.startsWith('course-2026-W44-') || (c.lastEditedAt && c.lastEditedAt >= '2026-10-25T00:00:00.000Z')) && !c.id.startsWith('course-def-')) {
           return true;
         }
         return false;
@@ -14398,8 +14525,10 @@ export function reconcilePlansWithDefaults(plans: WeekPlan[]): { plans: WeekPlan
           !(c.dayOfWeek === 2 && c.startTime === '16:15' && (c.name.toLowerCase().includes('anfänger') || c.name.toLowerCase().includes('mittelstufe') || c.id === 'course-2026-W39-42' || c.id === 'course-2026-W39-43'))
         )
       );
-      const hasPranavaJoint = p.courses.some(c => c.dayOfWeek === 2 && c.startTime === '16:15' && (c.teacherId === 'teacher-gen-pranava-pauly' || c.name.toLowerCase().includes('gemeinsam')));
-      if (!hasPranavaJoint && !p.deletedCourseIds?.includes('course-2026-W39-pranava-joint')) {
+      const hasPranavaJoint = p.courses.some(
+        c => c.id === 'course-2026-W39-pranava-joint' || (c.dayOfWeek === 2 && c.startTime === '16:15' && (c.teacherId === 'teacher-gen-pranava-pauly' || c.name.toLowerCase().includes('gemeinsam')))
+      );
+      if (!hasPranavaJoint && !p.deletedCourseIds?.includes('course-2026-W39-pranava-joint') && !isPlanProtected) {
         p.courses.push({
           id: 'course-2026-W39-pranava-joint',
           name: 'Gemeinsame Stunde',
@@ -14530,7 +14659,7 @@ export function reconcilePlansWithDefaults(plans: WeekPlan[]): { plans: WeekPlan
   return { plans: list, hasChanges: beforeJson !== afterJson };
 }
 
-const CURRENT_DB_VERSION = 149;
+const CURRENT_DB_VERSION = 151;
 
 // Database Actions
 export const db = {
@@ -14603,7 +14732,7 @@ export const db = {
                 );
 
                 // Apply universal idempotent reconciliation with codebase defaults
-                const { plans: reconciled } = reconcilePlansWithDefaults(merged);
+                const { plans: reconciled, hasChanges: reconciledChanged } = reconcilePlansWithDefaults(merged);
                 const mergedStr = JSON.stringify(reconciled);
 
                 const currentStr = localStorage.getItem('rapla_week_plans');
@@ -14614,7 +14743,7 @@ export const db = {
                 inMemoryStore['rapla_week_plans'] = reconciled;
                 localStorage.setItem('rapla_db_version', CURRENT_DB_VERSION.toString());
 
-                if (needsCloudPush && supabase) {
+                if ((needsCloudPush || (reconciledChanged && !isReadOnlyUserRole())) && supabase) {
                   await upsertKeyToCloud('rapla_week_plans', mergedStr);
                 } else {
                   clearKeyPendingSync('rapla_week_plans');
@@ -14706,13 +14835,19 @@ export const db = {
                   try {
                     const key = payload.new.key;
                     const val = payload.new.value;
-                    if (inFlightUpserts.has(key)) return;
+                    if (inFlightUpserts.has(key) || syncDebounceTimers[key]) return;
 
                     const current = localStorage.getItem(key);
                     if (current !== val) {
                       if (key === 'rapla_week_plans') {
                         const remotePlans: WeekPlan[] = JSON.parse(val);
-                        const { plans: reconciled } = reconcilePlansWithDefaults(remotePlans);
+                        const currentLocalPlans = inMemoryStore[key] || (current ? JSON.parse(current) : []);
+                        const { plans: merged } = mergeWeekPlansLists(
+                          remotePlans,
+                          Array.isArray(currentLocalPlans) ? currentLocalPlans : [],
+                          !isReadOnlyUserRole()
+                        );
+                        const { plans: reconciled } = reconcilePlansWithDefaults(merged);
                         const reconciledStr = JSON.stringify(reconciled);
                         if (current === reconciledStr) return;
                         localStorage.setItem(key, reconciledStr);
@@ -14984,15 +15119,20 @@ export const db = {
   updateWeekPlan: (plan: WeekPlan): void => {
     const list = db.getWeekPlans();
     const index = list.findIndex(p => p.id === plan.id || (plan.targetWeekCode && p.targetWeekCode === plan.targetWeekCode));
-    const nowIso = new Date().toISOString();
+    const existingPlanTime = index !== -1 && list[index].lastEditedAt ? new Date(list[index].lastEditedAt!).getTime() : 0;
+    const nowIso = new Date(Math.max(Date.now(), existingPlanTime + 1000)).toISOString();
     plan.lastEditedAt = nowIso;
     if (index !== -1) {
       const existing = list[index];
+      const existingCourses = existing.courses || [];
+      const incomingCourses = plan.courses || [];
       const deletedSet = new Set([...(existing.deletedCourseIds || []), ...(plan.deletedCourseIds || [])]);
+      const matchedStoredIds = new Set<string>();
       // Preserve any course in existing storage that has a strictly newer lastEditedAt than the incoming plan's copy
-      const mergedCourses: Course[] = (plan.courses || []).map(incC => {
-        const storedC = (existing.courses || []).find(sc => isSameCourseSlot(sc, incC));
+      const mergedCourses: Course[] = incomingCourses.map(incC => {
+        const storedC = findMatchingCourse(existingCourses, incC, incomingCourses);
         if (!storedC) return incC;
+        matchedStoredIds.add(storedC.id);
         const incTime = incC.lastEditedAt ? new Date(incC.lastEditedAt).getTime() : 0;
         const storedTime = storedC.lastEditedAt ? new Date(storedC.lastEditedAt).getTime() : 0;
         if (storedC.isManuallyEdited && storedTime > incTime) {
@@ -15000,9 +15140,9 @@ export const db = {
         }
         return incC;
       });
-      for (const storedC of (existing.courses || [])) {
-        if (deletedSet.has(storedC.id)) continue;
-        if (storedC.isManuallyEdited && !mergedCourses.some(mc => isSameCourseSlot(mc, storedC))) {
+      for (const storedC of existingCourses) {
+        if (deletedSet.has(storedC.id) || matchedStoredIds.has(storedC.id)) continue;
+        if (storedC.isManuallyEdited && !findMatchingCourse(mergedCourses, storedC)) {
           mergedCourses.push(storedC);
         }
       }
@@ -15019,14 +15159,26 @@ export const db = {
   },
   upsertCourseInWeekPlan: (planIdOrWeekCode: string, course: Course, fallbackPlan?: WeekPlan): WeekPlan | undefined => {
     const list = db.getWeekPlans();
-    const nowIso = new Date().toISOString();
+    let index = list.findIndex(p =>
+      p.id === planIdOrWeekCode ||
+      (p.targetWeekCode && p.targetWeekCode === planIdOrWeekCode) ||
+      (fallbackPlan?.targetWeekCode && p.targetWeekCode === fallbackPlan.targetWeekCode)
+    );
+    const existingPlan = index !== -1 ? list[index] : fallbackPlan;
+    const existingCourse = existingPlan?.courses?.find(c => c.id === course.id);
+    const prevCourseMs = Math.max(
+      course.lastEditedAt ? new Date(course.lastEditedAt).getTime() : 0,
+      existingCourse?.lastEditedAt ? new Date(existingCourse.lastEditedAt).getTime() : 0
+    );
+    const prevPlanMs = existingPlan?.lastEditedAt ? new Date(existingPlan.lastEditedAt).getTime() : 0;
+    const nowIso = new Date(Math.max(Date.now(), prevCourseMs + 1000, prevPlanMs + 1000)).toISOString();
+
     const updatedCourse: Course = {
       ...course,
       isManuallyEdited: true,
       isAiPlanned: false,
       lastEditedAt: nowIso
     };
-    let index = list.findIndex(p => p.id === planIdOrWeekCode || (p.targetWeekCode && p.targetWeekCode === planIdOrWeekCode));
     if (index === -1 && fallbackPlan) {
       const newPlan: WeekPlan = {
         ...JSON.parse(JSON.stringify(fallbackPlan)),
@@ -15034,9 +15186,19 @@ export const db = {
         hasManualEdits: true,
         lastEditedAt: nowIso
       };
-      const cIdx = newPlan.courses.findIndex(c => c.id === updatedCourse.id);
+      if (newPlan.deletedCourseIds) {
+        newPlan.deletedCourseIds = newPlan.deletedCourseIds.filter(id => id !== updatedCourse.id);
+      }
+      let cIdx = newPlan.courses.findIndex(c => c.id === updatedCourse.id);
+      if (cIdx === -1) {
+        const matched = findMatchingCourse(newPlan.courses, updatedCourse);
+        if (matched && !matched.isManuallyEdited) {
+          cIdx = newPlan.courses.findIndex(c => c.id === matched.id);
+        }
+      }
       if (cIdx !== -1) {
         newPlan.courses[cIdx] = updatedCourse;
+        newPlan.courses = newPlan.courses.filter((c, i) => i === cIdx || c.id !== updatedCourse.id);
       } else {
         newPlan.courses.push(updatedCourse);
       }
@@ -15052,9 +15214,16 @@ export const db = {
       if (plan.deletedCourseIds) {
         plan.deletedCourseIds = plan.deletedCourseIds.filter(id => id !== updatedCourse.id);
       }
-      const cIdx = plan.courses.findIndex(c => c.id === updatedCourse.id);
+      let cIdx = plan.courses.findIndex(c => c.id === updatedCourse.id);
+      if (cIdx === -1) {
+        const matched = findMatchingCourse(plan.courses, updatedCourse);
+        if (matched && !matched.isManuallyEdited) {
+          cIdx = plan.courses.findIndex(c => c.id === matched.id);
+        }
+      }
       if (cIdx !== -1) {
         plan.courses[cIdx] = updatedCourse;
+        plan.courses = plan.courses.filter((c, i) => i === cIdx || c.id !== updatedCourse.id);
       } else {
         plan.courses.push(updatedCourse);
       }
@@ -15065,8 +15234,14 @@ export const db = {
   },
   removeCourseFromWeekPlan: (planIdOrWeekCode: string, courseId: string, fallbackPlan?: WeekPlan): WeekPlan | undefined => {
     const list = db.getWeekPlans();
-    const nowIso = new Date().toISOString();
-    let index = list.findIndex(p => p.id === planIdOrWeekCode || (p.targetWeekCode && p.targetWeekCode === planIdOrWeekCode));
+    let index = list.findIndex(p =>
+      p.id === planIdOrWeekCode ||
+      (p.targetWeekCode && p.targetWeekCode === planIdOrWeekCode) ||
+      (fallbackPlan?.targetWeekCode && p.targetWeekCode === fallbackPlan.targetWeekCode)
+    );
+    const existingPlan = index !== -1 ? list[index] : fallbackPlan;
+    const prevPlanMs = existingPlan?.lastEditedAt ? new Date(existingPlan.lastEditedAt).getTime() : 0;
+    const nowIso = new Date(Math.max(Date.now(), prevPlanMs + 1000)).toISOString();
     if (index === -1 && fallbackPlan) {
       const newPlan: WeekPlan = {
         ...JSON.parse(JSON.stringify(fallbackPlan)),

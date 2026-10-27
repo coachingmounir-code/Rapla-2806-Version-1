@@ -195,6 +195,14 @@ export function validateAssignment(
     });
   }
 
+  // Harishakti und Ulrich sind nicht mehr Teil des Teams und können nicht mehr unterrichten
+  if (teacherNameLower.includes('harishakti') || teacherNameLower.includes('ulrich')) {
+    conflicts.push({
+      type: 'hard',
+      message: `${teacher.name} ist nicht mehr Teil des Teams und kann nicht mehr unterrichten.`
+    });
+  }
+
   // Qualifications for Karma-Yogis and Guest Teachers
   if (teacher.roleType === 'karma_yogi' || teacher.roleType === 'guest_teacher') {
     if (isYogaClassForSevaka && teacher.isYogaTeacher === false) {
@@ -595,7 +603,7 @@ export function validateAssignment(
           message: `${primary.toUpperCase()} muss die Anfängerstunde am Freitag um 09:15 Uhr leiten, da sie verfügbar ist.`
         });
       }
-    } else {
+    } else if (wochenplanRules.yoga.fridayMorningAnfaenger.backup) {
       const backup = wochenplanRules.yoga.fridayMorningAnfaenger.backup;
       const isBackupAbsent = isTeacherAbsent(backup, course.dayOfWeek, targetWeekCode, absences);
       if (!isBackupAbsent && !teacherNameLower.includes(backup)) {
@@ -664,7 +672,7 @@ export function validateAssignment(
               message: `Freitags muss ${primary.toUpperCase()} die Hausführung übernehmen, da er verfügbar ist.`
             });
           }
-        } else {
+        } else if (rules.friday.backup) {
           const backup = rules.friday.backup;
           const isBackupAbsent = isTeacherAbsent(backup, course.dayOfWeek, targetWeekCode, absences);
           if (!isBackupAbsent) {
@@ -1114,9 +1122,9 @@ export function runAiPlanning(
       // Rule 8: Friday morning (09:15) Beginner class from compiled rules
       const yogaRules = wochenplanRules.yoga;
       if (course.dayOfWeek === 5 && course.startTime === '09:15' && course.name.toLowerCase().includes('anfänger')) {
-        if (teacherNameLower.includes(yogaRules.fridayMorningAnfaenger.primary)) {
+        if (yogaRules.fridayMorningAnfaenger.primary && teacherNameLower.includes(yogaRules.fridayMorningAnfaenger.primary)) {
           score += 10000;
-        } else if (teacherNameLower.includes(yogaRules.fridayMorningAnfaenger.backup)) {
+        } else if (yogaRules.fridayMorningAnfaenger.backup && teacherNameLower.includes(yogaRules.fridayMorningAnfaenger.backup)) {
           score += 5000;
         }
       }
@@ -1157,9 +1165,6 @@ export function runAiPlanning(
           const idx = backups.findIndex((b: string) => teacherNameLower.includes(b));
           if (idx !== -1) {
             score += 5000 - idx * 2500;
-            if (backups[idx] === 'ulrich') {
-              score += 2000; // offset Ulrich's standard weekend penalty
-            }
           }
         }
       }
@@ -1170,9 +1175,9 @@ export function runAiPlanning(
         const rules = (wochenplanRules as any).hausfuehrung;
         if (rules) {
           if (course.dayOfWeek === 5) { // Freitag
-            if (teacherNameLower.includes(rules.friday.primary)) {
+            if (rules.friday.primary && teacherNameLower.includes(rules.friday.primary)) {
               score += 10000;
-            } else if (teacherNameLower.includes(rules.friday.backup)) {
+            } else if (rules.friday.backup && teacherNameLower.includes(rules.friday.backup)) {
               score += 5000;
             }
           } else if (course.dayOfWeek === 0) { // Sonntag
@@ -1439,8 +1444,8 @@ export function runAiPlanning(
       for (const teacher of yogaTeachers) {
         const teacherNameLower = teacher.name.toLowerCase();
         
-        // Regel 4: Folgende Personen werden nie für einen Satsang eingeteilt: Adam, Hu, Mounir, Teresa, Satyam, Ulrich, Pranava
-        const forbiddenForSatsang = ['adam', 'hu', 'mounir', 'mouniir', 'teresa', 'satyam', 'ulrich', 'pranava'];
+        // Regel 4: Folgende Personen werden nie für einen Satsang eingeteilt: Adam, Hu, Mounir, Teresa, Satyam, Ulrich, Harishakti, Pranava
+        const forbiddenForSatsang = ['adam', 'hu', 'mounir', 'mouniir', 'teresa', 'satyam', 'ulrich', 'harishakti', 'pranava'];
         if (forbiddenForSatsang.some(name => teacherNameLower.includes(name))) {
           continue; // Absolut verboten!
         }
@@ -1455,7 +1460,7 @@ export function runAiPlanning(
         const nonRelaxableConflicts = conflicts.filter(c => {
           if (c.type !== 'hard') return false;
           const msg = c.message.toLowerCase();
-          return msg.includes('abwesend') || msg.includes('urlaub') || msg.includes('krank') || msg.includes('satsang-regel 4') || msg.includes('nie für einen satsang') || msg.includes('verfügbar');
+          return msg.includes('abwesend') || msg.includes('urlaub') || msg.includes('krank') || msg.includes('satsang-regel 4') || msg.includes('nie für einen satsang') || msg.includes('verfügbar') || msg.includes('herausgenommen') || msg.includes('nicht mehr teil des teams');
         });
 
         if (nonRelaxableConflicts.length === 0) {
