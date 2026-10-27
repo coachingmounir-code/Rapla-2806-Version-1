@@ -969,11 +969,13 @@
     whatsappModalTrigger = trigger;
     const msgDrafts: Record<string, string> = {};
     const phoneDrafts: Record<string, string> = {};
+    const expanded: Record<string, boolean> = {};
     const selected: string[] = [];
 
     for (const d of devs) {
       msgDrafts[d.teacher.id] = d.messageText;
       phoneDrafts[d.teacher.id] = d.teacher.phone || '';
+      expanded[d.teacher.id] = true;
       if (!d.alreadyNotified) {
         selected.push(d.teacher.id);
       }
@@ -984,6 +986,7 @@
 
     whatsappMessageDrafts = msgDrafts;
     whatsappPhoneDrafts = phoneDrafts;
+    whatsappExpandedIds = expanded;
     whatsappSelectedIds = selected;
     whatsappFeedback = {};
     isWhatsAppModalOpen = true;

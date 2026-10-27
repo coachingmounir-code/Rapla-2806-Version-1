@@ -71,6 +71,33 @@ const DAY_LABELS_SHORT: Record<number, string> = {
   4: 'Do'
 };
 
+const DAY_LABELS_FULL: Record<number, string> = {
+  5: 'Freitag',
+  6: 'Samstag',
+  0: 'Sonntag',
+  1: 'Montag',
+  2: 'Dienstag',
+  3: 'Mittwoch',
+  4: 'Donnerstag'
+};
+
+const MALE_FIRST_NAMES = new Set([
+  'adam', 'adinatha', 'alexander', 'ananda', 'ananta', 'anantadas',
+  'burnie', 'chandrashekara', 'christopher', 'david', 'eric', 'erkan',
+  'gopala', 'hu', 'jnanadev', 'jörg', 'klaus', 'krishnajyoti', 'liu',
+  'matthias', 'michael', 'mounir', 'pranava', 'raphael', 'roland',
+  'sathyam', 'satyam', 'satyamitra', 'shankara', 'sukadev', 'swami',
+  'ulrich', 'venulo', 'volker', 'wolfgang'
+]);
+
+function getSalutationForTeacher(fullName: string): string {
+  const clean = (fullName || '').trim();
+  const firstName = clean.split(/\s+/)[0] || clean;
+  const lowerFirst = firstName.toLowerCase();
+  const adj = MALE_FIRST_NAMES.has(lowerFirst) ? 'lieber' : 'liebe';
+  return `Om Om, ${adj} ${firstName},`;
+}
+
 const DAY_ORDER: Record<number, number> = {
   5: 0,
   6: 1,
@@ -242,7 +269,7 @@ export function buildWhatsAppDeviationMessage(
 ): string {
   const weekCode = plan.targetWeekCode || '';
   const weekNumberMatch = weekCode.match(/-W(\d+)/);
-  const kwLabel = weekNumberMatch ? `KW ${parseInt(weekNumberMatch[1], 10)}` : plan.name;
+  const kwNumber = weekNumberMatch ? parseInt(weekNumberMatch[1], 10).toString() : plan.name;
 
   let dateRangePart = '';
   if (weekCode && weekCode.includes('-W')) {
@@ -253,67 +280,49 @@ export function buildWhatsAppDeviationMessage(
     }
   }
 
+  const formatChangedSlot = (course: Course): string => {
+    const dayFull = DAY_LABELS_FULL[course.dayOfWeek] || DAY_LABELS_SHORT[course.dayOfWeek] || 'Tag';
+    const roomObj = rooms.find(r => r.id === course.roomId);
+    const roomName = roomObj ? roomObj.name.split(' ')[0] : '';
+    const roomPart = roomName ? ` (${roomName})` : '';
+    return `${dayFull}, ${course.startTime} Uhr – ${course.name}${roomPart}`;
+  };
+
+  const isSingleSwap = missingFixedSlots.length === 1 && extraSlots.length === 1;
+  const totalChanges = isSingleSwap ? 1 : missingFixedSlots.length + extraSlots.length;
+  const introLine =
+    totalChanges === 1
+      ? `folgende Stunde hat sich geändert bei der Kalenderwoche ${kwNumber}${dateRangePart}:`
+      : `folgende Stunden haben sich geändert bei der Kalenderwoche ${kwNumber}${dateRangePart}:`;
+
   const lines: string[] = [];
-  lines.push(`Namaste ${teacher.name} 🙏,`);
-  lines.push(
-    `im genehmigten Wochenplan für *${kwLabel}${dateRangePart}* gibt es eine Abweichung von deinen fest vereinbarten Slots:`
-  );
+  lines.push(getSalutationForTeacher(teacher.name));
+  lines.push('');
+  lines.push(introLine);
   lines.push('');
 
-  lines.push('📊 *Dein Überblick (Soll → Ist):*');
-  for (const item of categoryBreakdown) {
-    let statusNote = '✅ wie vereinbart';
-    if (item.diff > 0) {
-      statusNote = `⚡ +${item.diff} zusätzlich`;
-    } else if (item.diff < 0) {
-      statusNote = `⚠️ ${Math.abs(item.diff)} weniger`;
-    } else {
-      // Same count, check if slots in this category were swapped
-      const missingInCat = missingFixedSlots.some(m => getCourseCategory(m.course) === item.category);
-      const extraInCat = extraSlots.some(e => getCourseCategory(e) === item.category);
-      if (missingInCat || extraInCat) {
-        statusNote = '🔄 zeitlich verschoben';
-      }
-    }
-    lines.push(`• ${item.category}: ${item.soll} → ${item.ist} (${statusNote})`);
-  }
-
-  if (missingFixedSlots.length > 0 || extraSlots.length > 0) {
-    lines.push('');
-    lines.push('🔄 *Details zur Abweichung:*');
-    for (const m of missingFixedSlots) {
-      const subInfo = m.substituteName ? ` [Vertretung: ${m.substituteName}]` : ' [entfällt / anderweitig vergeben]';
-      lines.push(formatCourseLine(m.course, rooms, ` ❌${subInfo}`));
-    }
-    for (const e of extraSlots) {
-      lines.push(formatCourseLine(e, rooms, ' ➕ [NEU eingeteilt]'));
-    }
-  }
-
-  const sortedActual = sortCoursesChronologically(actualSlots);
-  lines.push('');
-  if (sortedActual.length === 0) {
-    lines.push(`📅 *Deine Einteilung in ${kwLabel}:*`);
-    lines.push('• Keine Slots in dieser Woche eingeteilt.');
+  if (isSingleSwap) {
+    const m = missingFixedSlots[0];
+    const e = extraSlots[0];
+    lines.push(
+      `• Statt deiner festen Stunde am ${formatChangedSlot(m.course)} bist du eingeteilt für: ${formatChangedSlot(e)}`
+    );
   } else {
-    lines.push(`📅 *Alle deine Termine in ${kwLabel} (${sortedActual.length}):*`);
-    const extraIds = new Set(extraSlots.map(e => e.id));
-    for (const c of sortedActual) {
-      const tag = extraIds.has(c.id) ? ' *(+ neu)*' : ' *(fest)*';
-      lines.push(formatCourseLine(c, rooms, tag));
+    for (const m of missingFixedSlots) {
+      const subInfo = m.substituteName ? ` (übernimmt ${m.substituteName})` : '';
+      lines.push(`• Deine feste Stunde am ${formatChangedSlot(m.course)} entfällt für dich${subInfo}.`);
+    }
+
+    for (const e of extraSlots) {
+      lines.push(`• Zusätzlich zu deinen festen Stunden bist du eingeteilt für: ${formatChangedSlot(e)}.`);
     }
   }
 
-  const cfg = getWhatsAppGatewayConfig();
-  const origin =
-    cfg.baseAppUrl?.trim() ||
-    (typeof window !== 'undefined' ? window.location.origin : '');
-  if (origin) {
-    const cleanOrigin = origin.replace(/\/+$/, '');
-    const planLink = `${cleanOrigin}/wochenplan?teacher=${encodeURIComponent(teacher.name)}&onlyMySlots=true`;
-    lines.push('');
-    lines.push(`👉 *Dein Wochenplan:* ${planLink}`);
-  }
+  lines.push('');
+  lines.push('Ist das okay für dich?');
+  lines.push('');
+  lines.push('Om Shanti, liebe Grüße,');
+  lines.push('Mounir');
 
   return lines.join('\n');
 }
