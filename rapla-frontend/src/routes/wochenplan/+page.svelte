@@ -301,10 +301,6 @@
   ];
 
   let userManuallyChangedWeek = $state(false);
-  let isRealtimeOnline = $state(true);
-  let lastUpdatedTime = $state<Date>(new Date());
-  let showLiveUpdateBanner = $state(false);
-  let liveUpdateMessage = $state('');
   let userRole = $state<string | null>(null);
 
   onMount(() => {
@@ -337,34 +333,21 @@
         currentWeekOffset = findDefaultApprovedWeekOffset(weekPlans);
       }
       loadData();
-      lastUpdatedTime = new Date();
     });
 
-    const handleSync = (e?: any) => {
+    const handleSync = () => {
       weekPlans = db.getWeekPlans();
       if (!userManuallyChangedWeek) {
         currentWeekOffset = findDefaultApprovedWeekOffset(weekPlans);
       }
       loadData();
-      lastUpdatedTime = new Date();
-      if (e?.detail?.source === 'realtime' || e?.detail?.source === 'cloud-poll') {
-        liveUpdateMessage = 'Plan aktualisiert: Neueste Einteilungen geladen';
-        showLiveUpdateBanner = true;
-        setTimeout(() => { showLiveUpdateBanner = false; }, 4000);
-      }
-    };
-
-    const handleRealtimeStatus = (e: any) => {
-      if (e?.detail) {
-        isRealtimeOnline = !!e.detail.connected;
-      }
     };
 
     const handleVisibilityChange = () => {
       if (typeof document !== 'undefined' && document.visibilityState === 'visible') {
         db.checkCloudUpdates().then((hasChanged) => {
           if (hasChanged) {
-            handleSync({ detail: { source: 'cloud-poll' } });
+            handleSync();
           }
         });
       }
@@ -373,7 +356,6 @@
     window.addEventListener('keydown', handleKeydown);
     window.addEventListener('storage', handleSync);
     window.addEventListener('rapla-data-synced', handleSync);
-    window.addEventListener('rapla-realtime-status', handleRealtimeStatus);
     window.addEventListener('yla-assignment-changed', handleSync);
     document.addEventListener('visibilitychange', handleVisibilityChange);
     window.addEventListener('focus', handleVisibilityChange);
@@ -386,7 +368,6 @@
       window.removeEventListener('keydown', handleKeydown);
       window.removeEventListener('storage', handleSync);
       window.removeEventListener('rapla-data-synced', handleSync);
-      window.removeEventListener('rapla-realtime-status', handleRealtimeStatus);
       window.removeEventListener('yla-assignment-changed', handleSync);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
       window.removeEventListener('focus', handleVisibilityChange);
@@ -406,7 +387,6 @@
     try {
       await db.syncWithServerAndCloud();
       loadData();
-      lastUpdatedTime = new Date();
       syncFeedback = '✅ Daten erfolgreich synchronisiert!';
       setTimeout(() => { syncFeedback = null; }, 3500);
     } catch (e: any) {
@@ -885,42 +865,26 @@
         </select>
       </div>
 
-      <!-- Live Sync Status indicator -->
-      <div class="sync-status-indicator" title={isRealtimeOnline ? 'Echtzeit-Verbindung aktiv – Änderungen werden sofort angezeigt' : 'Offline / Hintergrund-Prüfung aktiv'}>
-        <span class="live-pulse-dot" class:offline={!isRealtimeOnline}></span>
-        <span class="live-text">{isRealtimeOnline ? 'Live' : 'Offline'}</span>
-      </div>
-
       <button 
         type="button" 
         class="btn sync-header-btn" 
         onclick={handleHeaderSync}
         disabled={isSyncing}
-        title="Aktuellen Stand vom Server neu laden"
+        title="Lade neueste Urlaube & Wünsche neu vom Server"
       >
-        <span class:icon-spin={isSyncing}>🔄</span> {isSyncing ? 'Synchronisiere...' : 'Aktualisieren'}
+        <span class:icon-spin={isSyncing}>🔄</span> {isSyncing ? 'Synchronisiere...' : 'Synchronisieren'}
       </button>
 
-      {#if userRole === 'admin' || userRole === 'viewer'}
-        <button 
-          type="button" 
-          class="btn logout-header-btn" 
-          onclick={() => { 
-            localStorage.removeItem('rapla_user_role'); 
-            goto('/login'); 
-          }}
-        >
-          🚪 Admin Abmelden
-        </button>
-      {:else}
-        <a 
-          href="/login" 
-          class="btn admin-switch-btn" 
-          title="In den Planungs-/Admin-Bereich wechseln"
-        >
-          🔐 Admin
-        </a>
-      {/if}
+      <button 
+        type="button" 
+        class="btn logout-header-btn" 
+        onclick={() => { 
+          localStorage.removeItem('rapla_user_role'); 
+          goto('/login'); 
+        }}
+      >
+        🚪 Abmelden
+      </button>
 
         <div class="user-badge" style="background: {selectedTeacher ? '#fff7ed' : '#f1f5f9'}; color: {selectedTeacher ? '#9a3412' : '#475569'}; border: 1px solid {selectedTeacher ? '#fed7aa' : '#e2e8f0'};">
           <span class="user-icon">{selectedTeacher ? '🧘' : '👥'}</span>
@@ -931,15 +895,6 @@
         </div>
     </div>
   </header>
-
-  {#if showLiveUpdateBanner}
-    <div class="live-update-toast animate-slide-down">
-      <span class="toast-icon">⚡</span>
-      <span class="toast-text">{liveUpdateMessage}</span>
-      <span class="toast-time">({lastUpdatedTime.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit', second: '2-digit' })})</span>
-      <button type="button" class="toast-close-btn" onclick={() => { showLiveUpdateBanner = false; }}>✕</button>
-    </div>
-  {/if}
 
   {#if syncFeedback}
     <div style="margin-bottom: 1.5rem; padding: 0.75rem 1.25rem; background: #ecfdf5; border: 1px solid #6ee7b7; color: #065f46; border-radius: 8px; font-weight: 500; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
@@ -1462,17 +1417,6 @@
         KW {currentPlan?.targetWeekCode ? parseInt(currentPlan.targetWeekCode.split('-W')[1], 10) : getWeekNumber(getMondayOfCurrentWeek())} ({currentPlan?.targetWeekCode || getWeekCode(getMondayOfCurrentWeek())})
       </span>
       <button type="button" class="btn btn-secondary btn-small" onclick={() => navigateWeek(1)}>▶</button>
-      <button type="button" class="btn btn-secondary btn-small btn-mobile-sync" onclick={handleHeaderSync} disabled={isSyncing} title="Neu synchronisieren">
-        <span class:icon-spin={isSyncing}>🔄</span>
-      </button>
-    </div>
-
-    <div class="mobile-status-strip">
-      <span class="status-indicator">
-        <span class="live-pulse-dot" class:offline={!isRealtimeOnline}></span>
-        {isRealtimeOnline ? 'Live synchronisiert' : 'Offline'}
-      </span>
-      <span class="status-updated">Stand: {lastUpdatedTime.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' })}</span>
     </div>
 
     {#if !isWeekApproved}
@@ -1513,7 +1457,6 @@
           {@const dayDateStr = getLocalDateForDay(currentWeekCode, day.value)}
           {@const isYlaWednesday = day.value === 3 && isDateInYlaRange(dayDateStr)}
           {@const teacherDayCount = selectedTeacher ? selectedTeacherAssignedCourses.filter(c => c.dayOfWeek === day.value).length : 0}
-          {@const totalDayCount = courses.filter(c => c.dayOfWeek === day.value).length}
           <button 
             type="button" 
             class="day-tab-btn" 
@@ -1530,8 +1473,6 @@
               {day.label.substring(0, 2)}
               {#if selectedTeacher && teacherDayCount > 0}
                 <span class="day-tab-slot-count">{teacherDayCount}</span>
-              {:else if !selectedTeacher && totalDayCount > 0}
-                <span class="day-tab-slot-count day-count-general">{totalDayCount}</span>
               {/if}
             </span>
             <span class="day-tab-date">{getDayDateString(day.value)}</span>
@@ -2511,135 +2452,6 @@
     .mobile-only-agenda {
       display: none;
     }
-  }
-
-  /* Live Pulse Indicator & Realtime UI */
-  .sync-status-indicator {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.45rem;
-    padding: 0.35rem 0.75rem;
-    background: #f0fdf4;
-    border: 1px solid #bbf7d0;
-    border-radius: 9999px;
-    font-size: 0.78rem;
-    font-weight: 700;
-    color: #166534;
-  }
-
-  .live-pulse-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background-color: #22c55e;
-    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
-    animation: live-pulse-anim 2s infinite;
-  }
-
-  .live-pulse-dot.offline {
-    background-color: #94a3b8;
-    box-shadow: none;
-    animation: none;
-  }
-
-  @keyframes live-pulse-anim {
-    0% {
-      transform: scale(0.95);
-      box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
-    }
-    70% {
-      transform: scale(1);
-      box-shadow: 0 0 0 6px rgba(34, 197, 94, 0);
-    }
-    100% {
-      transform: scale(0.95);
-      box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
-    }
-  }
-
-  /* Live Update Toast */
-  .live-update-toast {
-    margin-bottom: 1rem;
-    padding: 0.75rem 1.25rem;
-    background: #ecfdf5;
-    border: 1.5px solid #10b981;
-    color: #065f46;
-    border-radius: 8px;
-    font-weight: 600;
-    font-size: 0.9rem;
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
-    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15);
-  }
-
-  .toast-time {
-    font-size: 0.78rem;
-    color: #047857;
-    font-weight: 400;
-  }
-
-  .toast-close-btn {
-    margin-left: auto;
-    background: none;
-    border: none;
-    color: #065f46;
-    font-size: 1.1rem;
-    cursor: pointer;
-    padding: 0 0.25rem;
-  }
-
-  /* Mobile status strip */
-  .mobile-status-strip {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.35rem 0.6rem;
-    margin-top: -0.35rem;
-    margin-bottom: 0.75rem;
-    font-size: 0.72rem;
-    color: #64748b;
-    background: #f8fafc;
-    border-radius: 6px;
-    border: 1px solid #e2e8f0;
-  }
-
-  .mobile-status-strip .status-indicator {
-    display: flex;
-    align-items: center;
-    gap: 0.35rem;
-    font-weight: 600;
-    color: #166534;
-  }
-
-  .day-count-general {
-    background: #fed7aa;
-    color: #9a3412;
-  }
-
-  .btn-mobile-sync {
-    padding: 0.35rem 0.6rem;
-    font-size: 0.85rem;
-  }
-
-  .admin-switch-btn {
-    text-decoration: none;
-    background: #f8fafc;
-    color: #475569;
-    border: 1px solid #cbd5e1;
-    padding: 0.45rem 0.8rem;
-    border-radius: 6px;
-    font-weight: 600;
-    font-size: 0.85rem;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.35rem;
-    transition: all 0.2s ease;
-  }
-
-  .admin-switch-btn:hover {
-    background: #e2e8f0;
-    color: #1e293b;
   }
 
   @media (max-width: 1100px) {

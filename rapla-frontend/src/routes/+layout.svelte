@@ -46,13 +46,7 @@
 		userRole = storedRole;
 		
 		if (!storedRole) {
-			if (path === '/' || path.startsWith('/wochenplan')) {
-				userRole = 'team';
-				try { localStorage.setItem('rapla_user_role', 'team'); } catch {}
-				if (path === '/') {
-					goto('/wochenplan');
-				}
-			} else if (path !== '/login') {
+			if (path !== '/login') {
 				goto('/login');
 			}
 		} else if (storedRole === 'team') {
@@ -126,11 +120,12 @@
 	<title>Yoga Vidya Rapla 2.0</title>
 </svelte:head>
 
-{#if page.url.pathname.startsWith('/wochenplan') || page.url.pathname === '/login'}
-	{@render children()}
-{:else if authChecked}
-	{#if userRole === 'admin' || userRole === 'viewer'}
-		<div class="layout-container">
+{#if authChecked}
+	{#if userRole === 'admin' || userRole === 'viewer' || (userRole === 'team' && page.url.pathname.startsWith('/wochenplan')) || page.url.pathname === '/login'}
+		{#if page.url.pathname.startsWith('/wochenplan') || page.url.pathname === '/login'}
+			{@render children()}
+		{:else}
+			<div class="layout-container">
 				{#if mobileMenuOpen}
 					<!-- svelte-ignore a11y_click_events_have_key_events -->
 					<!-- svelte-ignore a11y_no_static_element_interactions -->
@@ -330,6 +325,7 @@
 				</main>
 			</div>
 		{/if}
+	{/if}
 
 	{#if todoManager.activeReminder}
 		<!-- svelte-ignore a11y_click_events_have_key_events -->
