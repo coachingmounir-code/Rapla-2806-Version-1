@@ -106,6 +106,23 @@
           Anmelden ➔
         {/if}
       </button>
+
+      <div class="team-direct-box">
+        <div class="direct-divider">
+          <span>ODER</span>
+        </div>
+        <button 
+          type="button" 
+          class="team-direct-btn"
+          onclick={() => {
+            try { localStorage.setItem('rapla_user_role', 'team'); } catch {}
+            goto('/wochenplan');
+          }}
+        >
+          👥 Direkt zur Team-Ansicht (Wochenplan)
+        </button>
+        <p class="direct-hint">Frei einsehbar für das gesamte Team (ohne Passwort)</p>
+      </div>
     </form>
     
     <div class="login-footer">
@@ -312,6 +329,70 @@
   @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
+  }
+
+  .team-direct-box {
+    margin-top: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.65rem;
+  }
+
+  .direct-divider {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    color: #94a3b8;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+  }
+
+  .direct-divider::before,
+  .direct-divider::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid #e2e8f0;
+  }
+
+  .direct-divider span {
+    padding: 0 0.75rem;
+  }
+
+  .team-direct-btn {
+    width: 100%;
+    padding: 0.85rem 1rem;
+    background: #fff7ed;
+    color: #c2410c;
+    border: 1.5px solid #fed7aa;
+    border-radius: var(--radius-md, 8px);
+    font-size: 0.95rem;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    box-shadow: 0 2px 4px rgba(194, 65, 12, 0.06);
+  }
+
+  .team-direct-btn:hover {
+    background: #ffedd5;
+    border-color: #f97316;
+    color: #9a3412;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(194, 65, 12, 0.12);
+  }
+
+  .direct-hint {
+    font-size: 0.76rem;
+    color: #64748b;
+    text-align: center;
+    margin: 0;
   }
 
   .login-footer {

@@ -300,14 +300,17 @@
     { value: 4, label: 'Donnerstag' }
   ];
 
-  let hasSetInitialWeek = false;
+  let userManuallyChangedWeek = $state(false);
+  let isRealtimeOnline = $state(true);
+  let lastUpdatedTime = $state<Date>(new Date());
+  let showLiveUpdateBanner = $state(false);
+  let liveUpdateMessage = $state('');
+  let userRole = $state<string | null>(null);
 
   onMount(() => {
+    userRole = localStorage.getItem('rapla_user_role') || 'team';
     weekPlans = db.getWeekPlans();
-    if (!hasSetInitialWeek) {
-      currentWeekOffset = findDefaultApprovedWeekOffset(weekPlans);
-      hasSetInitialWeek = true;
-    }
+    currentWeekOffset = findDefaultApprovedWeekOffset(weekPlans);
     loadData();
     
     // Set active mobile day to today if today is within our calendar cycle
@@ -327,14 +330,53 @@
       isFullscreen = !!document.fullscreenElement;
     };
 
-    const handleSync = () => {
+    // Immediate background cloud sync to ensure freshest data from Supabase
+    db.syncWithServerAndCloud().then(() => {
+      if (!userManuallyChangedWeek) {
+        weekPlans = db.getWeekPlans();
+        currentWeekOffset = findDefaultApprovedWeekOffset(weekPlans);
+      }
       loadData();
+      lastUpdatedTime = new Date();
+    });
+
+    const handleSync = (e?: any) => {
+      weekPlans = db.getWeekPlans();
+      if (!userManuallyChangedWeek) {
+        currentWeekOffset = findDefaultApprovedWeekOffset(weekPlans);
+      }
+      loadData();
+      lastUpdatedTime = new Date();
+      if (e?.detail?.source === 'realtime' || e?.detail?.source === 'cloud-poll') {
+        liveUpdateMessage = 'Plan aktualisiert: Neueste Einteilungen geladen';
+        showLiveUpdateBanner = true;
+        setTimeout(() => { showLiveUpdateBanner = false; }, 4000);
+      }
+    };
+
+    const handleRealtimeStatus = (e: any) => {
+      if (e?.detail) {
+        isRealtimeOnline = !!e.detail.connected;
+      }
+    };
+
+    const handleVisibilityChange = () => {
+      if (typeof document !== 'undefined' && document.visibilityState === 'visible') {
+        db.checkCloudUpdates().then((hasChanged) => {
+          if (hasChanged) {
+            handleSync({ detail: { source: 'cloud-poll' } });
+          }
+        });
+      }
     };
 
     window.addEventListener('keydown', handleKeydown);
     window.addEventListener('storage', handleSync);
     window.addEventListener('rapla-data-synced', handleSync);
+    window.addEventListener('rapla-realtime-status', handleRealtimeStatus);
     window.addEventListener('yla-assignment-changed', handleSync);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('focus', handleVisibilityChange);
     document.addEventListener('fullscreenchange', handleFullscreenChange);
     document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
     document.addEventListener('mozfullscreenchange', handleFullscreenChange);
@@ -344,7 +386,10 @@
       window.removeEventListener('keydown', handleKeydown);
       window.removeEventListener('storage', handleSync);
       window.removeEventListener('rapla-data-synced', handleSync);
+      window.removeEventListener('rapla-realtime-status', handleRealtimeStatus);
       window.removeEventListener('yla-assignment-changed', handleSync);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('focus', handleVisibilityChange);
       document.removeEventListener('fullscreenchange', handleFullscreenChange);
       document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
       document.removeEventListener('mozfullscreenchange', handleFullscreenChange);
@@ -361,6 +406,7 @@
     try {
       await db.syncWithServerAndCloud();
       loadData();
+      lastUpdatedTime = new Date();
       syncFeedback = '✅ Daten erfolgreich synchronisiert!';
       setTimeout(() => { syncFeedback = null; }, 3500);
     } catch (e: any) {
@@ -413,20 +459,43 @@
   }
 
   function findDefaultApprovedWeekOffset(plans: WeekPlan[]): number {
-    // 1. If current calendar week (offset 0) is approved, show current week
+    if (!plans || plans.length === 0) return 0;
+
+    const isPlanApprovedWithCourses = (p: WeekPlan | undefined): boolean => {
+      if (!p) return false;
+      const isApproved = p.isApproved === true || (p.status === 'approved' && p.isApproved !== false);
+      return isApproved && Array.isArray(p.courses) && p.courses.length > 0;
+    };
+
+    // 1. If current calendar week (offset 0) is approved and has courses, show it
     const currentWeekCode = getWeekCode(getMondayForOffset(0));
     const curPlan = plans.find(p => p.targetWeekCode === currentWeekCode);
-    const isCurrentApproved = !!curPlan && (curPlan.isApproved === true || (curPlan.status === 'approved' && curPlan.isApproved !== false));
-    if (isCurrentApproved) {
+    if (isPlanApprovedWithCourses(curPlan)) {
       return 0;
     }
 
-    // 2. Otherwise start with the first upcoming approved week (e.g. KW 36)
-    for (let offset = 1; offset <= 26; offset++) {
+    // 2. Search bi-directionally by proximity to today (-1, +1, -2, +2, ...)
+    const proximityOffsets = [-1, 1, -2, 2, -3, 3, -4, 4, -5, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
+    for (const offset of proximityOffsets) {
       const code = getWeekCode(getMondayForOffset(offset));
       const plan = plans.find(p => p.targetWeekCode === code);
-      if (plan && (plan.isApproved === true || (plan.status === 'approved' && plan.isApproved !== false))) {
+      if (isPlanApprovedWithCourses(plan)) {
         return offset;
+      }
+    }
+
+    // 3. If current week has any courses (even if draft/auto), show it rather than blank
+    if (curPlan && Array.isArray(curPlan.courses) && curPlan.courses.length > 0) {
+      return 0;
+    }
+
+    // 4. Fallback to any plan that has courses
+    const anyPlan = plans.find(p => Array.isArray(p.courses) && p.courses.length > 0 && p.targetWeekCode);
+    if (anyPlan?.targetWeekCode) {
+      for (let off = -10; off <= 26; off++) {
+        if (getWeekCode(getMondayForOffset(off)) === anyPlan.targetWeekCode) {
+          return off;
+        }
       }
     }
 
@@ -748,7 +817,14 @@
   }
 
   function navigateWeek(direction: number) {
+    userManuallyChangedWeek = true;
     currentWeekOffset += direction;
+    loadData();
+  }
+
+  function goToCurrentWeek() {
+    userManuallyChangedWeek = false;
+    currentWeekOffset = findDefaultApprovedWeekOffset(weekPlans);
     loadData();
   }
 
@@ -809,26 +885,42 @@
         </select>
       </div>
 
+      <!-- Live Sync Status indicator -->
+      <div class="sync-status-indicator" title={isRealtimeOnline ? 'Echtzeit-Verbindung aktiv – Änderungen werden sofort angezeigt' : 'Offline / Hintergrund-Prüfung aktiv'}>
+        <span class="live-pulse-dot" class:offline={!isRealtimeOnline}></span>
+        <span class="live-text">{isRealtimeOnline ? 'Live' : 'Offline'}</span>
+      </div>
+
       <button 
         type="button" 
         class="btn sync-header-btn" 
         onclick={handleHeaderSync}
         disabled={isSyncing}
-        title="Lade neueste Urlaube & Wünsche neu vom Server"
+        title="Aktuellen Stand vom Server neu laden"
       >
-        <span class:icon-spin={isSyncing}>🔄</span> {isSyncing ? 'Synchronisiere...' : 'Synchronisieren'}
+        <span class:icon-spin={isSyncing}>🔄</span> {isSyncing ? 'Synchronisiere...' : 'Aktualisieren'}
       </button>
 
-      <button 
-        type="button" 
-        class="btn logout-header-btn" 
-        onclick={() => { 
-          localStorage.removeItem('rapla_user_role'); 
-          goto('/login'); 
-        }}
-      >
-        🚪 Abmelden
-      </button>
+      {#if userRole === 'admin' || userRole === 'viewer'}
+        <button 
+          type="button" 
+          class="btn logout-header-btn" 
+          onclick={() => { 
+            localStorage.removeItem('rapla_user_role'); 
+            goto('/login'); 
+          }}
+        >
+          🚪 Admin Abmelden
+        </button>
+      {:else}
+        <a 
+          href="/login" 
+          class="btn admin-switch-btn" 
+          title="In den Planungs-/Admin-Bereich wechseln"
+        >
+          🔐 Admin
+        </a>
+      {/if}
 
         <div class="user-badge" style="background: {selectedTeacher ? '#fff7ed' : '#f1f5f9'}; color: {selectedTeacher ? '#9a3412' : '#475569'}; border: 1px solid {selectedTeacher ? '#fed7aa' : '#e2e8f0'};">
           <span class="user-icon">{selectedTeacher ? '🧘' : '👥'}</span>
@@ -839,6 +931,15 @@
         </div>
     </div>
   </header>
+
+  {#if showLiveUpdateBanner}
+    <div class="live-update-toast animate-slide-down">
+      <span class="toast-icon">⚡</span>
+      <span class="toast-text">{liveUpdateMessage}</span>
+      <span class="toast-time">({lastUpdatedTime.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit', second: '2-digit' })})</span>
+      <button type="button" class="toast-close-btn" onclick={() => { showLiveUpdateBanner = false; }}>✕</button>
+    </div>
+  {/if}
 
   {#if syncFeedback}
     <div style="margin-bottom: 1.5rem; padding: 0.75rem 1.25rem; background: #ecfdf5; border: 1px solid #6ee7b7; color: #065f46; border-radius: 8px; font-weight: 500; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
@@ -1355,12 +1456,23 @@
   <div class="mobile-only-agenda">
     <!-- Navigation for Weeks on Mobile -->
     <div class="mobile-week-nav">
-      <button type="button" class="btn btn-current-week btn-small" onclick={() => { currentWeekOffset = 0; loadData(); }}>Aktuelle Woche</button>
+      <button type="button" class="btn btn-current-week btn-small" onclick={goToCurrentWeek}>Aktuelle Woche</button>
       <button type="button" class="btn btn-secondary btn-small" onclick={() => navigateWeek(-1)}>◀</button>
       <span class="week-title-badge-mobile">
         KW {currentPlan?.targetWeekCode ? parseInt(currentPlan.targetWeekCode.split('-W')[1], 10) : getWeekNumber(getMondayOfCurrentWeek())} ({currentPlan?.targetWeekCode || getWeekCode(getMondayOfCurrentWeek())})
       </span>
       <button type="button" class="btn btn-secondary btn-small" onclick={() => navigateWeek(1)}>▶</button>
+      <button type="button" class="btn btn-secondary btn-small btn-mobile-sync" onclick={handleHeaderSync} disabled={isSyncing} title="Neu synchronisieren">
+        <span class:icon-spin={isSyncing}>🔄</span>
+      </button>
+    </div>
+
+    <div class="mobile-status-strip">
+      <span class="status-indicator">
+        <span class="live-pulse-dot" class:offline={!isRealtimeOnline}></span>
+        {isRealtimeOnline ? 'Live synchronisiert' : 'Offline'}
+      </span>
+      <span class="status-updated">Stand: {lastUpdatedTime.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' })}</span>
     </div>
 
     {#if !isWeekApproved}
@@ -1377,7 +1489,7 @@
           <button 
             type="button" 
             class="btn btn-primary btn-small" 
-            onclick={() => { currentWeekOffset = findDefaultApprovedWeekOffset(weekPlans); loadData(); }}
+            onclick={() => { userManuallyChangedWeek = false; currentWeekOffset = findDefaultApprovedWeekOffset(weekPlans); loadData(); }}
           >
             📅 Zur freigegebenen Woche
           </button>
@@ -1385,7 +1497,7 @@
             <button 
               type="button" 
               class="btn btn-secondary btn-small" 
-              onclick={() => { currentWeekOffset = 0; loadData(); }}
+              onclick={goToCurrentWeek}
             >
               Aktuelle Woche
             </button>
@@ -1401,6 +1513,7 @@
           {@const dayDateStr = getLocalDateForDay(currentWeekCode, day.value)}
           {@const isYlaWednesday = day.value === 3 && isDateInYlaRange(dayDateStr)}
           {@const teacherDayCount = selectedTeacher ? selectedTeacherAssignedCourses.filter(c => c.dayOfWeek === day.value).length : 0}
+          {@const totalDayCount = courses.filter(c => c.dayOfWeek === day.value).length}
           <button 
             type="button" 
             class="day-tab-btn" 
@@ -1417,6 +1530,8 @@
               {day.label.substring(0, 2)}
               {#if selectedTeacher && teacherDayCount > 0}
                 <span class="day-tab-slot-count">{teacherDayCount}</span>
+              {:else if !selectedTeacher && totalDayCount > 0}
+                <span class="day-tab-slot-count day-count-general">{totalDayCount}</span>
               {/if}
             </span>
             <span class="day-tab-date">{getDayDateString(day.value)}</span>
@@ -2396,6 +2511,135 @@
     .mobile-only-agenda {
       display: none;
     }
+  }
+
+  /* Live Pulse Indicator & Realtime UI */
+  .sync-status-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.35rem 0.75rem;
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    border-radius: 9999px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #166534;
+  }
+
+  .live-pulse-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #22c55e;
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
+    animation: live-pulse-anim 2s infinite;
+  }
+
+  .live-pulse-dot.offline {
+    background-color: #94a3b8;
+    box-shadow: none;
+    animation: none;
+  }
+
+  @keyframes live-pulse-anim {
+    0% {
+      transform: scale(0.95);
+      box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
+    }
+    70% {
+      transform: scale(1);
+      box-shadow: 0 0 0 6px rgba(34, 197, 94, 0);
+    }
+    100% {
+      transform: scale(0.95);
+      box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
+    }
+  }
+
+  /* Live Update Toast */
+  .live-update-toast {
+    margin-bottom: 1rem;
+    padding: 0.75rem 1.25rem;
+    background: #ecfdf5;
+    border: 1.5px solid #10b981;
+    color: #065f46;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15);
+  }
+
+  .toast-time {
+    font-size: 0.78rem;
+    color: #047857;
+    font-weight: 400;
+  }
+
+  .toast-close-btn {
+    margin-left: auto;
+    background: none;
+    border: none;
+    color: #065f46;
+    font-size: 1.1rem;
+    cursor: pointer;
+    padding: 0 0.25rem;
+  }
+
+  /* Mobile status strip */
+  .mobile-status-strip {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.35rem 0.6rem;
+    margin-top: -0.35rem;
+    margin-bottom: 0.75rem;
+    font-size: 0.72rem;
+    color: #64748b;
+    background: #f8fafc;
+    border-radius: 6px;
+    border: 1px solid #e2e8f0;
+  }
+
+  .mobile-status-strip .status-indicator {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-weight: 600;
+    color: #166534;
+  }
+
+  .day-count-general {
+    background: #fed7aa;
+    color: #9a3412;
+  }
+
+  .btn-mobile-sync {
+    padding: 0.35rem 0.6rem;
+    font-size: 0.85rem;
+  }
+
+  .admin-switch-btn {
+    text-decoration: none;
+    background: #f8fafc;
+    color: #475569;
+    border: 1px solid #cbd5e1;
+    padding: 0.45rem 0.8rem;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    transition: all 0.2s ease;
+  }
+
+  .admin-switch-btn:hover {
+    background: #e2e8f0;
+    color: #1e293b;
   }
 
   @media (max-width: 1100px) {

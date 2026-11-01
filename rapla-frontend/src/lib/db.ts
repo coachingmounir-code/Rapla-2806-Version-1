@@ -13290,6 +13290,7 @@ let cloudInitialized = false;
 let cloudSyncPromise: Promise<void> | null = null;
 let lastCloudSyncTime = 0;
 const inFlightUpserts = new Map<string, Promise<boolean>>();
+const inFlightTaskTokens = new Map<string, object>();
 
 const PENDING_SYNC_STORAGE_KEY = 'rapla_pending_sync_keys';
 
@@ -13406,6 +13407,9 @@ async function upsertKeyToCloud(key: string, serializedValue: string): Promise<b
   }
   const client = supabase;
   const previousTask = inFlightUpserts.get(key);
+  const currentToken = {};
+  inFlightTaskTokens.set(key, currentToken);
+
   const task = (async () => {
     try {
       if (previousTask) {
@@ -13486,8 +13490,9 @@ async function upsertKeyToCloud(key: string, serializedValue: string): Promise<b
       console.error(`Error syncing ${key} to cloud:`, err);
       return false;
     } finally {
-      if (inFlightUpserts.get(key) === task) {
+      if (inFlightTaskTokens.get(key) === currentToken) {
         inFlightUpserts.delete(key);
+        inFlightTaskTokens.delete(key);
       }
     }
   })();
@@ -14825,10 +14830,9 @@ export const db = {
         }
 
         // Setup Realtime sync so updates across all connected team/admin devices reflect immediately
-        if (supabase && typeof window !== 'undefined' && !(window as any).__rapla_realtime_initialized) {
-          (window as any).__rapla_realtime_initialized = true;
+        if (supabase && typeof window !== 'undefined' && !(window as any).__rapla_realtime_channel) {
           try {
-            supabase
+            const channel = supabase
               .channel('app_state_realtime_channel')
               .on('postgres_changes', { event: '*', schema: 'public', table: 'app_state' }, (payload: any) => {
                 if (payload?.new?.key && payload?.new?.value) {
@@ -14866,14 +14870,19 @@ export const db = {
                       if (key === 'rapla_yla_assignments') {
                         window.dispatchEvent(new CustomEvent('yla-assignment-changed'));
                       }
-                      window.dispatchEvent(new CustomEvent('rapla-data-synced'));
+                      window.dispatchEvent(new CustomEvent('rapla-data-synced', { detail: { source: 'realtime', key } }));
                     }
                   } catch (err) {
                     console.error('Error handling realtime app_state update:', err);
                   }
                 }
               })
-              .subscribe();
+              .subscribe((status: string) => {
+                const isConnected = status === 'SUBSCRIBED';
+                (window as any).__rapla_realtime_connected = isConnected;
+                window.dispatchEvent(new CustomEvent('rapla-realtime-status', { detail: { connected: isConnected, status } }));
+              });
+            (window as any).__rapla_realtime_channel = channel;
           } catch (subErr) {
             console.error('Failed to subscribe to realtime app_state changes:', subErr);
           }
@@ -15467,6 +15476,56 @@ export const db = {
         window.dispatchEvent(new CustomEvent('rapla-data-synced'));
       });
     }
+  },
+
+  checkCloudUpdates: async (): Promise<boolean> => {
+    if (typeof window === 'undefined' || !supabase) return false;
+    try {
+      const { data, error } = await supabase.from('app_state').select('*');
+      if (error || !data || data.length === 0) return false;
+      let changed = false;
+      for (const row of data) {
+        if (!row.key || !row.value) continue;
+        const currentStr = localStorage.getItem(row.key);
+        if (currentStr !== row.value) {
+          if (row.key === 'rapla_week_plans') {
+            const remotePlans: WeekPlan[] = JSON.parse(row.value);
+            const { plans: reconciled } = reconcilePlansWithDefaults(remotePlans);
+            const recStr = JSON.stringify(reconciled);
+            if (currentStr !== recStr) {
+              changed = true;
+              localStorage.setItem(row.key, recStr);
+              inMemoryStore[row.key] = reconciled;
+            }
+          } else if (row.key === 'rapla_teachers') {
+            const remoteTeachers: Teacher[] = JSON.parse(row.value);
+            const { teachers: reconciled } = reconcileTeachersWithCloud([], remoteTeachers, false);
+            const recStr = JSON.stringify(reconciled);
+            if (currentStr !== recStr) {
+              changed = true;
+              localStorage.setItem(row.key, recStr);
+              inMemoryStore[row.key] = reconciled;
+            }
+          } else {
+            changed = true;
+            localStorage.setItem(row.key, row.value);
+            try { inMemoryStore[row.key] = JSON.parse(row.value); } catch {}
+          }
+        }
+      }
+      if (changed) {
+        window.dispatchEvent(new CustomEvent('rapla-data-synced', { detail: { source: 'cloud-poll' } }));
+        window.dispatchEvent(new CustomEvent('yla-assignment-changed'));
+      }
+      return changed;
+    } catch (e) {
+      console.warn('Check cloud updates error:', e);
+      return false;
+    }
+  },
+
+  isRealtimeActive: (): boolean => {
+    return !!(typeof window !== 'undefined' && (window as any).__rapla_realtime_connected);
   },
 
   getOrCreateUpcomingWeekPlans: (): WeekPlan[] => {

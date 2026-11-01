@@ -46,7 +46,13 @@
 		userRole = storedRole;
 		
 		if (!storedRole) {
-			if (path !== '/login') {
+			if (path === '/' || path.startsWith('/wochenplan')) {
+				userRole = 'team';
+				try { localStorage.setItem('rapla_user_role', 'team'); } catch {}
+				if (path === '/') {
+					goto('/wochenplan');
+				}
+			} else if (path !== '/login') {
 				goto('/login');
 			}
 		} else if (storedRole === 'team') {
@@ -84,8 +90,34 @@
 		const interval = setInterval(() => {
 			todoManager.checkReminders();
 		}, 10000);
+
+		// Smartphone resume & Wi-Fi reconnect listeners
+		const handleVisibility = () => {
+			if (typeof document !== 'undefined' && document.visibilityState === 'visible') {
+				db.checkCloudUpdates();
+			}
+		};
+		const handleOnline = () => {
+			syncData();
+		};
+		window.addEventListener('visibilitychange', handleVisibility);
+		window.addEventListener('focus', handleVisibility);
+		window.addEventListener('online', handleOnline);
+
+		// Background polling heartbeat every 15s to keep all connected team/smartphone browsers live
+		const cloudPollInterval = setInterval(() => {
+			if (typeof document !== 'undefined' && document.visibilityState === 'visible') {
+				db.checkCloudUpdates();
+			}
+		}, 15000);
 		
-		return () => clearInterval(interval);
+		return () => {
+			clearInterval(interval);
+			clearInterval(cloudPollInterval);
+			window.removeEventListener('visibilitychange', handleVisibility);
+			window.removeEventListener('focus', handleVisibility);
+			window.removeEventListener('online', handleOnline);
+		};
 	});
 </script>
 
@@ -94,12 +126,11 @@
 	<title>Yoga Vidya Rapla 2.0</title>
 </svelte:head>
 
-{#if authChecked}
-	{#if userRole === 'admin' || userRole === 'viewer' || (userRole === 'team' && page.url.pathname.startsWith('/wochenplan')) || page.url.pathname === '/login'}
-		{#if page.url.pathname.startsWith('/wochenplan') || page.url.pathname === '/login'}
-			{@render children()}
-		{:else}
-			<div class="layout-container">
+{#if page.url.pathname.startsWith('/wochenplan') || page.url.pathname === '/login'}
+	{@render children()}
+{:else if authChecked}
+	{#if userRole === 'admin' || userRole === 'viewer'}
+		<div class="layout-container">
 				{#if mobileMenuOpen}
 					<!-- svelte-ignore a11y_click_events_have_key_events -->
 					<!-- svelte-ignore a11y_no_static_element_interactions -->
@@ -299,7 +330,6 @@
 				</main>
 			</div>
 		{/if}
-	{/if}
 
 	{#if todoManager.activeReminder}
 		<!-- svelte-ignore a11y_click_events_have_key_events -->
