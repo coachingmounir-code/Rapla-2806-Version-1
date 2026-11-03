@@ -376,7 +376,7 @@ localStorage.setItem('rapla_teachers', JSON.stringify(teachers));
 
 const standardCoursesDefs = [
   // Friday (dayOfWeek: 5)
-  { name: 'Hausführung', style: 'Sonstiges', dayOfWeek: 5, startTime: '19:00', endTime: '19:30', roomId: 'Rezeption', teacherName: '' },
+  { name: 'Hausführung', style: 'Sonstiges', dayOfWeek: 5, startTime: '19:00', endTime: '19:30', roomId: 'room-7', teacherName: '' },
   { name: 'Geführte Meditation', style: 'Meditation', dayOfWeek: 5, startTime: '07:00', endTime: '07:30', roomId: 'room-5', teacherName: 'Pranava' },
   { name: 'Satsang', style: 'Meditation', dayOfWeek: 5, startTime: '07:00', endTime: '08:00', roomId: 'room-2', teacherName: 'Nirmaya' },
   { name: 'Anfänger', style: 'Hatha', dayOfWeek: 5, startTime: '09:15', endTime: '11:00', roomId: 'room-5', teacherName: '' },
@@ -399,7 +399,7 @@ const standardCoursesDefs = [
   { name: 'Satsang', style: 'Meditation', dayOfWeek: 6, startTime: '20:00', endTime: '22:00', roomId: 'room-2', teacherName: 'Karuna' },
 
   // Sunday (dayOfWeek: 0)
-  { name: 'Hausführung', style: 'Sonstiges', dayOfWeek: 0, startTime: '19:00', endTime: '19:30', roomId: 'Rezeption', teacherName: '' },
+  { name: 'Hausführung', style: 'Sonstiges', dayOfWeek: 0, startTime: '19:00', endTime: '19:30', roomId: 'room-7', teacherName: '' },
   { name: 'Fortgeschrittenes Pranayama', style: 'Hatha', dayOfWeek: 0, startTime: '06:00', endTime: '06:50', roomId: 'room-2', teacherName: '' },
   { name: 'Geführte Meditation', style: 'Meditation', dayOfWeek: 0, startTime: '07:00', endTime: '07:30', roomId: 'room-5', teacherName: '' },
   { name: 'Satsang', style: 'Meditation', dayOfWeek: 0, startTime: '07:00', endTime: '08:00', roomId: 'room-2', teacherName: 'burnie' },
@@ -477,14 +477,14 @@ function getNext8WeekCodes(): string[] {
   return weeks;
 }
 
-const weeksToPlan = ["2026-W41", "2026-W42", "2026-W43", "2026-W44", "2026-W45"];
-console.log(`[PREPLANNING] Planning for the next 8 weeks: ${weeksToPlan.join(', ')}`);
+const weeksToPlan = ["2026-W41", "2026-W42", "2026-W43", "2026-W44", "2026-W45", "2026-W46"];
+console.log(`[PREPLANNING] Planning for weeks: ${weeksToPlan.join(', ')}`);
 
 const existingWeekPlans = db.getWeekPlans();
 const results: Record<string, any[]> = {};
 for (const week of weeksToPlan) {
   const existingPlan = existingWeekPlans.find(p => p.targetWeekCode === week);
-  if (week !== "2026-W45" && existingPlan && (existingPlan.hasManualEdits || existingPlan.isManualOnly || existingPlan.isApproved || existingPlan.status === 'approved')) {
+  if (week !== "2026-W46" && existingPlan && (existingPlan.hasManualEdits || existingPlan.isManualOnly || existingPlan.isApproved || existingPlan.status === 'approved')) {
     console.log(`[PREPLANNING] Preserving existing approved/manually-edited plan for ${week} (${existingPlan.courses.length} courses).`);
     results[week] = existingPlan.courses;
   } else {
@@ -523,55 +523,63 @@ fs.writeFileSync('planned_weeks_output.txt',
 );
 console.log("\nDone! Output written to planned_weeks_output.txt");
 
-// Reconstruct the plans TS code to insert into db.ts
-const plansCodeParts = Object.entries(results).map(([week, courses]) => {
-  return `  {
-    id: "plan-pre-${week}",
-    name: "Vorplanung ${week} (Automatisch)",
-    status: "approved",
-    isApproved: true,
-    targetWeekCode: "${week}",
-    courses: ${formatPlanCoursesCode(courses)},
-    createdAt: new Date().toISOString()
-  }`;
-});
-const plansCode = plansCodeParts.join(',\n');
-
-// Read db.ts
+// Update db.ts
 const dbPath = './rapla-frontend/src/lib/db.ts';
 if (fs.existsSync(dbPath)) {
   let dbContent = fs.readFileSync(dbPath, 'utf-8');
 
-  // Find the target section to replace dynamically
-  const firstPrePlanIndex = dbContent.indexOf('    id: "plan-pre-');
-  let braceStartIndex = -1;
-  let braceEndIndex = -1;
+  // Insert or update plan-pre-2026-W46
+  const w46Courses = results['2026-W46'];
+  if (w46Courses) {
+    const w46PlanCode = `  {
+    "id": "plan-pre-2026-W46",
+    "name": "Vorplanung 2026-W46 (Automatisch)",
+    "status": "approved",
+    "isApproved": true,
+    "targetWeekCode": "2026-W46",
+    "courses": ${formatPlanCoursesCode(w46Courses)},
+    "createdAt": "${new Date().toISOString()}"
+  }`;
 
-  if (firstPrePlanIndex !== -1) {
-    braceStartIndex = dbContent.lastIndexOf('{', firstPrePlanIndex);
-    const lastPrePlanIndex = dbContent.lastIndexOf('    id: "plan-pre-');
-    const createdAtIndex = dbContent.indexOf('    createdAt:', lastPrePlanIndex);
-    braceEndIndex = dbContent.indexOf('  }', createdAtIndex) + 3;
-  }
+    const existingW46Idx = dbContent.indexOf('"id": "plan-pre-2026-W46"');
+    if (existingW46Idx !== -1) {
+      const braceStart = dbContent.lastIndexOf('  {', existingW46Idx);
+      const createdIdx = dbContent.indexOf('"createdAt":', existingW46Idx);
+      const braceEnd = dbContent.indexOf('  }', createdIdx) + 3;
+      dbContent = dbContent.substring(0, braceStart) + w46PlanCode + dbContent.substring(braceEnd);
+      console.log(`[PREPLANNING] Updated existing plan-pre-2026-W46 in db.ts.`);
+    } else {
+      const insertMarker = '\n];\n\n\n// Cloud-aware storage';
+      const insertIdx = dbContent.indexOf(insertMarker);
+      if (insertIdx !== -1) {
+        dbContent = dbContent.substring(0, insertIdx) + ',\n' + w46PlanCode + dbContent.substring(insertIdx);
+        console.log(`[PREPLANNING] Appended plan-pre-2026-W46 to DEFAULT_WEEK_PLANS in db.ts.`);
+      } else {
+        console.error('[PREPLANNING] Could not find insertion marker in db.ts');
+      }
+    }
 
-  if (braceStartIndex !== -1 && braceEndIndex !== -1 && firstPrePlanIndex !== -1) {
-    const before = dbContent.substring(0, braceStartIndex);
-    const after = dbContent.substring(braceEndIndex);
-    
-    // Also bump CURRENT_DB_VERSION
-    let updatedContent = before + plansCode + after;
-    updatedContent = updatedContent.replace(
-      /const CURRENT_DB_VERSION = \d+;/g,
-      (match) => {
-        const version = parseInt(match.match(/\d+/)![0], 10);
-        return `const CURRENT_DB_VERSION = ${version + 1};`;
+    // Update APPROVED_WEEKS
+    const approvedMatch = dbContent.match(/const APPROVED_WEEKS = new Set\(\[(.*?)\]\);/);
+    if (approvedMatch && !approvedMatch[1].includes("'2026-W46'")) {
+      dbContent = dbContent.replace(
+        /const APPROVED_WEEKS = new Set\(\[(.*?)\]\);/,
+        (match, p1) => `const APPROVED_WEEKS = new Set([${p1}, '2026-W46']);`
+      );
+      console.log(`[PREPLANNING] Added 2026-W46 to APPROVED_WEEKS in db.ts.`);
+    }
+
+    // Bump CURRENT_DB_VERSION
+    dbContent = dbContent.replace(
+      /const CURRENT_DB_VERSION = \d+;/,
+      match => {
+        const v = parseInt(match.match(/\d+/)![0], 10);
+        return `const CURRENT_DB_VERSION = ${v + 1};`;
       }
     );
-    
-    fs.writeFileSync(dbPath, updatedContent);
-    console.log(`[PREPLANNING] rapla-frontend/src/lib/db.ts wurde erfolgreich mit den neuen Wochenplänen aktualisiert (CURRENT_DB_VERSION erhöht).`);
-  } else {
-    console.error('[PREPLANNING] Fehler beim Finden des Ersetzungsbereichs in db.ts');
+
+    fs.writeFileSync(dbPath, dbContent, 'utf-8');
+    console.log(`[PREPLANNING] rapla-frontend/src/lib/db.ts wurde erfolgreich mit KW 46 aktualisiert (CURRENT_DB_VERSION erhöht).`);
   }
 } else {
   console.error('[PREPLANNING] db.ts Pfad existiert nicht.');
