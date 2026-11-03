@@ -15,6 +15,11 @@ Bitte stets darauf achten, dass alle Slots besetzt werden (kein Slot darf bei de
 - Teresa: Bis auf weiteres komplett herausgenommen (wird für keine Stunden oder Dienste eingeteilt).
 - Harishakti: Komplett herausgenommen (nicht mehr Teil des Teams, kann nicht mehr unterrichten und wird für keine Stunden oder Dienste eingeteilt).
 - Ulrich: Komplett herausgenommen (nicht mehr Teil des Teams, kann nicht mehr unterrichten und wird für keine Stunden oder Dienste eingeteilt).
+- Abha:
+  - Hat ab sofort immer mittwochs und freitags ihren freien Tag (Seva-frei). An diesen beiden Tagen wird sie für keinerlei Stunden oder Dienste eingeteilt.
+  - Sonntags hat sie dafür nicht mehr regulär frei.
+  - Sie darf wöchentlich bis zu drei Anfänger-Yogastunden geben (an Tagen, an denen sie nicht frei hat).
+  - In den 4 Wochen der Yogalehrerausbildung (YLA: 30.08.2026 – 27.09.2026) steht sie komplett nicht zur Verfügung.
 - Alexander Melior:
   - Seva-freie Zeiten: 28.10.2026 – 30.10.2026 (3 Kalendertage) sowie 19.11.2026 – 24.11.2026 (6 Kalendertage).
 - Christopher Mader:

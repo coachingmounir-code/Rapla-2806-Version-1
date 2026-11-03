@@ -102,6 +102,14 @@ export function getAbsenceDetails(teacherName: string, dayOfWeek: number, target
 }
 
 export function isTeacherAbsent(teacherName: string, dayOfWeek: number, targetWeekCode?: string, absences?: any[]): boolean {
+  if (teacherName) {
+    const nameLower = teacherName.toLowerCase().trim();
+    const teacherKey = Object.keys(wochenplanRules.teachers).find(k => nameLower.includes(k) || k.includes(nameLower));
+    const tRules = teacherKey ? (wochenplanRules.teachers as any)[teacherKey] : null;
+    if (tRules && tRules.freeDays && tRules.freeDays.includes(dayOfWeek)) {
+      return true;
+    }
+  }
   return getAbsenceDetails(teacherName, dayOfWeek, targetWeekCode, absences) !== null;
 }
 

@@ -89,8 +89,8 @@
     "abha": {
       "name": "Abha",
       "freeDays": [
-        0,
-        3
+        3,
+        5
       ],
       "maxMeditationPerWeek": 0,
       "maxSatsangsPerWeek": null,
@@ -656,7 +656,7 @@
   },
   "yoga": {
     "fridayMorningAnfaenger": {
-      "primary": "abha",
+      "primary": "",
       "backup": ""
     },
     "fridayMorningMittelstufe": {
