@@ -181,6 +181,7 @@ export interface Course {
   agreedTeacherId?: string | null; // Original teacher ID for whom this slot is firmly agreed
   agreedTeacherName?: string; // Original teacher name for whom this slot is firmly agreed
   agreementNotes?: string;   // Notes / context for this agreed slot
+  fixedAgreementRemoved?: boolean; // Explicitly unchecked fixed agreement so canonical sync won't re-enable it
 }
 
 export interface WeekPlan {
@@ -14116,10 +14117,17 @@ export function mergeWeekPlansLists(
       hasMergedFromIncoming = true;
     }
 
-    const mergedNotifiedLog = {
-      ...(remPlan.whatsappNotifiedLog || {}),
-      ...(locPlan.whatsappNotifiedLog || {})
+    const mergedNotifiedLog: Record<string, { timestamp: string; signature: string }> = {
+      ...(remPlan.whatsappNotifiedLog || {})
     };
+    if (locPlan.whatsappNotifiedLog) {
+      for (const [tId, locEntry] of Object.entries(locPlan.whatsappNotifiedLog)) {
+        const remEntry = mergedNotifiedLog[tId];
+        if (!remEntry || (locEntry?.timestamp || '') >= (remEntry?.timestamp || '')) {
+          mergedNotifiedLog[tId] = locEntry;
+        }
+      }
+    }
 
     return {
       ...remPlan,

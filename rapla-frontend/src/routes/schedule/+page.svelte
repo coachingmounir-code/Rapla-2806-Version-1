@@ -6,6 +6,8 @@
   import { isDateInYlaRange } from '$lib/ylaData';
   import {
     detectDeviationsForPlan,
+    buildManualEditProposals,
+    syncCanonicalFixedSlotsToPlan,
     buildWhatsAppDeepLink,
     markTeacherDeviationNotified,
     propagateFixedAgreementAcrossPlans,
@@ -142,6 +144,7 @@
   // WhatsApp Deviation Confirmation Modal ("Bestätigungsfenster") states
   let isWhatsAppModalOpen = $state(false);
   let whatsappModalTrigger = $state<'approval' | 'edit_on_approved' | 'manual'>('manual');
+  let whatsappModalItems = $state<TeacherDeviation[]>([]);
   let whatsappSelectedIds = $state<string[]>([]);
   let whatsappMessageDrafts = $state<Record<string, string>>({});
   let whatsappPhoneDrafts = $state<Record<string, string>>({});
@@ -151,10 +154,13 @@
   let whatsappFeedback = $state<Record<string, { type: 'ok' | 'err'; text: string }>>({});
 
   let planDeviations = $derived<TeacherDeviation[]>(
-    detectDeviationsForPlan(currentPlan, teachers, rooms)
+    detectDeviationsForPlan(currentPlan, teachers, rooms, weekPlans)
   );
   let unnotifiedDeviations = $derived<TeacherDeviation[]>(
     planDeviations.filter(d => !d.alreadyNotified)
+  );
+  let activeWhatsAppItems = $derived<TeacherDeviation[]>(
+    whatsappModalTrigger === 'edit_on_approved' ? whatsappModalItems : planDeviations
   );
 
   // Active validation conflicts for the selected teacher in the form
@@ -585,6 +591,10 @@
     }
     
     if (currentPlan) {
+      const syncedFixed = syncCanonicalFixedSlotsToPlan(currentPlan, weekPlans);
+      if (syncedFixed && db.getWeekPlan(currentPlan.id)) {
+        db.updateWeekPlan(currentPlan);
+      }
       const weekCode = currentPlan.targetWeekCode || getWeekCode(getMondayOfCurrentWeek());
       
       courses = currentPlan.courses
@@ -735,6 +745,8 @@
   }
 
   function saveCourseDirectly(courseData: Course) {
+    const existingInPlan = courses.find(c => c.id === courseData.id);
+    const prevSnapshot: Course | null = existingInPlan ? { ...existingInPlan } : null;
     const nowIso = new Date().toISOString();
     const agreedId = courseData.isFixedAgreement
       ? (courseData.agreedTeacherId || courseData.teacherId || null)
@@ -756,8 +768,11 @@
       db.updateCourse(stampedCourse);
     }
     loadData();
-    if (wasPlanApproved) {
-      maybeOpenWhatsAppModalAfterChange('edit_on_approved');
+    if (wasPlanApproved && currentPlan) {
+      const editProposals = buildManualEditProposals(currentPlan, prevSnapshot, stampedCourse, teachers, rooms);
+      if (editProposals.length > 0) {
+        openWhatsAppModalWithItems(editProposals, 'edit_on_approved');
+      }
     }
   }
 
@@ -769,6 +784,7 @@
     const updatedCourse: Course = {
       ...course,
       isFixedAgreement: nextFixed,
+      fixedAgreementRemoved: !nextFixed,
       agreedTeacherId: agreedId,
       agreedTeacherName: nextFixed ? (agreedTeacher?.name || course.agreedTeacherName || course.teacherName) : undefined,
       isManuallyEdited: true
@@ -790,6 +806,7 @@
     const updatedCourse: Course = {
       ...quickNoteCourse,
       isFixedAgreement: true,
+      fixedAgreementRemoved: false,
       agreedTeacherId: agreedId,
       agreedTeacherName: agreedTeacher?.name || quickNoteCourse.agreedTeacherName || quickNoteCourse.teacherName,
       agreementNotes: quickNoteText.trim() ? quickNoteText.trim() : undefined,
@@ -861,6 +878,7 @@
       : null;
     const agreedTeacherObj = effectiveAgreedId ? teachers.find(t => t.id === effectiveAgreedId) : null;
 
+    const prevSnapshot: Course | null = editingCourse ? { ...editingCourse } : null;
     const nowIso = new Date().toISOString();
     const wasPlanApproved = !!(currentPlan?.isApproved || currentPlan?.status === 'approved');
     const courseData: Course = {
@@ -878,6 +896,9 @@
       lastEditedAt: nowIso,
       status: wasPlanApproved ? 'approved' : (editingCourse?.status || 'draft'),
       isFixedAgreement: formIsFixedAgreement,
+      fixedAgreementRemoved: formIsFixedAgreement
+        ? false
+        : (editingCourse?.isFixedAgreement ? true : editingCourse?.fixedAgreementRemoved),
       agreedTeacherId: effectiveAgreedId,
       agreedTeacherName: formIsFixedAgreement
         ? (agreedTeacherObj?.name || editingCourse?.agreedTeacherName || finalTeacherName)
@@ -900,13 +921,18 @@
 
     isModalOpen = false;
     loadData();
-    if (wasPlanApproved) {
-      maybeOpenWhatsAppModalAfterChange('edit_on_approved');
+    if (wasPlanApproved && currentPlan) {
+      const editProposals = buildManualEditProposals(currentPlan, prevSnapshot, courseData, teachers, rooms);
+      if (editProposals.length > 0) {
+        openWhatsAppModalWithItems(editProposals, 'edit_on_approved');
+      }
     }
   }
 
   function handleDelete(id: string) {
     if (confirm('Möchten Sie diesen Kurs wirklich löschen?')) {
+      const existingToDelete = courses.find(c => c.id === id);
+      const deletedSnapshot: Course | null = existingToDelete ? { ...existingToDelete } : null;
       const wasPlanApproved = !!(currentPlan?.isApproved || currentPlan?.status === 'approved');
       if (currentPlan) {
         db.removeCourseFromWeekPlan(currentPlan.targetWeekCode || currentPlan.id, id, currentPlan);
@@ -915,8 +941,11 @@
       }
       isModalOpen = false;
       loadData();
-      if (wasPlanApproved) {
-        maybeOpenWhatsAppModalAfterChange('edit_on_approved');
+      if (wasPlanApproved && currentPlan && deletedSnapshot) {
+        const editProposals = buildManualEditProposals(currentPlan, deletedSnapshot, null, teachers, rooms);
+        if (editProposals.length > 0) {
+          openWhatsAppModalWithItems(editProposals, 'edit_on_approved');
+        }
       }
     }
   }
@@ -964,24 +993,28 @@
     return teachers.filter(t => (t.roleType === 'karma_yogi' || t.roleType === 'guest_teacher' || t.stayStartDate || t.stayEndDate) && !isTeacherInHouseForCourse(t));
   }
 
-  function openWhatsAppModal(trigger: 'approval' | 'edit_on_approved' | 'manual' = 'manual') {
-    const devs = detectDeviationsForPlan(currentPlan, teachers, rooms);
+  function openWhatsAppModalWithItems(
+    items: TeacherDeviation[],
+    trigger: 'approval' | 'edit_on_approved' | 'manual'
+  ) {
     whatsappModalTrigger = trigger;
+    whatsappModalItems = items;
     const msgDrafts: Record<string, string> = {};
     const phoneDrafts: Record<string, string> = {};
     const expanded: Record<string, boolean> = {};
     const selected: string[] = [];
 
-    for (const d of devs) {
+    for (const d of items) {
       msgDrafts[d.teacher.id] = d.messageText;
       phoneDrafts[d.teacher.id] = d.teacher.phone || '';
       expanded[d.teacher.id] = true;
-      if (!d.alreadyNotified) {
+      // On initial week approval ("approval") or single manual edit ("edit_on_approved"), select all proposed persons directly
+      if (trigger === 'approval' || trigger === 'edit_on_approved' || !d.alreadyNotified) {
         selected.push(d.teacher.id);
       }
     }
-    if (selected.length === 0 && devs.length > 0) {
-      selected.push(...devs.map(d => d.teacher.id));
+    if (selected.length === 0 && items.length > 0) {
+      selected.push(...items.map(d => d.teacher.id));
     }
 
     whatsappMessageDrafts = msgDrafts;
@@ -992,12 +1025,9 @@
     isWhatsAppModalOpen = true;
   }
 
-  function maybeOpenWhatsAppModalAfterChange(trigger: 'approval' | 'edit_on_approved') {
-    const devs = detectDeviationsForPlan(currentPlan, teachers, rooms);
-    const pending = devs.filter(d => !d.alreadyNotified);
-    if (pending.length > 0) {
-      openWhatsAppModal(trigger);
-    }
+  function openWhatsAppModal(trigger: 'approval' | 'edit_on_approved' | 'manual' = 'manual') {
+    const devs = detectDeviationsForPlan(currentPlan, teachers, rooms, weekPlans);
+    openWhatsAppModalWithItems(devs, trigger);
   }
 
   async function ensureTeacherPhoneSaved(teacherId: string): Promise<string> {
@@ -1011,6 +1041,12 @@
     return draftPhone || found?.phone || '';
   }
 
+  function markItemDoneInModalState(teacherId: string) {
+    whatsappModalItems = whatsappModalItems.map(item =>
+      item.teacher.id === teacherId ? { ...item, alreadyNotified: true } : item
+    );
+  }
+
   async function handleWhatsAppLinkSend(dev: TeacherDeviation) {
     const phone = await ensureTeacherPhoneSaved(dev.teacher.id);
     const text = whatsappMessageDrafts[dev.teacher.id] || dev.messageText;
@@ -1021,6 +1057,7 @@
       markTeacherDeviationNotified(currentPlan.id, dev.teacher.id, dev.signature);
       loadData();
     }
+    markItemDoneInModalState(dev.teacher.id);
     whatsappFeedback = {
       ...whatsappFeedback,
       [dev.teacher.id]: { type: 'ok', text: 'WhatsApp geöffnet & als benachrichtigt markiert' }
@@ -1038,6 +1075,7 @@
           markTeacherDeviationNotified(currentPlan.id, dev.teacher.id, dev.signature);
           loadData();
         }
+        markItemDoneInModalState(dev.teacher.id);
         whatsappFeedback = {
           ...whatsappFeedback,
           [dev.teacher.id]: { type: 'ok', text: 'Erfolgreich automatisch per WhatsApp-API gesendet!' }
@@ -1059,7 +1097,7 @@
     if (whatsappBatchSending) return;
     whatsappBatchSending = true;
     try {
-      for (const dev of planDeviations) {
+      for (const dev of activeWhatsAppItems) {
         if (whatsappSelectedIds.includes(dev.teacher.id)) {
           await handleWhatsAppApiSend(dev);
         }
@@ -1073,6 +1111,7 @@
     if (!currentPlan) return;
     markTeacherDeviationNotified(currentPlan.id, dev.teacher.id, dev.signature);
     loadData();
+    markItemDoneInModalState(dev.teacher.id);
     whatsappFeedback = {
       ...whatsappFeedback,
       [dev.teacher.id]: { type: 'ok', text: 'Als bereits informiert markiert' }
@@ -1081,7 +1120,7 @@
 
   function handleMarkAllDeviationsDone() {
     if (!currentPlan) return;
-    for (const dev of planDeviations) {
+    for (const dev of activeWhatsAppItems) {
       markTeacherDeviationNotified(currentPlan.id, dev.teacher.id, dev.signature);
     }
     loadData();
@@ -1128,6 +1167,7 @@
     latestPlan.lastEditedAt = nowIso;
     
     if (approved) {
+      syncCanonicalFixedSlotsToPlan(latestPlan, weekPlans);
       latestPlan.courses = latestPlan.courses.map(c => ({ ...c, status: 'approved', lastEditedAt: c.lastEditedAt || nowIso }));
     }
     
@@ -1140,7 +1180,10 @@
     window.dispatchEvent(new CustomEvent('rapla-data-synced'));
     loadData();
     if (approved) {
-      maybeOpenWhatsAppModalAfterChange('approval');
+      const approvalDevs = detectDeviationsForPlan(currentPlan, teachers, rooms, weekPlans);
+      if (approvalDevs.length > 0) {
+        openWhatsAppModalWithItems(approvalDevs, 'approval');
+      }
     }
   }
 
@@ -2284,12 +2327,20 @@
         <div style="display: flex; align-items: center; gap: 0.65rem;">
           <span style="font-size: 1.65rem;">📲</span>
           <div>
-            <h2 style="margin: 0; font-size: 1.25rem;">WhatsApp-Benachrichtigung bei Plan-Abweichung</h2>
+            <h2 style="margin: 0; font-size: 1.25rem;">
+              {#if whatsappModalTrigger === 'edit_on_approved'}
+                WhatsApp-Benachrichtigung zur manuellen Änderung
+              {:else if whatsappModalTrigger === 'approval'}
+                WhatsApp-Benachrichtigung zur Wochenfreigabe
+              {:else}
+                WhatsApp-Check: Fest vereinbarte Stunden
+              {/if}
+            </h2>
             <div style="font-size: 0.82rem; color: #475569; margin-top: 0.15rem;">
               {#if whatsappModalTrigger === 'approval'}
-                ✅ Wochenplan wurde soeben genehmigt – Abweichungen von fest vereinbarten Slots erkannt:
+                ✅ Woche wurde auf „Genehmigt & Veröffentlicht“ gesetzt – Vorschlag für Sevakas mit Abweichung von festen Stunden:
               {:else if whatsappModalTrigger === 'edit_on_approved'}
-                ⚡ Änderung im genehmigten Wochenplan gespeichert – Abweichung von festen Slots erkannt:
+                ⚡ Manuelle Anpassung im veröffentlichten Wochenplan – möchtest du diese geänderte Stunde jetzt per WhatsApp mitteilen?
               {:else}
                 Übersicht der Abweichungen von „Fest vereinbarten“ Slots ({currentPlan?.name || 'Aktuelle Woche'})
               {/if}
@@ -2310,17 +2361,17 @@
           </div>
         {/if}
 
-        {#if planDeviations.length === 0}
+        {#if activeWhatsAppItems.length === 0}
           <div class="wa-empty-state">
             <div style="font-size: 2.2rem; margin-bottom: 0.5rem;">🎉</div>
             <h3>Keine Abweichungen von festen Slots!</h3>
             <p>
-              Alle als <strong>„🤝 Fest vereinbart“</strong> markierten Slots stimmen in dieser Woche exakt mit den eingeteilten Personen überein (oder es wurden in dieser Woche noch keine Kurse als „Fest vereinbart“ markiert).
+              Alle als <strong>„🤝 Fest vereinbart“</strong> markierten Slots stimmen in dieser Woche exakt mit den eingeteilten Sevakas überein.
             </p>
           </div>
         {:else}
           <div class="wa-list-container">
-            {#each planDeviations as dev (dev.teacher.id)}
+            {#each activeWhatsAppItems as dev (dev.teacher.id)}
               {@const isSelected = whatsappSelectedIds.includes(dev.teacher.id)}
               {@const isExpanded = !!whatsappExpandedIds[dev.teacher.id]}
               {@const isSending = !!whatsappSendingIds[dev.teacher.id]}
@@ -2341,51 +2392,66 @@
                       <span class="wa-badge wa-badge-done" title="Für genau diesen Planungsstand wurde bereits benachrichtigt">
                         ✓ Bereits benachrichtigt
                       </span>
+                    {:else if dev.mode === 'manual_edit'}
+                      <span class="wa-badge wa-badge-new">
+                        ⚡ Geänderte Stunde
+                      </span>
                     {:else}
                       <span class="wa-badge wa-badge-new">
-                        🔔 Neue Abweichung
+                        🔔 Abweichung (Fester Slot)
                       </span>
                     {/if}
                   </div>
                 </div>
 
-                <!-- Soll -> Ist Category Summary Pills -->
-                <div class="wa-category-pills">
-                  {#each dev.categoryBreakdown as cat}
-                    <div
-                      class="wa-cat-pill"
-                      class:wa-cat-plus={cat.diff > 0}
-                      class:wa-cat-minus={cat.diff < 0}
-                      class:wa-cat-equal={cat.diff === 0}
-                    >
-                      <span class="wa-cat-name">{cat.category}:</span>
-                      <strong>{cat.soll} → {cat.ist}</strong>
-                      {#if cat.diff > 0}
-                        <span class="wa-cat-delta">(+{cat.diff})</span>
-                      {:else if cat.diff < 0}
-                        <span class="wa-cat-delta">({cat.diff})</span>
-                      {:else}
-                        <span class="wa-cat-delta">(✓)</span>
-                      {/if}
-                    </div>
-                  {/each}
-                </div>
+                {#if dev.categoryBreakdown.length > 0}
+                  <!-- Soll -> Ist Category Summary Pills (only for fixed-slot check) -->
+                  <div class="wa-category-pills">
+                    {#each dev.categoryBreakdown as cat}
+                      <div
+                        class="wa-cat-pill"
+                        class:wa-cat-plus={cat.diff > 0}
+                        class:wa-cat-minus={cat.diff < 0}
+                        class:wa-cat-equal={cat.diff === 0}
+                      >
+                        <span class="wa-cat-name">{cat.category}:</span>
+                        <strong>{cat.soll} → {cat.ist}</strong>
+                        {#if cat.diff > 0}
+                          <span class="wa-cat-delta">(+{cat.diff})</span>
+                        {:else if cat.diff < 0}
+                          <span class="wa-cat-delta">({cat.diff})</span>
+                        {:else}
+                          <span class="wa-cat-delta">(✓)</span>
+                        {/if}
+                      </div>
+                    {/each}
+                  </div>
+                {/if}
 
                 <!-- Concrete Slot Changes -->
                 <div class="wa-changes-list">
-                  {#each dev.missingFixedSlots as m}
-                    <div class="wa-change-item wa-change-missing">
-                      <span>❌ <strong>Fester Slot entfällt / Vertretung:</strong> {DAYS.find(d => d.value === m.course.dayOfWeek)?.label}, {m.course.startTime} – {m.course.name}</span>
-                      {#if m.substituteName}
-                        <span class="wa-sub-tag">übernommen von {m.substituteName}</span>
-                      {:else}
-                        <span class="wa-sub-tag">unbesetzt</span>
+                  {#each dev.uiChangeSummaries as summary}
+                    <div
+                      class="wa-change-item"
+                      class:wa-change-missing={summary.kind === 'missing'}
+                      class:wa-change-extra={summary.kind === 'added'}
+                      class:wa-change-swap={summary.kind === 'swap' || summary.kind === 'modified'}
+                    >
+                      <span>
+                        {#if summary.kind === 'missing'}
+                          ❌
+                        {:else if summary.kind === 'added'}
+                          ➕
+                        {:else if summary.kind === 'swap'}
+                          🔄
+                        {:else}
+                          ✏️
+                        {/if}
+                        <strong>{summary.text}</strong>
+                      </span>
+                      {#if summary.badge}
+                        <span class="wa-sub-tag">{summary.badge}</span>
                       {/if}
-                    </div>
-                  {/each}
-                  {#each dev.extraSlots as e}
-                    <div class="wa-change-item wa-change-extra">
-                      <span>➕ <strong>Zusätzlich (nicht fest vereinbart):</strong> {DAYS.find(d => d.value === e.dayOfWeek)?.label}, {e.startTime} – {e.name}</span>
                     </div>
                   {/each}
                 </div>
@@ -2482,12 +2548,12 @@
           ⚙️ Gateway-Einstellungen
         </a>
         <div style="display: flex; gap: 0.6rem; margin-left: auto; flex-wrap: wrap;">
-          {#if planDeviations.some(d => !d.alreadyNotified)}
+          {#if activeWhatsAppItems.some(d => !d.alreadyNotified)}
             <button type="button" class="btn btn-secondary" onclick={handleMarkAllDeviationsDone}>
               ✓ Alle als informiert markieren
             </button>
           {/if}
-          {#if hasServerApi && planDeviations.length > 0}
+          {#if hasServerApi && activeWhatsAppItems.length > 0}
             <button
               type="button"
               class="btn btn-primary"
@@ -4078,6 +4144,12 @@
     background: #eff6ff;
     border: 1px solid #bfdbfe;
     color: #1e40af;
+  }
+
+  .wa-change-swap {
+    background: #fffbeb;
+    border: 1px solid #fde68a;
+    color: #92400e;
   }
 
   .wa-sub-tag {
