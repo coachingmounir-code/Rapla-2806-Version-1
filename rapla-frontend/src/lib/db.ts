@@ -196,6 +196,7 @@ export interface WeekPlan {
   isApproved?: boolean;
   hasManualEdits?: boolean;
   manuallyUnapproved?: boolean;
+  manuallyApprovedByUser?: boolean;
   lastEditedAt?: string;
   deletedCourseIds?: string[];
   whatsappNotifiedLog?: Record<string, { timestamp: string; signature: string }>;
@@ -13285,8 +13286,9 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
   {
     "id": "plan-pre-2026-W46",
     "name": "Vorplanung 2026-W46 (Automatisch)",
-    "status": "approved",
-    "isApproved": true,
+    "status": "draft",
+    "isApproved": false,
+    "manuallyUnapproved": true,
     "targetWeekCode": "2026-W46",
     "courses": [
       {
@@ -13299,7 +13301,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-burnie-bansemer",
         "isAiPlanned": true,
-        "status": "approved",
+        "status": "draft",
         "teacherName": "burnie"
       },
       {
@@ -13312,7 +13314,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-5",
         "teacherId": "teacher-gen-chandrashekara",
         "isAiPlanned": true,
-        "status": "approved",
+        "status": "draft",
         "teacherName": "Chandrashekara"
       },
       {
@@ -13325,7 +13327,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-burnie-bansemer",
         "isAiPlanned": false,
-        "status": "approved",
+        "status": "draft",
         "teacherName": "burnie"
       },
       {
@@ -13338,7 +13340,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-burnie-bansemer",
         "isAiPlanned": false,
-        "status": "approved",
+        "status": "draft",
         "teacherName": "burnie"
       },
       {
@@ -13351,7 +13353,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-5",
         "teacherId": "teacher-gen-anjali-gelzleichter",
         "isAiPlanned": false,
-        "status": "approved",
+        "status": "draft",
         "teacherName": "Anjali"
       },
       {
@@ -13364,7 +13366,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": false,
-        "status": "approved",
+        "status": "draft",
         "teacherName": "Pranava"
       },
       {
@@ -13377,7 +13379,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-5",
         "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
-        "status": "approved",
+        "status": "draft",
         "teacherName": "Karuna"
       },
       {
@@ -13390,7 +13392,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-7",
         "teacherId": "teacher-gen-burnie-bansemer",
         "isAiPlanned": true,
-        "status": "approved",
+        "status": "draft",
         "teacherName": "burnie"
       },
       {
@@ -13403,7 +13405,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-adam-zmuda",
         "isAiPlanned": true,
-        "status": "approved",
+        "status": "draft",
         "teacherName": "Adam"
       },
       {
@@ -13416,7 +13418,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-5",
         "teacherId": "teacher-gen-mouniir-jaber",
         "isAiPlanned": true,
-        "status": "approved",
+        "status": "draft",
         "teacherName": "Mounir"
       },
       {
@@ -13429,7 +13431,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
-        "status": "approved",
+        "status": "draft",
         "teacherName": "Karuna"
       },
       {
@@ -13442,7 +13444,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-5",
         "teacherId": "teacher-gen-christopher",
         "isAiPlanned": true,
-        "status": "approved",
+        "status": "draft",
         "teacherName": "Christopher"
       },
       {
@@ -13455,7 +13457,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-anjali-gelzleichter",
         "isAiPlanned": false,
-        "status": "approved",
+        "status": "draft",
         "teacherName": "Anjali"
       },
       {
@@ -13468,7 +13470,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-burnie-bansemer",
         "isAiPlanned": false,
-        "status": "approved",
+        "status": "draft",
         "teacherName": "burnie"
       },
       {
@@ -13481,7 +13483,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-5",
         "teacherId": "teacher-gen-chandrashekara",
         "isAiPlanned": true,
-        "status": "approved",
+        "status": "draft",
         "teacherName": "Chandrashekara"
       },
       {
@@ -13494,7 +13496,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": false,
-        "status": "approved",
+        "status": "draft",
         "teacherName": "Pranava"
       },
       {
@@ -13507,7 +13509,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-5",
         "teacherId": "teacher-gen-chandrashekara",
         "isAiPlanned": true,
-        "status": "approved",
+        "status": "draft",
         "teacherName": "Chandrashekara"
       },
       {
@@ -13520,7 +13522,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-nirmaya-fodor",
         "isAiPlanned": false,
-        "status": "approved",
+        "status": "draft",
         "teacherName": "Nirmaya"
       },
       {
@@ -13533,7 +13535,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-narayani-kedenburg",
         "isAiPlanned": false,
-        "status": "approved",
+        "status": "draft",
         "teacherName": "Narayani"
       },
       {
@@ -13546,7 +13548,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-5",
         "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": true,
-        "status": "approved",
+        "status": "draft",
         "teacherName": "Pranava"
       },
       {
@@ -13559,7 +13561,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-5",
         "teacherId": "teacher-gen-alexander-melior",
         "isAiPlanned": false,
-        "status": "approved",
+        "status": "draft",
         "teacherName": "Alexander"
       },
       {
@@ -13572,7 +13574,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-christopher",
         "isAiPlanned": true,
-        "status": "approved",
+        "status": "draft",
         "teacherName": "Christopher"
       },
       {
@@ -13585,7 +13587,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
-        "status": "approved",
+        "status": "draft",
         "teacherName": "Karuna"
       },
       {
@@ -13598,7 +13600,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-5",
         "teacherId": "teacher-gen-anjali-gelzleichter",
         "isAiPlanned": false,
-        "status": "approved",
+        "status": "draft",
         "teacherName": "Anjali"
       },
       {
@@ -13611,7 +13613,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-abha-morkoetter",
         "isAiPlanned": false,
-        "status": "approved",
+        "status": "draft",
         "teacherName": "Abha"
       },
       {
@@ -13624,7 +13626,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-5",
         "teacherId": "teacher-gen-narayani-kedenburg",
         "isAiPlanned": false,
-        "status": "approved",
+        "status": "draft",
         "teacherName": "Narayani"
       },
       {
@@ -13637,7 +13639,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-chandrashekara",
         "isAiPlanned": true,
-        "status": "approved",
+        "status": "draft",
         "teacherName": "Chandrashekara"
       },
       {
@@ -13650,7 +13652,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-7",
         "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": false,
-        "status": "approved",
+        "status": "draft",
         "teacherName": "Pranava"
       },
       {
@@ -13663,7 +13665,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-5",
         "teacherId": "teacher-gen-mouniir-jaber",
         "isAiPlanned": true,
-        "status": "approved",
+        "status": "draft",
         "teacherName": "Mounir"
       },
       {
@@ -13676,7 +13678,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-narayani-kedenburg",
         "isAiPlanned": false,
-        "status": "approved",
+        "status": "draft",
         "teacherName": "Narayani"
       },
       {
@@ -13689,7 +13691,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-alexander-melior",
         "isAiPlanned": false,
-        "status": "approved",
+        "status": "draft",
         "teacherName": "Alexander"
       },
       {
@@ -13702,7 +13704,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-5",
         "teacherId": "teacher-gen-narayani-kedenburg",
         "isAiPlanned": false,
-        "status": "approved",
+        "status": "draft",
         "teacherName": "Narayani"
       },
       {
@@ -13715,7 +13717,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-chandrashekara",
         "isAiPlanned": true,
-        "status": "approved",
+        "status": "draft",
         "teacherName": "Chandrashekara"
       },
       {
@@ -13728,7 +13730,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
-        "status": "approved",
+        "status": "draft",
         "teacherName": "Karuna"
       },
       {
@@ -13741,7 +13743,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-6",
         "teacherId": "teacher-gen-adam-zmuda",
         "isAiPlanned": true,
-        "status": "approved",
+        "status": "draft",
         "teacherName": "Adam"
       },
       {
@@ -13754,7 +13756,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-5",
         "teacherId": "teacher-gen-mouniir-jaber",
         "isAiPlanned": true,
-        "status": "approved",
+        "status": "draft",
         "teacherName": "Mounir"
       },
       {
@@ -13767,7 +13769,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-chandrashekara",
         "isAiPlanned": true,
-        "status": "approved",
+        "status": "draft",
         "teacherName": "Chandrashekara"
       },
       {
@@ -13780,7 +13782,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-alexander-melior",
         "isAiPlanned": false,
-        "status": "approved",
+        "status": "draft",
         "teacherName": "Alexander"
       },
       {
@@ -13793,7 +13795,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-5",
         "teacherId": "teacher-gen-abha-morkoetter",
         "isAiPlanned": false,
-        "status": "approved",
+        "status": "draft",
         "teacherName": "Abha"
       },
       {
@@ -13806,7 +13808,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-5",
         "teacherId": null,
         "isAiPlanned": false,
-        "status": "approved"
+        "status": "draft"
       },
       {
         "id": "course-2026-W46-59",
@@ -13818,7 +13820,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-abha-morkoetter",
         "isAiPlanned": true,
-        "status": "approved",
+        "status": "draft",
         "teacherName": "Abha"
       },
       {
@@ -13831,7 +13833,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-5",
         "teacherId": "teacher-gen-nirmaya-fodor",
         "isAiPlanned": false,
-        "status": "approved",
+        "status": "draft",
         "teacherName": "Nirmaya"
       },
       {
@@ -13844,7 +13846,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-christopher",
         "isAiPlanned": true,
-        "status": "approved",
+        "status": "draft",
         "teacherName": "Christopher"
       },
       {
@@ -13857,7 +13859,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
-        "status": "approved",
+        "status": "draft",
         "teacherName": "Karuna"
       },
       {
@@ -13870,7 +13872,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-5",
         "teacherId": "teacher-gen-burnie-bansemer",
         "isAiPlanned": true,
-        "status": "approved",
+        "status": "draft",
         "teacherName": "burnie"
       },
       {
@@ -13883,7 +13885,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-5",
         "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": false,
-        "status": "approved",
+        "status": "draft",
         "teacherName": "Pranava"
       },
       {
@@ -13896,7 +13898,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-nirmaya-fodor",
         "isAiPlanned": false,
-        "status": "approved",
+        "status": "draft",
         "teacherName": "Nirmaya"
       },
       {
@@ -13909,7 +13911,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-5",
         "teacherId": "teacher-gen-alexander-melior",
         "isAiPlanned": true,
-        "status": "approved",
+        "status": "draft",
         "teacherName": "Alexander"
       },
       {
@@ -13922,7 +13924,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": false,
-        "status": "approved",
+        "status": "draft",
         "teacherName": "Pranava"
       },
       {
@@ -13935,7 +13937,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-alexander-melior",
         "isAiPlanned": true,
-        "status": "approved",
+        "status": "draft",
         "teacherName": "Alexander"
       },
       {
@@ -13948,7 +13950,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-5",
         "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
-        "status": "approved",
+        "status": "draft",
         "teacherName": "Karuna"
       },
       {
@@ -13961,7 +13963,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-7",
         "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": true,
-        "status": "approved",
+        "status": "draft",
         "teacherName": "Pranava"
       },
       {
@@ -13974,7 +13976,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-adam-anjali",
         "isAiPlanned": false,
-        "status": "approved",
+        "status": "draft",
         "teacherName": "Adam, Anjali"
       },
       {
@@ -13987,7 +13989,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-5",
         "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": false,
-        "status": "approved",
+        "status": "draft",
         "teacherName": "Pranava"
       },
       {
@@ -14000,7 +14002,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
-        "status": "approved",
+        "status": "draft",
         "teacherName": "Karuna"
       },
       {
@@ -14013,7 +14015,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-abha-morkoetter",
         "isAiPlanned": true,
-        "status": "approved",
+        "status": "draft",
         "teacherName": "Abha"
       },
       {
@@ -14026,7 +14028,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-5",
         "teacherId": "teacher-gen-nirmaya-fodor",
         "isAiPlanned": false,
-        "status": "approved",
+        "status": "draft",
         "teacherName": "Nirmaya"
       },
       {
@@ -14039,7 +14041,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-abha-morkoetter",
         "isAiPlanned": false,
-        "status": "approved",
+        "status": "draft",
         "teacherName": "Abha"
       },
       {
@@ -14052,7 +14054,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": false,
-        "status": "approved",
+        "status": "draft",
         "teacherName": "Pranava"
       },
       {
@@ -14065,7 +14067,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-5",
         "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
-        "status": "approved",
+        "status": "draft",
         "teacherName": "Karuna"
       },
       {
@@ -14078,7 +14080,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-yl",
         "isAiPlanned": false,
-        "status": "approved",
+        "status": "draft",
         "teacherName": "! YL"
       },
       {
@@ -14091,7 +14093,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-5",
         "teacherId": "teacher-gen-anjali-gelzleichter",
         "isAiPlanned": false,
-        "status": "approved",
+        "status": "draft",
         "teacherName": "Anjali"
       },
       {
@@ -14104,7 +14106,7 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-anjali-gelzleichter",
         "isAiPlanned": false,
-        "status": "approved",
+        "status": "draft",
         "teacherName": "Anjali"
       },
       {
@@ -14117,11 +14119,11 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
         "roomId": "room-2",
         "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": false,
-        "status": "approved",
+        "status": "draft",
         "teacherName": "Karuna"
       }
     ],
-    "createdAt": "2026-11-03T10:40:14.155Z"
+    "createdAt": "2026-11-03T10:56:45.447Z"
   }
 ];
 
@@ -14204,11 +14206,10 @@ if (typeof window !== 'undefined' && !(window as any).__rapla_storage_listener_a
 
 // Helper functions for storage (Read-safe: never writes defaults to localStorage on cache miss)
 function getStored<T>(key: string, defaultValue: T): T {
-  if (typeof window === 'undefined') return defaultValue;
-  
   if (inMemoryStore[key] !== undefined) {
     return inMemoryStore[key] as T;
   }
+  if (typeof window === 'undefined') return defaultValue;
 
   // Fallback to localStorage without polluting localStorage with un-synced defaults
   const stored = localStorage.getItem(key);
@@ -14343,10 +14344,10 @@ async function upsertKeyToCloud(key: string, serializedValue: string): Promise<b
 }
 
 async function setStored<T>(key: string, value: T, immediate = false): Promise<boolean> {
-  if (typeof window === 'undefined') return false;
+  inMemoryStore[key] = value;
+  if (typeof window === 'undefined') return true;
   
   const serialized = JSON.stringify(value);
-  inMemoryStore[key] = value;
   try {
     localStorage.setItem(key, serialized);
   } catch (e) {
@@ -14989,6 +14990,8 @@ export function mergeWeekPlansLists(
       ...remPlan,
       isApproved: useLocPlanMeta ? locPlan.isApproved : remPlan.isApproved,
       status: useLocPlanMeta ? locPlan.status : remPlan.status,
+      manuallyUnapproved: useLocPlanMeta ? locPlan.manuallyUnapproved : remPlan.manuallyUnapproved,
+      manuallyApprovedByUser: useLocPlanMeta ? locPlan.manuallyApprovedByUser : remPlan.manuallyApprovedByUser,
       isManualOnly: (useLocPlanMeta ? locPlan.isManualOnly : remPlan.isManualOnly) || anyCourseMerged || remPlan.isManualOnly,
       hasManualEdits: (useLocPlanMeta ? locPlan.hasManualEdits : remPlan.hasManualEdits) || anyCourseMerged || remPlan.hasManualEdits,
       seminarLeaderIds: useLocPlanMeta && locPlan.seminarLeaderIds ? [...locPlan.seminarLeaderIds] : (remPlan.seminarLeaderIds || []),
@@ -15049,7 +15052,7 @@ export function reconcilePlansWithDefaults(plans: WeekPlan[]): { plans: WeekPlan
       if (defPlan.targetWeekCode && plan.targetWeekCode !== defPlan.targetWeekCode) {
         plan.targetWeekCode = defPlan.targetWeekCode;
       }
-      if (defPlan.isApproved && plan.isApproved !== true && !(plan as any).manuallyUnapproved) {
+      if (defPlan.isApproved && plan.isApproved !== false && plan.status !== 'draft' && !(plan as any).manuallyUnapproved) {
         plan.isApproved = true;
         plan.status = 'approved';
       }
@@ -15135,7 +15138,7 @@ export function reconcilePlansWithDefaults(plans: WeekPlan[]): { plans: WeekPlan
   }
 
   // 3. Apply universal normalizations across all plans (strictly respecting manual edits & approved plans)
-  const APPROVED_WEEKS = new Set(['2026-W36', '2026-W37', '2026-W38', '2026-W39', '2026-W40', '2026-W41', '2026-W42', '2026-W43', '2026-W44', '2026-W45', '2026-W46']);
+  const APPROVED_WEEKS = new Set(['2026-W36', '2026-W37', '2026-W38', '2026-W39', '2026-W40', '2026-W41', '2026-W42', '2026-W43', '2026-W44', '2026-W45']);
 
   for (const p of list) {
     if (p.targetWeekCode === '2026-W36') {
@@ -15144,7 +15147,7 @@ export function reconcilePlansWithDefaults(plans: WeekPlan[]): { plans: WeekPlan
       p.isManualOnly = true;
       p.hasManualEdits = true;
     } else if (p.targetWeekCode && APPROVED_WEEKS.has(p.targetWeekCode)) {
-      if (!(p as any).manuallyUnapproved) {
+      if (!(p as any).manuallyUnapproved && p.isApproved !== false && p.status !== 'draft') {
         p.isApproved = true;
         p.status = 'approved';
       }
@@ -15154,6 +15157,22 @@ export function reconcilePlansWithDefaults(plans: WeekPlan[]): { plans: WeekPlan
       } else if (p.status !== 'blanko') {
         p.isApproved = false;
         p.status = 'draft';
+      }
+    }
+
+    // Ensure KW 46 defaults to draft / unapproved unless explicitly approved by user
+    if (p.targetWeekCode === '2026-W46') {
+      if (!(p as any).manuallyApprovedByUser) {
+        p.isApproved = false;
+        p.status = 'draft';
+        (p as any).manuallyUnapproved = true;
+        if (Array.isArray(p.courses)) {
+          p.courses.forEach(c => {
+            if (!c.isManuallyEdited && c.status === 'approved') {
+              c.status = 'draft';
+            }
+          });
+        }
       }
     }
 
@@ -15528,7 +15547,7 @@ export function reconcilePlansWithDefaults(plans: WeekPlan[]): { plans: WeekPlan
   return { plans: list, hasChanges: beforeJson !== afterJson };
 }
 
-const CURRENT_DB_VERSION = 152;
+const CURRENT_DB_VERSION = 155;
 
 // Database Actions
 export const db = {
@@ -16200,8 +16219,11 @@ export const db = {
       plan.status = isApproved ? 'approved' : 'draft';
       plan.hasManualEdits = true;
       (plan as any).manuallyUnapproved = !isApproved;
+      (plan as any).manuallyApprovedByUser = isApproved;
       if (isApproved) {
         plan.courses = plan.courses.map(c => ({ ...c, status: 'approved', lastEditedAt: c.lastEditedAt || nowIso }));
+      } else {
+        plan.courses = plan.courses.map(c => ({ ...c, status: 'draft', lastEditedAt: c.lastEditedAt || nowIso }));
       }
       plan.lastEditedAt = nowIso;
     }
@@ -16211,7 +16233,9 @@ export const db = {
   isWeekPlanApproved: (weekCodeOrPlanId: string): boolean => {
     const list = db.getWeekPlans();
     const plan = list.find(p => p.id === weekCodeOrPlanId || p.targetWeekCode === weekCodeOrPlanId);
-    return !!plan && (plan.isApproved === true || (plan.status === 'approved' && plan.isApproved !== false));
+    if (!plan) return false;
+    if (plan.isApproved === false || plan.status === 'draft' || (plan as any).manuallyUnapproved) return false;
+    return plan.isApproved === true || plan.status === 'approved';
   },
 
   // Courses API - maps to specific plan (defaults to first approved plan if no planId provided)

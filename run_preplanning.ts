@@ -512,7 +512,7 @@ function formatPlanCoursesCode(courses: any[]): string {
         "roomId": "${c.roomId}",
         "teacherId": ${c.teacherId ? `"${c.teacherId}"` : 'null'},
         "isAiPlanned": ${Boolean(c.isAiPlanned)},
-        "status": "approved"${extraStr}
+        "status": "draft"${extraStr}
       }`;
   });
   return '[\n' + lines.join(',\n') + '\n    ]';
@@ -534,8 +534,9 @@ if (fs.existsSync(dbPath)) {
     const w46PlanCode = `  {
     "id": "plan-pre-2026-W46",
     "name": "Vorplanung 2026-W46 (Automatisch)",
-    "status": "approved",
-    "isApproved": true,
+    "status": "draft",
+    "isApproved": false,
+    "manuallyUnapproved": true,
     "targetWeekCode": "2026-W46",
     "courses": ${formatPlanCoursesCode(w46Courses)},
     "createdAt": "${new Date().toISOString()}"
@@ -559,15 +560,7 @@ if (fs.existsSync(dbPath)) {
       }
     }
 
-    // Update APPROVED_WEEKS
-    const approvedMatch = dbContent.match(/const APPROVED_WEEKS = new Set\(\[(.*?)\]\);/);
-    if (approvedMatch && !approvedMatch[1].includes("'2026-W46'")) {
-      dbContent = dbContent.replace(
-        /const APPROVED_WEEKS = new Set\(\[(.*?)\]\);/,
-        (match, p1) => `const APPROVED_WEEKS = new Set([${p1}, '2026-W46']);`
-      );
-      console.log(`[PREPLANNING] Added 2026-W46 to APPROVED_WEEKS in db.ts.`);
-    }
+    // Do NOT add to APPROVED_WEEKS - newly planned weeks should remain unapproved/draft by default!
 
     // Bump CURRENT_DB_VERSION
     dbContent = dbContent.replace(

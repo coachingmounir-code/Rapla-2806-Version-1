@@ -443,7 +443,8 @@
 
     const isPlanApprovedWithCourses = (p: WeekPlan | undefined): boolean => {
       if (!p) return false;
-      const isApproved = p.isApproved === true || (p.status === 'approved' && p.isApproved !== false);
+      if (p.isApproved === false || p.status === 'draft' || (p as any).manuallyUnapproved) return false;
+      const isApproved = p.isApproved === true || p.status === 'approved';
       return isApproved && Array.isArray(p.courses) && p.courses.length > 0;
     };
 
@@ -750,7 +751,7 @@
     const weekCode = getWeekCode(monday);
     
     let foundPlan = weekPlans.find(p => p.targetWeekCode === weekCode);
-    const approved = !!foundPlan && (foundPlan.isApproved === true || (foundPlan.status === 'approved' && foundPlan.isApproved !== false));
+    const approved = !!foundPlan && foundPlan.isApproved !== false && foundPlan.status !== 'draft' && !(foundPlan as any).manuallyUnapproved && (foundPlan.isApproved === true || foundPlan.status === 'approved');
     
     isWeekApproved = approved;
     currentPlan = foundPlan || null;

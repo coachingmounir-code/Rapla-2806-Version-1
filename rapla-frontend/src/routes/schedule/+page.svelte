@@ -760,7 +760,7 @@
       isAiPlanned: false,
       lastEditedAt: nowIso
     };
-    const wasPlanApproved = !!(currentPlan?.isApproved || currentPlan?.status === 'approved');
+    const wasPlanApproved = isPlanApproved(currentPlan);
     if (currentPlan) {
       db.upsertCourseInWeekPlan(currentPlan.targetWeekCode || currentPlan.id, stampedCourse, currentPlan);
       propagateFixedAgreementAcrossPlans(stampedCourse, currentPlan.id);
@@ -880,7 +880,7 @@
 
     const prevSnapshot: Course | null = editingCourse ? { ...editingCourse } : null;
     const nowIso = new Date().toISOString();
-    const wasPlanApproved = !!(currentPlan?.isApproved || currentPlan?.status === 'approved');
+    const wasPlanApproved = isPlanApproved(currentPlan);
     const courseData: Course = {
       id: editingCourse?.id || 'course-' + Date.now(),
       name: formName,
@@ -933,7 +933,7 @@
     if (confirm('Möchten Sie diesen Kurs wirklich löschen?')) {
       const existingToDelete = courses.find(c => c.id === id);
       const deletedSnapshot: Course | null = existingToDelete ? { ...existingToDelete } : null;
-      const wasPlanApproved = !!(currentPlan?.isApproved || currentPlan?.status === 'approved');
+      const wasPlanApproved = isPlanApproved(currentPlan);
       if (currentPlan) {
         db.removeCourseFromWeekPlan(currentPlan.targetWeekCode || currentPlan.id, id, currentPlan);
       } else {
@@ -1155,6 +1155,12 @@
     };
   }
 
+  function isPlanApproved(plan: WeekPlan | null | undefined): boolean {
+    if (!plan) return false;
+    if (plan.isApproved === false || plan.status === 'draft' || (plan as any).manuallyUnapproved) return false;
+    return plan.isApproved === true || plan.status === 'approved';
+  }
+
   function togglePublishPlan(approved: boolean) {
     if (!currentPlan) return;
     const latestPlan = db.getWeekPlan(currentPlan.id) || currentPlan;
@@ -1162,13 +1168,16 @@
     
     latestPlan.isApproved = approved;
     latestPlan.status = approved ? 'approved' : 'draft';
-    (latestPlan as any).manuallyUnapproved = !approved;
+    latestPlan.manuallyUnapproved = !approved;
+    latestPlan.manuallyApprovedByUser = approved;
     latestPlan.hasManualEdits = true;
     latestPlan.lastEditedAt = nowIso;
     
     if (approved) {
       syncCanonicalFixedSlotsToPlan(latestPlan, weekPlans);
       latestPlan.courses = latestPlan.courses.map(c => ({ ...c, status: 'approved', lastEditedAt: c.lastEditedAt || nowIso }));
+    } else {
+      latestPlan.courses = latestPlan.courses.map(c => ({ ...c, status: 'draft', lastEditedAt: c.lastEditedAt || nowIso }));
     }
     
     if (!db.getWeekPlan(latestPlan.id)) {
@@ -1177,6 +1186,7 @@
       db.updateWeekPlan(latestPlan);
     }
     
+    currentPlan = latestPlan;
     window.dispatchEvent(new CustomEvent('rapla-data-synced'));
     loadData();
     if (approved) {
@@ -1324,7 +1334,7 @@
     <h1 style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
       <span>Wochenplan</span>
       <span style="font-size: 1.2rem; font-weight: 500; color: var(--text-secondary);">({currentPlan?.name || 'Aktiv'}) {currentPlan?.isManualOnly ? '🔒' : ''}</span>
-      {#if currentPlan?.isApproved || currentPlan?.status === 'approved'}
+      {#if isPlanApproved(currentPlan)}
         <span class="approval-status-pill approved" title="Diese Woche ist genehmigt und in der Team-Ansicht sichtbar">
           ✅ Genehmigt & Freigegeben
         </span>
@@ -1428,13 +1438,13 @@
     <button
       type="button"
       class="btn-whatsapp-check"
-      class:has-pending={unnotifiedDeviations.length > 0 && (currentPlan?.isApproved || currentPlan?.status === 'approved')}
+      class:has-pending={unnotifiedDeviations.length > 0 && isPlanApproved(currentPlan)}
       onclick={() => openWhatsAppModal('manual')}
       title="Prüft Abweichungen von fest vereinbarten Slots und öffnet das WhatsApp-Bestätigungsfenster"
     >
       <span>📲</span>
       <span>WhatsApp-Check ({planDeviations.length})</span>
-      {#if unnotifiedDeviations.length > 0 && (currentPlan?.isApproved || currentPlan?.status === 'approved')}
+      {#if unnotifiedDeviations.length > 0 && isPlanApproved(currentPlan)}
         <span class="wa-pending-badge">{unnotifiedDeviations.length} offen</span>
       {/if}
     </button>
@@ -1467,18 +1477,18 @@
     {#if currentPlan}
       <label 
         class="approval-toggle-tool"
-        class:is-approved={currentPlan.isApproved || currentPlan.status === 'approved'}
-        title={currentPlan.isApproved || currentPlan.status === 'approved' 
+        class:is-approved={isPlanApproved(currentPlan)}
+        title={isPlanApproved(currentPlan)
           ? 'Diese Woche ist für die Team-Ansicht genehmigt und veröffentlicht. Klicken, um Freigabe aufzuheben.' 
           : 'Diese Woche ist als Entwurf nur in der Admin-Ansicht sichtbar. Häkchen setzen, um sie für das Team freizugeben.'}
       >
         <input 
           type="checkbox" 
-          checked={currentPlan.isApproved ?? (currentPlan.status === 'approved')} 
+          checked={isPlanApproved(currentPlan)} 
           onchange={(e) => togglePublishPlan(e.currentTarget.checked)}
         />
         <span class="approval-label">
-          {#if currentPlan.isApproved ?? (currentPlan.status === 'approved')}
+          {#if isPlanApproved(currentPlan)}
             <span class="approval-icon">✅</span>
             <span class="approval-text"><strong>Genehmigt & Veröffentlicht</strong> <small>(Team-Ansicht: Sichtbar)</small></span>
           {:else}
@@ -2351,7 +2361,7 @@
       </div>
 
       <div class="modal-body wa-modal-body">
-        {#if !(currentPlan?.isApproved || currentPlan?.status === 'approved')}
+        {#if !isPlanApproved(currentPlan)}
           <div class="wa-draft-banner">
             <span>⏳</span>
             <div>
