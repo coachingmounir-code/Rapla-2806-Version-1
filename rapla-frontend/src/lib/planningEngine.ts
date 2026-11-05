@@ -87,6 +87,22 @@ export function getAbsenceDetails(teacherName: string, dayOfWeek: number, target
     if (entry) return entry;
   }
 
+  // Regular free days (Seva-frei) from rules
+  if (teacherName) {
+    const nameLower = teacherName.toLowerCase().trim();
+    const teacherKey = Object.keys(wochenplanRules.teachers).find(k => nameLower.includes(k) || k.includes(nameLower));
+    const tRules = teacherKey ? (wochenplanRules.teachers as any)[teacherKey] : null;
+    if (tRules && tRules.freeDays && tRules.freeDays.includes(dayOfWeek)) {
+      return {
+        teacherName,
+        type: 'Frei',
+        startDate: courseDate,
+        endDate: courseDate,
+        note: 'Regulärer freier Wochentag (Seva-frei)'
+      };
+    }
+  }
+
   // Abha is completely unavailable during the 4 weeks of Yogalehrerausbildung (YLA: 30.08.2026 - 27.09.2026)
   if (teacherName.toLowerCase().includes('abha') && isDateInYlaRange(courseDate)) {
     return {
@@ -102,13 +118,15 @@ export function getAbsenceDetails(teacherName: string, dayOfWeek: number, target
 }
 
 export function isTeacherAbsent(teacherName: string, dayOfWeek: number, targetWeekCode?: string, absences?: any[]): boolean {
-  if (teacherName) {
-    const nameLower = teacherName.toLowerCase().trim();
-    const teacherKey = Object.keys(wochenplanRules.teachers).find(k => nameLower.includes(k) || k.includes(nameLower));
-    const tRules = teacherKey ? (wochenplanRules.teachers as any)[teacherKey] : null;
-    if (tRules && tRules.freeDays && tRules.freeDays.includes(dayOfWeek)) {
-      return true;
-    }
+  if (!teacherName) return false;
+  if (teacherName.includes(',')) {
+    return teacherName.split(',').some(part => isTeacherAbsent(part.trim(), dayOfWeek, targetWeekCode, absences));
+  }
+  const nameLower = teacherName.toLowerCase().trim();
+  const teacherKey = Object.keys(wochenplanRules.teachers).find(k => nameLower.includes(k) || k.includes(nameLower));
+  const tRules = teacherKey ? (wochenplanRules.teachers as any)[teacherKey] : null;
+  if (tRules && tRules.freeDays && tRules.freeDays.includes(dayOfWeek)) {
+    return true;
   }
   return getAbsenceDetails(teacherName, dayOfWeek, targetWeekCode, absences) !== null;
 }
@@ -155,6 +173,12 @@ export function validateAssignment(
           });
           break;
         }
+      } else if (isTeacherAbsent(name, course.dayOfWeek, targetWeekCode, absences)) {
+        conflicts.push({
+          type: 'hard',
+          message: `${teacher.name} hat an diesem Wochentag (${getDayName(course.dayOfWeek)}) Seva-frei / ist abwesend.`
+        });
+        break;
       }
     }
   }
@@ -184,8 +208,9 @@ export function validateAssignment(
   const isSatsangForSevaka = courseNameLower.includes('satsang') && !courseNameLower.includes('einführung') && !courseNameLower.includes('einfuehrung');
   const isSatsangEinfuehrungForSevaka = courseNameLower.includes('satsang') && (courseNameLower.includes('einführung') || courseNameLower.includes('einfuehrung'));
   const isEntspannungForSevaka = courseStyleLower.includes('entspannung') || courseNameLower.includes('entspannung') || courseNameLower.includes('spaziergang');
+  const isPranayamaForSevaka = courseNameLower.includes('pranayama') || courseStyleLower.includes('pranayama');
   const isSonstigesForSevaka = courseStyleLower.includes('sonstiges') || courseStyleLower.includes('buffet') || courseStyleLower.includes('schulung') || courseNameLower.includes('schulung') || courseNameLower.includes('hausführung') || courseNameLower.includes('hausfuehrung') || courseNameLower.includes('rezeption') || courseNameLower.includes('infopoint') || courseNameLower.includes('yoga-shop') || courseNameLower.includes('begrüßung') || courseNameLower.includes('ausbildung') || courseNameLower.includes('mantra-singen');
-  const isYogaClassForSevaka = !isMeditationForSevaka && !isSatsangForSevaka && !isSatsangEinfuehrungForSevaka && !isOnnForSevaka && !isEntspannungForSevaka && !isSonstigesForSevaka;
+  const isYogaClassForSevaka = !isMeditationForSevaka && !isSatsangForSevaka && !isSatsangEinfuehrungForSevaka && !isOnnForSevaka && !isEntspannungForSevaka && !isSonstigesForSevaka && !isPranayamaForSevaka;
 
   // Complete exclusion for Satyam (Sevaka), but NOT Guest Teacher Sathyam Bad Meinberg
   if (teacherNameLower.includes('satyam') && !teacherNameLower.includes('meinberg')) {
@@ -203,11 +228,11 @@ export function validateAssignment(
     });
   }
 
-  // Harishakti und Ulrich sind nicht mehr Teil des Teams und können nicht mehr unterrichten
-  if (teacherNameLower.includes('harishakti') || teacherNameLower.includes('ulrich')) {
+  // Harishakti, Ulrich und Adam sind nicht mehr Teil des Teams und können nicht mehr unterrichten
+  if (teacherNameLower.includes('harishakti') || teacherNameLower.includes('ulrich') || teacherNameLower.includes('adam')) {
     conflicts.push({
       type: 'hard',
-      message: `${teacher.name} ist nicht mehr Teil des Teams und kann nicht mehr unterrichten.`
+      message: `${teacher.name} ist nicht mehr Teil des Teams und kann nicht mehr unterrichten (spielt in der Wochenplanung keine Rolle mehr).`
     });
   }
 
@@ -244,6 +269,17 @@ export function validateAssignment(
     c => c.teacherId === teacher.id && c.id !== course.id
   );
 
+  // Chandrashekara rule: ONN is only allowed if he does NOT teach fortgeschrittenes Pranayama that week
+  if (isOnnForSevaka && teacherNameLower.includes('chandrashekara')) {
+    const hasPranayamaInWeek = otherSevakaAssignments.some(c => c.name.toLowerCase().includes('pranayama') || c.style.toLowerCase().includes('pranayama'));
+    if (hasPranayamaInWeek) {
+      conflicts.push({
+        type: 'hard',
+        message: `Chandrashekara darf nur für Om Namo Narayana eingeteilt werden, wenn er in der Woche nicht fortgeschrittenes Pranayama unterrichtet.`
+      });
+    }
+  }
+
   const getWeeklyCounts = () => {
     let yogaCount = isYogaClassForSevaka ? 1 : 0;
     let meditationCount = isMeditationForSevaka ? 1 : 0;
@@ -259,8 +295,9 @@ export function validateAssignment(
       const cIsSatEinf = cName.includes('satsang') && (cName.includes('einführung') || cName.includes('einfuehrung'));
       const cIsEntspannung = cStyle.includes('entspannung') || cName.includes('entspannung');
       const cIsSonstiges = cStyle.includes('sonstiges') || cName.includes('hausführung') || cName.includes('hausfuehrung');
+      const cIsPran = cName.includes('pranayama') || cStyle.includes('pranayama');
 
-      if (!cIsMed && !cIsSat && !cIsSatEinf && !cIsOnn && !cIsEntspannung && !cIsSonstiges) {
+      if (!cIsMed && !cIsSat && !cIsSatEinf && !cIsOnn && !cIsEntspannung && !cIsSonstiges && !cIsPran) {
         yogaCount++;
       } else if (cIsMed) {
         meditationCount++;
@@ -411,6 +448,17 @@ export function validateAssignment(
             message: `burnie steht am Sonntag zur Verfügung und muss für Pranayama eingeteilt werden.`
           });
         }
+      }
+    }
+
+    // 3.6 Chandrashekara Pranayama & ONN mutual exclusion:
+    if (teacherNameLower.includes('chandrashekara')) {
+      const hasOnnInWeek = otherSevakaAssignments.some(c => c.name.toLowerCase().includes('om namo') || c.name.toLowerCase().includes('narayanaya'));
+      if (hasOnnInWeek) {
+        conflicts.push({
+          type: 'hard',
+          message: `Chandrashekara darf in einer Woche, in der er Om Namo Narayana leitet, nicht für fortgeschrittenes Pranayama eingeteilt werden.`
+        });
       }
     }
   }
@@ -850,12 +898,47 @@ export function validateAssignment(
 
   // Chandrashekara / onlyMittelstufeYoga rule: Only Mittelstufen yoga classes allowed
   const isOnlyMittelstufe = teacherNameLower.includes('chandrashekara') || (tRules && tRules.onlyMittelstufeYoga) || teacher.rules?.onlyMittelstufeYoga;
-  if (isOnlyMittelstufe && isYogaClassForSevaka) {
+  if (isOnlyMittelstufe && isYogaClassForSevaka && !isPranayamaForSevaka) {
     if (!courseNameLower.includes('mittelstufe')) {
       conflicts.push({
         type: 'hard',
         message: `${teacher.name} unterrichtet ausschließlich Mittelstufen-Yogastunden (keine Anfänger-Yogastunden).`
       });
+    }
+  }
+
+  // Chandrashekara: Yogastunden dürfen nicht an zwei aufeinanderfolgenden Tagen sein (mindestens ein Tag dazwischen)
+  if (isYogaClassForSevaka && (teacherNameLower.includes('chandrashekara') || tRules?.noConsecutiveYogaDays || teacher.rules?.noConsecutiveYogaDays)) {
+    const otherYogaCourses = otherSevakaAssignments.filter(c => {
+      const cName = c.name.toLowerCase();
+      const cStyle = c.style.toLowerCase();
+      const cIsOnn = cName.includes('om namo') || cName.includes('narayanaya');
+      const cIsMed = (cName.includes('meditation') || cName.includes('medi.') || (cStyle.includes('meditation') && !cIsOnn)) && !cName.includes('satsang') && !cIsOnn;
+      const cIsSat = cName.includes('satsang') && !cName.includes('einführung') && !cName.includes('einfuehrung');
+      const cIsSatEinf = cName.includes('satsang') && (cName.includes('einführung') || cName.includes('einfuehrung'));
+      const cIsEntspannung = cStyle.includes('entspannung') || cName.includes('entspannung');
+      const cIsSonstiges = cStyle.includes('sonstiges') || cName.includes('hausführung') || cName.includes('hausfuehrung');
+      const cIsPran = cName.includes('pranayama') || cStyle.includes('pranayama');
+      return !cIsMed && !cIsSat && !cIsSatEinf && !cIsOnn && !cIsEntspannung && !cIsSonstiges && !cIsPran;
+    });
+
+    for (const other of otherYogaCourses) {
+      if (other.dayOfWeek === course.dayOfWeek) {
+        conflicts.push({
+          type: 'hard',
+          message: `${teacher.name} darf maximal eine Yogastunde pro Tag leiten.`
+        });
+        break;
+      }
+      const diff = Math.abs(course.dayOfWeek - other.dayOfWeek);
+      const cyclicDiff = Math.min(diff, 7 - diff);
+      if (cyclicDiff <= 1) {
+        conflicts.push({
+          type: 'hard',
+          message: `${teacher.name} darf Yogastunden nicht an zwei aufeinanderfolgenden Tagen unterrichten (es muss mindestens ein Tag dazwischen liegen; ${getDayName(course.dayOfWeek)} und ${getDayName(other.dayOfWeek)} sind aufeinanderfolgend).`
+        });
+        break;
+      }
     }
   }
 
@@ -910,7 +993,10 @@ export function runAiPlanning(
   
   // Only plan with Sevakas (Kernteam) and prioritized Karma Yogis (Tanja, Swantje, Gopala)
   const yogaTeachers = teachers.filter(t => 
-    t.roleType === 'sevaka' || t.name === 'Tanja' || t.name === 'Swantje' || t.name === 'Gopala'
+    (t.roleType === 'sevaka' || t.name === 'Tanja' || t.name === 'Swantje' || t.name === 'Gopala') &&
+    !t.name.toLowerCase().includes('harishakti') &&
+    !t.name.toLowerCase().includes('ulrich') &&
+    !t.name.toLowerCase().includes('adam')
   );
   logs.push(`Berücksichtige ${yogaTeachers.length} Sevakas/Priorisierte Lehrer für die KI-Vorplanung.`);
   
@@ -941,11 +1027,40 @@ export function runAiPlanning(
     if (isSchulung || isBuffet || isTdot) {
       return false;
     }
-    // Fixed agreements (firmly agreed with a teacher) are preserved and never overridden or cleared by AI
-    if (c.isFixedAgreement && c.teacherId) {
-      const assignedTeacher = teachers.find(t => t.id === c.teacherId);
-      logs.push(`[Feste Vereinbarung] "${c.name}" am ${getDayName(c.dayOfWeek)} (${c.startTime}) bleibt für ${assignedTeacher?.name || c.teacherId} fest reserviert.`);
-      return false;
+    // Fixed agreements (firmly agreed with a teacher)
+    // ALLERHÖCHSTE PRIORITÄT: Der Seva-Frei-Kalender sticht ausnahmslos jede feste Vereinbarung!
+    // Selbst wenn für eine Stunde das Häkchen für "fest vereinbarte Stunde" (isFixedAgreement) gesetzt ist,
+    // darf die Person an Tagen, an denen sie Seva-frei, Urlaub, krank ist, Seminartage hat, Seva außer Haus hat
+    // oder sonst wie im Seva-Frei-Kalender als abwesend eingetragen ist, NIEMALS eingeteilt werden.
+    if (c.isFixedAgreement) {
+      const teacherIdToCheck = c.teacherId || c.agreedTeacherId;
+      const teacherToCheck = teacherIdToCheck 
+        ? teachers.find(t => t.id === teacherIdToCheck) 
+        : (c.agreedTeacherName ? teachers.find(t => t.name.toLowerCase().trim() === c.agreedTeacherName?.toLowerCase().trim()) : null);
+
+      if (teacherToCheck) {
+        const isAbsent = isTeacherAbsent(teacherToCheck.name, c.dayOfWeek, targetWeekCode, absences);
+        const absence = getAbsenceDetails(teacherToCheck.name, c.dayOfWeek, targetWeekCode, absences);
+        const tempLayout = workingCourses.map(x => x.id === c.id ? { ...x, teacherId: teacherToCheck.id } : { ...x });
+        adjustRoomsForRules(tempLayout, teachers, targetWeekCode);
+        const adjustedCourse = tempLayout.find(x => x.id === c.id)!;
+        const conflicts = validateAssignment(teacherToCheck, adjustedCourse, tempLayout, seminarLeaderIds, targetWeekCode, teachers, absences);
+        const hasHardConflict = isAbsent || conflicts.some(conf => conf.type === 'hard');
+
+        if (hasHardConflict) {
+          const reason = absence ? `${absence.type}${absence.note ? ` (${absence.note})` : ''}` : 'Abwesenheit / Konflikt';
+          logs.push(`[Feste Vereinbarung neu verplanen] "${c.name}" am ${getDayName(c.dayOfWeek)} (${c.startTime}): Ist zwar fest vereinbart für ${teacherToCheck.name}, muss aber neu verplant werden, da ${teacherToCheck.name} laut Seva-Frei-Kalender abwesend ist (${reason}). Der Seva-Frei-Kalender hat allerhöchste Priorität!`);
+          return true; // Must be replanned by AI!
+        } else if (c.teacherId === teacherToCheck.id) {
+          logs.push(`[Feste Vereinbarung] "${c.name}" am ${getDayName(c.dayOfWeek)} (${c.startTime}) bleibt für ${teacherToCheck.name} fest reserviert.`);
+          return false;
+        } else if (!c.teacherId) {
+          c.teacherId = teacherToCheck.id;
+          c.teacherName = teacherToCheck.name;
+          logs.push(`[Feste Vereinbarung] "${c.name}" am ${getDayName(c.dayOfWeek)} (${c.startTime}) wurde vereinbarungsgemäß für Stamm-Lehrkraft ${teacherToCheck.name} eingeteilt.`);
+          return false;
+        }
+      }
     }
     if (customConstraints && customConstraints.length > 0) {
       for (const rule of customConstraints) {
@@ -986,6 +1101,7 @@ export function runAiPlanning(
   // Clear existing AI planning tags
   coursesToPlan.forEach(c => {
     c.teacherId = null;
+    delete (c as any).teacherName;
     c.isAiPlanned = false;
     // Revert custom course names to original template names using template lookup
     const templateCourse = db.getDefaultCourses?.().find(tc => tc.dayOfWeek === c.dayOfWeek && tc.startTime === c.startTime && tc.roomId === c.roomId);
@@ -1088,6 +1204,15 @@ export function runAiPlanning(
       if (customForced) {
         score += 100000;
       }
+
+      // Fixed agreement preference: if this course is firmly agreed with this teacher and teacher has no hard conflict
+      if (course.isFixedAgreement) {
+        const isAgreedTeacher = (course.agreedTeacherId && course.agreedTeacherId === teacher.id) ||
+                                (course.agreedTeacherName && teacher.name.toLowerCase().trim() === course.agreedTeacherName.toLowerCase().trim());
+        if (isAgreedTeacher) {
+          score += 200000; // Strongest priority to assign agreed teacher if available
+        }
+      }
       
       // PRIORITIES FOR SWANTJE AND TANJA
       if (teacher.name === 'Swantje') {
@@ -1118,6 +1243,12 @@ export function runAiPlanning(
       // Custom scoring rules from compiled rules: prefers Mittelstufe
       if (teacher.rules.prefersMittelstufe && course.name.toLowerCase().includes('mittelstufe')) {
         score += 150;
+      }
+      if (teacherNameLower.includes('chandrashekara') && course.name.toLowerCase().includes('mittelstufe')) {
+        const plannedYoga = workingCourses.filter(c => c.teacherId === teacher.id && !c.name.toLowerCase().includes('pranayama') && !c.style.toLowerCase().includes('pranayama') && !c.name.toLowerCase().includes('om namo') && !c.name.toLowerCase().includes('narayanaya') && !c.name.toLowerCase().includes('satsang') && !c.name.toLowerCase().includes('meditation')).length;
+        if (plannedYoga < 2) {
+          score += 400; // Boost to help reach desired 2 classes per week
+        }
       }
 
       // Custom scoring rules from compiled rules: weekend as backup only
@@ -1241,12 +1372,12 @@ export function runAiPlanning(
                 }
               }
             } else if (course.dayOfWeek === 6) {
-              // On Saturdays, rotate the remaining eligible teachers
-              const backups = ["karuna", "narayani", "abha"];
+              // On Saturdays, rotate the eligible teachers
+              const backups = (wochenplanRules.pranayama as any)?.saturday?.alternating || ["karuna", "chandrashekara", "narayani", "abha"];
               const teacherIdx = backups.findIndex((n: string) => teacherNameLower.includes(n));
               if (teacherIdx !== -1) {
-                const targetIndex = weekNum % 3;
-                const distance = (teacherIdx - targetIndex + 3) % 3;
+                const targetIndex = weekNum % backups.length;
+                const distance = (teacherIdx - targetIndex + backups.length) % backups.length;
                 score += 1000 - distance * 300;
               }
             }
@@ -1508,6 +1639,7 @@ export function runAiPlanning(
       const index = workingCourses.findIndex(c => c.id === course.id);
       if (index !== -1) {
         workingCourses[index].teacherId = bestCandidate.teacher.id;
+        workingCourses[index].teacherName = bestCandidate.teacher.name;
         workingCourses[index].isAiPlanned = true;
 
         // Apply custom course name based on Sevaka rules
@@ -1544,6 +1676,13 @@ export function runAiPlanning(
         }
         
         logs.push(`✓ Zuweisung erfolgreich: ${bestCandidate.teacher.name} (Score: ${bestCandidate.score.toFixed(0)})`);
+        if (workingCourses[index].isFixedAgreement && (workingCourses[index].agreedTeacherId || workingCourses[index].agreedTeacherName)) {
+          const agreedId = workingCourses[index].agreedTeacherId;
+          const agreedName = workingCourses[index].agreedTeacherName || teachers.find(t => t.id === agreedId)?.name || 'Stamm-Lehrkraft';
+          if (bestCandidate.teacher.id !== agreedId && bestCandidate.teacher.name.toLowerCase().trim() !== agreedName.toLowerCase().trim()) {
+            logs.push(`  [Vertretung für fest vereinbarten Slot] ${bestCandidate.teacher.name} übernimmt Vertretung für ${agreedName} am ${getDayName(course.dayOfWeek)} (${course.startTime}) wegen Abwesenheit laut Seva-Frei-Kalender.`);
+          }
+        }
         if (bestCandidate.conflicts.length > 0) {
           logs.push(`  Hinweis: ${bestCandidate.conflicts[0].message}`);
         }
@@ -1610,6 +1749,22 @@ export function runAiPlanning(
 
   // Apply room rules to auto-adjust rooms based on final teacher assignments
   adjustRoomsForRules(workingCourses, teachers, targetWeekCode);
+
+  // Synchronize teacherName with final teacherId across all courses
+  workingCourses.forEach(c => {
+    if (c.teacherId) {
+      if (c.teacherId === 'teacher-gen-yl') {
+        c.teacherName = '! YL';
+      } else {
+        const assignedTeacher = teachers.find(t => t.id === c.teacherId);
+        if (assignedTeacher) {
+          c.teacherName = assignedTeacher.name;
+        }
+      }
+    } else {
+      delete (c as any).teacherName;
+    }
+  });
 
   const assignedCount = workingCourses.filter(c => c.teacherId !== null && c.isAiPlanned).length;
   logs.push(`Planung abgeschlossen. ${assignedCount} von ${coursesToPlan.length} Kursen wurden erfolgreich zugewiesen.`);

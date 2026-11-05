@@ -356,28 +356,34 @@
     "adam": {
       "name": "Adam",
       "freeDays": [
-        2
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
       ],
       "maxMeditationPerWeek": 0,
       "maxSatsangsPerWeek": 0,
       "maxMorningSatsangsPerWeek": 0,
       "maxYogaClassesPerWeek": 0,
-      "maxOnnPerWeek": 1,
+      "maxOnnPerWeek": 0,
       "maxAnfaengerYogaPerWeek": 0,
       "isYogaTeacher": false,
       "canLeadSatsang": false,
       "canLeadPranayama": false,
       "canLeadSatsangEinfuehrung": false,
-      "canLeadOnn": true,
-      "noYogaOnWeekend": false,
-      "noTwoYogaSameDay": false,
+      "canLeadOnn": false,
+      "noYogaOnWeekend": true,
+      "noTwoYogaSameDay": true,
       "weekendAfternoonOnly": false,
       "weekendAsBackupOnly": false,
       "prefersMittelstufe": false,
       "customCourseNames": [],
       "availabilityRestrictions": [],
       "preferredAvailability": [],
-      "maxClassesPerDay": 2
+      "maxClassesPerDay": 0
     },
     "harishakti": {
       "name": "Harishakti",
@@ -482,20 +488,23 @@
     },
     "chandrashekara": {
       "name": "Chandrashekara",
-      "freeDays": [],
+      "freeDays": [
+        1
+      ],
       "maxMeditationPerWeek": null,
       "maxSatsangsPerWeek": null,
       "maxMorningSatsangsPerWeek": null,
-      "maxYogaClassesPerWeek": null,
+      "maxYogaClassesPerWeek": 2,
       "maxOnnPerWeek": null,
       "maxAnfaengerYogaPerWeek": 0,
       "isYogaTeacher": true,
       "canLeadSatsang": true,
-      "canLeadPranayama": false,
+      "canLeadPranayama": true,
       "canLeadSatsangEinfuehrung": false,
       "canLeadOnn": true,
       "noYogaOnWeekend": false,
-      "noTwoYogaSameDay": false,
+      "noTwoYogaSameDay": true,
+      "noConsecutiveYogaDays": true,
       "weekendAfternoonOnly": false,
       "weekendAsBackupOnly": false,
       "prefersMittelstufe": true,
@@ -686,8 +695,17 @@
       "karuna",
       "burnie",
       "narayani",
-      "abha"
-    ]
+      "abha",
+      "chandrashekara"
+    ],
+    "saturday": {
+      "alternating": [
+        "karuna",
+        "chandrashekara",
+        "narayani",
+        "abha"
+      ]
+    }
   },
   "entspannungsangebot": {
     "montag": {

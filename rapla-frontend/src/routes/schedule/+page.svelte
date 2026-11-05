@@ -1614,10 +1614,10 @@
                   class="course-card-rapla" 
                   class:schulung-card={isSchulung}
                   class:is-agreed-card={isAgreed}
-                  class:unassigned-card={(!course.teacherId || course.teacherId === 'teacher-gen-yl') && !isSchulung && !isAgreed && !isBuffet}
-                  style="background-color: {cardColors.bg}; border: 1px solid {cardColors.border}; border-left: {isAgreed ? '4px solid #e11d48' : (isSchulung ? '5px solid #4338ca' : '1px solid ' + cardColors.border)};"
+                  class:unassigned-card={(!course.teacherId || course.teacherId === 'teacher-gen-yl') && !isSchulung && !isBuffet}
+                  style="background-color: {cardColors.bg}; border: 1px solid {cardColors.border}; border-left: {hasHard ? '5px solid #dc2626' : (isAgreed ? '4px solid #e11d48' : (isSchulung ? '5px solid #4338ca' : '1px solid ' + cardColors.border))};"
                   onclick={() => openEditModal(course)}
-                  title={isBuffet ? 'Vollwert-Buffet im Speisesaal (Keine Personen-Einteilung)' : (isAgreed ? (course.agreementNotes ? `Fest vereinbarte Stunde:\n${course.agreementNotes}` : 'Fest vereinbarte Stunde (Klicken zum Bearbeiten)') : (hasHard ? courseConflicts.find(c => c.type === 'hard')?.message : 'Klicken zum Einteilen / Bearbeiten'))}
+                  title={isBuffet ? 'Vollwert-Buffet im Speisesaal (Keine Personen-Einteilung)' : (hasHard ? `⚠️ KONFLIKT: ${courseConflicts.find(c => c.type === 'hard')?.message}` : (isAgreed ? (course.agreementNotes ? `Fest vereinbarte Stunde:\n${course.agreementNotes}` : 'Fest vereinbarte Stunde (Klicken zum Bearbeiten)') : 'Klicken zum Einteilen / Bearbeiten'))}
                 >
                   <!-- Top line: Time and Room -->
                   <div class="card-top-line">
@@ -1765,14 +1765,16 @@
               {@const isSchulung = course.name.toLowerCase().includes('schulung') || (course.style && course.style.toLowerCase().includes('schulung'))}
               {@const isBuffet = isBuffetSlot(course)}
               {@const isAgreed = course.isFixedAgreement}
+              {@const courseConflicts = getCourseConflicts(course)}
+              {@const hasHard = courseConflicts.some(c => c.type === 'hard')}
               <div 
                 class="course-card-rapla" 
                 class:schulung-card={isSchulung}
                 class:is-agreed-card={isAgreed}
-                class:unassigned-card={(!course.teacherId || course.teacherId === 'teacher-gen-yl') && !isSchulung && !isAgreed && !isBuffet}
-                style="background-color: {cardColors.bg}; border: 1px solid {cardColors.border}; border-left: {isAgreed ? '4px solid #e11d48' : (isSchulung ? '5px solid #4338ca' : '1px solid ' + cardColors.border)};"
+                class:unassigned-card={(!course.teacherId || course.teacherId === 'teacher-gen-yl') && !isSchulung && !isBuffet}
+                style="background-color: {cardColors.bg}; border: 1px solid {cardColors.border}; border-left: {hasHard ? '5px solid #dc2626' : (isAgreed ? '4px solid #e11d48' : (isSchulung ? '5px solid #4338ca' : '1px solid ' + cardColors.border))};"
                 onclick={() => openEditModal(course)}
-                title={isBuffet ? 'Vollwert-Buffet im Speisesaal (Keine Personen-Einteilung)' : (isAgreed ? (course.agreementNotes ? `Fest vereinbarte Stunde:\n${course.agreementNotes}` : 'Fest vereinbarte Stunde (Klicken zum Bearbeiten)') : (hasHard ? courseConflicts.find(c => c.type === 'hard')?.message : 'Klicken zum Einteilen / Bearbeiten'))}
+                title={isBuffet ? 'Vollwert-Buffet im Speisesaal (Keine Personen-Einteilung)' : (hasHard ? `⚠️ KONFLIKT: ${courseConflicts.find(c => c.type === 'hard')?.message}` : (isAgreed ? (course.agreementNotes ? `Fest vereinbarte Stunde:\n${course.agreementNotes}` : 'Fest vereinbarte Stunde (Klicken zum Bearbeiten)') : 'Klicken zum Einteilen / Bearbeiten'))}
               >
                 <!-- Top line: Time and Room -->
                 <div class="card-top-line">
