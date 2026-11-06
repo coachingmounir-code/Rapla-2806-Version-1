@@ -13,6 +13,7 @@
     propagateFixedAgreementAcrossPlans,
     sendWhatsAppViaServerApi,
     getWhatsAppGatewayConfig,
+    resolveAssignedTeachersForCourse,
     type TeacherDeviation
   } from '$lib/whatsappNotifier';
   import sivanandaImg from '$lib/assets/sivananda.png';
@@ -117,6 +118,33 @@
   let selectedRoomFilter = $state('all');
   let selectedTeacherFilter = $state('all');
   let showOnlyAgreedSlots = $state(false);
+
+  const YOGA_CLASS_START_TIMES = new Set(['09:15', '9:15', '16:15', '16:30']);
+
+  function isYogaClassSlot(course: Course): boolean {
+    if (!course || isBuffetSlot(course)) return false;
+    const start = (course.startTime || '').trim();
+    return YOGA_CLASS_START_TIMES.has(start);
+  }
+
+  let sevakaYogaCounts = $derived.by<Record<string, number>>(() => {
+    const counts: Record<string, number> = {};
+    for (const t of teachers) {
+      if (t.roleType === 'sevaka') {
+        counts[t.id] = 0;
+      }
+    }
+    for (const course of courses) {
+      if (!isYogaClassSlot(course)) continue;
+      const assignedTeachers = resolveAssignedTeachersForCourse(course, teachers);
+      for (const assigned of assignedTeachers) {
+        if (assigned.roleType === 'sevaka') {
+          counts[assigned.id] = (counts[assigned.id] || 0) + 1;
+        }
+      }
+    }
+    return counts;
+  });
 
   // Modal states
   let isModalOpen = $state(false);
@@ -1406,8 +1434,8 @@
     <select id="filter-teacher" class="form-select filter-select" bind:value={selectedTeacherFilter}>
       <option value="all">Alle Unterrichtenden</option>
       <optgroup label="Sevakas (Kernteam)">
-        {#each teachers.filter(t => t.roleType === 'sevaka') as t}
-          <option value={t.id}>🧘 {t.name}</option>
+        {#each teachers.filter(t => t.roleType === 'sevaka') as t (t.id)}
+          <option value={t.id}>🧘 {t.name} ({sevakaYogaCounts[t.id] ?? 0})</option>
         {/each}
       </optgroup>
       <optgroup label="Karma-Yogis & externe Seminarleiter">
@@ -2627,7 +2655,8 @@
   }
 
   .filter-select {
-    width: 200px;
+    min-width: 225px;
+    width: auto;
     padding: 0.5rem 1rem;
   }
 
