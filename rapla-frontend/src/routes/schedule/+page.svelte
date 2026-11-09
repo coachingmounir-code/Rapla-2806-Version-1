@@ -495,18 +495,26 @@
     const list: Teacher[] = [...teachers];
     for (const sem of registeredSeminars) {
       if (sem.isCancelled || sem.isHiddenFromTeam) continue;
-      if (!sem.leaderName) continue;
-      const leaderParts = sem.leaderName.split(/[,+/&]+|\bund\b/i).map(p => p.trim()).filter(Boolean);
+      if (!sem.leader || sem.leader === 'Offen') continue;
+      const leaderParts = sem.leader.split(/[,+/&]+|\bund\b/i).map((p: string) => p.trim()).filter(Boolean);
       for (const part of leaderParts) {
-        if (!part || part.toLowerCase() === 'team' || part.toLowerCase().includes('yoga vidya')) continue;
+        if (!part || part === 'Offen' || part.toLowerCase() === 'team' || part.toLowerCase().includes('yoga vidya')) continue;
         const alreadyExists = list.some(t => doesSeminarPersonMatchTeacher(part, t.name, t.id));
         if (!alreadyExists) {
-          const slug = part.toLowerCase().replace(/[^a-z0-9äöüß]+/g, '-').replace(/^-|-$/g, '');
+          const slug = part
+            .toLowerCase()
+            .replace(/[ä]/g, 'ae')
+            .replace(/[ö]/g, 'oe')
+            .replace(/[ü]/g, 'ue')
+            .replace(/[ß]/g, 'ss')
+            .replace(/[^a-z0-9]+/g, '-')
+            .replace(/^-|-$/g, '');
           list.push({
-            id: `seminar-leader-${slug}`,
+            id: `teacher-sem-${slug}`,
             name: part,
             email: '',
-            avatarColor: '#ea580c',
+            phone: '',
+            avatarColor: sem.color || '#ea580c',
             specialties: [sem.shortTitle || sem.title],
             isYogaTeacher: true,
             availabilityMode: 'seminar_only',

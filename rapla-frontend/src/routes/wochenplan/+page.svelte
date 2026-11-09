@@ -172,8 +172,9 @@
   let allFilterableTeachers = $derived.by<Teacher[]>(() => {
     const base = [...teachers];
     for (const sem of registeredSeminars) {
+      if (sem.isCancelled || sem.isHiddenFromTeam) continue;
       if (!sem.leader || sem.leader === 'Offen') continue;
-      const leaders = sem.leader.split(',').map(s => s.trim()).filter(s => s && s !== 'Offen');
+      const leaders = sem.leader.split(/[,+/&]+|\bund\b/i).map((s: string) => s.trim()).filter((s: string) => s && s !== 'Offen');
       for (const leaderName of leaders) {
         const alreadyExists = base.some(t => doesSeminarPersonMatchTeacher(leaderName, t.name, t.id));
         if (!alreadyExists) {
