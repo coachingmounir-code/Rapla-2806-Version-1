@@ -1027,7 +1027,7 @@
                         <span class="compact-today-badge">Heute</span>
                       {/if}
                     </span>
-                    <span class="compact-day-count">{group.slots.length} {group.slots.length === 1 ? 'Std.' : 'Std.'}</span>
+                    <span class="compact-day-count">{group.slots.length} {group.slots.length === 1 ? 'Slot' : 'Slots'}</span>
                   </div>
                   <div class="compact-day-slots">
                     {#each group.slots as slot}
