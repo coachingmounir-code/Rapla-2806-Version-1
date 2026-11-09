@@ -10,6 +10,7 @@
     getSeminarRoomShortName,
     getLeaderShortName,
     isIndoorSeminarRoomSlot,
+    isSeminarVisibleInTeam,
     type SeminarSlot,
     type Seminar
   } from '$lib/seminarData';
@@ -80,10 +81,12 @@
   );
 
   // Active seminars overlapping this Friday-to-Friday week
-  let weekSeminars = $derived(getSeminarsForWeek(currentWeekCode, allSeminars));
+  // In Admin mode, also include cancelled/hidden seminars so the Admin can see & reactivate them
+  let weekSeminars = $derived(getSeminarsForWeek(currentWeekCode, allSeminars, { includeHidden: isAdmin }));
+  let visibleWeekSeminars = $derived(weekSeminars.filter(isSeminarVisibleInTeam));
 
   let coreWeekSeminars = $derived(
-    weekSeminars.filter(s => getSeminarTransitionType(s, currentWeekCode) === null)
+    visibleWeekSeminars.filter(s => getSeminarTransitionType(s, currentWeekCode) === null)
   );
 
   // Selected seminar ID: 'all' = master overview of all parallel seminars, or specific seminar id
@@ -169,7 +172,7 @@
 
   function getEntriesForDay(day: { index: number; dayIndex: number; dateStr: string; dayOfWeek: number; label: string }): SlotEntry[] {
     const results: SlotEntry[] = [];
-    const seminarsToSearch = activeSeminar ? [activeSeminar] : weekSeminars;
+    const seminarsToSearch = activeSeminar ? [activeSeminar] : visibleWeekSeminars;
 
     for (const sem of seminarsToSearch) {
       const daySlots = getEffectiveSeminarSlotsForDay(sem, day);
@@ -383,15 +386,16 @@
     return slot.roomName || seminar.roomName || 'Laut Tagesaushang';
   }
 
-  // --- SEMINAR-LEVEL EDIT MODAL (Leitung & Raum für alle Slots) ---
-  let editingSeminarModal = $state<{ seminar: Seminar; focusField: 'leader' | 'room' } | null>(null);
+  // --- SEMINAR-LEVEL EDIT MODAL (Leitung, Raum & Team-Sichtbarkeit/Stornierung) ---
+  let editingSeminarModal = $state<{ seminar: Seminar; focusField: 'leader' | 'room' | 'visibility' } | null>(null);
   let semFormLeaderSelect = $state<string>('');
   let semFormLeaderText = $state<string>('');
   let semFormRoomId = $state<string>('room-4');
   let semFormApplyRoomAll = $state<boolean>(true);
   let semFormApplyLeaderAll = $state<boolean>(true);
+  let semFormIsCancelled = $state<boolean>(false);
 
-  function openSeminarEditModal(seminar: Seminar, focusField: 'leader' | 'room' = 'room') {
+  function openSeminarEditModal(seminar: Seminar, focusField: 'leader' | 'room' | 'visibility' = 'room') {
     if (!isAdmin) return;
     editingSeminarModal = { seminar, focusField };
     semFormLeaderText = seminar.leader || '';
@@ -400,6 +404,7 @@
     );
     semFormLeaderSelect = matchedTeacher ? matchedTeacher.name : '';
     semFormRoomId = seminar.roomId || 'room-4';
+    semFormIsCancelled = !isSeminarVisibleInTeam(seminar);
 
     const hasDeviatingSlots = seminar.slots.some(
       s => isIndoorSeminarRoomSlot(s) && s.roomId && s.roomId !== seminar.roomId
@@ -410,6 +415,20 @@
 
   function closeSeminarEditModal() {
     editingSeminarModal = null;
+  }
+
+  function handleToggleSeminarVisibility(seminar: Seminar, e?: MouseEvent) {
+    if (e) e.stopPropagation();
+    if (!isAdmin) return;
+    const updated = db.toggleSeminarTeamVisibility(seminar.id);
+    refreshData();
+    if (updated) {
+      if (updated.isCancelled || updated.isHiddenFromTeam) {
+        showSaveFeedback(`🚫 „${updated.title}“ als storniert markiert – in der Team-Ansicht ausgeblendet.`);
+      } else {
+        showSaveFeedback(`👁️ „${updated.title}“ wieder aktiviert – in der Team-Ansicht sichtbar.`);
+      }
+    }
   }
 
   function handleSaveSeminarEdit() {
@@ -423,18 +442,24 @@
       leader: finalLeader,
       roomId: semFormRoomId,
       applyRoomToAllSlots: shouldApplyRoomAll,
-      applyLeaderToAllSlots: semFormApplyLeaderAll
+      applyLeaderToAllSlots: semFormApplyLeaderAll,
+      isCancelled: semFormIsCancelled,
+      isHiddenFromTeam: semFormIsCancelled
     });
 
     refreshData();
     closeSeminarEditModal();
 
     if (updated) {
-      const roomLabel = getSeminarRoomDisplayName(semFormRoomId, updated.roomName);
-      if (shouldApplyRoomAll) {
-        showSaveFeedback(`✅ „${updated.title}“ gespeichert: Alle festen Slots auf ${roomLabel} gesetzt · Leitung: ${updated.leader}`);
+      if (updated.isCancelled || updated.isHiddenFromTeam) {
+        showSaveFeedback(`🚫 „${updated.title}“ als storniert gespeichert (in der Team-Ansicht nicht mehr sichtbar).`);
       } else {
-        showSaveFeedback(`✅ „${updated.title}“ aktualisiert: Leitung: ${updated.leader} · Hauptraum: ${roomLabel}`);
+        const roomLabel = getSeminarRoomDisplayName(semFormRoomId, updated.roomName);
+        if (shouldApplyRoomAll) {
+          showSaveFeedback(`✅ „${updated.title}“ gespeichert: Alle festen Slots auf ${roomLabel} gesetzt · Leitung: ${updated.leader}`);
+        } else {
+          showSaveFeedback(`✅ „${updated.title}“ aktualisiert: Leitung: ${updated.leader} · Hauptraum: ${roomLabel}`);
+        }
       }
     }
   }
@@ -669,25 +694,29 @@
             onclick={() => selectedSeminarId = 'all'}
           >
             <span class="chip-title">Alle Seminare</span>
-            <span class="chip-count">{coreWeekSeminars.length || weekSeminars.length}</span>
+            <span class="chip-count">{coreWeekSeminars.length || visibleWeekSeminars.length}</span>
           </button>
 
           {#each weekSeminars as sem (sem.id)}
             {@const transitionType = getSeminarTransitionType(sem, currentWeekCode)}
             {@const roomShort = sem.roomId ? getSeminarRoomShortName(sem.roomId, sem.roomName) : ''}
-            <div class="seminar-chip-group">
+            {@const isSemHidden = !isSeminarVisibleInTeam(sem)}
+            <div class="seminar-chip-group" class:group-cancelled={isSemHidden}>
               <button
                 type="button"
                 class="seminar-chip"
                 class:active={selectedSeminarId === sem.id}
                 class:transition-chip={transitionType !== null}
+                class:cancelled-chip={isSemHidden}
                 style="--sem-accent: {sem.color};"
                 onclick={() => selectedSeminarId = sem.id}
-                title="{sem.title} · {sem.subtitle} · Leitung: {sem.leader}{roomShort ? ` · Raum: ${roomShort}` : ''}"
+                title="{sem.title} · {sem.subtitle} · Leitung: {sem.leader}{roomShort ? ` · Raum: ${roomShort}` : ''}{isSemHidden ? ' · STORNIERT (In Team-Ansicht ausgeblendet)' : ''}"
               >
-                <span class="chip-color-dot" style="background-color: {sem.color};"></span>
-                <span class="chip-title">{sem.shortTitle}</span>
-                {#if transitionType === 'departing-start-fr'}
+                <span class="chip-color-dot" style="background-color: {isSemHidden ? '#94a3b8' : sem.color};"></span>
+                <span class="chip-title" class:strikethrough-title={isSemHidden}>{sem.shortTitle}</span>
+                {#if isSemHidden}
+                  <span class="chip-cycle-tag cancelled-tag">🚫 Storniert (Team aus)</span>
+                {:else if transitionType === 'departing-start-fr'}
                   <span class="chip-cycle-tag departing">Abreise Fr</span>
                 {:else if transitionType === 'arriving-end-fr'}
                   <span class="chip-cycle-tag arriving">Anreise Fr</span>
@@ -696,16 +725,27 @@
                 {:else}
                   <span class="chip-cycle-tag weekly">So–Fr</span>
                 {/if}
-                {#if roomShort}
+                {#if roomShort && !isSemHidden}
                   <span class="chip-room">· {roomShort}</span>
                 {/if}
               </button>
               {#if isAdmin}
                 <button
                   type="button"
+                  class="seminar-chip-vis-btn"
+                  class:is-hidden={isSemHidden}
+                  onclick={(e) => handleToggleSeminarVisibility(sem, e)}
+                  title={isSemHidden
+                    ? `„${sem.title}“ ist storniert / in Team-Ansicht ausgeblendet. Klicken zum Wieder-Einblenden.`
+                    : `„${sem.title}“ als storniert markieren & in der Team-Ansicht ausblenden`}
+                >
+                  {isSemHidden ? '👁️‍🗨️ Einblenden' : '🚫 Stornieren'}
+                </button>
+                <button
+                  type="button"
                   class="seminar-chip-edit-btn"
                   onclick={() => openSeminarEditModal(sem, 'room')}
-                  title="Raum & Leitung für „{sem.title}“ bearbeiten"
+                  title="Raum, Leitung & Sichtbarkeit für „{sem.title}“ bearbeiten"
                 >
                   ✏️
                 </button>
@@ -743,9 +783,19 @@
       </div>
 
       {#if activeSeminar}
-        <div class="selected-seminar-strip" style="border-left: 4px solid {activeSeminar.color};">
+        {@const isActiveSemHidden = !isSeminarVisibleInTeam(activeSeminar)}
+        <div
+          class="selected-seminar-strip"
+          class:strip-cancelled={isActiveSemHidden}
+          style="border-left: 4px solid {isActiveSemHidden ? '#dc2626' : activeSeminar.color};"
+        >
           <div class="strip-main">
-            <span class="strip-title">{activeSeminar.title}</span>
+            <span class="strip-title" class:strikethrough-title={isActiveSemHidden}>{activeSeminar.title}</span>
+            {#if isActiveSemHidden}
+              <span class="strip-cancelled-badge">🚫 Storniert · In Team-Ansicht ausgeblendet</span>
+            {:else if isAdmin}
+              <span class="strip-visible-badge">👁️ In Team-Ansicht sichtbar</span>
+            {/if}
             <span class="strip-meta">🗓️ {activeSeminar.subtitle}</span>
             <span class="strip-meta">👤 {activeSeminar.leader}</span>
             <span class="strip-meta">
@@ -757,6 +807,16 @@
           </div>
           <div class="strip-actions">
             {#if isAdmin}
+              <button
+                type="button"
+                class="btn btn-small {isActiveSemHidden ? 'btn-restore-sem' : 'btn-cancel-sem'}"
+                onclick={(e) => handleToggleSeminarVisibility(activeSeminar!, e)}
+                title={isActiveSemHidden
+                  ? 'Stornierung aufheben und Seminar in der Team-Ansicht wieder anzeigen'
+                  : 'Seminar als storniert markieren – wird in der Team-Ansicht komplett ausgeblendet'}
+              >
+                {isActiveSemHidden ? '✅ Stornierung aufheben (Im Team zeigen)' : '🚫 Als storniert markieren (Team ausblenden)'}
+              </button>
               <button
                 type="button"
                 class="btn btn-secondary btn-small"
@@ -937,21 +997,52 @@
         class:active={selectedSeminarId === 'all'}
         onclick={() => selectedSeminarId = 'all'}
       >
-        Alle ({coreWeekSeminars.length || weekSeminars.length})
+        Alle ({coreWeekSeminars.length || visibleWeekSeminars.length})
       </button>
       {#each weekSeminars as sem (sem.id)}
+        {@const isSemHidden = !isSeminarVisibleInTeam(sem)}
         <button
           type="button"
           class="seminar-chip"
           class:active={selectedSeminarId === sem.id}
+          class:cancelled-chip={isSemHidden}
           style="--sem-accent: {sem.color};"
           onclick={() => selectedSeminarId = sem.id}
         >
-          <span class="chip-color-dot" style="background-color: {sem.color};"></span>
-          <span>{sem.shortTitle}</span>
+          <span class="chip-color-dot" style="background-color: {isSemHidden ? '#94a3b8' : sem.color};"></span>
+          <span class:strikethrough-title={isSemHidden}>{sem.shortTitle}</span>
+          {#if isSemHidden}
+            <span class="chip-cycle-tag cancelled-tag">🚫 Storniert</span>
+          {/if}
         </button>
       {/each}
     </div>
+
+    {#if activeSeminar && isAdmin}
+      {@const isActiveSemHidden = !isSeminarVisibleInTeam(activeSeminar)}
+      <div class="mobile-admin-seminar-bar" class:strip-cancelled={isActiveSemHidden}>
+        <div class="mobile-admin-sem-info">
+          <strong>{activeSeminar.shortTitle}:</strong>
+          <span>{isActiveSemHidden ? '🚫 Storniert (Team-Ansicht aus)' : '👁️ Aktiv (Im Team sichtbar)'}</span>
+        </div>
+        <div class="mobile-admin-sem-btns">
+          <button
+            type="button"
+            class="btn btn-small {isActiveSemHidden ? 'btn-restore-sem' : 'btn-cancel-sem'}"
+            onclick={(e) => handleToggleSeminarVisibility(activeSeminar!, e)}
+          >
+            {isActiveSemHidden ? '✅ Einblenden' : '🚫 Stornieren'}
+          </button>
+          <button
+            type="button"
+            class="btn btn-secondary btn-small"
+            onclick={() => openSeminarEditModal(activeSeminar!, 'room')}
+          >
+            ⚙️
+          </button>
+        </div>
+      </div>
+    {/if}
 
     <!-- Day Selector Tabs (8 Days: Fr Start – Fr Ende) -->
     <div class="mobile-day-tabs">
@@ -1150,6 +1241,41 @@
               (ändert alle Seminarraum-Einheiten sowie die Raumbelegung automatisch auf {getSeminarRoomDisplayName(semFormRoomId)})
             </span>
           </label>
+        </div>
+
+        <div class="admin-edit-section" class:section-focused={editingSeminarModal.focusField === 'visibility'} class:section-cancelled={semFormIsCancelled}>
+          <div class="edit-section-header">
+            <span class="section-badge">👁️ Sichtbarkeit in der Team-Ansicht / Stornierung</span>
+            <span class="section-hint">Steuert, ob das Seminar im Team-Wochenplan angezeigt wird</span>
+          </div>
+
+          <div class="visibility-toggle-cards">
+            <button
+              type="button"
+              class="vis-choice-card active-choice"
+              class:selected={!semFormIsCancelled}
+              onclick={() => { semFormIsCancelled = false; }}
+            >
+              <span class="vis-icon">✅</span>
+              <div class="vis-text">
+                <strong>Aktiv & im Team sichtbar</strong>
+                <small>Seminar wird regulär in der Team-Ansicht und Raumbelegung angezeigt</small>
+              </div>
+            </button>
+
+            <button
+              type="button"
+              class="vis-choice-card cancel-choice"
+              class:selected={semFormIsCancelled}
+              onclick={() => { semFormIsCancelled = true; }}
+            >
+              <span class="vis-icon">🚫</span>
+              <div class="vis-text">
+                <strong>Storniert / In Team-Ansicht ausblenden</strong>
+                <small>Seminar ist in der Team-Ansicht komplett unsichtbar und gibt den Seminarraum frei</small>
+              </div>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -1571,6 +1697,63 @@
   .seminar-chip-edit-btn:hover {
     background: #fff7ed;
     border-color: #ea580c;
+  }
+
+  .seminar-chip.cancelled-chip {
+    background: #fef2f2;
+    border-color: #fecaca;
+    color: #7f1d1d;
+    opacity: 0.85;
+  }
+
+  .seminar-chip.cancelled-chip.active {
+    background: #fee2e2;
+    border-color: #dc2626;
+    opacity: 1;
+  }
+
+  .strikethrough-title {
+    text-decoration: line-through;
+    opacity: 0.78;
+  }
+
+  .chip-cycle-tag.cancelled-tag {
+    background: #fee2e2;
+    color: #b91c1c;
+    border: 1px solid #fca5a5;
+  }
+
+  .seminar-chip-vis-btn {
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 5px;
+    padding: 0.22rem 0.45rem;
+    font-family: inherit;
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: #b91c1c;
+    cursor: pointer;
+    line-height: 1;
+    transition: all 0.15s ease;
+    white-space: nowrap;
+  }
+
+  .seminar-chip-vis-btn:hover {
+    background: #fef2f2;
+    border-color: #ef4444;
+    color: #991b1b;
+  }
+
+  .seminar-chip-vis-btn.is-hidden {
+    background: #f0fdf4;
+    border-color: #86efac;
+    color: #166534;
+  }
+
+  .seminar-chip-vis-btn.is-hidden:hover {
+    background: #dcfce7;
+    border-color: #22c55e;
+    color: #14532d;
   }
 
   .slot-type-segmented {
@@ -2547,6 +2730,162 @@
     border: 1px solid #fed7aa;
     color: #9a3412;
     font-size: 0.8rem;
+  }
+
+  .selected-seminar-strip.strip-cancelled {
+    background: #fef2f2;
+    border-color: #fecaca;
+  }
+
+  .strip-cancelled-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.72rem;
+    font-weight: 800;
+    padding: 0.15rem 0.5rem;
+    border-radius: 999px;
+    background: #fee2e2;
+    color: #b91c1c;
+    border: 1px solid #fca5a5;
+  }
+
+  .strip-visible-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 0.15rem 0.5rem;
+    border-radius: 999px;
+    background: #f0fdf4;
+    color: #15803d;
+    border: 1px solid #bbf7d0;
+  }
+
+  .btn-cancel-sem {
+    background: #fef2f2;
+    border-color: #fca5a5;
+    color: #b91c1c;
+    font-weight: 700;
+  }
+
+  .btn-cancel-sem:hover {
+    background: #fee2e2;
+    border-color: #ef4444;
+    color: #991b1b;
+  }
+
+  .btn-restore-sem {
+    background: #dcfce7;
+    border-color: #4ade80;
+    color: #166534;
+    font-weight: 700;
+  }
+
+  .btn-restore-sem:hover {
+    background: #bbf7d0;
+    border-color: #22c55e;
+    color: #14532d;
+  }
+
+  .mobile-admin-seminar-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    padding: 0.5rem 0.65rem;
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    margin-bottom: 0.6rem;
+    font-size: 0.78rem;
+  }
+
+  .mobile-admin-seminar-bar.strip-cancelled {
+    background: #fef2f2;
+    border-color: #fecaca;
+  }
+
+  .mobile-admin-sem-info {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    flex-wrap: wrap;
+  }
+
+  .mobile-admin-sem-btns {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+
+  .admin-edit-section.section-cancelled {
+    background: #fef2f2;
+    border-color: #fca5a5;
+  }
+
+  .visibility-toggle-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 0.6rem;
+  }
+
+  .vis-choice-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    padding: 0.65rem 0.8rem;
+    border-radius: 8px;
+    border: 1px solid #cbd5e1;
+    background: #ffffff;
+    text-align: left;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .vis-choice-card .vis-icon {
+    font-size: 1.15rem;
+    line-height: 1.2;
+  }
+
+  .vis-choice-card .vis-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+
+  .vis-choice-card .vis-text strong {
+    font-size: 0.82rem;
+    color: #0f172a;
+  }
+
+  .vis-choice-card .vis-text small {
+    font-size: 0.72rem;
+    color: #64748b;
+    line-height: 1.3;
+  }
+
+  .vis-choice-card.active-choice.selected {
+    border-color: #16a34a;
+    background: #f0fdf4;
+    box-shadow: 0 1px 4px rgba(22, 163, 74, 0.12);
+  }
+
+  .vis-choice-card.active-choice.selected .vis-text strong {
+    color: #166534;
+  }
+
+  .vis-choice-card.cancel-choice.selected {
+    border-color: #dc2626;
+    background: #fef2f2;
+    box-shadow: 0 1px 4px rgba(220, 38, 38, 0.12);
+  }
+
+  .vis-choice-card.cancel-choice.selected .vis-text strong {
+    color: #991b1b;
   }
 
   @media print {

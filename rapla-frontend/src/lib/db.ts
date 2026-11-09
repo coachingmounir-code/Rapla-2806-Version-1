@@ -16115,11 +16115,25 @@ export const db = {
       roomId?: string;
       applyRoomToAllSlots?: boolean;
       applyLeaderToAllSlots?: boolean;
+      isCancelled?: boolean;
+      isHiddenFromTeam?: boolean;
     }
   ): Seminar | null => {
     const seminars: Seminar[] = JSON.parse(JSON.stringify(db.getSeminars()));
     const sem = seminars.find(s => s.id === seminarId);
     if (!sem) return null;
+
+    if (updates.isCancelled !== undefined) {
+      sem.isCancelled = updates.isCancelled;
+      if (updates.isCancelled) {
+        sem.isHiddenFromTeam = true;
+      } else if (updates.isHiddenFromTeam === undefined) {
+        sem.isHiddenFromTeam = false;
+      }
+    }
+    if (updates.isHiddenFromTeam !== undefined) {
+      sem.isHiddenFromTeam = updates.isHiddenFromTeam;
+    }
 
     if (updates.leader !== undefined) {
       const newLeader = updates.leader.trim() || 'Offen';
@@ -16154,6 +16168,25 @@ export const db = {
       }
     }
 
+    db.saveSeminars(seminars, true);
+    return sem;
+  },
+  toggleSeminarTeamVisibility: (
+    seminarId: string,
+    options?: { isCancelled?: boolean; isHiddenFromTeam?: boolean }
+  ): Seminar | null => {
+    const seminars: Seminar[] = JSON.parse(JSON.stringify(db.getSeminars()));
+    const sem = seminars.find(s => s.id === seminarId);
+    if (!sem) return null;
+    const currentlyHidden = !!(sem.isCancelled || sem.isHiddenFromTeam);
+    const nextHidden = options?.isHiddenFromTeam !== undefined
+      ? options.isHiddenFromTeam
+      : (options?.isCancelled !== undefined ? options.isCancelled : !currentlyHidden);
+    const nextCancelled = options?.isCancelled !== undefined
+      ? options.isCancelled
+      : nextHidden;
+    sem.isCancelled = nextCancelled;
+    sem.isHiddenFromTeam = nextHidden;
     db.saveSeminars(seminars, true);
     return sem;
   },

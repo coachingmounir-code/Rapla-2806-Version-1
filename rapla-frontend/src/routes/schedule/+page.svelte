@@ -571,11 +571,13 @@
   });
 
   let cachedAbsences = $state<any[]>([]);
+  let registeredSeminars = $state(db.getSeminars());
 
   function loadData() {
     weekPlans = db.getWeekPlans();
     teachers = db.getTeachers();
     rooms = db.getRooms();
+    registeredSeminars = db.getSeminars();
     cachedAbsences = [...db.getSevafrei(), ...EXCEL_ABSENCES];
     
     if (planId) {
@@ -1460,9 +1462,9 @@
     >
       <span class="tab-icon">🧘‍♀️</span>
       <span class="tab-label">Seminare</span>
-      {#if getSeminarsForWeek(currentPlan?.targetWeekCode || '2026-W45').length > 0}
+      {#if getSeminarsForWeek(currentPlan?.targetWeekCode || '2026-W45', registeredSeminars).length > 0}
         {@const activeSemCode = currentPlan?.targetWeekCode || '2026-W45'}
-        {@const activeSemList = getSeminarsForWeek(activeSemCode)}
+        {@const activeSemList = getSeminarsForWeek(activeSemCode, registeredSeminars)}
         {@const coreCount = activeSemList.filter(s => getSeminarTransitionType(s, activeSemCode) === null).length}
         <span class="tab-badge seminar-badge" style="background: #ea580c; color: #fff; padding: 0.1rem 0.45rem; border-radius: 9999px; font-size: 0.72rem; margin-left: 0.35rem;">
           {coreCount || activeSemList.length}

@@ -36,6 +36,8 @@ export interface Seminar {
   weeks: string[]; // ['2026-W45', '2026-W46']
   type: 'fewo' | 'seminar';
   isBlueprint: boolean;
+  isCancelled?: boolean;      // True if seminar is cancelled (Storniert)
+  isHiddenFromTeam?: boolean; // True if hidden from Team view (automatically true when cancelled)
   slots: SeminarSlot[];
   peaceChant?: {
     time: string;
@@ -43,6 +45,10 @@ export interface Seminar {
     title: string;
   };
   notes?: string[];
+}
+
+export function isSeminarVisibleInTeam(seminar: Seminar): boolean {
+  return !seminar.isCancelled && !seminar.isHiddenFromTeam;
 }
 
 export const DAYS_FEWO = [
@@ -1943,11 +1949,17 @@ export function getSeminarTransitionType(
 }
 
 // Helper to get active seminars overlapping the Friday-to-Friday cycle of a given week code (e.g. '2026-W45')
-export function getSeminarsForWeek(weekCode: string, seminarsInput?: Seminar[]): Seminar[] {
+export function getSeminarsForWeek(
+  weekCode: string,
+  seminarsInput?: Seminar[],
+  options?: { includeHidden?: boolean }
+): Seminar[] {
   const all = seminarsInput || getRegisteredSeminars();
+  const includeHidden = options?.includeHidden ?? false;
   const { startFr, endFr } = getSeminarFridayRange(weekCode);
 
   const matching = all.filter(s => {
+    if (!includeHidden && !isSeminarVisibleInTeam(s)) return false;
     if (s.startDate && s.endDate) {
       if (s.startDate <= endFr && s.endDate >= startFr) return true;
     }
@@ -1955,6 +1967,9 @@ export function getSeminarsForWeek(weekCode: string, seminarsInput?: Seminar[]):
   });
 
   return matching.sort((a, b) => {
+    const visA = isSeminarVisibleInTeam(a) ? 0 : 1;
+    const visB = isSeminarVisibleInTeam(b) ? 0 : 1;
+    if (visA !== visB) return visA - visB;
     const transA = getSeminarTransitionType(a, weekCode);
     const transB = getSeminarTransitionType(b, weekCode);
     const rankA = transA === null ? 0 : transA === 'departing-start-fr' ? 1 : 2;
@@ -2094,6 +2109,7 @@ export function getEffectiveSeminarSlotsForDay(
 
 // Generates the standard room reservations for ashram wide room occupancy
 export function getSeminarRoomReservations(seminar: Seminar): RoomReservation[] {
+  if (!isSeminarVisibleInTeam(seminar)) return [];
   const reservations: RoomReservation[] = [];
 
   for (const slot of seminar.slots) {
