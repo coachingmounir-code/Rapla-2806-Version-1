@@ -11,6 +11,8 @@
     getLeaderShortName,
     isIndoorSeminarRoomSlot,
     isSeminarVisibleInTeam,
+    doesSeminarPersonMatchTeacher,
+    cleanSeminarSlotTitle,
     type SeminarSlot,
     type Seminar
   } from '$lib/seminarData';
@@ -149,20 +151,16 @@
   }
 
   function cleanSlotTitle(rawTitle: string): string {
-    return (rawTitle || '')
-      .replace(/^\d{1,2}:\d{2}\s*Uhr\s*:\s*/i, '')
-      .replace(/^\d{1,2}:\d{2}\s*Uhr\s+/i, '')
-      .trim();
+    return cleanSeminarSlotTitle(rawTitle);
   }
 
   function matchesSelectedTeacher(entry: SlotEntry, teacher: Teacher | null): boolean {
     if (!teacher) return false;
-    const targetFull = (teacher.name || '').trim().toLowerCase();
-    if (!targetFull) return false;
-    const targetFirst = targetFull.split(/[\s,]+/)[0] || targetFull;
-    const slotPerson = (entry.slot.teacher || (entry.slot.isOrange ? entry.seminar.leader : '') || '').toLowerCase();
+    // Only match internal seminar slots (isOrange === true), never open Hausprogramm slots
+    if (!entry.slot.isOrange) return false;
+    const slotPerson = (entry.slot.teacher || entry.seminar.leader || '').trim();
     if (!slotPerson) return false;
-    return slotPerson.includes(targetFull) || (targetFirst.length >= 3 && slotPerson.includes(targetFirst));
+    return doesSeminarPersonMatchTeacher(slotPerson, teacher.name, teacher.id);
   }
 
   function getSlotHour(slot: SeminarSlot): number {

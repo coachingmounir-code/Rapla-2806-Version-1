@@ -13,13 +13,22 @@
   } from '$lib/ylaData';
   import YlaScheduleView from '$lib/components/YlaScheduleView.svelte';
   import SeminarScheduleView from '$lib/components/SeminarScheduleView.svelte';
-  import { getSeminarsForWeek, getSeminarTransitionType, type Seminar } from '$lib/seminarData';
+  import {
+    getSeminarsForWeek,
+    getSeminarTransitionType,
+    getSeminarSlotsForTeacherAndWeek,
+    doesSeminarPersonMatchTeacher,
+    type Seminar,
+    type SeminarTeacherWeekSlot
+  } from '$lib/seminarData';
   import nataraja from '$lib/assets/nataraja.jpg';
   import sivanandaImg from '$lib/assets/sivananda.png';
   import { page } from '$app/state';
   import { goto } from '$app/navigation';
 
-  export function isSivanandaPujaSlot(course: Course | YlaTeacherWeekSlot): boolean {
+  type DisplaySlot = Course | YlaTeacherWeekSlot | SeminarTeacherWeekSlot;
+
+  export function isSivanandaPujaSlot(course: DisplaySlot): boolean {
     if (!course) return false;
     const name = (course.name || '').toLowerCase();
     const id = ((course as Course).id || '').toLowerCase();
@@ -28,20 +37,20 @@
     return (isSivananda && isPuja) || id.includes('puja-sivananda');
   }
 
-  export function isBuffetSlot(course: Course | YlaTeacherWeekSlot): boolean {
+  export function isBuffetSlot(course: DisplaySlot): boolean {
     if (!course) return false;
     const name = (course.name || '').toLowerCase();
     const style = ((course as Course).style || '').toLowerCase();
     return name.includes('vollwert-buffet') || name.includes('vollwertbuffet') || style === 'buffet';
   }
 
-  export function isOpenDayCourse(course: Course | YlaTeacherWeekSlot): boolean {
+  export function isOpenDayCourse(course: DisplaySlot): boolean {
     if (!course) return false;
     const id = ((course as Course).id || '').toLowerCase();
     return id.includes('-tdot-');
   }
 
-  export function isNormalOpenDaySlot(course: Course | YlaTeacherWeekSlot): boolean {
+  export function isNormalOpenDaySlot(course: DisplaySlot): boolean {
     if (!course) return false;
     if (!isOpenDayCourse(course)) return true;
     const id = ((course as Course).id || '').toLowerCase();
@@ -159,23 +168,58 @@
   let teacherParam = $derived(page.url.searchParams.get('teacher') || '');
   let onlyMySlotsParam = $derived(page.url.searchParams.get('onlyMySlots') === 'true');
 
+  // Combined list of teachers + any external seminar leaders from registeredSeminars
+  let allFilterableTeachers = $derived.by<Teacher[]>(() => {
+    const base = [...teachers];
+    for (const sem of registeredSeminars) {
+      if (!sem.leader || sem.leader === 'Offen') continue;
+      const leaders = sem.leader.split(',').map(s => s.trim()).filter(s => s && s !== 'Offen');
+      for (const leaderName of leaders) {
+        const alreadyExists = base.some(t => doesSeminarPersonMatchTeacher(leaderName, t.name, t.id));
+        if (!alreadyExists) {
+          const slug = leaderName
+            .toLowerCase()
+            .replace(/[ä]/g, 'ae')
+            .replace(/[ö]/g, 'oe')
+            .replace(/[ü]/g, 'ue')
+            .replace(/[ß]/g, 'ss')
+            .replace(/[^a-z0-9]+/g, '-')
+            .replace(/^-|-$/g, '');
+          base.push({
+            id: `teacher-sem-${slug}`,
+            name: leaderName,
+            email: '',
+            phone: '',
+            avatarColor: sem.color || '#ea580c',
+            specialties: ['Seminar'],
+            isYogaTeacher: true,
+            availabilityMode: 'seminar_only',
+            roleType: 'external',
+            rules: { preferredRooms: [], availability: [] }
+          });
+        }
+      }
+    }
+    return base;
+  });
+
   // Resolved teacher state
   let selectedTeacher = $derived.by<Teacher | null>(() => {
     if (!teacherParam) return null;
-    return teachers.find(t => 
+    return allFilterableTeachers.find(t => 
       t.id === teacherParam || 
       t.name.toLowerCase().includes(teacherParam.toLowerCase())
     ) || null;
   });
 
   let karmaTeachersList = $derived(
-    teachers.filter(t => t.roleType === 'karma_yogi' || t.roleType === 'guest_teacher' || t.stayStartDate || t.stayEndDate)
+    allFilterableTeachers.filter(t => t.roleType === 'karma_yogi' || t.roleType === 'guest_teacher' || t.stayStartDate || t.stayEndDate)
   );
   let externalTeachersList = $derived(
-    teachers.filter(t => t.roleType !== 'sevaka' && t.roleType !== 'karma_yogi' && t.roleType !== 'guest_teacher' && !t.stayStartDate && !t.stayEndDate)
+    allFilterableTeachers.filter(t => t.roleType !== 'sevaka' && t.roleType !== 'karma_yogi' && t.roleType !== 'guest_teacher' && !t.stayStartDate && !t.stayEndDate)
   );
   let sevakaTeachersList = $derived(
-    teachers.filter(t => t.roleType === 'sevaka')
+    allFilterableTeachers.filter(t => t.roleType === 'sevaka')
   );
 
   let activeWeekCode = $derived(
@@ -186,6 +230,25 @@
   let selectedTeacherYlaSlots = $derived.by<YlaTeacherWeekSlot[]>(() => {
     if (!selectedTeacher) return [];
     return getYlaSlotsForTeacherAndWeek(selectedTeacher.name, activeWeekCode, selectedTeacher.id);
+  });
+
+  // Resolved internal Seminar slots (isOrange === true) for the selected teacher in this week
+  let selectedTeacherSeminarSlots = $derived.by<SeminarTeacherWeekSlot[]>(() => {
+    if (!selectedTeacher) return [];
+    return getSeminarSlotsForTeacherAndWeek(
+      selectedTeacher.name,
+      activeWeekCode,
+      selectedTeacher.id,
+      registeredSeminars
+    );
+  });
+
+  let selectedTeacherSeminarTitles = $derived.by<string[]>(() => {
+    const titles = new Set<string>();
+    for (const s of selectedTeacherSeminarSlots) {
+      if (s.seminarShortTitle) titles.add(s.seminarShortTitle);
+    }
+    return Array.from(titles);
   });
 
   // Resolved Week 2 YLA slots specifically for selected teacher (for YLA4 tab)
@@ -260,11 +323,16 @@
     return result;
   });
 
-  // Derived list of all courses assigned/visible to the selected teacher in the current week
-  let selectedTeacherAssignedCourses = $derived.by<(Course | YlaTeacherWeekSlot)[]>(() => {
+  // Regular weekly courses assigned to selectedTeacher
+  let selectedTeacherRegularCourses = $derived.by<Course[]>(() => {
     if (!selectedTeacher) return [];
-    const regular = courses.filter(c => isTeacherVisibleForCourse(c, selectedTeacher!.id));
-    return [...regular, ...selectedTeacherYlaSlots];
+    return courses.filter(c => isTeacherVisibleForCourse(c, selectedTeacher!.id));
+  });
+
+  // Derived list of all courses + YLA slots + internal Seminar slots assigned/visible to the selected teacher in the current week
+  let selectedTeacherAssignedCourses = $derived.by<DisplaySlot[]>(() => {
+    if (!selectedTeacher) return [];
+    return [...selectedTeacherRegularCourses, ...selectedTeacherYlaSlots, ...selectedTeacherSeminarSlots];
   });
 
   // Grouped by day in DAYS order (Freitag -> Donnerstag) for the compact personal overview
@@ -283,14 +351,14 @@
   });
 
   // Derived combined courses for total displayed hours and counting
-  let allDisplayCourses = $derived<(Course | YlaTeacherWeekSlot)[]>(
+  let allDisplayCourses = $derived<DisplaySlot[]>(
     selectedTeacher
-      ? (onlyMySlotsParam ? selectedTeacherAssignedCourses : [...courses, ...selectedTeacherYlaSlots])
+      ? (onlyMySlotsParam ? selectedTeacherAssignedCourses : [...courses, ...selectedTeacherYlaSlots, ...selectedTeacherSeminarSlots])
       : courses
   );
 
   // Derived filtered courses for the mobile agenda view
-  let filteredMobileCourses = $derived.by<(Course | YlaTeacherWeekSlot)[]>(() => {
+  let filteredMobileCourses = $derived.by<DisplaySlot[]>(() => {
     const regular = courses
       .filter(c => c.dayOfWeek === activeMobileDay)
       .filter(c => !onlyMySlotsParam || !selectedTeacher || isTeacherVisibleForCourse(c, selectedTeacher.id));
@@ -298,7 +366,10 @@
     const yla = (selectedTeacher ? selectedTeacherYlaSlots : [])
       .filter(s => s.dayOfWeek === activeMobileDay);
 
-    return [...regular, ...yla].sort((a, b) => a.startTime.localeCompare(b.startTime));
+    const semSlots = (selectedTeacher ? selectedTeacherSeminarSlots : [])
+      .filter(s => s.dayOfWeek === activeMobileDay);
+
+    return [...regular, ...yla, ...semSlots].sort((a, b) => a.startTime.localeCompare(b.startTime));
   });
 
   const DAYS = [
@@ -549,13 +620,14 @@
     return false;
   }
 
-  function isTeacherVisibleForCourse(course: Course | YlaTeacherWeekSlot, targetTeacherId: string): boolean {
+  function isTeacherVisibleForCourse(course: DisplaySlot, targetTeacherId: string): boolean {
     if (!course) return false;
+    if ((course as any).isSeminarSlot) return true;
     if (course.teacherId && isTeacherAssigned(course.teacherId, targetTeacherId)) return true;
     if ((course as Course).additionalVisibilityTeacherIds?.includes(targetTeacherId)) return true;
     const cName = (course as Course).teacherName;
     if (cName && cName.trim()) {
-      const targetTeacher = teachers.find(t => t.id === targetTeacherId);
+      const targetTeacher = allFilterableTeachers.find(t => t.id === targetTeacherId);
       if (targetTeacher) {
         const targetNameLower = targetTeacher.name.trim().toLowerCase();
         const nameParts = cName.split(/[,+/&]+/).map(s => s.trim().toLowerCase()).filter(Boolean);
@@ -579,7 +651,7 @@
       if (id === 'teacher-gen-ulrich-nebel') return 'Ulrich';
       if (id === 'teacher-gen-harishakti') return 'Harishakti';
       if (id === 'teacher-guest-1790942064335' || id === 'teacher-guest-1790942126763') return 'Sathyam Bad Meinberg';
-      const found = teachers.find(t => 
+      const found = allFilterableTeachers.find(t => 
         t.id === id || 
         (id.includes('tanja') && (t.id.includes('tanja') || t.name.toLowerCase().includes('tanja'))) || 
         (id.includes('swantje') && (t.id.includes('swantje') || t.name.toLowerCase().includes('swantje'))) || 
@@ -608,11 +680,34 @@
     return names.join(', ');
   }
 
-  function getCourseColor(course: Course | YlaTeacherWeekSlot): { bg: string; border: string } {
+  function getCourseColor(course: DisplaySlot): { bg: string; border: string } {
     if (isSivanandaPujaSlot(course)) {
       return {
         bg: '#fffbeb', // radiant golden cream
         border: '#d97706' // deep golden saffron
+      };
+    }
+
+    if ((course as any).isSeminarSlot || course.style === 'Seminar') {
+      const semColor = ((course as SeminarTeacherWeekSlot).seminarColor || '#ea580c').toLowerCase();
+      if (semColor === '#16a34a' || semColor === '#059669') {
+        return { bg: '#dcfce7', border: '#16a34a' };
+      }
+      if (semColor === '#e11d48' || semColor === '#db2777') {
+        return { bg: '#ffe4e6', border: '#e11d48' };
+      }
+      if (semColor === '#8b5cf6' || semColor === '#7c3aed' || semColor === '#9333ea') {
+        return { bg: '#f3e8ff', border: '#8b5cf6' };
+      }
+      if (semColor === '#0284c7' || semColor === '#2563eb') {
+        return { bg: '#e0f2fe', border: '#0284c7' };
+      }
+      if (semColor === '#0d9488') {
+        return { bg: '#ccfbf1', border: '#0d9488' };
+      }
+      return {
+        bg: '#ffedd5', // warm amber / orange for Seminar / FEWO
+        border: '#ea580c'
       };
     }
 
@@ -702,7 +797,7 @@
     }
   }
 
-  function getEffectiveGridHour(course: Course | YlaTeacherWeekSlot): number {
+  function getEffectiveGridHour(course: DisplaySlot): number {
     const h = parseInt(course.startTime.split(':')[0], 10);
     if (isOpenDayCourse(course)) {
       if (h >= 9 && h <= 14) return 9;
@@ -712,7 +807,7 @@
     return h;
   }
 
-  function getDisplayedHours(currentCourses: (Course | YlaTeacherWeekSlot)[]): number[] {
+  function getDisplayedHours(currentCourses: DisplaySlot[]): number[] {
     const defaultHours = [6, 7, 9, 16, 19, 20, 21];
     const activeHours = new Set<number>();
     currentCourses.forEach(c => {
@@ -728,7 +823,7 @@
     return Array.from(combined).sort((a, b) => a - b);
   }
 
-  function getFilteredCoursesForHour(day: number, hour: number): (Course | YlaTeacherWeekSlot)[] {
+  function getFilteredCoursesForHour(day: number, hour: number): DisplaySlot[] {
     const regular = courses
       .filter(c => c.dayOfWeek === day)
       .filter(c => {
@@ -750,7 +845,14 @@
         return startHour === hour;
       });
 
-    return [...regular, ...yla].sort((a, b) => a.startTime.localeCompare(b.startTime));
+    const semSlots = (selectedTeacher ? selectedTeacherSeminarSlots : [])
+      .filter(s => s.dayOfWeek === day)
+      .filter(s => {
+        const startHour = getEffectiveGridHour(s);
+        return startHour === hour;
+      });
+
+    return [...regular, ...yla, ...semSlots].sort((a, b) => a.startTime.localeCompare(b.startTime));
   }
 
   function loadData() {
@@ -979,9 +1081,14 @@
               {/if}
             {:else}
               <h2>Persönlicher Wochenplan: <strong>{selectedTeacher.name}</strong></h2>
-              {#if isWeekApproved}
+              {#if isWeekApproved || selectedTeacherSeminarSlots.length > 0 || selectedTeacherYlaSlots.length > 0}
                 <span class="personal-slots-counter-pill" class:zero-slots={selectedTeacherAssignedCourses.length === 0}>
                   📋 {selectedTeacherAssignedCourses.length} {selectedTeacherAssignedCourses.length === 1 ? 'Einteilung' : 'Einteilungen'} in KW {currentWeekNum}
+                </span>
+              {/if}
+              {#if selectedTeacherSeminarSlots.length > 0}
+                <span class="seminar-counter-pill">
+                  🧘‍♀️ davon {selectedTeacherSeminarSlots.length}x Seminar-Slot{selectedTeacherSeminarSlots.length === 1 ? '' : 's'} ({selectedTeacherSeminarTitles.join(', ')})
                 </span>
               {/if}
               {#if selectedTeacherYlaSlots.length > 0}
@@ -1010,11 +1117,19 @@
               <span class="yla-active-notice" style="color: #9333ea;">
                 ✨ Deine Unterrichtseinheiten für Woche 4 der Yogalehrerausbildung sind im Plan hervorgehoben!
               </span>
-            {:else if selectedTeacherYlaSlots.length > 0}
-              <span class="dot-separator">•</span>
-              <span class="yla-active-notice">
-                ✨ Deine Einteilungen für die 4-wöchige Yogalehrerausbildung sind im Plan hervorgehoben!
-              </span>
+            {:else}
+              {#if selectedTeacherSeminarSlots.length > 0}
+                <span class="dot-separator">•</span>
+                <span class="seminar-active-notice">
+                  ✨ Inkl. deiner internen Seminar-Slots ({selectedTeacherSeminarTitles.join(', ')})
+                </span>
+              {/if}
+              {#if selectedTeacherYlaSlots.length > 0}
+                <span class="dot-separator">•</span>
+                <span class="yla-active-notice">
+                  ✨ Deine Einteilungen für die 4-wöchige Yogalehrerausbildung sind im Plan hervorgehoben!
+                </span>
+              {/if}
             {/if}
           </div>
         </div>
@@ -1028,7 +1143,7 @@
         </button>
       </div>
 
-      {#if activeTab === 'wochenplan' && isWeekApproved}
+      {#if activeTab === 'wochenplan' && (isWeekApproved || selectedTeacherSeminarSlots.length > 0 || selectedTeacherYlaSlots.length > 0)}
         <div class="personal-compact-schedule">
           <div class="compact-schedule-header">
             <span class="compact-schedule-title">⚡ Kompakte Übersicht deiner Stunden (KW {currentWeekNum}):</span>
@@ -1061,13 +1176,23 @@
                   <div class="compact-day-slots">
                     {#each group.slots as slot}
                       {@const isYla = (slot as any).isYla === true}
-                      {@const isSchulung = !isYla && ((slot as Course).name?.toLowerCase().includes('schulung') || (((slot as Course).style || '').toLowerCase().includes('schulung')))}
+                      {@const isSeminar = (slot as any).isSeminarSlot === true}
+                      {@const isSchulung = !isYla && !isSeminar && ((slot as Course).name?.toLowerCase().includes('schulung') || (((slot as Course).style || '').toLowerCase().includes('schulung')))}
                       {@const colors = getCourseColor(slot)}
-                      {@const roomName = isYla ? ((slot as any).roomName || 'Sivananda Saal (YLA)') : (rooms.find(r => r.id === slot.roomId)?.name || slot.roomId || 'Raum?')}
-                      {@const slotTitle = isYla ? (slot as any).name.replace('4-Wochen YLA: ', '') : slot.name}
+                      {@const roomName = isYla
+                        ? ((slot as any).roomName || 'Sivananda Saal (YLA)')
+                        : isSeminar
+                          ? ((slot as SeminarTeacherWeekSlot).roomName || 'Seminarraum')
+                          : (rooms.find(r => r.id === slot.roomId)?.name || slot.roomId || 'Raum?')}
+                      {@const slotTitle = isYla
+                        ? (slot as any).name.replace('4-Wochen YLA: ', '')
+                        : isSeminar
+                          ? (slot as SeminarTeacherWeekSlot).slotTitle
+                          : slot.name}
                       <div 
                         class="compact-slot-row"
-                        style="background-color: {colors.bg}; border-left: 4px solid {isYla ? '#9333ea' : isSchulung ? '#4338ca' : colors.border};"
+                        class:compact-seminar-slot-row={isSeminar}
+                        style="background-color: {colors.bg}; border-left: 4px solid {isYla ? '#9333ea' : isSeminar ? ((slot as SeminarTeacherWeekSlot).seminarColor || '#ea580c') : isSchulung ? '#4338ca' : colors.border};"
                       >
                         <div class="compact-slot-top">
                           <span class="compact-slot-time">⏰ {slot.startTime} – {slot.endTime}</span>
@@ -1076,6 +1201,8 @@
                         <div class="compact-slot-name">
                           {#if isYla}
                             <span class="compact-yla-tag">YLA</span>
+                          {:else if isSeminar}
+                            <span class="compact-seminar-tag" style="background-color: {(slot as SeminarTeacherWeekSlot).seminarColor || '#ea580c'};">{(slot as SeminarTeacherWeekSlot).seminarShortTitle}</span>
                           {:else if isSchulung}
                             <span class="compact-schulung-tag">YL-Schulung</span>
                           {/if}
@@ -1127,7 +1254,7 @@
         </div>
       </div>
 
-      {#if !isWeekApproved}
+      {#if !isWeekApproved && !(selectedTeacher && (selectedTeacherSeminarSlots.length > 0 || selectedTeacherYlaSlots.length > 0))}
         <div class="unapproved-week-notice animate-fade-in">
           <div class="notice-icon-large">🔒</div>
           <h2>Wochenplan noch nicht freigegeben</h2>
@@ -1199,7 +1326,7 @@
           {#each getDisplayedHours(allDisplayCourses) as hour, idx}
             {@const hoursList = getDisplayedHours(allDisplayCourses)}
             {@const prevHour = idx > 0 ? hoursList[idx - 1] : null}
-            {@const isMiddayGap = prevHour !== null && prevHour <= 10 && hour >= 15}
+            {@const isMiddayGap = prevHour !== null && prevHour <= 10 && hour >= 12}
 
             {#if isMiddayGap}
               <div class="grid-midday-gap" aria-hidden="true"></div>
@@ -1217,12 +1344,14 @@
               <div class="grid-content-cell" class:tdot-column-cell={isOpenDaySaturday}>
                 {#if isOpenDaySaturday}
                   {@const primaryCourses = cellCourses.filter(c => {
+                    if ((c as any).isSeminarSlot === true) return true;
                     if (!isOpenDayCourse(c)) return true;
                     if (hour === 9) return c.startTime < '10:00' || (selectedTeacher && isTeacherVisibleForCourse(c, selectedTeacher.id));
                     if (hour === 15) return selectedTeacher ? isTeacherVisibleForCourse(c, selectedTeacher.id) : false;
                     return true;
                   })}
                   {@const collapsibleCourses = cellCourses.filter(c => {
+                    if ((c as any).isSeminarSlot === true) return false;
                     if (!isOpenDayCourse(c)) return false;
                     if (hour === 9) return c.startTime >= '10:00' && !(selectedTeacher && isTeacherVisibleForCourse(c, selectedTeacher.id));
                     if (hour === 15) return !(selectedTeacher && isTeacherVisibleForCourse(c, selectedTeacher.id));
@@ -1233,13 +1362,35 @@
                   {@const visibleTdotCourses = isGroupOpen ? cellCourses : primaryCourses}
 
                   {#each visibleTdotCourses as course}
-                    {@const isBuffet = isBuffetSlot(course)}
-                    {@const isHighlighted = selectedTeacher && isTeacherVisibleForCourse(course, selectedTeacher.id)}
+                    {@const isSeminar = (course as any).isSeminarSlot === true}
+                    {@const isBuffet = !isSeminar && isBuffetSlot(course)}
+                    {@const isHighlighted = selectedTeacher && (isSeminar || isTeacherVisibleForCourse(course, selectedTeacher.id))}
                     {@const colors = getCourseColor(course)}
-                    {@const teacherName = getTeacherDisplayName(course.teacherId, (course as any).teacherName, false)}
-                    {@const roomName = rooms.find(r => r.id === course.roomId)?.name || course.roomId || 'Raum?'}
+                    {@const teacherName = isSeminar ? (course as any).teacherName : getTeacherDisplayName(course.teacherId, (course as any).teacherName, false)}
+                    {@const roomName = isSeminar ? ((course as any).roomName || 'Seminarraum') : (rooms.find(r => r.id === course.roomId)?.name || course.roomId || 'Raum?')}
                     {@const isSlotExpanded = !!expandedTdotSlotIds[(course as Course).id]}
-                    {#if isNormalOpenDaySlot(course)}
+                    {#if isSeminar}
+                      {@const sem = course as any}
+                      <div 
+                        class="course-card-rapla seminar-course-card highlighted-card"
+                        style="background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%); border-left: 5px solid {sem.seminarColor || '#ea580c'}; box-shadow: 0 3px 8px rgba(234, 88, 12, 0.18);"
+                        title="{sem.seminarTitle} — {sem.slotTitle}{sem.slotDescription ? ': ' + sem.slotDescription : ''}"
+                      >
+                        <div class="card-top-line">
+                          <span class="card-time" style="color: #9a3412; font-weight: 800;">⏰ {sem.startTime} - {sem.endTime}</span>
+                          <span class="seminar-slot-badge-pill">🧘‍♀️ {sem.seminarShortTitle}</span>
+                        </div>
+                        <div class="card-title-line" style="color: #7c2d12; font-weight: 800;">
+                          {sem.slotTitle}
+                        </div>
+                        <div class="card-subtitle-line" style="color: #c2410c;">
+                          📍 {sem.roomName}{sem.locationHint && sem.locationHint !== sem.roomName ? ` (${sem.locationHint})` : ''}
+                        </div>
+                        <div class="card-teacher-line" style="color: #9a3412; font-weight: 700;">
+                          👤 {sem.teacherName}
+                        </div>
+                      </div>
+                    {:else if isNormalOpenDaySlot(course)}
                       {@const isSchulung = (course as Course).name?.toLowerCase().includes('schulung') || (((course as Course).style || '').toLowerCase().includes('schulung'))}
                       <div 
                         class="course-card-rapla" 
@@ -1343,11 +1494,12 @@
                 {:else}
                   {#each cellCourses as course}
                     {@const isYla = (course as any).isYla === true}
-                    {@const isSchulung = !isYla && ((course as Course).name?.toLowerCase().includes('schulung') || (((course as Course).style || '').toLowerCase().includes('schulung')))}
-                    {@const isHighlighted = selectedTeacher && (isTeacherVisibleForCourse(course, selectedTeacher.id) || isYla)}
+                    {@const isSeminar = (course as any).isSeminarSlot === true}
+                    {@const isSchulung = !isYla && !isSeminar && ((course as Course).name?.toLowerCase().includes('schulung') || (((course as Course).style || '').toLowerCase().includes('schulung')))}
+                    {@const isHighlighted = selectedTeacher && (isTeacherVisibleForCourse(course, selectedTeacher.id) || isYla || isSeminar)}
                     {@const colors = getCourseColor(course)}
-                    {@const teacherName = isYla ? (course as any).teacherName : getTeacherDisplayName(course.teacherId, (course as any).teacherName, isSchulung)}
-                    {@const roomName = isYla ? ((course as any).roomName || 'Sivananda Saal (YLA)') : (rooms.find(r => r.id === course.roomId)?.name || course.roomId || 'Raum?')}
+                    {@const teacherName = isYla || isSeminar ? (course as any).teacherName : getTeacherDisplayName(course.teacherId, (course as any).teacherName, isSchulung)}
+                    {@const roomName = isYla ? ((course as any).roomName || 'Sivananda Saal (YLA)') : isSeminar ? ((course as any).roomName || 'Seminarraum') : (rooms.find(r => r.id === course.roomId)?.name || course.roomId || 'Raum?')}
                     
                     {#if isYla}
                       {@const yla = course as any}
@@ -1368,6 +1520,27 @@
                         </div>
                         <div class="card-teacher-line" style="color: #6b21a8; font-weight: 700;">
                           👤 {yla.teacherName}
+                        </div>
+                      </div>
+                    {:else if isSeminar}
+                      {@const sem = course as any}
+                      <div 
+                        class="course-card-rapla seminar-course-card highlighted-card"
+                        style="background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%); border-left: 5px solid {sem.seminarColor || '#ea580c'}; box-shadow: 0 3px 8px rgba(234, 88, 12, 0.18);"
+                        title="{sem.seminarTitle} — {sem.slotTitle}{sem.slotDescription ? ': ' + sem.slotDescription : ''}"
+                      >
+                        <div class="card-top-line">
+                          <span class="card-time" style="color: #9a3412; font-weight: 800;">⏰ {sem.startTime} - {sem.endTime}</span>
+                          <span class="seminar-slot-badge-pill">🧘‍♀️ {sem.seminarShortTitle}</span>
+                        </div>
+                        <div class="card-title-line" style="color: #7c2d12; font-weight: 800;">
+                          {sem.slotTitle}
+                        </div>
+                        <div class="card-subtitle-line" style="color: #c2410c;">
+                          📍 {sem.roomName}{sem.locationHint && sem.locationHint !== sem.roomName ? ` (${sem.locationHint})` : ''}
+                        </div>
+                        <div class="card-teacher-line" style="color: #9a3412; font-weight: 700;">
+                          👤 {sem.teacherName}
                         </div>
                       </div>
                     {:else if isSivanandaPujaSlot(course)}
@@ -1460,7 +1633,7 @@
       <button type="button" class="btn btn-secondary btn-small" onclick={() => navigateWeek(1)}>▶</button>
     </div>
 
-    {#if !isWeekApproved}
+    {#if !isWeekApproved && !(selectedTeacher && (selectedTeacherSeminarSlots.length > 0 || selectedTeacherYlaSlots.length > 0))}
       <div class="unapproved-week-notice animate-fade-in" style="margin: 1.5rem 0.5rem; padding: 2rem 1rem;">
         <div class="notice-icon-large">🔒</div>
         <h2 style="font-size: 1.25rem;">Wochenplan noch nicht freigegeben</h2>
@@ -1540,11 +1713,12 @@
         {:else}
           {#each filteredMobileCourses as course}
             {@const isYla = (course as any).isYla === true}
-            {@const isSchulung = !isYla && ((course as Course).name?.toLowerCase().includes('schulung') || (((course as Course).style || '').toLowerCase().includes('schulung')))}
-            {@const isHighlighted = selectedTeacher && (isTeacherVisibleForCourse(course, selectedTeacher.id) || isYla)}
+            {@const isSeminar = (course as any).isSeminarSlot === true}
+            {@const isSchulung = !isYla && !isSeminar && ((course as Course).name?.toLowerCase().includes('schulung') || (((course as Course).style || '').toLowerCase().includes('schulung')))}
+            {@const isHighlighted = selectedTeacher && (isTeacherVisibleForCourse(course, selectedTeacher.id) || isYla || isSeminar)}
             {@const colors = getCourseColor(course)}
-            {@const teacherName = isYla ? (course as any).teacherName : getTeacherDisplayName((course as Course).teacherId, (course as Course).teacherName, isSchulung)}
-            {@const roomName = isYla ? ((course as any).roomName || 'Sivananda Saal (YLA)') : (rooms.find(r => r.id === course.roomId)?.name || course.roomId || 'Raum?')}
+            {@const teacherName = isYla || isSeminar ? (course as any).teacherName : getTeacherDisplayName((course as Course).teacherId, (course as Course).teacherName, isSchulung)}
+            {@const roomName = isYla ? ((course as any).roomName || 'Sivananda Saal (YLA)') : isSeminar ? ((course as any).roomName || 'Seminarraum') : (rooms.find(r => r.id === course.roomId)?.name || course.roomId || 'Raum?')}
 
             {#if isYla}
               {@const yla = course as any}
@@ -1562,6 +1736,24 @@
                 </div>
                 <div class="agenda-teacher" style="color: #6b21a8; font-weight: 700;">
                   👤 {yla.teacherName}
+                </div>
+              </div>
+            {:else if isSeminar}
+              {@const sem = course as any}
+              <div 
+                class="mobile-agenda-card seminar-mobile-card highlighted-card"
+                style="background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%); border-left: 6px solid {sem.seminarColor || '#ea580c'}; box-shadow: 0 4px 10px rgba(234, 88, 12, 0.15);"
+              >
+                <div class="agenda-time-room">
+                  <span class="agenda-time" style="color: #9a3412; font-weight: 800;">⏰ {sem.startTime} - {sem.endTime}</span>
+                  <span class="seminar-slot-badge-pill">🧘‍♀️ {sem.seminarShortTitle}</span>
+                </div>
+                <h3 class="agenda-title" style="color: #7c2d12; font-weight: 800;">{sem.slotTitle}</h3>
+                <div style="font-size: 0.75rem; color: #c2410c; margin-bottom: 0.25rem; font-weight: 600;">
+                  📍 {sem.roomName}{sem.locationHint && sem.locationHint !== sem.roomName ? ` (${sem.locationHint})` : ''} • {sem.seminarTitle}
+                </div>
+                <div class="agenda-teacher" style="color: #9a3412; font-weight: 700;">
+                  👤 {sem.teacherName}
                 </div>
               </div>
             {:else if isSivanandaPujaSlot(course)}
@@ -2983,6 +3175,18 @@
     box-shadow: 0 2px 4px rgba(126, 34, 206, 0.1);
   }
 
+  .seminar-counter-pill {
+    background: #ffedd5;
+    color: #c2410c;
+    font-size: 0.78rem;
+    font-weight: 800;
+    padding: 0.22rem 0.7rem;
+    border-radius: 20px;
+    border: 1px solid #fdba74;
+    box-shadow: 0 2px 4px rgba(234, 88, 12, 0.12);
+    white-space: nowrap;
+  }
+
   .teacher-details-row {
     display: flex;
     align-items: center;
@@ -2994,6 +3198,11 @@
 
   .yla-active-notice {
     color: #7e22ce;
+    font-weight: 600;
+  }
+
+  .seminar-active-notice {
+    color: #c2410c;
     font-weight: 600;
   }
 
@@ -3162,6 +3371,17 @@
     border: 1px solid #d8b4fe;
   }
 
+  .compact-seminar-tag {
+    background: #ffedd5;
+    color: #9a3412;
+    font-size: 0.6rem;
+    font-weight: 800;
+    padding: 1px 5px;
+    border-radius: 4px;
+    border: 1px solid #fdba74;
+    white-space: nowrap;
+  }
+
   .compact-schulung-tag {
     background: #e0e7ff;
     color: #4338ca;
@@ -3209,6 +3429,20 @@
     white-space: nowrap;
   }
 
+  .seminar-slot-badge-pill {
+    background: #fed7aa;
+    color: #9a3412;
+    font-size: 0.62rem;
+    font-weight: 800;
+    padding: 1.5px 5px;
+    border-radius: 4px;
+    border: 1px solid #fb923c;
+    white-space: nowrap;
+    max-width: 125px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
   .yla-course-card {
     border-left: 5px solid #9333ea !important;
   }
@@ -3218,8 +3452,21 @@
     transform: translateY(-1px);
   }
 
+  .seminar-course-card {
+    border: 1px solid #fdba74 !important;
+  }
+
+  .seminar-course-card:hover {
+    box-shadow: 0 6px 14px rgba(234, 88, 12, 0.25) !important;
+    transform: translateY(-1px);
+  }
+
   .yla-mobile-card {
     border-left: 6px solid #9333ea !important;
+  }
+
+  .seminar-mobile-card {
+    border: 1px solid #fdba74 !important;
   }
 
   .card-subtitle-line {

@@ -18,12 +18,14 @@
   } from '$lib/whatsappNotifier';
   import sivanandaImg from '$lib/assets/sivananda.png';
   import SeminarScheduleView from '$lib/components/SeminarScheduleView.svelte';
-  import { getSeminarsForWeek, getSeminarTransitionType } from '$lib/seminarData';
+  import { getSeminarsForWeek, getSeminarTransitionType, getSeminarSlotsForTeacherAndWeek, doesSeminarPersonMatchTeacher, type SeminarTeacherWeekSlot } from '$lib/seminarData';
   import { page } from '$app/state';
   import { goto } from '$app/navigation';
 
-  export function isSivanandaPujaSlot(course: Course): boolean {
-    if (!course) return false;
+  type AdminDisplaySlot = Course | SeminarTeacherWeekSlot;
+
+  export function isSivanandaPujaSlot(course: AdminDisplaySlot): boolean {
+    if (!course || (course as any).isSeminarSlot) return false;
     const name = (course.name || '').toLowerCase();
     const id = (course.id || '').toLowerCase();
     const isSivananda = name.includes('sivananda') || name.includes('shivananda');
@@ -31,20 +33,20 @@
     return (isSivananda && isPuja) || id.includes('puja-sivananda');
   }
 
-  export function isBuffetSlot(course: Course): boolean {
-    if (!course) return false;
+  export function isBuffetSlot(course: AdminDisplaySlot): boolean {
+    if (!course || (course as any).isSeminarSlot) return false;
     const name = (course.name || '').toLowerCase();
     const style = (course.style || '').toLowerCase();
     return name.includes('vollwert-buffet') || name.includes('vollwertbuffet') || style === 'buffet';
   }
 
-  export function isOpenDayCourse(course: Course): boolean {
-    if (!course) return false;
+  export function isOpenDayCourse(course: AdminDisplaySlot): boolean {
+    if (!course || (course as any).isSeminarSlot) return false;
     const id = (course.id || '').toLowerCase();
     return id.includes('-tdot-');
   }
 
-  export function isNormalOpenDaySlot(course: Course): boolean {
+  export function isNormalOpenDaySlot(course: AdminDisplaySlot): boolean {
     if (!course) return false;
     if (!isOpenDayCourse(course)) return true;
     const id = (course.id || '').toLowerCase();
@@ -366,7 +368,14 @@
   }
 
   // Get color based on course name or style to match the image theme
-  function getCourseColor(course: Course): { bg: string; border: string } {
+  function getCourseColor(course: AdminDisplaySlot): { bg: string; border: string } {
+    if ((course as any).isSeminarSlot === true) {
+      return {
+        bg: '#fff7ed',
+        border: (course as any).seminarColor || '#ea580c'
+      };
+    }
+
     if (isSivanandaPujaSlot(course)) {
       return {
         bg: '#fffbeb', // radiant golden cream
@@ -392,7 +401,7 @@
     }
 
     const hasValidTeacherName = !!(course.teacherName && course.teacherName.trim() && course.teacherName !== '! YL #' && course.teacherName !== 'Offen' && course.teacherName !== 'Unbesetzt');
-    const isUnassigned = (!course.teacherId || course.teacherId === 'teacher-gen-yl') && !hasValidTeacherName && !course.isFixedAgreement;
+    const isUnassigned = (!course.teacherId || course.teacherId === 'teacher-gen-yl') && !hasValidTeacherName && !(course as Course).isFixedAgreement;
     if (isUnassigned) {
       return {
         bg: '#fee2e2', // light red/rose
@@ -430,7 +439,7 @@
       !nameLower.includes('ankommensstunde');
     
     if (isYellow) {
-      if (course.isFixedAgreement) {
+      if ((course as Course).isFixedAgreement) {
         return {
           bg: '#fef08a', // warm golden yellow (subtle distinction in yellow family)
           border: '#eab308'
@@ -441,7 +450,7 @@
         border: '#dddd66'
       };
     } else {
-      if (course.isFixedAgreement) {
+      if ((course as Course).isFixedAgreement) {
         return {
           bg: '#fecdd3', // warm reddish-rose tone (same rosa family, but distinct nuance for agreed slots)
           border: '#f43f5e' // deeper rose-red border
@@ -454,8 +463,9 @@
     }
   }
 
-  function getEffectiveGridHour(course: Course): number {
+  function getEffectiveGridHour(course: AdminDisplaySlot): number {
     const h = parseInt(course.startTime.split(':')[0], 10);
+    if ((course as any).isSeminarSlot === true) return h;
     if (isOpenDayCourse(course)) {
       if (h >= 9 && h <= 14) return 9;
       if (h === 15) return 15;
@@ -465,7 +475,7 @@
   }
 
   // Retrieve displaying hours dynamically to hide empty hours but show scheduled and core ones
-  function getDisplayedHours(currentCourses: Course[]): number[] {
+  function getDisplayedHours(currentCourses: AdminDisplaySlot[]): number[] {
     const defaultHours = [6, 7, 9, 16, 19, 20, 21];
     const activeHours = new Set<number>();
     currentCourses.forEach(c => {
@@ -477,6 +487,58 @@
     const combined = new Set([...defaultHours, ...activeHours]);
     return Array.from(combined).sort((a, b) => a - b);
   }
+
+  let cachedAbsences = $state<any[]>([]);
+  let registeredSeminars = $state(db.getSeminars());
+
+  let allFilterableTeachers = $derived.by<Teacher[]>(() => {
+    const list: Teacher[] = [...teachers];
+    for (const sem of registeredSeminars) {
+      if (sem.isCancelled || sem.isHiddenFromTeam) continue;
+      if (!sem.leaderName) continue;
+      const leaderParts = sem.leaderName.split(/[,+/&]+|\bund\b/i).map(p => p.trim()).filter(Boolean);
+      for (const part of leaderParts) {
+        if (!part || part.toLowerCase() === 'team' || part.toLowerCase().includes('yoga vidya')) continue;
+        const alreadyExists = list.some(t => doesSeminarPersonMatchTeacher(part, t.name, t.id));
+        if (!alreadyExists) {
+          const slug = part.toLowerCase().replace(/[^a-z0-9äöüß]+/g, '-').replace(/^-|-$/g, '');
+          list.push({
+            id: `seminar-leader-${slug}`,
+            name: part,
+            email: '',
+            avatarColor: '#ea580c',
+            specialties: [sem.shortTitle || sem.title],
+            isYogaTeacher: true,
+            availabilityMode: 'seminar_only',
+            roleType: 'external',
+            rules: { preferredRooms: [], preferredDays: [], availability: [] }
+          });
+        }
+      }
+    }
+    return list;
+  });
+
+  let selectedFilterTeacherObj = $derived(
+    selectedTeacherFilter !== 'all'
+      ? (allFilterableTeachers.find(t => t.id === selectedTeacherFilter) || null)
+      : null
+  );
+
+  let selectedTeacherSeminarSlots = $derived<SeminarTeacherWeekSlot[]>(
+    selectedFilterTeacherObj
+      ? getSeminarSlotsForTeacherAndWeek(
+          selectedFilterTeacherObj.name,
+          currentPlan?.targetWeekCode || getWeekCode(getMondayOfCurrentWeek()),
+          selectedFilterTeacherObj.id,
+          registeredSeminars
+        )
+      : []
+  );
+
+  let allDisplayCourses = $derived<AdminDisplaySlot[]>(
+    selectedFilterTeacherObj ? [...courses, ...selectedTeacherSeminarSlots] : courses
+  );
 
   function isTeacherAssigned(courseTeacherId: string | null | undefined, targetTeacherId: string): boolean {
     if (!courseTeacherId) return false;
@@ -490,13 +552,15 @@
     return false;
   }
 
-  function isTeacherVisibleForCourse(course: Course, targetTeacherId: string): boolean {
+  function isTeacherVisibleForCourse(course: AdminDisplaySlot, targetTeacherId: string): boolean {
     if (!course) return false;
+    if ((course as any).isSeminarSlot === true) return course.teacherId === targetTeacherId;
     if (course.teacherId && isTeacherAssigned(course.teacherId, targetTeacherId)) return true;
-    if (course.additionalVisibilityTeacherIds?.includes(targetTeacherId)) return true;
+    if ((course as Course).additionalVisibilityTeacherIds?.includes(targetTeacherId)) return true;
     if (course.teacherName && course.teacherName.trim()) {
-      const targetTeacher = teachers.find(t => t.id === targetTeacherId);
+      const targetTeacher = allFilterableTeachers.find(t => t.id === targetTeacherId);
       if (targetTeacher) {
+        if (doesSeminarPersonMatchTeacher(course.teacherName, targetTeacher.name, targetTeacher.id)) return true;
         const targetNameLower = targetTeacher.name.trim().toLowerCase();
         const nameParts = course.teacherName.split(/[,+/&]+/).map(s => s.trim().toLowerCase()).filter(Boolean);
         if (nameParts.some(p => p === targetNameLower)) return true;
@@ -549,8 +613,8 @@
   }
 
   // Get filtered courses for a specific day and hour
-  function getFilteredCoursesForHour(day: number, hour: number): Course[] {
-    return courses
+  function getFilteredCoursesForHour(day: number, hour: number): AdminDisplaySlot[] {
+    return allDisplayCourses
       .filter(c => c.dayOfWeek === day)
       .filter(c => {
         const startHour = getEffectiveGridHour(c);
@@ -558,7 +622,7 @@
       })
       .filter(c => selectedRoomFilter === 'all' || c.roomId === selectedRoomFilter)
       .filter(c => selectedTeacherFilter === 'all' || isTeacherVisibleForCourse(c, selectedTeacherFilter))
-      .filter(c => !showOnlyAgreedSlots || c.isFixedAgreement)
+      .filter(c => !showOnlyAgreedSlots || ((c as any).isSeminarSlot !== true && (c as Course).isFixedAgreement))
       .sort((a, b) => a.startTime.localeCompare(b.startTime));
   }
 
@@ -569,9 +633,6 @@
       loadData();
     });
   });
-
-  let cachedAbsences = $state<any[]>([]);
-  let registeredSeminars = $state(db.getSeminars());
 
   function loadData() {
     weekPlans = db.getWeekPlans();
@@ -1509,21 +1570,26 @@
     <select id="filter-teacher" class="form-select filter-select" bind:value={selectedTeacherFilter}>
       <option value="all">Alle Unterrichtenden</option>
       <optgroup label="Sevakas (Kernteam)">
-        {#each teachers.filter(t => t.roleType === 'sevaka') as t (t.id)}
+        {#each allFilterableTeachers.filter(t => t.roleType === 'sevaka') as t (t.id)}
           <option value={t.id}>🧘 {t.name} ({sevakaYogaCounts[t.id] ?? 0})</option>
         {/each}
       </optgroup>
       <optgroup label="Karma-Yogis & externe Seminarleiter">
-        {#each teachers.filter(t => t.roleType === 'karma_yogi' || t.roleType === 'guest_teacher' || t.stayStartDate || t.stayEndDate) as t}
+        {#each allFilterableTeachers.filter(t => t.roleType === 'karma_yogi' || t.roleType === 'guest_teacher' || t.stayStartDate || t.stayEndDate) as t (t.id)}
           <option value={t.id}>✨ {t.name} ({t.roleType === 'guest_teacher' ? 'Gast-SL' : 'Karma-Yogi'})</option>
         {/each}
       </optgroup>
       <optgroup label="Externe Seminarleiter">
-        {#each teachers.filter(t => t.roleType !== 'sevaka' && t.roleType !== 'karma_yogi' && t.roleType !== 'guest_teacher' && !t.stayStartDate && !t.stayEndDate) as t}
+        {#each allFilterableTeachers.filter(t => t.roleType !== 'sevaka' && t.roleType !== 'karma_yogi' && t.roleType !== 'guest_teacher' && !t.stayStartDate && !t.stayEndDate) as t (t.id)}
           <option value={t.id}>👤 {t.name}</option>
         {/each}
       </optgroup>
     </select>
+    {#if selectedFilterTeacherObj && selectedTeacherSeminarSlots.length > 0}
+      <span style="display: inline-flex; align-items: center; gap: 0.3rem; background: #ffedd5; color: #c2410c; border: 1px solid #fdba74; border-radius: 999px; padding: 0.2rem 0.65rem; font-size: 0.76rem; font-weight: 800; white-space: nowrap;">
+        🧘‍♀️ +{selectedTeacherSeminarSlots.length} {selectedTeacherSeminarSlots.length === 1 ? 'interner Seminar-Slot' : 'interne Seminar-Slots'}
+      </span>
+    {/if}
   </div>
 
   <div class="filter-group" style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
@@ -1664,10 +1730,10 @@
     {/each}
 
     <!-- Time rows -->
-    {#each getDisplayedHours(courses) as hour, idx}
-      {@const hoursList = getDisplayedHours(courses)}
+    {#each getDisplayedHours(allDisplayCourses) as hour, idx}
+      {@const hoursList = getDisplayedHours(allDisplayCourses)}
       {@const prevHour = idx > 0 ? hoursList[idx - 1] : null}
-      {@const isMiddayGap = prevHour !== null && prevHour <= 10 && hour >= 15}
+      {@const isMiddayGap = prevHour !== null && prevHour <= 10 && hour >= 12}
 
       {#if isMiddayGap}
         <div class="grid-midday-gap" aria-hidden="true"></div>
@@ -1685,12 +1751,14 @@
         <div class="grid-content-cell" class:tdot-column-cell={isOpenDaySaturday}>
           {#if isOpenDaySaturday}
             {@const primaryCourses = coursesInSlot.filter(c => {
+              if ((c as any).isSeminarSlot === true) return true;
               if (!isOpenDayCourse(c)) return true;
               if (hour === 9) return c.startTime < '10:00' || selectedTeacherFilter !== 'all' || selectedRoomFilter !== 'all';
               if (hour === 15) return selectedTeacherFilter !== 'all' || selectedRoomFilter !== 'all';
               return true;
             })}
             {@const collapsibleCourses = coursesInSlot.filter(c => {
+              if ((c as any).isSeminarSlot === true) return false;
               if (!isOpenDayCourse(c)) return false;
               if (hour === 9) return c.startTime >= '10:00' && selectedTeacherFilter === 'all' && selectedRoomFilter === 'all';
               if (hour === 15) return selectedTeacherFilter === 'all' && selectedRoomFilter === 'all';
@@ -1701,15 +1769,40 @@
             {@const visibleTdotCourses = isGroupOpen ? coursesInSlot : primaryCourses}
 
             {#each visibleTdotCourses as course}
+              {@const isSeminar = (course as any).isSeminarSlot === true}
               {@const cardColors = getCourseColor(course)}
               {@const roomObj = rooms.find(r => r.id === course.roomId)}
-              {@const isBuffet = isBuffetSlot(course)}
+              {@const isBuffet = !isSeminar && isBuffetSlot(course)}
               {@const isSlotExpanded = !!expandedTdotSlotIds[course.id]}
-              {@const teacherName = getTeacherDisplayName(course.teacherId, course.teacherName)}
-              {#if isNormalOpenDaySlot(course)}
+              {@const teacherName = isSeminar ? (course as any).teacherName : getTeacherDisplayName(course.teacherId, course.teacherName)}
+              {#if isSeminar}
+                {@const sem = course as any}
+                <!-- svelte-ignore a11y_click_events_have_key_events -->
+                <!-- svelte-ignore a11y_no_static_element_interactions -->
+                <div 
+                  class="course-card-rapla"
+                  style="background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%); border: 1px solid #fdba74; border-left: 5px solid {sem.seminarColor || '#ea580c'}; box-shadow: 0 3px 8px rgba(234, 88, 12, 0.16);"
+                  onclick={() => switchScheduleTab('seminare')}
+                  title="{sem.seminarTitle} — {sem.slotTitle} (Klicken, um zum Seminarplan zu wechseln)"
+                >
+                  <div class="card-top-line">
+                    <span class="card-time" style="color: #9a3412; font-weight: 800;">⏰ {sem.startTime} - {sem.endTime}</span>
+                    <span style="background: #fed7aa; color: #9a3412; font-size: 0.6rem; font-weight: 800; padding: 1px 5px; border-radius: 4px; border: 1px solid #fb923c; white-space: nowrap; max-width: 115px; overflow: hidden; text-overflow: ellipsis;">🧘‍♀️ {sem.seminarShortTitle}</span>
+                  </div>
+                  <div class="card-title-line" style="color: #7c2d12; font-weight: 800;">
+                    {sem.slotTitle}
+                  </div>
+                  <div style="font-size: 0.68rem; color: #c2410c; font-weight: 600;">
+                    📍 {sem.roomName}{sem.locationHint && sem.locationHint !== sem.roomName ? ` (${sem.locationHint})` : ''}
+                  </div>
+                  <div class="card-teacher-line" style="color: #9a3412; font-weight: 700;">
+                    👤 {sem.teacherName}
+                  </div>
+                </div>
+              {:else if isNormalOpenDaySlot(course)}
                 {@const isSchulung = course.name.toLowerCase().includes('schulung') || (course.style && course.style.toLowerCase().includes('schulung'))}
-                {@const isAgreed = course.isFixedAgreement}
-                {@const courseConflicts = getCourseConflicts(course)}
+                {@const isAgreed = (course as Course).isFixedAgreement}
+                {@const courseConflicts = getCourseConflicts(course as Course)}
                 {@const hasHard = courseConflicts.some(c => c.type === 'hard')}
                 <!-- svelte-ignore a11y_click_events_have_key_events -->
                 <!-- svelte-ignore a11y_no_static_element_interactions -->
@@ -1719,8 +1812,8 @@
                   class:is-agreed-card={isAgreed}
                   class:unassigned-card={(!course.teacherId || course.teacherId === 'teacher-gen-yl') && !isSchulung && !isBuffet}
                   style="background-color: {cardColors.bg}; border: 1px solid {cardColors.border}; border-left: {hasHard ? '5px solid #dc2626' : (isAgreed ? '4px solid #e11d48' : (isSchulung ? '5px solid #4338ca' : '1px solid ' + cardColors.border))};"
-                  onclick={() => openEditModal(course)}
-                  title={isBuffet ? 'Vollwert-Buffet im Speisesaal (Keine Personen-Einteilung)' : (hasHard ? `⚠️ KONFLIKT: ${courseConflicts.find(c => c.type === 'hard')?.message}` : (isAgreed ? (course.agreementNotes ? `Fest vereinbarte Stunde:\n${course.agreementNotes}` : 'Fest vereinbarte Stunde (Klicken zum Bearbeiten)') : 'Klicken zum Einteilen / Bearbeiten'))}
+                  onclick={() => openEditModal(course as Course)}
+                  title={isBuffet ? 'Vollwert-Buffet im Speisesaal (Keine Personen-Einteilung)' : (hasHard ? `⚠️ KONFLIKT: ${courseConflicts.find(c => c.type === 'hard')?.message}` : (isAgreed ? ((course as Course).agreementNotes ? `Fest vereinbarte Stunde:\n${(course as Course).agreementNotes}` : 'Fest vereinbarte Stunde (Klicken zum Bearbeiten)') : 'Klicken zum Einteilen / Bearbeiten'))}
                 >
                   <!-- Top line: Time and Room -->
                   <div class="card-top-line">
@@ -1731,8 +1824,8 @@
                   <!-- Middle line: Course Name -->
                   <div class="card-title-line" class:schulung-title={isSchulung}>
                     {course.name}
-                    {#if course.agreementNotes}
-                      <span class="note-indicator-dot" title="Notiz zur Vereinbarung: {course.agreementNotes}">📝</span>
+                    {#if (course as Course).agreementNotes}
+                      <span class="note-indicator-dot" title="Notiz zur Vereinbarung: {(course as Course).agreementNotes}">📝</span>
                     {/if}
                   </div>
                   
@@ -1754,7 +1847,7 @@
                   class="tdot-mini-card"
                   class:tdot-unassigned={(!course.teacherId || course.teacherId === 'teacher-gen-yl') && !isBuffet}
                   style="background-color: {cardColors.bg}; border-left: 3.5px solid {cardColors.border};"
-                  onclick={() => openEditModal(course)}
+                  onclick={() => openEditModal(course as Course)}
                   title="{course.startTime} - {course.endTime}: {course.name} — Klicken zum Bearbeiten / Einteilen"
                 >
                   <div class="tdot-mini-main">
@@ -1819,17 +1912,40 @@
             {/if}
           {:else}
             {#each coursesInSlot as course}
+            {@const isSeminar = (course as any).isSeminarSlot === true}
             {@const cardColors = getCourseColor(course)}
             {@const roomObj = rooms.find(r => r.id === course.roomId)}
             {@const teacherObj = teachers.find(t => t.id === course.teacherId)}
-            {@const courseConflicts = getCourseConflicts(course)}
+            {@const courseConflicts = isSeminar ? [] : getCourseConflicts(course as Course)}
             {@const hasHard = courseConflicts.some(c => c.type === 'hard')}
             <!-- svelte-ignore a11y_click_events_have_key_events -->
             <!-- svelte-ignore a11y_no_static_element_interactions -->
-            {#if isSivanandaPujaSlot(course)}
+            {#if isSeminar}
+              {@const sem = course as any}
+              <div 
+                class="course-card-rapla"
+                style="background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%); border: 1px solid #fdba74; border-left: 5px solid {sem.seminarColor || '#ea580c'}; box-shadow: 0 3px 8px rgba(234, 88, 12, 0.16);"
+                onclick={() => switchScheduleTab('seminare')}
+                title="{sem.seminarTitle} — {sem.slotTitle} (Klicken, um zum Seminarplan zu wechseln)"
+              >
+                <div class="card-top-line">
+                  <span class="card-time" style="color: #9a3412; font-weight: 800;">⏰ {sem.startTime} - {sem.endTime}</span>
+                  <span style="background: #fed7aa; color: #9a3412; font-size: 0.6rem; font-weight: 800; padding: 1px 5px; border-radius: 4px; border: 1px solid #fb923c; white-space: nowrap; max-width: 115px; overflow: hidden; text-overflow: ellipsis;">🧘‍♀️ {sem.seminarShortTitle}</span>
+                </div>
+                <div class="card-title-line" style="color: #7c2d12; font-weight: 800;">
+                  {sem.slotTitle}
+                </div>
+                <div style="font-size: 0.68rem; color: #c2410c; font-weight: 600;">
+                  📍 {sem.roomName}{sem.locationHint && sem.locationHint !== sem.roomName ? ` (${sem.locationHint})` : ''}
+                </div>
+                <div class="card-teacher-line" style="color: #9a3412; font-weight: 700;">
+                  👤 {sem.teacherName}
+                </div>
+              </div>
+            {:else if isSivanandaPujaSlot(course)}
               <div 
                 class="course-card-rapla sivananda-puja-card"
-                onclick={() => openEditModal(course)}
+                onclick={() => openEditModal(course as Course)}
                 title="Swami Sivanandas Geburtstag Puja - Spezielles Festangebot (Klicken zum Bearbeiten)"
               >
                 <div class="puja-top-badge-row">
@@ -1867,8 +1983,8 @@
             {:else}
               {@const isSchulung = course.name.toLowerCase().includes('schulung') || (course.style && course.style.toLowerCase().includes('schulung'))}
               {@const isBuffet = isBuffetSlot(course)}
-              {@const isAgreed = course.isFixedAgreement}
-              {@const courseConflicts = getCourseConflicts(course)}
+              {@const isAgreed = (course as Course).isFixedAgreement}
+              {@const courseConflicts = getCourseConflicts(course as Course)}
               {@const hasHard = courseConflicts.some(c => c.type === 'hard')}
               <div 
                 class="course-card-rapla" 
@@ -1876,8 +1992,8 @@
                 class:is-agreed-card={isAgreed}
                 class:unassigned-card={(!course.teacherId || course.teacherId === 'teacher-gen-yl') && !isSchulung && !isBuffet}
                 style="background-color: {cardColors.bg}; border: 1px solid {cardColors.border}; border-left: {hasHard ? '5px solid #dc2626' : (isAgreed ? '4px solid #e11d48' : (isSchulung ? '5px solid #4338ca' : '1px solid ' + cardColors.border))};"
-                onclick={() => openEditModal(course)}
-                title={isBuffet ? 'Vollwert-Buffet im Speisesaal (Keine Personen-Einteilung)' : (hasHard ? `⚠️ KONFLIKT: ${courseConflicts.find(c => c.type === 'hard')?.message}` : (isAgreed ? (course.agreementNotes ? `Fest vereinbarte Stunde:\n${course.agreementNotes}` : 'Fest vereinbarte Stunde (Klicken zum Bearbeiten)') : 'Klicken zum Einteilen / Bearbeiten'))}
+                onclick={() => openEditModal(course as Course)}
+                title={isBuffet ? 'Vollwert-Buffet im Speisesaal (Keine Personen-Einteilung)' : (hasHard ? `⚠️ KONFLIKT: ${courseConflicts.find(c => c.type === 'hard')?.message}` : (isAgreed ? ((course as Course).agreementNotes ? `Fest vereinbarte Stunde:\n${(course as Course).agreementNotes}` : 'Fest vereinbarte Stunde (Klicken zum Bearbeiten)') : 'Klicken zum Einteilen / Bearbeiten'))}
               >
                 <!-- Top line: Time and Room -->
                 <div class="card-top-line">
@@ -1888,8 +2004,8 @@
                 <!-- Middle line: Course Name -->
                 <div class="card-title-line" class:schulung-title={isSchulung}>
                   {course.name}
-                  {#if course.agreementNotes}
-                    <span class="note-indicator-dot" title="Notiz zur Vereinbarung: {course.agreementNotes}">📝</span>
+                  {#if (course as Course).agreementNotes}
+                    <span class="note-indicator-dot" title="Notiz zur Vereinbarung: {(course as Course).agreementNotes}">📝</span>
                   {/if}
                 </div>
                 

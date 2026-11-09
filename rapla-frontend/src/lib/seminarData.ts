@@ -2165,3 +2165,164 @@ export function parseSeminarReservationId(
 }
 
 export const DEFAULT_SEMINAR_RESERVATIONS: RoomReservation[] = getAllSeminarRoomReservations();
+
+export interface SeminarTeacherWeekSlot {
+  id: string;
+  name: string;
+  style: string;
+  dayOfWeek: number; // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+  startTime: string; // HH:MM
+  endTime: string;   // HH:MM
+  roomId: string;
+  roomName: string;
+  teacherId: string;
+  teacherName: string;
+  isAiPlanned: boolean;
+  status: 'approved';
+  isSeminarSlot: true;
+  seminarId: string;
+  seminarTitle: string;
+  seminarShortTitle: string;
+  seminarColor: string;
+  seminarType: 'fewo' | 'seminar';
+  slotId: string;
+  slotTitle: string;
+  slotDescription?: string;
+  locationHint?: string;
+  category: SeminarSlot['category'];
+  dateStr: string;
+  dayName: string;
+}
+
+function tokenizePersonName(raw: string): string[] {
+  if (!raw) return [];
+  return raw
+    .toLowerCase()
+    .replace(/^(?:prof\.|dr\.|phil\.|med\.|rer\.|nat\.|dipl\.-[a-z]+\.?)\s*/gi, '')
+    .replace(/\b(?:prof|dr|phil|med|rer|nat|dipl)\b\.?/gi, '')
+    .replace(/[#?!()]/g, ' ')
+    .split(/[\s\-]+/)
+    .map(t => t.replace(/^\.+|\.+$/g, '').trim())
+    .filter(t => t.length >= 2 && t !== 'offen' && t !== 'unbesetzt' && t !== 'de' && t !== 'van' && t !== 'und');
+}
+
+export function doesSeminarPersonMatchTeacher(
+  slotPersonRaw: string | undefined | null,
+  teacherName: string | undefined | null,
+  teacherId?: string | null
+): boolean {
+  if (!slotPersonRaw || !teacherName) return false;
+  const targetTokens = tokenizePersonName(teacherName);
+  if (targetTokens.length === 0) return false;
+
+  const subPersons = slotPersonRaw
+    .split(/[,+/&]+|\bund\b/i)
+    .map(s => s.trim())
+    .filter(Boolean);
+
+  for (const sub of subPersons) {
+    const personTokens = tokenizePersonName(sub);
+    if (personTokens.length === 0) continue;
+    const allTargetInPerson = targetTokens.every(tt => personTokens.includes(tt));
+    const allPersonInTarget = personTokens.every(pt => targetTokens.includes(pt));
+    if (allTargetInPerson || allPersonInTarget) return true;
+  }
+
+  if (teacherId && (teacherId === 'teacher-karma-gopala' || teacherId.includes('gopala'))) {
+    if (slotPersonRaw.toLowerCase().includes('gopala')) return true;
+  }
+  return false;
+}
+
+export function cleanSeminarSlotTitle(rawTitle: string): string {
+  return (rawTitle || '')
+    .replace(/^\d{1,2}:\d{2}(?:\s*[–\-]\s*\d{1,2}:\d{2})?\s*Uhr\s*:?\s*/i, '')
+    .replace(/^\d{1,2}:\d{2}\s*Uhr\s+/i, '')
+    .trim();
+}
+
+/**
+ * Resolves all internal seminar slots (isOrange === true) assigned to a specific teacher
+ * within a target Wochenplan week (Friday-to-Thursday cycle).
+ */
+export function getSeminarSlotsForTeacherAndWeek(
+  teacherName: string,
+  targetWeekCode: string,
+  teacherId?: string,
+  seminarsInput?: Seminar[]
+): SeminarTeacherWeekSlot[] {
+  if (!teacherName || !targetWeekCode) return [];
+
+  const activeSeminars = getSeminarsForWeek(targetWeekCode, seminarsInput, { includeHidden: false });
+  if (activeSeminars.length === 0) return [];
+
+  const result: SeminarTeacherWeekSlot[] = [];
+  // Standard Rapla week cycle: Friday (Start) through Thursday
+  const DAYS_ORDER = [5, 6, 0, 1, 2, 3, 4];
+
+  for (const dayVal of DAYS_ORDER) {
+    const isoDate = getLocalDateForDay(targetWeekCode, dayVal, false);
+    if (!isoDate) continue;
+
+    for (const seminar of activeSeminars) {
+      if (!isSeminarVisibleInTeam(seminar)) continue;
+
+      const daySlots = (seminar.slots || []).filter(sl => {
+        // ONLY internal/fixed seminar slots, never open Hausprogramm slots
+        if (!sl.isOrange) return false;
+        if (sl.dateStr) {
+          return sl.dateStr === isoDate;
+        }
+        if (seminar.startDate && seminar.endDate && (isoDate < seminar.startDate || isoDate > seminar.endDate)) {
+          return false;
+        }
+        return sl.dayOfWeek === dayVal;
+      });
+
+      for (const slot of daySlots) {
+        const effectivePerson = (slot.teacher || seminar.leader || '').trim();
+        if (!doesSeminarPersonMatchTeacher(effectivePerson, teacherName, teacherId)) continue;
+
+        const cleanTitle = cleanSeminarSlotTitle(slot.title);
+        const resolvedRoomName = slot.roomId
+          ? getSeminarRoomDisplayName(slot.roomId, slot.roomName || seminar.roomName)
+          : (slot.roomName || seminar.roomName || 'Laut Tagesaushang');
+
+        result.push({
+          id: `sem-slot-${seminar.id}-${slot.id}-${isoDate}`,
+          name: `${seminar.shortTitle}: ${cleanTitle}`,
+          style: 'Seminar',
+          dayOfWeek: dayVal,
+          startTime: slot.startTime,
+          endTime: slot.endTime,
+          roomId: slot.roomId || seminar.roomId || 'room-seminar',
+          roomName: resolvedRoomName,
+          teacherId: teacherId || teacherName,
+          teacherName: effectivePerson,
+          isAiPlanned: false,
+          status: 'approved',
+          isSeminarSlot: true,
+          seminarId: seminar.id,
+          seminarTitle: seminar.title,
+          seminarShortTitle: seminar.shortTitle,
+          seminarColor: seminar.color || '#ea580c',
+          seminarType: seminar.type,
+          slotId: slot.id,
+          slotTitle: cleanTitle,
+          slotDescription: slot.description,
+          locationHint: slot.locationHint,
+          category: slot.category,
+          dateStr: isoDate,
+          dayName: slot.dayName || GERMAN_DAY_NAMES[dayVal] || ''
+        });
+      }
+    }
+  }
+
+  return result.sort((a, b) => {
+    const idxA = DAYS_ORDER.indexOf(a.dayOfWeek);
+    const idxB = DAYS_ORDER.indexOf(b.dayOfWeek);
+    if (idxA !== idxB) return idxA - idxB;
+    return a.startTime.localeCompare(b.startTime);
+  });
+}
