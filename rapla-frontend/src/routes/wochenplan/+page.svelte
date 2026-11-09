@@ -12,6 +12,8 @@
     type YlaTeacherWeekSlot 
   } from '$lib/ylaData';
   import YlaScheduleView from '$lib/components/YlaScheduleView.svelte';
+  import SeminarScheduleView from '$lib/components/SeminarScheduleView.svelte';
+  import { getSeminarsForWeek, getSeminarTransitionType, type Seminar } from '$lib/seminarData';
   import nataraja from '$lib/assets/nataraja.jpg';
   import sivanandaImg from '$lib/assets/sivananda.png';
   import { page } from '$app/state';
@@ -100,21 +102,28 @@
   let isFullscreen = $state(false);
   let activeMobileDay = $state(5);
   let isWeekApproved = $state(false);
+  let registeredSeminars = $state<Seminar[]>(db.getSeminars());
 
-  // Tab switcher state: 'wochenplan' | 'yla4' | 'yla4_w3' | 'yla4_w4'
+  // Tab switcher state: 'wochenplan' | 'yla4' | 'yla4_w3' | 'yla4_w4' | 'seminare'
   let tabParam = $derived(page.url.searchParams.get('tab') || '');
-  let activeTab = $state<'wochenplan' | 'yla4' | 'yla4_w3' | 'yla4_w4'>(
-    (typeof window !== 'undefined' && (page.url.searchParams.get('tab') === 'yla4_w4' || page.url.searchParams.get('tab') === 'woche4' || page.url.searchParams.get('tab') === 'w4' || page.url.searchParams.get('tab') === 'yla4_4'))
-      ? 'yla4_w4'
-      : (typeof window !== 'undefined' && (page.url.searchParams.get('tab') === 'yla4_w3' || page.url.searchParams.get('tab') === 'woche3' || page.url.searchParams.get('tab') === 'w3'))
-        ? 'yla4_w3'
-        : (typeof window !== 'undefined' && (page.url.searchParams.get('tab') === 'yla4' || page.url.searchParams.get('tab') === 'woche2' || page.url.searchParams.get('tab') === 'w2'))
-          ? 'yla4'
-          : 'wochenplan'
+  let activeTab = $state<'wochenplan' | 'yla4' | 'yla4_w3' | 'yla4_w4' | 'seminare'>(
+    (typeof window !== 'undefined' && (page.url.searchParams.get('tab') === 'seminare' || page.url.searchParams.get('tab') === 'seminar' || page.url.searchParams.get('tab') === 'seminarplan'))
+      ? 'seminare'
+      : (typeof window !== 'undefined' && (page.url.searchParams.get('tab') === 'yla4_w4' || page.url.searchParams.get('tab') === 'woche4' || page.url.searchParams.get('tab') === 'w4' || page.url.searchParams.get('tab') === 'yla4_4'))
+        ? 'yla4_w4'
+        : (typeof window !== 'undefined' && (page.url.searchParams.get('tab') === 'yla4_w3' || page.url.searchParams.get('tab') === 'woche3' || page.url.searchParams.get('tab') === 'w3'))
+          ? 'yla4_w3'
+          : (typeof window !== 'undefined' && (page.url.searchParams.get('tab') === 'yla4' || page.url.searchParams.get('tab') === 'woche2' || page.url.searchParams.get('tab') === 'w2'))
+            ? 'yla4'
+            : 'wochenplan'
   );
 
   $effect(() => {
-    if (tabParam === 'yla4_w4' || tabParam === 'woche4' || tabParam === 'w4' || tabParam === 'yla4_4') {
+    if (tabParam === 'seminare' || tabParam === 'seminar' || tabParam === 'seminarplan') {
+      if ('seminare' !== untrack(() => activeTab)) {
+        activeTab = 'seminare';
+      }
+    } else if (tabParam === 'yla4_w4' || tabParam === 'woche4' || tabParam === 'w4' || tabParam === 'yla4_4') {
       if ('yla4_w4' !== untrack(() => activeTab)) {
         activeTab = 'yla4_w4';
       }
@@ -126,17 +135,19 @@
       if ('yla4' !== untrack(() => activeTab)) {
         activeTab = 'yla4';
       }
-    } else if (tabParam === 'wochenplan') {
+    } else if (tabParam === 'wochenplan' || tabParam === '') {
       if ('wochenplan' !== untrack(() => activeTab)) {
         activeTab = 'wochenplan';
       }
     }
   });
 
-  function switchTab(tab: 'wochenplan' | 'yla4' | 'yla4_w3' | 'yla4_w4') {
+  function switchTab(tab: 'wochenplan' | 'yla4' | 'yla4_w3' | 'yla4_w4' | 'seminare') {
     activeTab = tab;
     const params = new URLSearchParams(page.url.searchParams);
-    if (tab === 'yla4' || tab === 'yla4_w3' || tab === 'yla4_w4') {
+    if (tab === 'seminare') {
+      params.set('tab', 'seminare');
+    } else if (tab === 'yla4' || tab === 'yla4_w3' || tab === 'yla4_w4') {
       params.set('tab', tab);
     } else {
       params.delete('tab');
@@ -746,6 +757,7 @@
     weekPlans = db.getWeekPlans();
     teachers = db.getTeachers();
     rooms = db.getRooms();
+    registeredSeminars = db.getSeminars();
     
     const monday = getMondayOfCurrentWeek();
     const weekCode = getWeekCode(monday);
@@ -904,21 +916,38 @@
     </div>
   {/if}
 
-  <!-- Main View Tabs Navigation (Wochenplan) -->
+  <!-- Main View Tabs Navigation (Wochenplan & Seminare) -->
   <div class="team-view-tabs-container">
     <div class="team-view-tabs-nav">
       <button 
         type="button" 
-        class="team-view-tab-btn active" 
+        class="team-view-tab-btn" 
+        class:active={activeTab === 'wochenplan'}
         onclick={() => switchTab('wochenplan')}
       >
         <span class="tab-icon">📅</span>
         <span class="tab-label">Wochenplan</span>
       </button>
+
+      <button 
+        type="button" 
+        class="team-view-tab-btn seminar-tab-btn" 
+        class:active={activeTab === 'seminare'}
+        onclick={() => switchTab('seminare')}
+        title="Zur Seminarplanung & aktuellen Wochenseminaren"
+      >
+        <span class="tab-icon">🧘‍♀️</span>
+        <span class="tab-label">Seminare</span>
+        {#if getSeminarsForWeek(activeWeekCode, registeredSeminars).length > 0}
+          {@const activeSemList = getSeminarsForWeek(activeWeekCode, registeredSeminars)}
+          {@const coreCount = activeSemList.filter(s => getSeminarTransitionType(s, activeWeekCode) === null).length}
+          <span class="tab-badge seminar-badge" style="background: #ea580c; color: #fff;">{coreCount || activeSemList.length}</span>
+        {/if}
+      </button>
     </div>
   </div>
 
-  {#if selectedTeacher}
+  {#if selectedTeacher && activeTab !== 'seminare'}
     {@const currentWeekNum = currentPlan?.targetWeekCode ? parseInt(currentPlan.targetWeekCode.split('-W')[1], 10) : getWeekNumber(getMondayOfCurrentWeek())}
     <div class="personal-teacher-header-banner animate-fade-in" class:yla-banner={activeTab === 'yla4' || activeTab === 'yla4_w3' || activeTab === 'yla4_w4'}>
       <div class="personal-banner-top-row">
@@ -1064,6 +1093,17 @@
     </div>
   {/if}
 
+  {#if activeTab === 'seminare'}
+    <SeminarScheduleView
+      currentWeekCode={activeWeekCode}
+      onNavigateWeek={(delta) => navigateWeek(delta)}
+      onGoToCurrentWeek={goToCurrentWeek}
+      onClose={() => switchTab('wochenplan')}
+      isAdmin={false}
+      {selectedTeacher}
+      onlyMySlots={onlyMySlotsParam}
+    />
+  {:else}
   <!-- Calendar Roster Grid (Desktop Only) -->
   <div class="desktop-only-grid">
       <div id="view-calendar-container" class="calendar-grid-container animate-fade-in" class:fullscreen-mode={isFullscreen}>
@@ -1590,6 +1630,7 @@
       </div>
     {/if}
   </div>
+  {/if}
   
   <footer class="view-footer-info" style="margin-top: 2rem; text-align: center; font-size: 0.8rem; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 1rem; clear: both;">
     <span>Yoga Vidya Nordsee © 2026</span>
@@ -1633,6 +1674,7 @@
   .team-view-tabs-nav {
     display: flex;
     align-items: center;
+    flex-wrap: wrap;
     gap: 0.5rem;
   }
 
@@ -1664,6 +1706,13 @@
     border-color: #c2410c;
     color: #ffffff;
     box-shadow: 0 4px 12px rgba(234, 88, 12, 0.25);
+  }
+
+  .team-view-tab-btn.seminar-tab-btn.active {
+    background: linear-gradient(135deg, #d97706 0%, #ea580c 100%);
+    border-color: #c2410c;
+    color: #ffffff;
+    box-shadow: 0 4px 14px rgba(217, 119, 6, 0.3);
   }
 
   .team-view-tab-btn.yla4-tab-btn.active {

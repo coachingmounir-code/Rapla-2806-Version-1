@@ -24,7 +24,7 @@ export function isOverlapping(start1: string, end1: string, start2: string, end2
 }
 
 // Convert ISO week code (e.g. "2026-W28") to actual date string for a specific day of the week
-export function getLocalDateForDay(weekCode: string, dayOfWeek: number): string {
+export function getLocalDateForDay(weekCode: string, dayOfWeek: number, isEndFriday: boolean = false): string {
   const [yearStr, weekStr] = weekCode.split('-W');
   const year = parseInt(yearStr, 10);
   const week = parseInt(weekStr, 10);
@@ -45,7 +45,7 @@ export function getLocalDateForDay(weekCode: string, dayOfWeek: number): string 
 
   // Offset from Friday
   let offset = 0;
-  if (dayOfWeek === 5) offset = 0;
+  if (dayOfWeek === 5) offset = isEndFriday ? 7 : 0;
   else if (dayOfWeek === 6) offset = 1;
   else if (dayOfWeek === 0) offset = 2;
   else if (dayOfWeek === 1) offset = 3;

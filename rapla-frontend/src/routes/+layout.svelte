@@ -50,7 +50,9 @@
 				goto('/login');
 			}
 		} else if (storedRole === 'team') {
-			if (!path.startsWith('/wochenplan') && path !== '/login') {
+			if (path.startsWith('/seminare')) {
+				goto('/wochenplan?tab=seminare');
+			} else if (!path.startsWith('/wochenplan') && path !== '/login') {
 				goto('/wochenplan');
 			}
 		} else if (storedRole === 'admin' || storedRole === 'viewer') {
@@ -171,12 +173,23 @@
 
 						<!-- Wochenplan -->
 						<a 
-							href="/schedule" 
+							href={userRole === 'team' ? '/wochenplan' : '/schedule'} 
 							class="nav-item" 
-							class:active={page.url.pathname.startsWith('/schedule')}
+							class:active={(page.url.pathname.startsWith('/schedule') || page.url.pathname.startsWith('/wochenplan')) && page.url.searchParams.get('tab') !== 'seminare'}
 						>
 							<span class="nav-icon">📅</span>
 							<span class="nav-label">Wochenplan</span>
+						</a>
+
+						<!-- Seminare (Seminarplanung) -->
+						<a 
+							href={userRole === 'team' ? '/wochenplan?tab=seminare' : '/schedule?tab=seminare'} 
+							class="nav-item" 
+							class:active={page.url.pathname.startsWith('/seminare') || page.url.searchParams.get('tab') === 'seminare'}
+						>
+							<span class="nav-icon">🧘‍♀️</span>
+							<span class="nav-label">Seminare</span>
+							<span class="nav-badge-pill" style="margin-left: auto; font-size: 0.68rem; padding: 0.15rem 0.45rem; background: #ffedd5; color: #c2410c; border-radius: 9999px; font-weight: 700;">Neu</span>
 						</a>
 
 						<!-- 4-Wöchige Yogalehrer-Ausbildung (YLA) -->
@@ -305,17 +318,37 @@
 				<main class="main-content">
 					<!-- Header Search Bar & User info -->
 					<header class="top-header">
-						<button 
-							type="button" 
-							class="hamburger-menu" 
-							onclick={() => mobileMenuOpen = !mobileMenuOpen} 
-							aria-label="Menü öffnen"
-						>
-							☰
-						</button>
-						<div class="studio-selector">
-							<strong>Yoga Vidya Rapla 2.0</strong>
-							<span class="selector-arrow">˅</span>
+						<div style="display: flex; align-items: center; gap: 0.75rem;">
+							<button 
+								type="button" 
+								class="hamburger-menu" 
+								onclick={() => mobileMenuOpen = !mobileMenuOpen} 
+								aria-label="Menü öffnen"
+							>
+								☰
+							</button>
+							<div class="studio-selector">
+								<strong>Yoga Vidya Rapla 2.0</strong>
+								<span class="selector-arrow">˅</span>
+							</div>
+						</div>
+
+						<!-- Quick Navigation Header Pills (Desktop & Tablet) -->
+						<div class="top-nav-pills">
+							<a 
+								href="/schedule" 
+								class="top-pill-btn"
+								class:active={page.url.pathname.startsWith('/schedule') && page.url.searchParams.get('tab') !== 'seminare'}
+							>
+								<span>📅</span> Wochenplan
+							</a>
+							<a 
+								href="/schedule?tab=seminare" 
+								class="top-pill-btn pill-seminar"
+								class:active={page.url.pathname.startsWith('/seminare') || page.url.searchParams.get('tab') === 'seminare'}
+							>
+								<span>🧘‍♀️</span> Seminare
+							</a>
 						</div>
 					</header>
 
@@ -576,10 +609,56 @@
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		padding: 0 2.5rem;
+		padding: 0 2rem;
 		position: sticky;
 		top: 0;
 		z-index: 50;
+	}
+
+	.top-nav-pills {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+	}
+
+	.top-pill-btn {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.4rem;
+		padding: 0.45rem 0.95rem;
+		border-radius: 9999px;
+		font-size: 0.85rem;
+		font-weight: 600;
+		color: #475569;
+		background: #f8fafc;
+		text-decoration: none;
+		border: 1px solid #e2e8f0;
+		transition: all 0.2s ease;
+	}
+
+	.top-pill-btn:hover {
+		background: #f1f5f9;
+		color: #1e293b;
+		border-color: #cbd5e1;
+	}
+
+	.top-pill-btn.active {
+		background: #ea580c;
+		color: #ffffff;
+		border-color: #ea580c;
+		box-shadow: 0 2px 6px rgba(234, 88, 12, 0.25);
+	}
+
+	.top-pill-btn.pill-seminar.active {
+		background: #d97706;
+		border-color: #d97706;
+		box-shadow: 0 2px 6px rgba(217, 119, 6, 0.25);
+	}
+
+	@media (max-width: 768px) {
+		.top-nav-pills {
+			display: none;
+		}
 	}
 
 	.studio-selector {

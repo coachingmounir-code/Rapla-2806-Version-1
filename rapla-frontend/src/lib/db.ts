@@ -3,9 +3,21 @@ import { supabase } from './supabaseClient';
 import wochenplanRules from './data/wochenplan_rules.json' with { type: 'json' };
 import { isDateInYlaRange } from './ylaData';
 import { EXCEL_ABSENCES } from './excel_absences';
+import {
+  DEFAULT_SEMINARS,
+  DEFAULT_SEMINAR_RESERVATIONS,
+  getAllSeminarRoomReservations,
+  getSeminarRoomDisplayName,
+  getLeaderShortName,
+  isIndoorSeminarRoomSlot,
+  replaceRoomMentionInText,
+  parseSeminarReservationId,
+  type Seminar,
+  type SeminarSlot
+} from './seminarData';
 
-// Convert ISO week code (e.g. "2026-W28") to actual date string (YYYY-MM-DD) for a specific day of the week (Friday-Thursday cycle)
-export function getLocalDateForDay(weekCode: string, dayOfWeek: number): string {
+// Convert ISO week code (e.g. "2026-W28") to actual date string (YYYY-MM-DD) for a specific day of the week
+export function getLocalDateForDay(weekCode: string, dayOfWeek: number, isEndFriday: boolean = false): string {
   const [yearStr, weekStr] = weekCode.split('-W');
   const year = parseInt(yearStr, 10);
   const week = parseInt(weekStr, 10);
@@ -26,7 +38,7 @@ export function getLocalDateForDay(weekCode: string, dayOfWeek: number): string 
 
   // Offset from Friday
   let offset = 0;
-  if (dayOfWeek === 5) offset = 0;
+  if (dayOfWeek === 5) offset = isEndFriday ? 7 : 0;
   else if (dayOfWeek === 6) offset = 1;
   else if (dayOfWeek === 0) offset = 2;
   else if (dayOfWeek === 1) offset = 3;
@@ -162,6 +174,22 @@ export interface Room {
   id: string;
   name: string;
   color: string; // hex or hsl
+}
+
+export interface RoomReservation {
+  id: string;
+  roomId: string;
+  weekCode: string; // e.g. "2026-W45"
+  dayOfWeek: number; // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+  dayIndex?: number; // 0 to 7 (8-day view: 0=Start-Fr, 1=Sa, 2=So, 3=Mo, 4=Di, 5=Mi, 6=Do, 7=End-Fr)
+  isEndFriday?: boolean;
+  date?: string; // YYYY-MM-DD
+  startTime: string; // "HH:MM"
+  endTime: string; // "HH:MM"
+  title: string; // Reason / Purpose (e.g. "Workshop-Vorbereitung", "Teamtreffen", "Klangmeditation")
+  reservedBy?: string; // Name of person / group reserving the room
+  notes?: string;
+  createdAt?: string;
 }
 
 export interface Course {
@@ -16027,6 +16055,265 @@ export const db = {
     return stored;
   },
   saveRooms: (rooms: Room[]): void => { setStored('rapla_rooms', rooms); },
+  
+  // Seminar Methods (Bidirectionally synced with Room Reservations & Cloud)
+  getSeminars: (): Seminar[] => {
+    let stored = getStored<Seminar[]>('rapla_seminars', DEFAULT_SEMINARS);
+    if (!Array.isArray(stored) || stored.length === 0) {
+      stored = JSON.parse(JSON.stringify(DEFAULT_SEMINARS));
+      inMemoryStore['rapla_seminars'] = stored;
+      return stored;
+    }
+    let mutated = false;
+    const weeklyDowToIndex: Record<number, number> = { 0: 2, 1: 3, 2: 4, 3: 5, 4: 6, 5: 7, 6: 1 };
+    for (const sem of stored) {
+      if (sem.startDayName === 'Sonntag' && Array.isArray(sem.slots)) {
+        const hasLegacyZeroSunday = sem.slots.some(sl => sl.dayOfWeek === 0 && sl.dayIndex === 0);
+        if (hasLegacyZeroSunday) {
+          sem.slots = sem.slots.map(sl => ({
+            ...sl,
+            dayIndex: weeklyDowToIndex[sl.dayOfWeek] ?? sl.dayIndex
+          }));
+          mutated = true;
+        }
+      }
+    }
+    for (const defSem of DEFAULT_SEMINARS) {
+      if (!stored.some(s => s.id === defSem.id)) {
+        stored.push(JSON.parse(JSON.stringify(defSem)));
+        mutated = true;
+      }
+    }
+    if (mutated) {
+      inMemoryStore['rapla_seminars'] = stored;
+    }
+    return stored;
+  },
+  syncSeminarRoomReservations: (seminarsInput?: Seminar[]): void => {
+    const seminars = seminarsInput || db.getSeminars();
+    const freshSemRes = getAllSeminarRoomReservations(seminars);
+    const rawList = getStored<RoomReservation[]>('rapla_room_reservations', freshSemRes);
+    const manualRes = Array.isArray(rawList)
+      ? rawList.filter(r => !r.id.startsWith('res-seminar-'))
+      : [];
+    const combined = [...manualRes, ...freshSemRes];
+    setStored('rapla_room_reservations', combined, true);
+  },
+  saveSeminars: (seminars: Seminar[], syncReservations = true): void => {
+    setStored('rapla_seminars', seminars, true);
+    if (syncReservations) {
+      db.syncSeminarRoomReservations(seminars);
+    }
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('rapla-data-synced', { detail: { source: 'seminar-update' } }));
+    }
+  },
+  updateSeminarGlobal: (
+    seminarId: string,
+    updates: {
+      leader?: string;
+      roomId?: string;
+      applyRoomToAllSlots?: boolean;
+      applyLeaderToAllSlots?: boolean;
+    }
+  ): Seminar | null => {
+    const seminars: Seminar[] = JSON.parse(JSON.stringify(db.getSeminars()));
+    const sem = seminars.find(s => s.id === seminarId);
+    if (!sem) return null;
+
+    if (updates.leader !== undefined) {
+      const newLeader = updates.leader.trim() || 'Offen';
+      sem.leader = newLeader;
+      if (sem.type === 'fewo' && sem.shortTitle.startsWith('FEWO ')) {
+        sem.shortTitle = `FEWO ${getLeaderShortName(newLeader)}`;
+      }
+      if (updates.applyLeaderToAllSlots !== false) {
+        for (const slot of sem.slots) {
+          if (slot.isOrange || slot.teacher) {
+            slot.teacher = newLeader;
+          }
+        }
+      }
+    }
+
+    if (updates.roomId !== undefined && updates.roomId !== '') {
+      const newRoomName = getSeminarRoomDisplayName(updates.roomId, sem.roomName);
+      sem.roomId = updates.roomId;
+      sem.roomName = newRoomName;
+      if (Array.isArray(sem.notes)) {
+        sem.notes = sem.notes.map(n => replaceRoomMentionInText(n, newRoomName) || n);
+      }
+      if (updates.applyRoomToAllSlots !== false) {
+        for (const slot of sem.slots) {
+          if (isIndoorSeminarRoomSlot(slot)) {
+            slot.roomId = updates.roomId;
+            slot.roomName = newRoomName;
+            slot.description = replaceRoomMentionInText(slot.description, newRoomName);
+          }
+        }
+      }
+    }
+
+    db.saveSeminars(seminars, true);
+    return sem;
+  },
+  updateSeminarSlot: (
+    seminarId: string,
+    slotId: string,
+    updates: {
+      roomId?: string | null;
+      roomName?: string;
+      teacher?: string;
+      title?: string;
+      startTime?: string;
+      endTime?: string;
+      description?: string;
+      locationHint?: string;
+      isOrange?: boolean;
+      dateStr?: string;
+      dayOfWeek?: number;
+      dayName?: string;
+    }
+  ): Seminar | null => {
+    const seminars: Seminar[] = JSON.parse(JSON.stringify(db.getSeminars()));
+    const sem = seminars.find(s => s.id === seminarId);
+    if (!sem) return null;
+    let slot = sem.slots.find(s => s.id === slotId);
+    if (!slot) {
+      if (!updates.dateStr || !updates.startTime) return null;
+      slot = {
+        id: slotId,
+        seminarId: sem.id,
+        dayIndex: 0,
+        dayOfWeek: updates.dayOfWeek ?? 0,
+        dayName: updates.dayName || 'Tag',
+        dateStr: updates.dateStr,
+        timeLabel: updates.startTime,
+        startTime: updates.startTime,
+        endTime: updates.endTime || updates.startTime,
+        title: updates.title || 'Seminar-Einheit',
+        isOrange: updates.isOrange ?? false,
+        category: 'lecture'
+      };
+      sem.slots.push(slot);
+    }
+
+    if (updates.title !== undefined) slot.title = updates.title;
+    if (updates.startTime !== undefined) slot.startTime = updates.startTime;
+    if (updates.endTime !== undefined) slot.endTime = updates.endTime;
+    if (updates.description !== undefined) slot.description = updates.description;
+    if (updates.locationHint !== undefined) slot.locationHint = updates.locationHint;
+    if (updates.dateStr !== undefined) slot.dateStr = updates.dateStr;
+    if (updates.dayOfWeek !== undefined) slot.dayOfWeek = updates.dayOfWeek;
+    if (updates.dayName !== undefined) slot.dayName = updates.dayName;
+    if (updates.teacher !== undefined) slot.teacher = updates.teacher.trim() || sem.leader;
+    if (updates.isOrange !== undefined) slot.isOrange = updates.isOrange;
+
+    if (updates.roomId !== undefined) {
+      if (updates.roomId === null || updates.roomId === '' || updates.roomId === 'none') {
+        delete slot.roomId;
+        slot.roomName = updates.roomName !== undefined ? updates.roomName : (slot.isOrange ? 'Treffpunkt Eingang' : undefined);
+      } else {
+        slot.roomId = updates.roomId;
+        slot.roomName = updates.roomName || getSeminarRoomDisplayName(updates.roomId);
+        slot.isOrange = true;
+        slot.description = replaceRoomMentionInText(slot.description, slot.roomName);
+      }
+    }
+
+    db.saveSeminars(seminars, true);
+    return sem;
+  },
+  resetSeminarToDefault: (seminarId: string): Seminar | null => {
+    const defSem = DEFAULT_SEMINARS.find(s => s.id === seminarId);
+    if (!defSem) return null;
+    const seminars: Seminar[] = JSON.parse(JSON.stringify(db.getSeminars()));
+    const idx = seminars.findIndex(s => s.id === seminarId);
+    const clonedDef: Seminar = JSON.parse(JSON.stringify(defSem));
+    if (idx !== -1) {
+      seminars[idx] = clonedDef;
+    } else {
+      seminars.push(clonedDef);
+    }
+    db.saveSeminars(seminars, true);
+    return clonedDef;
+  },
+
+  // Room Reservations Methods
+  getRoomReservations: (weekCode?: string): RoomReservation[] => {
+    const currentSeminars = db.getSeminars();
+    const expectedSemRes = getAllSeminarRoomReservations(currentSeminars);
+    let rawList = getStored<RoomReservation[]>('rapla_room_reservations', expectedSemRes);
+    if (!Array.isArray(rawList)) rawList = [];
+
+    const manualRes = rawList.filter(r => !r.id.startsWith('res-seminar-'));
+    const list = [...manualRes, ...expectedSemRes];
+
+    if (!weekCode) return list;
+    const startFr = getLocalDateForDay(weekCode, 5, false);
+    const endFr = getLocalDateForDay(weekCode, 5, true);
+    return list.filter(r => {
+      if (r.date) {
+        return r.date >= startFr && r.date <= endFr;
+      }
+      return r.weekCode === weekCode;
+    });
+  },
+  saveRoomReservation: (reservation: RoomReservation): void => {
+    if (reservation.id.startsWith('res-seminar-')) {
+      const parsed = parseSeminarReservationId(reservation.id, db.getSeminars());
+      if (parsed) {
+        const suffix = ` (${parsed.seminar.shortTitle})`;
+        const cleanTitle = reservation.title.endsWith(suffix)
+          ? reservation.title.slice(0, -suffix.length).trim()
+          : reservation.title.trim();
+        const dayNames = ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag'];
+        db.updateSeminarSlot(parsed.seminar.id, parsed.slot.id, {
+          roomId: reservation.roomId,
+          startTime: reservation.startTime,
+          endTime: reservation.endTime,
+          title: cleanTitle,
+          teacher: reservation.reservedBy || parsed.seminar.leader,
+          dateStr: reservation.date || parsed.slot.dateStr,
+          dayOfWeek: reservation.dayOfWeek,
+          dayName: dayNames[reservation.dayOfWeek] || parsed.slot.dayName
+        });
+        return;
+      }
+    }
+
+    const list = db.getRoomReservations();
+    const idx = list.findIndex(r => r.id === reservation.id);
+    if (idx !== -1) {
+      list[idx] = reservation;
+    } else {
+      list.push(reservation);
+    }
+    setStored('rapla_room_reservations', list, true);
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('rapla-data-synced', { detail: { source: 'reservation-update' } }));
+    }
+  },
+  deleteRoomReservation: (id: string): void => {
+    if (id.startsWith('res-seminar-')) {
+      const parsed = parseSeminarReservationId(id, db.getSeminars());
+      if (parsed) {
+        db.updateSeminarSlot(parsed.seminar.id, parsed.slot.id, {
+          roomId: null,
+          roomName: undefined,
+          isOrange: false
+        });
+        return;
+      }
+    }
+
+    const list = db.getRoomReservations();
+    const filtered = list.filter(r => r.id !== id);
+    setStored('rapla_room_reservations', filtered, true);
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('rapla-data-synced', { detail: { source: 'reservation-delete' } }));
+    }
+  },
   
   // Week Plan Methods (Read-safe: never triggers cloud upserts or event loops)
   getWeekPlans: (): WeekPlan[] => {

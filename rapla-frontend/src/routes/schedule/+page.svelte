@@ -17,6 +17,8 @@
     type TeacherDeviation
   } from '$lib/whatsappNotifier';
   import sivanandaImg from '$lib/assets/sivananda.png';
+  import SeminarScheduleView from '$lib/components/SeminarScheduleView.svelte';
+  import { getSeminarsForWeek, getSeminarTransitionType } from '$lib/seminarData';
   import { page } from '$app/state';
   import { goto } from '$app/navigation';
 
@@ -113,6 +115,33 @@
 
   // Deriving active plan ID from URL query param
   let planId = $derived(page.url.searchParams.get('planId') || '');
+
+  // Tab switcher state: 'calendar' (Wochenplan) | 'seminare'
+  let scheduleTabParam = $derived(page.url.searchParams.get('tab') || '');
+  let activeScheduleTab = $state<'calendar' | 'seminare'>(
+    (typeof window !== 'undefined' && (page.url.searchParams.get('tab') === 'seminare' || page.url.searchParams.get('tab') === 'seminar' || page.url.searchParams.get('tab') === 'seminarplan'))
+      ? 'seminare'
+      : 'calendar'
+  );
+
+  $effect(() => {
+    if (scheduleTabParam === 'seminare' || scheduleTabParam === 'seminar' || scheduleTabParam === 'seminarplan') {
+      if (activeScheduleTab !== 'seminare') activeScheduleTab = 'seminare';
+    } else if (scheduleTabParam === '' || scheduleTabParam === 'calendar' || scheduleTabParam === 'wochenplan') {
+      if (activeScheduleTab !== 'calendar') activeScheduleTab = 'calendar';
+    }
+  });
+
+  function switchScheduleTab(tab: 'calendar' | 'seminare') {
+    activeScheduleTab = tab;
+    const params = new URLSearchParams(page.url.searchParams);
+    if (tab === 'seminare') {
+      params.set('tab', 'seminare');
+    } else {
+      params.delete('tab');
+    }
+    goto(`?${params.toString()}`, { replaceState: true, noScroll: true, keepFocus: true });
+  }
 
   // Filter states
   let selectedRoomFilter = $state('all');
@@ -1410,6 +1439,39 @@
   </div>
 </div>
 
+<!-- Main Navigation Tabs: Wochenplan & Seminare -->
+<div class="schedule-view-tabs-container">
+  <div class="schedule-view-tabs-nav">
+    <button 
+      type="button" 
+      class="schedule-view-tab-btn" 
+      class:active={activeScheduleTab === 'calendar'}
+      onclick={() => switchScheduleTab('calendar')}
+    >
+      <span class="tab-icon">📅</span>
+      <span class="tab-label">Wochenplan</span>
+    </button>
+    <button 
+      type="button" 
+      class="schedule-view-tab-btn seminar-tab-btn" 
+      class:active={activeScheduleTab === 'seminare'}
+      onclick={() => switchScheduleTab('seminare')}
+      title="Zur Seminarplanung & Ferienwochen dieser Woche"
+    >
+      <span class="tab-icon">🧘‍♀️</span>
+      <span class="tab-label">Seminare</span>
+      {#if getSeminarsForWeek(currentPlan?.targetWeekCode || '2026-W45').length > 0}
+        {@const activeSemCode = currentPlan?.targetWeekCode || '2026-W45'}
+        {@const activeSemList = getSeminarsForWeek(activeSemCode)}
+        {@const coreCount = activeSemList.filter(s => getSeminarTransitionType(s, activeSemCode) === null).length}
+        <span class="tab-badge seminar-badge" style="background: #ea580c; color: #fff; padding: 0.1rem 0.45rem; border-radius: 9999px; font-size: 0.72rem; margin-left: 0.35rem;">
+          {coreCount || activeSemList.length}
+        </span>
+      {/if}
+    </button>
+  </div>
+</div>
+
 {#if syncFeedback}
   <div class="sync-toast-alert" style="margin-bottom: 1rem; padding: 0.75rem 1.25rem; background: #ecfdf5; border: 1px solid #6ee7b7; color: #065f46; border-radius: 8px; font-weight: 500; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 4px rgba(0,0,0,0.05); animation: fadeIn 0.3s ease;">
     <span>{syncFeedback}</span>
@@ -1417,6 +1479,17 @@
   </div>
 {/if}
 
+{#if activeScheduleTab === 'seminare'}
+  <div style="padding: 0.5rem 0;">
+    <SeminarScheduleView
+      currentWeekCode={currentPlan?.targetWeekCode || '2026-W45'}
+      onNavigateWeek={(delta) => navigateWeek(delta)}
+      onGoToCurrentWeek={goToCurrentWeek}
+      onClose={() => switchScheduleTab('calendar')}
+      isAdmin={true}
+    />
+  </div>
+{:else}
 <!-- Filters Toolbar on top of Calendar -->
 <div class="filters-bar glass-card">
   <div class="filter-group">
@@ -1940,6 +2013,7 @@
     </div>
   </div>
 </div>
+{/if}
 
 <!-- Add/Edit Course Modal -->
 {#if isModalOpen}
@@ -2658,6 +2732,53 @@
     min-width: 225px;
     width: auto;
     padding: 0.5rem 1rem;
+  }
+
+  /* Main Tabs Switcher (Wochenplan & Seminare) */
+  .schedule-view-tabs-container {
+    margin-bottom: 1.25rem;
+    padding: 0.5rem;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  }
+
+  .schedule-view-tabs-nav {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .schedule-view-tab-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.65rem 1.25rem;
+    border-radius: 12px;
+    border: 1.5px solid #e2e8f0;
+    background: #f8fafc;
+    color: #475569;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .schedule-view-tab-btn:hover {
+    background: #f1f5f9;
+    border-color: #cbd5e1;
+    color: #1e293b;
+    transform: translateY(-1px);
+  }
+
+  .schedule-view-tab-btn.active {
+    background: linear-gradient(135deg, #ea580c 0%, #c2410c 100%);
+    border-color: #c2410c;
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(234, 88, 12, 0.25);
   }
 
   .legend-container {
