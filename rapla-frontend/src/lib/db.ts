@@ -16383,6 +16383,61 @@ export const db = {
     db.saveSeminars(seminars, true);
     return sem;
   },
+  deleteSeminarSlot: (
+    seminarId: string,
+    slotId: string,
+    options?: {
+      deleteMatchingHouseInWeekCode?: string;
+      slotSnapshot?: SeminarSlot;
+    }
+  ): Seminar | null => {
+    const seminars: Seminar[] = JSON.parse(JSON.stringify(db.getSeminars()));
+    const sem = seminars.find(s => s.id === seminarId);
+    if (!sem) return null;
+
+    const targetSlot = sem.slots.find(s => s.id === slotId) || options?.slotSnapshot;
+    const deletedSet = new Set(sem.deletedSlotIds || []);
+    deletedSet.add(slotId);
+    sem.deletedSlotIds = Array.from(deletedSet);
+    sem.slots = (sem.slots || []).filter(s => s.id !== slotId);
+
+    // When deleting an open Hausprogramm slot in the combined "Alle Seminare" view,
+    // also remove matching open Hausprogramm slots at the same date + hour + category
+    // across parallel seminars on that day so no duplicate house card pops up in its place.
+    if (options?.deleteMatchingHouseInWeekCode && targetSlot && !targetSlot.isOrange && targetSlot.dateStr) {
+      const targetHour = parseInt((targetSlot.startTime || '08:00').split(':')[0], 10);
+      const targetDate = targetSlot.dateStr;
+      const targetCat = targetSlot.category;
+
+      for (const otherSem of seminars) {
+        if (otherSem.startDate > targetDate || otherSem.endDate < targetDate) continue;
+        const otherDel = new Set(otherSem.deletedSlotIds || []);
+        const matchingSlots = (otherSem.slots || []).filter(s => {
+          if (s.isOrange) return false;
+          const sDate = s.dateStr || '';
+          if (sDate !== targetDate) return false;
+          const sHour = parseInt((s.startTime || '08:00').split(':')[0], 10);
+          return sHour === targetHour && s.category === targetCat;
+        });
+        for (const ms of matchingSlots) {
+          otherDel.add(ms.id);
+        }
+        if (otherSem.isBlueprint) {
+          for (const suffix of ['0700', '0915', '1100', '1200-abreise', '1615', '1800', '2000']) {
+            const synthHour = parseInt(suffix.slice(0, 2), 10);
+            if (synthHour === targetHour) {
+              otherDel.add(`house-${otherSem.id}-${targetDate}-${suffix}`);
+            }
+          }
+        }
+        otherSem.deletedSlotIds = Array.from(otherDel);
+        otherSem.slots = (otherSem.slots || []).filter(s => !otherDel.has(s.id));
+      }
+    }
+
+    db.saveSeminars(seminars, true);
+    return sem;
+  },
   resetSeminarToDefault: (seminarId: string): Seminar | null => {
     const defSem = DEFAULT_SEMINARS.find(s => s.id === seminarId);
     if (!defSem) return null;

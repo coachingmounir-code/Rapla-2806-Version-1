@@ -1889,7 +1889,19 @@
                 >
                   <div class="card-top-line">
                     <span class="card-time" style="color: #9a3412; font-weight: 800;">⏰ {sem.startTime} - {sem.endTime}</span>
-                    <span style="background: #fed7aa; color: #9a3412; font-size: 0.6rem; font-weight: 800; padding: 1px 5px; border-radius: 4px; border: 1px solid #fb923c; white-space: nowrap; max-width: 115px; overflow: hidden; text-overflow: ellipsis;">🧘‍♀️ {sem.seminarShortTitle}</span>
+                    <div style="display: flex; align-items: center; gap: 3px;">
+                      <span style="background: #fed7aa; color: #9a3412; font-size: 0.6rem; font-weight: 800; padding: 1px 5px; border-radius: 4px; border: 1px solid #fb923c; white-space: nowrap; max-width: 98px; overflow: hidden; text-overflow: ellipsis;">🧘‍♀️ {sem.seminarShortTitle}</span>
+                      <button
+                        type="button"
+                        style="display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; padding: 0; border-radius: 4px; border: 1px solid rgba(220,38,38,0.3); background: #fef2f2; color: #dc2626; font-size: 0.62rem; cursor: pointer;"
+                        onclick={(e) => {
+                          e.stopPropagation();
+                          db.deleteSeminarSlot(sem.seminarId, sem.slotId);
+                          registeredSeminars = db.getSeminars();
+                        }}
+                        title="Diesen Seminar-Slot löschen"
+                      >🗑️</button>
+                    </div>
                   </div>
                   <div class="card-title-line" style="color: #7c2d12; font-weight: 800;">
                     {sem.slotTitle}

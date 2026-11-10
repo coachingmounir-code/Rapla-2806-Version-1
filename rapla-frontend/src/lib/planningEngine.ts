@@ -2,6 +2,7 @@ import { db, doesAbsenceMatchTeacher, type Teacher, type Course, type Room, type
 import { EXCEL_ABSENCES } from './excel_absences';
 import wochenplanRules from './data/wochenplan_rules.json' with { type: 'json' };
 import { getYlaConflictForTeacher, isDateInYlaRange } from './ylaData';
+import { getSeminarConflictForTeacher } from './seminarData';
 
 export interface ConflictMessage {
   type: 'hard' | 'soft'; // hard = invalid assignment, soft = warning/preference
@@ -421,6 +422,30 @@ export function validateAssignment(
     });
   }
 
+  // 2c. Check Active Seminar / 2-Year YLA Slot Overlap (Hard)
+  const seminarConflict = getSeminarConflictForTeacher(
+    teacher.name,
+    course.dayOfWeek,
+    course.startTime,
+    course.endTime,
+    targetWeekCode,
+    course.name,
+    teacher.id
+  );
+  if (seminarConflict) {
+    if (seminarConflict.isSharedSatsangVortrag && course.name === 'Satsang' && course.startTime === '07:00') {
+      conflicts.push({
+        type: 'hard',
+        message: `${teacher.name} ist im Seminar „${seminarConflict.seminarShortTitle}“ für „${seminarConflict.slotTitle}“ (${seminarConflict.timeRange}) eingeteilt (bleibt dort für die Ausbildungsgruppe/Vortrag stehen, leitet aber nicht den allgemeinen Wochenplan-Satsang um 7:00 Uhr).`
+      });
+    } else {
+      conflicts.push({
+        type: 'hard',
+        message: `${teacher.name} ist zeitgleich im Seminar „${seminarConflict.seminarShortTitle}“ („${seminarConflict.slotTitle}“ von ${seminarConflict.timeRange}) eingeteilt und steht im Wochenplan nicht zur Verfügung.`
+      });
+    }
+  }
+
 
   // 3. Pranayama constraints
   const isPranayama = courseNameLower.includes('pranayama') || courseStyleLower.includes('pranayama');
@@ -642,7 +667,8 @@ export function validateAssignment(
   if (isMittelstufeAnkommen) {
     const primary = wochenplanRules.yoga.fridayMittelstufeAnkommen.primary;
     const hasPrimaryYla = targetWeekCode ? !!getYlaConflictForTeacher(primary, course.dayOfWeek, course.startTime, course.endTime, targetWeekCode, course.name) : false;
-    const isPrimaryAbsent = isTeacherAbsent(primary, course.dayOfWeek, targetWeekCode, absences) || hasPrimaryYla;
+    const hasPrimarySem = targetWeekCode ? !!getSeminarConflictForTeacher(primary, course.dayOfWeek, course.startTime, course.endTime, targetWeekCode, course.name) : false;
+    const isPrimaryAbsent = isTeacherAbsent(primary, course.dayOfWeek, targetWeekCode, absences) || hasPrimaryYla || hasPrimarySem;
     if (!isPrimaryAbsent) {
       if (!teacherNameLower.includes(primary)) {
         conflicts.push({
@@ -655,7 +681,8 @@ export function validateAssignment(
       let assignedBackup = null;
       for (const backupName of backups) {
         const hasBackupYla = targetWeekCode ? !!getYlaConflictForTeacher(backupName, course.dayOfWeek, course.startTime, course.endTime, targetWeekCode, course.name) : false;
-        const isBackupAbsent = isTeacherAbsent(backupName, course.dayOfWeek, targetWeekCode, absences) || hasBackupYla;
+        const hasBackupSem = targetWeekCode ? !!getSeminarConflictForTeacher(backupName, course.dayOfWeek, course.startTime, course.endTime, targetWeekCode, course.name) : false;
+        const isBackupAbsent = isTeacherAbsent(backupName, course.dayOfWeek, targetWeekCode, absences) || hasBackupYla || hasBackupSem;
         if (!isBackupAbsent) {
           const backupTeacher = teachers?.find(t => findRuleTeacherKey(t.name) === backupName || t.name.toLowerCase().includes(backupName));
           let canBackupTakeSlot = true;
@@ -1668,7 +1695,7 @@ export function runAiPlanning(
         const nonRelaxableConflicts = conflicts.filter(c => {
           if (c.type !== 'hard') return false;
           const msg = c.message.toLowerCase();
-          return msg.includes('abwesend') || msg.includes('urlaub') || msg.includes('krank') || msg.includes('satsang-regel 4') || msg.includes('nie für einen satsang') || msg.includes('verfügbar') || msg.includes('herausgenommen') || msg.includes('nicht mehr teil des teams');
+          return msg.includes('abwesend') || msg.includes('urlaub') || msg.includes('krank') || msg.includes('satsang-regel 4') || msg.includes('nie für einen satsang') || msg.includes('verfügbar') || msg.includes('herausgenommen') || msg.includes('nicht mehr teil des teams') || msg.includes('zeitgleich im seminar') || msg.includes('im seminar') || msg.includes('yogalehrer-ausbildung');
         });
 
         if (nonRelaxableConflicts.length === 0) {

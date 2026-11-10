@@ -38,6 +38,7 @@ export interface Seminar {
   isBlueprint: boolean;
   isCancelled?: boolean;      // True if seminar is cancelled (Storniert)
   isHiddenFromTeam?: boolean; // True if hidden from Team view (automatically true when cancelled)
+  deletedSlotIds?: string[];  // IDs of slots explicitly deleted by Admin (e.g. unnecessary duplicates)
   slots: SeminarSlot[];
   peaceChant?: {
     time: string;
@@ -1616,11 +1617,11 @@ export const WE4_YOGA_ANATOMIE_SLOTS: SeminarSlot[] = [
     startTime: '07:00',
     endTime: '09:15',
     title: 'Satsang & Vortrag: Yoga wirkt – Chronische Erkrankungen (Stoffwechsel, Verdauung)',
-    description: 'Yoga wirkt: Chronische Erkrankungen (wie Stoffwechsel, Verdauung) und wie Yoga dabei unterstützen und wirken kann (im Radakrishna-Raum).',
+    description: '7:00 – 8:00 Uhr gemeinsamer Morgen-Satsang laut Wochenplan (der Satsang wird von der regulär im Wochenplan eingeteilten Satsang-Leitung angeleitet) · anschließend YLA-Vortrag mit Karuna: Yoga wirkt – Chronische Erkrankungen (Stoffwechsel, Verdauung) im Radha Krishna Raum.',
     isOrange: true,
-    roomName: 'Radakrishna-Raum',
+    roomName: 'Radha Krishna Raum',
     roomId: 'room-2',
-    teacher: 'Offen',
+    teacher: 'Karuna',
     category: 'lecture'
   },
   {
@@ -1634,11 +1635,11 @@ export const WE4_YOGA_ANATOMIE_SLOTS: SeminarSlot[] = [
     startTime: '09:30',
     endTime: '11:00',
     title: 'Yogastunde: Korrekte Aussprache der Asanas & Mantra – Ausgleich Verdauungssystem & Selbstregulation Immunsystem',
-    description: 'Korrekte Aussprache der Asanas und Mantra · Yogastunde zum Ausgleich des Verdauungssystems und zur Selbstregulation des Immunsystems im Radakrishna-Raum.',
+    description: 'Korrekte Aussprache der Asanas und Mantra · Yogastunde zum Ausgleich des Verdauungssystems und zur Selbstregulation des Immunsystems im Radha Krishna Raum.',
     isOrange: true,
-    roomName: 'Radakrishna-Raum',
+    roomName: 'Radha Krishna Raum',
     roomId: 'room-2',
-    teacher: 'Offen',
+    teacher: 'Narayani',
     category: 'yoga'
   },
   {
@@ -1667,11 +1668,11 @@ export const WE4_YOGA_ANATOMIE_SLOTS: SeminarSlot[] = [
     startTime: '14:30',
     endTime: '16:30',
     title: 'Workshop: Neurologische Erkrankungen und Yoga (Depressive Erkrankungen, Burn-out)',
-    description: 'Neurologische Erkrankungen und Yoga: Depressive Erkrankungen, psychologische und neurowissenschaftliche Aspekte in Bezug auf die Yoga-Praxis (Depression, Burn-out) im Radakrishna-Raum.',
+    description: 'Neurologische Erkrankungen und Yoga: Depressive Erkrankungen, psychologische und neurowissenschaftliche Aspekte in Bezug auf die Yoga-Praxis (Depression, Burn-out) im Radha Krishna Raum.',
     isOrange: true,
-    roomName: 'Radakrishna-Raum',
+    roomName: 'Radha Krishna Raum',
     roomId: 'room-2',
-    teacher: 'Offen',
+    teacher: 'Anjali',
     category: 'afternoon'
   },
   {
@@ -1765,11 +1766,11 @@ export const WE4_YOGA_ANATOMIE_SLOTS: SeminarSlot[] = [
     startTime: '07:00',
     endTime: '09:15',
     title: 'Satsang & Vortrag: Wie Yoga & Meditation bei chronischen Erkrankungen helfen',
-    description: 'Wie Yoga und Meditation bei chronischen Erkrankungen helfen: Wirkung von Asanas und Meditation bei chronischen Erkrankungen (z. B. Krebs, Darmerkrankungen, Lebererkrankungen, Hepatitis usw.) im Radakrishna-Raum.',
+    description: '7:00 – 8:00 Uhr gemeinsamer Morgen-Satsang laut Wochenplan (der Satsang wird von der regulär im Wochenplan eingeteilten Satsang-Leitung angeleitet) · anschließend YLA-Vortrag mit Karuna: Wie Yoga und Meditation bei chronischen Erkrankungen helfen (z. B. Krebs, Darmerkrankungen, Lebererkrankungen, Hepatitis usw.) im Radha Krishna Raum.',
     isOrange: true,
-    roomName: 'Radakrishna-Raum',
+    roomName: 'Radha Krishna Raum',
     roomId: 'room-2',
-    teacher: 'Offen',
+    teacher: 'Karuna',
     category: 'lecture'
   },
   {
@@ -1783,11 +1784,11 @@ export const WE4_YOGA_ANATOMIE_SLOTS: SeminarSlot[] = [
     startTime: '09:30',
     endTime: '11:00',
     title: 'Yogastunde: Korrekte Aussprache der Asanas & Mantra – Yoga bei chronischen neurologischen Erkrankungen',
-    description: 'Korrekte Aussprache der Asanas und Mantra · Yogastunde: Yoga bei chronischen neurologischen Erkrankungen im Radakrishna-Raum.',
+    description: 'Korrekte Aussprache der Asanas und Mantra · Yogastunde: Yoga bei chronischen neurologischen Erkrankungen im Radha Krishna Raum.',
     isOrange: true,
-    roomName: 'Radakrishna-Raum',
+    roomName: 'Radha Krishna Raum',
     roomId: 'room-2',
-    teacher: 'Offen',
+    teacher: 'Narayani',
     category: 'yoga'
   },
   {
@@ -3355,17 +3356,19 @@ export function getEffectiveSeminarSlotsForDay(
   seminar: Seminar,
   day: { dateStr: string; dayIndex: number; dayOfWeek: number; label: string }
 ): SeminarSlot[] {
-  const explicitDaySlots = seminar.slots.filter(sl =>
-    sl.dateStr ? sl.dateStr === day.dateStr : sl.dayIndex === day.dayIndex
-  );
+  const deletedSet = new Set(seminar.deletedSlotIds || []);
+  const explicitDaySlots = seminar.slots
+    .filter(sl => (sl.dateStr ? sl.dateStr === day.dateStr : sl.dayIndex === day.dayIndex))
+    .filter(sl => !deletedSet.has(sl.id));
 
   // Outside seminar date range, only return any explicitly dated slots
   if (!day.dateStr || day.dateStr < seminar.startDate || day.dateStr > seminar.endDate) {
     return explicitDaySlots;
   }
 
-  // If this seminar already defines open Hausprogramm slots on this date, return as-is
-  if (explicitDaySlots.some(sl => !sl.isOrange)) {
+  // If this seminar uses explicit Hausprogramm slots (or is not a generic blueprint), return explicit slots directly
+  // so that deleting a Hausprogramm slot on a day does not synthesize fallback duplicates.
+  if (!seminar.isBlueprint || seminar.slots.some(sl => !sl.isOrange) || explicitDaySlots.some(sl => !sl.isOrange)) {
     return explicitDaySlots;
   }
 
@@ -3383,8 +3386,10 @@ export function getEffectiveSeminarSlotsForDay(
     description: string,
     category: SeminarSlot['category']
   ) => {
+    const synthId = `house-${seminar.id}-${day.dateStr}-${suffix}`;
+    if (deletedSet.has(synthId)) return;
     generatedHouse.push({
-      id: `house-${seminar.id}-${day.dateStr}-${suffix}`,
+      id: synthId,
       seminarId: seminar.id,
       dayIndex: day.dayIndex,
       dayOfWeek: day.dayOfWeek,
@@ -3479,9 +3484,11 @@ export function getEffectiveSeminarSlotsForDay(
 // Generates the standard room reservations for ashram wide room occupancy
 export function getSeminarRoomReservations(seminar: Seminar): RoomReservation[] {
   if (!isSeminarVisibleInTeam(seminar)) return [];
+  const deletedSet = new Set(seminar.deletedSlotIds || []);
   const reservations: RoomReservation[] = [];
 
   for (const slot of seminar.slots) {
+    if (deletedSet.has(slot.id)) continue;
     // Only orange slots located in a specific ashram room reserve room occupancy
     if (!slot.isOrange || !slot.roomId) continue;
 
@@ -3638,8 +3645,10 @@ export function getSeminarSlotsForTeacherAndWeek(
 
     for (const seminar of activeSeminars) {
       if (!isSeminarVisibleInTeam(seminar)) continue;
+      const deletedSet = new Set(seminar.deletedSlotIds || []);
 
       const daySlots = (seminar.slots || []).filter(sl => {
+        if (deletedSet.has(sl.id)) return false;
         // ONLY internal/fixed seminar slots, never open Hausprogramm slots
         if (!sl.isOrange) return false;
         if (sl.dateStr) {
@@ -3699,4 +3708,123 @@ export function getSeminarSlotsForTeacherAndWeek(
     if (idxA !== idxB) return idxA - idxB;
     return a.startTime.localeCompare(b.startTime);
   });
+}
+
+/**
+ * Returns true if a seminar slot is a combined "7:00 - 9:15 Uhr Satsang & Vortrag" block
+ * (e.g. in the 2-Year YLA WE 4 Yoga Anatomie on Saturday & Sunday morning).
+ * Domain rule:
+ * - The 07:00 - 08:00 Satsang taking place in this frame is the exact same general Ashram Satsang
+ *   from the regular Wochenplan.
+ * - However, the person leading the regular 07:00 - 08:00 Wochenplan Satsang is NOT the person
+ *   assigned to the 07:00 - 09:15 YLA slot (e.g. Karuna is assigned to the 07:00 - 09:15 YLA slot
+ *   for the YLA group/Vortrag and must remain assigned there, while the Wochenplan Satsang has its
+ *   regular morning Satsang teacher).
+ */
+export function isSharedMorningSatsangVortragSlot(slot: SeminarSlot): boolean {
+  const titleLower = (slot.title || '').toLowerCase();
+  return (
+    slot.startTime === '07:00' &&
+    (slot.id.includes('satsang-vortrag') || (titleLower.includes('satsang') && titleLower.includes('vortrag')))
+  );
+}
+
+function seminarTimeToMinutes(t: string): number {
+  const [h, m] = (t || '00:00').split(':').map(Number);
+  return (h || 0) * 60 + (m || 0);
+}
+
+function seminarTimesOverlap(s1: string, e1: string, s2: string, e2: string): boolean {
+  const a1 = seminarTimeToMinutes(s1);
+  const b1 = seminarTimeToMinutes(e1);
+  const a2 = seminarTimeToMinutes(s2);
+  const b2 = seminarTimeToMinutes(e2);
+  return a1 < b2 && a2 < b1;
+}
+
+export interface SeminarConflictInfo {
+  seminarId: string;
+  seminarTitle: string;
+  seminarShortTitle: string;
+  slotId: string;
+  slotTitle: string;
+  timeRange: string;
+  roomName: string;
+  isSharedSatsangVortrag?: boolean;
+}
+
+/**
+ * Checks whether a teacher is occupied in an internal seminar slot (isOrange === true)
+ * at the given day and time window of a target week.
+ */
+export function getSeminarConflictForTeacher(
+  teacherName: string,
+  dayOfWeek: number,
+  startTime: string,
+  endTime: string,
+  targetWeekCode?: string,
+  courseName?: string,
+  teacherId?: string,
+  isEndFriday: boolean = false,
+  seminarsInput?: Seminar[]
+): SeminarConflictInfo | null {
+  if (!teacherName || !targetWeekCode) return null;
+
+  const isoDate = getLocalDateForDay(targetWeekCode, dayOfWeek, isEndFriday);
+  if (!isoDate) return null;
+
+  const activeSeminars = getSeminarsForWeek(targetWeekCode, seminarsInput, { includeHidden: false });
+  if (activeSeminars.length === 0) return null;
+
+  const cNameLower = (courseName || '').toLowerCase();
+  const isPureMorningSatsangCourse = cNameLower.includes('satsang') && !cNameLower.includes('einführung') && startTime === '07:00';
+
+  for (const seminar of activeSeminars) {
+    if (!isSeminarVisibleInTeam(seminar)) continue;
+    // Skip generic auto-generated blueprint placeholders where no concrete room/schedule is locked
+    if (seminar.isBlueprint) continue;
+
+    const deletedSet = new Set(seminar.deletedSlotIds || []);
+    const daySlots = (seminar.slots || []).filter(sl => {
+      if (deletedSet.has(sl.id)) return false;
+      if (!sl.isOrange) return false;
+      if (sl.dateStr) return sl.dateStr === isoDate;
+      if (seminar.startDate && seminar.endDate && (isoDate < seminar.startDate || isoDate > seminar.endDate)) {
+        return false;
+      }
+      return sl.dayOfWeek === dayOfWeek;
+    });
+
+    for (const slot of daySlots) {
+      const effectivePerson = (slot.teacher || seminar.leader || '').trim();
+      if (!doesSeminarPersonMatchTeacher(effectivePerson, teacherName, teacherId)) continue;
+      if (!seminarTimesOverlap(startTime, endTime, slot.startTime, slot.endTime)) continue;
+
+      const sharedSatsangVortrag = isSharedMorningSatsangVortragSlot(slot);
+
+      // If a seminar has a pure 07:00-08:00 Satsang slot (not a 07:00-09:15 Satsang & Vortrag block),
+      // it is the identical house Satsang.
+      if (!sharedSatsangVortrag && isPureMorningSatsangCourse && slot.startTime === '07:00' && slot.endTime === '08:00') {
+        continue;
+      }
+
+      const cleanTitle = cleanSeminarSlotTitle(slot.title);
+      const resolvedRoomName = slot.roomId
+        ? getSeminarRoomDisplayName(slot.roomId, slot.roomName || seminar.roomName)
+        : (slot.roomName || seminar.roomName || 'Laut Tagesaushang');
+
+      return {
+        seminarId: seminar.id,
+        seminarTitle: seminar.title,
+        seminarShortTitle: seminar.shortTitle,
+        slotId: slot.id,
+        slotTitle: cleanTitle,
+        timeRange: `${slot.startTime}–${slot.endTime} Uhr`,
+        roomName: resolvedRoomName,
+        isSharedSatsangVortrag: sharedSatsangVortrag
+      };
+    }
+  }
+
+  return null;
 }

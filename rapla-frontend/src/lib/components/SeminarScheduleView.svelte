@@ -13,6 +13,7 @@
     isSeminarVisibleInTeam,
     doesSeminarPersonMatchTeacher,
     cleanSeminarSlotTitle,
+    isSharedMorningSatsangVortragSlot,
     type SeminarSlot,
     type Seminar
   } from '$lib/seminarData';
@@ -50,19 +51,52 @@
   let allSeminars = $state<Seminar[]>(db.getSeminars());
   let teachers = $state<Teacher[]>(db.getTeachers());
   let saveFeedback = $state<string | null>(null);
+  let lastDeletedSeminarsSnapshot = $state<Seminar[] | null>(null);
   let feedbackTimer: ReturnType<typeof setTimeout> | null = null;
 
-  function showSaveFeedback(msg: string) {
+  function showSaveFeedback(msg: string, keepUndoSnapshot = false) {
     saveFeedback = msg;
+    if (!keepUndoSnapshot) {
+      lastDeletedSeminarsSnapshot = null;
+    }
     if (feedbackTimer) clearTimeout(feedbackTimer);
     feedbackTimer = setTimeout(() => {
       saveFeedback = null;
-    }, 4500);
+      lastDeletedSeminarsSnapshot = null;
+    }, keepUndoSnapshot ? 8000 : 4500);
   }
 
   function refreshData() {
     allSeminars = db.getSeminars();
     teachers = db.getTeachers();
+  }
+
+  function handleDeleteSlot(slot: SeminarSlot, seminar: Seminar, e?: MouseEvent) {
+    if (e) e.stopPropagation();
+    if (!isAdmin) return;
+    // Save snapshot for 1-click Undo
+    lastDeletedSeminarsSnapshot = JSON.parse(JSON.stringify(db.getSeminars()));
+    const titleShort = cleanSeminarSlotTitle(slot.title);
+    db.deleteSeminarSlot(seminar.id, slot.id, {
+      deleteMatchingHouseInWeekCode: (!slot.isOrange && selectedSeminarId === 'all') ? currentWeekCode : undefined,
+      slotSnapshot: slot
+    });
+    refreshData();
+    if (selectedSlotModal && selectedSlotModal.slot.id === slot.id) {
+      closeSlotModal();
+    }
+    showSaveFeedback(
+      `🗑️ Slot „${titleShort}“ (${slot.dayName}, ${slot.startTime}–${slot.endTime}) aus „${seminar.shortTitle}“ gelöscht.`,
+      true
+    );
+  }
+
+  function handleUndoDeleteSlot() {
+    if (!lastDeletedSeminarsSnapshot || !isAdmin) return;
+    db.saveSeminars(lastDeletedSeminarsSnapshot, true);
+    lastDeletedSeminarsSnapshot = null;
+    refreshData();
+    showSaveFeedback('↩️ Gelöschter Seminar-Slot wurde wiederhergestellt.');
   }
 
   // Filter out permanently excluded team members per project rules
@@ -649,7 +683,14 @@
 {#if saveFeedback}
   <div class="seminar-save-toast animate-fade-in">
     <span>{saveFeedback}</span>
-    <button type="button" class="toast-close-btn" onclick={() => { saveFeedback = null; }}>✕</button>
+    <div style="display: flex; align-items: center; gap: 0.45rem;">
+      {#if lastDeletedSeminarsSnapshot && isAdmin}
+        <button type="button" class="toast-undo-btn" onclick={handleUndoDeleteSlot}>
+          ↩️ Rückgängig
+        </button>
+      {/if}
+      <button type="button" class="toast-close-btn" onclick={() => { saveFeedback = null; lastDeletedSeminarsSnapshot = null; }}>✕</button>
+    </div>
   </div>
 {/if}
 
@@ -924,6 +965,7 @@
                 {@const isHighlighted = selectedTeacherHasWeekSlots && matchesSelectedTeacher(entry, selectedTeacher)}
                 {@const isDimmed = selectedTeacherHasWeekSlots && !isHighlighted && !onlyMySlots}
                 {@const teacherLabel = entry.slot.teacher || entry.seminar.leader || 'Offen'}
+                {@const isSharedSatsangVortrag = isSharedMorningSatsangVortragSlot(entry.slot)}
                 <!-- svelte-ignore a11y_click_events_have_key_events -->
                 <!-- svelte-ignore a11y_no_static_element_interactions -->
                 <div
@@ -936,7 +978,19 @@
                 >
                   <div class="card-top-line">
                     <span class="card-time">{entry.slot.startTime} - {entry.slot.endTime}</span>
-                    <span class="card-room" style="color: {colors.roomText};">{roomLabel}</span>
+                    <div class="card-top-right-group">
+                      <span class="card-room" style="color: {colors.roomText};">{roomLabel}</span>
+                      {#if isAdmin}
+                        <button
+                          type="button"
+                          class="card-slot-delete-btn"
+                          onclick={(e) => handleDeleteSlot(entry.slot, entry.seminar, e)}
+                          title="Diesen Seminar-Slot löschen (z. B. bei Dopplung)"
+                        >
+                          🗑️
+                        </button>
+                      {/if}
+                    </div>
                   </div>
                   <div class="card-title-line">{cleanSlotTitle(entry.slot.title)}</div>
                   {#if entry.slot.isOrange && selectedSeminarId === 'all'}
@@ -959,6 +1013,11 @@
                     <div class="card-teacher-line">
                       👤 {teacherLabel}
                     </div>
+                    {#if isSharedSatsangVortrag}
+                      <div class="card-satsang-harmony-hint" title="Der 7:00–8:00 Uhr Satsang ist der reguläre Haus-Satsang laut Wochenplan (mit der dort eingeteilten Satsang-Leitung). {teacherLabel} bleibt für den YLA-Slot (Vortrag) eingeteilt.">
+                        🕊️ 7:00 Satsang lt. Wochenplan
+                      </div>
+                    {/if}
                   {/if}
                   {#if entry.slot.locationHint}
                     <div class="card-loc-hint">📍 {entry.slot.locationHint}</div>
@@ -1128,7 +1187,19 @@
           >
             <div class="agenda-time-room">
               <span>⏰ {entry.slot.startTime} – {entry.slot.endTime}</span>
-              <span class="agenda-room" style="color: {colors.roomText};">📍 {roomLabel}</span>
+              <div style="display: flex; align-items: center; gap: 0.35rem;">
+                <span class="agenda-room" style="color: {colors.roomText};">📍 {roomLabel}</span>
+                {#if isAdmin}
+                  <button
+                    type="button"
+                    class="card-slot-delete-btn"
+                    onclick={(e) => handleDeleteSlot(entry.slot, entry.seminar, e)}
+                    title="Diesen Seminar-Slot löschen (z. B. bei Dopplung)"
+                  >
+                    🗑️
+                  </button>
+                {/if}
+              </div>
             </div>
             <h3 class="agenda-title">{cleanSlotTitle(entry.slot.title)}</h3>
             {#if entry.slot.isOrange}
@@ -1146,6 +1217,11 @@
                 🕊️ Offenes Hausprogramm
               {:else}
                 👤 {entry.slot.teacher || entry.seminar.leader || 'Offen'}
+                {#if isSharedMorningSatsangVortragSlot(entry.slot)}
+                  <span style="display: block; font-size: 0.72rem; color: #0369a1; margin-top: 2px;">
+                    🕊️ 7:00–8:00 Satsang lt. Wochenplan · Vortrag: {entry.slot.teacher || entry.seminar.leader}
+                  </span>
+                {/if}
               {/if}
             </div>
           </div>
@@ -1530,7 +1606,17 @@
       </div>
 
       <div class="modal-footer modal-footer-between">
-        <div>
+        <div style="display: flex; align-items: center; gap: 0.45rem; flex-wrap: wrap;">
+          {#if isAdmin}
+            <button
+              type="button"
+              class="btn btn-cancel-sem btn-small"
+              onclick={() => handleDeleteSlot(selectedSlotModal!.slot, selectedSlotModal!.seminar)}
+              title="Diesen Seminar-Slot dauerhaft löschen (z. B. bei unnötiger Dopplung)"
+            >
+              🗑️ Slot löschen
+            </button>
+          {/if}
           {#if selectedSlotModal.slot.isOrange && selectedSlotModal.slot.roomId && onSwitchToOccupancy}
             <button
               type="button"
@@ -2930,7 +3016,73 @@
     color: #991b1b;
   }
 
+  .card-top-right-group {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    min-width: 0;
+  }
+
+  .card-slot-delete-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    padding: 0;
+    border-radius: 5px;
+    border: 1px solid rgba(220, 38, 38, 0.28);
+    background: rgba(254, 242, 242, 0.92);
+    color: #dc2626;
+    font-size: 0.68rem;
+    line-height: 1;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: all 0.14s ease;
+    opacity: 0.85;
+  }
+
+  .card-slot-delete-btn:hover {
+    opacity: 1;
+    background: #fee2e2;
+    border-color: #ef4444;
+    transform: scale(1.08);
+    box-shadow: 0 1px 4px rgba(220, 38, 38, 0.2);
+  }
+
+  .card-satsang-harmony-hint {
+    font-size: 0.63rem;
+    font-weight: 700;
+    color: #0369a1;
+    background: rgba(255, 255, 255, 0.72);
+    border: 1px dashed #7dd3fc;
+    border-radius: 4px;
+    padding: 1px 4px;
+    margin-top: 2px;
+    line-height: 1.25;
+  }
+
+  .toast-undo-btn {
+    background: #ffffff;
+    color: #0f172a;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    padding: 0.2rem 0.55rem;
+    font-size: 0.76rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .toast-undo-btn:hover {
+    background: #f1f5f9;
+    border-color: #94a3b8;
+  }
+
   @media print {
+    .card-slot-delete-btn {
+      display: none !important;
+    }
     .grid-controls-row,
     .seminar-filter-toolbar,
     .mobile-only-agenda {
