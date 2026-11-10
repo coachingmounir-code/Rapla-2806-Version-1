@@ -933,7 +933,7 @@ export const EXCEL_ABSENCES = [
   { teacherId: "teacher-gen-narayani-kedenburg", excelName: "Narayani", startDate: "2026-10-31", endDate: "2026-10-31", type: "Frei" as const, status: "Genehmigt" as const, note: "Regulärer freier Wochentag" },
   { teacherId: "teacher-gen-narayani-kedenburg", excelName: "Narayani", startDate: "2026-11-07", endDate: "2026-11-07", type: "Frei" as const, status: "Genehmigt" as const, note: "Regulärer freier Wochentag" },
   { teacherId: "teacher-gen-narayani-kedenburg", excelName: "Narayani", startDate: "2026-11-08", endDate: "2026-11-08", type: "Seminartage" as const, status: "Genehmigt" as const, note: "Seminartage" },
-  { teacherId: "teacher-gen-narayani-kedenburg", excelName: "Narayani", startDate: "2026-11-14", endDate: "2026-11-14", type: "Frei" as const, status: "Genehmigt" as const, note: "Regulärer freier Wochentag" },
+  { teacherId: "teacher-gen-narayani-kedenburg", excelName: "Narayani", startDate: "2026-11-16", endDate: "2026-11-16", type: "Frei" as const, status: "Genehmigt" as const, note: "Regulärer freier Wochentag" },
   { teacherId: "teacher-gen-narayani-kedenburg", excelName: "Narayani", startDate: "2026-11-21", endDate: "2026-11-21", type: "Frei" as const, status: "Genehmigt" as const, note: "Regulärer freier Wochentag" },
   { teacherId: "teacher-gen-narayani-kedenburg", excelName: "Narayani", startDate: "2026-11-28", endDate: "2026-11-28", type: "Frei" as const, status: "Genehmigt" as const, note: "Regulärer freier Wochentag" },
   { teacherId: "teacher-gen-narayani-kedenburg", excelName: "Narayani", startDate: "2026-12-05", endDate: "2026-12-05", type: "Frei" as const, status: "Genehmigt" as const, note: "Regulärer freier Wochentag" },

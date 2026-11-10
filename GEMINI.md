@@ -14,6 +14,14 @@ Bitte bei zukünftigen Zuweisungen und Planungen entsprechend beachten!
   - Der **Seva-Frei-Kalender hat ausnahmslos die allerhöchste Priorität** bei der Entscheidung, ob eine Person einplanbar ist oder nicht.
   - Wenn bei einem Slot das Häkchen für **„Fest vereinbarte Stunde“ (`isFixedAgreement`)** gesetzt ist, gilt uneingeschränkt: Hat die betreffende Lehrkraft an diesem Tag **Seva frei, Urlaub, ist krank, hat Seminartage, Seva außer Haus oder ist aus beliebigem anderem Grund im Seva-Frei-Kalender als abwesend vermerkt**, darf sie an diesem Tag **automatisch NICHT eingeplant werden**!
   - Die Abwesenheit sticht jede feste Vereinbarung. Der Slot muss in solchen Fällen automatisch von der KI für eine andere verfügbare Lehrkraft verplant bzw. vertreten werden.
+- **Raumbelegungen durch Seminare (Allgemeine Regel ab KW 47)**:
+  - Bei der Wochenplanung muss stets berücksichtigt werden, in welchen Räumen aktive Seminare stattfinden (`isOrange: true` Raumbelegungen im Seminarplan) und welche offenen Wochenplan-Slots dadurch in diesen Räumen blockiert sind.
+  - Wenn der Standardraum einer offenen Yogastunde oder eines Angebots (z. B. Radha Krishna Raum oder Tripura Raum) durch ein parallel laufendes Seminar belegt ist, wird die offene Stunde automatisch auf einen freien Ausweichraum (z. B. Sitaram Raum oder Hanuman Raum) verlegt.
+  - Speziell für **KW 47**:
+    - Samstag (14.11.) ganztägig und Sonntag (15.11.) bis 15:00 Uhr finden im **Radha Krishna Raum (`room-2`)** wegen des 2-Jahres-YLA-Seminars (`WE 4 – Yoga Anatomie`) **keine offenen Yogastunden** statt (ab Sonntag 15:00 Uhr ist der Raum wieder frei für die 16:30 Uhr Ankommensstunde).
+    - Sonntagmorgen (15.11., 09:15 Uhr): Statt der üblichen Anfängerstunde findet eine offene **Räkelyoga**-Yogastunde im **Tripura-Raum (`room-5`)** (mit Erkan Batmaz) statt; parallel dazu findet die **Mittelstufenstunde** im **Sitaram-Raum (`room-4`)** statt.
+    - **Narayani in KW 47**: Macht ausnahmsweise am **Montag (16.11.)** ihren freien Tag (statt Samstag). Daher kann sie am **Sonntag (15.11.) ab Nachmittag (ab 12:00 Uhr)**, am **Montag (16.11.) ganztägig** sowie am **Dienstag (17.11.) Vormittag bis 15:00 Uhr** für keinerlei Slots eingeteilt werden.
+    - **Morgen-Satsang (07:00 Uhr) am Samstag (14.11.) & Sonntag (15.11.) in KW 47**: Weder Anjali noch Karuna einteilen.
 
 # Sevaka-Regeln
 - Teresa: Bis auf weiteres komplett herausgenommen (wird für keine Stunden oder Dienste eingeteilt).

@@ -123,6 +123,14 @@ def main():
                 person_days['Chandrashekara'][cur] = 'f'
             cur += datetime.timedelta(days=1)
 
+    # 3. Narayani in KW 47: Exceptionally takes her free day ('f') on Monday 2026-11-16 instead of Saturday 2026-11-14.
+    if 'Narayani' in person_days:
+        sat_w47 = datetime.datetime(2026, 11, 14)
+        mon_w47 = datetime.datetime(2026, 11, 16)
+        if person_days['Narayani'].get(sat_w47) == 'f':
+            del person_days['Narayani'][sat_w47]
+        person_days['Narayani'][mon_w47] = 'f'
+
     # Convert daily codes into contiguous blocks per person
     blocks = []
     for excel_name in person_order:

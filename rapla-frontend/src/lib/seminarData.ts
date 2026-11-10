@@ -3808,10 +3808,134 @@ export function getSeminarConflictForTeacher(
         continue;
       }
 
+      // Open seminar yoga class that is itself represented as an open Wochenplan course (e.g. Räkelyoga on Sunday 09:15)
+      const slotTitleLower = (slot.title || '').toLowerCase();
+      if (
+        (cNameLower.includes('räkel') || cNameLower.includes('raekel')) &&
+        (slotTitleLower.includes('räkel') || slotTitleLower.includes('raekel') || slotTitleLower.includes('(offen)'))
+      ) {
+        continue;
+      }
+
       const cleanTitle = cleanSeminarSlotTitle(slot.title);
       const resolvedRoomName = slot.roomId
         ? getSeminarRoomDisplayName(slot.roomId, slot.roomName || seminar.roomName)
         : (slot.roomName || seminar.roomName || 'Laut Tagesaushang');
+
+      return {
+        seminarId: seminar.id,
+        seminarTitle: seminar.title,
+        seminarShortTitle: seminar.shortTitle,
+        slotId: slot.id,
+        slotTitle: cleanTitle,
+        timeRange: `${slot.startTime}–${slot.endTime} Uhr`,
+        roomName: resolvedRoomName,
+        isSharedSatsangVortrag: sharedSatsangVortrag
+      };
+    }
+  }
+
+  return null;
+}
+
+/**
+ * Checks whether a room is occupied by an active, visible seminar slot (isOrange === true)
+ * at the given day and time window of a target week, or blocked by a seminar-wide room rule
+ * (such as no open yoga classes in Radha Krishna Raum on Saturday & Sunday until 15:00 during 2J-YLA WE 4).
+ */
+export function getSeminarRoomConflict(
+  roomId: string,
+  dayOfWeek: number,
+  startTime: string,
+  endTime: string,
+  targetWeekCode?: string,
+  courseName?: string,
+  courseStyle?: string,
+  isEndFriday: boolean = false,
+  seminarsInput?: Seminar[]
+): SeminarConflictInfo | null {
+  if (!roomId || !targetWeekCode) return null;
+
+  const isoDate = getLocalDateForDay(targetWeekCode, dayOfWeek, isEndFriday);
+  if (!isoDate) return null;
+
+  const cNameLower = (courseName || '').toLowerCase();
+  const cStyleLower = (courseStyle || '').toLowerCase();
+
+  // YL-Schulungen have a fixed room (Tripura room-5) per GEMINI.md
+  if (cNameLower.includes('schulung') || cStyleLower.includes('schulung')) {
+    return null;
+  }
+
+  const isPureMorningSatsangCourse = cNameLower.includes('satsang') && !cNameLower.includes('einführung') && startTime === '07:00';
+  const isOnn = cNameLower.includes('om namo') || cNameLower.includes('narayanaya');
+  const isMeditation = (cNameLower.includes('meditation') || cNameLower.includes('medi.') || (cStyleLower.includes('meditation') && !isOnn)) && !cNameLower.includes('satsang') && !isOnn;
+  const isSatsang = cNameLower.includes('satsang');
+  const isEntspannung = cStyleLower.includes('entspannung') || cNameLower.includes('entspannung') || cNameLower.includes('klangreise') || cNameLower.includes('peziebälle') || cNameLower.includes('spaziergang') || cNameLower.includes('am kamin');
+  const isSonstiges = cStyleLower.includes('sonstiges') || cStyleLower.includes('buffet') || cNameLower.includes('hausführung') || cNameLower.includes('hausfuehrung');
+  const isPranayama = cNameLower.includes('pranayama') || cStyleLower.includes('pranayama');
+  const isOpenYogaClass = !isMeditation && !isSatsang && !isOnn && !isEntspannung && !isSonstiges && !isPranayama;
+
+  const activeSeminars = getSeminarsForWeek(targetWeekCode, seminarsInput, { includeHidden: false });
+  if (activeSeminars.length === 0) return null;
+
+  for (const seminar of activeSeminars) {
+    if (!isSeminarVisibleInTeam(seminar)) continue;
+    if (seminar.isBlueprint) continue;
+
+    // Special domain rule for 2-Year YLA WE 4 in KW 47:
+    // On Saturday (2026-11-14) and Sunday until 15:00 (2026-11-15 < 15:00), no open yoga classes may take place in Radha Krishna Raum (room-2).
+    if (
+      seminar.id === 'seminar-yla2j-we4-anatomie-2026-11-13' &&
+      roomId === 'room-2' &&
+      isOpenYogaClass &&
+      (isoDate === '2026-11-14' || (isoDate === '2026-11-15' && seminarTimeToMinutes(startTime) < seminarTimeToMinutes('15:00')))
+    ) {
+      return {
+        seminarId: seminar.id,
+        seminarTitle: seminar.title,
+        seminarShortTitle: seminar.shortTitle,
+        slotId: 'we4-room2-block',
+        slotTitle: '2-Jahres-YLA Seminar (Sa. & So. bis 15:00 Uhr im Radha Krishna Raum)',
+        timeRange: isoDate === '2026-11-14' ? 'ganztägig' : 'bis 15:00 Uhr',
+        roomName: 'Radha Krishna Raum'
+      };
+    }
+
+    const deletedSet = new Set(seminar.deletedSlotIds || []);
+    const daySlots = (seminar.slots || []).filter(sl => {
+      if (deletedSet.has(sl.id)) return false;
+      if (!sl.isOrange) return false;
+      if (!isIndoorSeminarRoomSlot(sl)) return false;
+      if (sl.dateStr) return sl.dateStr === isoDate;
+      if (seminar.startDate && seminar.endDate && (isoDate < seminar.startDate || isoDate > seminar.endDate)) {
+        return false;
+      }
+      return sl.dayOfWeek === dayOfWeek;
+    });
+
+    for (const slot of daySlots) {
+      const effectiveRoomId = slot.roomId || seminar.roomId;
+      if (effectiveRoomId !== roomId) continue;
+      if (!seminarTimesOverlap(startTime, endTime, slot.startTime, slot.endTime)) continue;
+
+      const sharedSatsangVortrag = isSharedMorningSatsangVortragSlot(slot);
+      if (isPureMorningSatsangCourse && (sharedSatsangVortrag || (slot.startTime === '07:00' && slot.endTime === '08:00'))) {
+        continue;
+      }
+
+      const slotTitleLower = (slot.title || '').toLowerCase();
+      if (
+        (cNameLower.includes('räkel') || cNameLower.includes('raekel')) &&
+        (slotTitleLower.includes('räkel') || slotTitleLower.includes('raekel') || slotTitleLower.includes('(offen)'))
+      ) {
+        continue;
+      }
+
+      const cleanTitle = cleanSeminarSlotTitle(slot.title);
+      const resolvedRoomName = effectiveRoomId
+        ? getSeminarRoomDisplayName(effectiveRoomId, slot.roomName || seminar.roomName)
+        : (slot.roomName || seminar.roomName || 'Seminarraum');
 
       return {
         seminarId: seminar.id,

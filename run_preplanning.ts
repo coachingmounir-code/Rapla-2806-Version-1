@@ -154,6 +154,22 @@ function planWeekWithAbsences(weekCode: string, standardCourses: any[]) {
         status: 'approved'
       };
 
+      // KW 47 Sunday 09:15 special rule:
+      // Instead of the usual Sunday 09:15 Anfänger class, there is an open Räkelyoga class in Tripura (room-5) with Erkan Batmaz,
+      // and the parallel Mittelstufe class takes place in Sitaram (room-4).
+      if (weekCode === '2026-W47' && courseCopy.dayOfWeek === 0 && courseCopy.startTime === '09:15') {
+        if (courseCopy.name.toLowerCase().includes('anfänger')) {
+          courseCopy.name = 'Räkelyoga';
+          courseCopy.roomId = 'room-5';
+          courseCopy.teacherId = 'teacher-gen-erkan-batmaz';
+          (courseCopy as any).teacherName = 'Erkan Batmaz';
+          courseCopy.isAiPlanned = false;
+          return courseCopy;
+        } else if (courseCopy.name.toLowerCase().includes('mittelstufe')) {
+          courseCopy.roomId = 'room-4';
+        }
+      }
+
     if (!courseCopy.teacherId) {
       courseCopy.isAiPlanned = true;
       return courseCopy;
@@ -173,6 +189,18 @@ function planWeekWithAbsences(weekCode: string, standardCourses: any[]) {
 
     let isAnyAbsent = false;
     for (const name of namesToCheck) {
+      // KW 47 special rule for Narayani: free day shifted to Monday -> unavailable Sunday afternoon/evening (>= 12:00) and Tuesday morning (< 15:00)
+      if (weekCode === '2026-W47' && name.includes('narayani')) {
+        if (
+          (courseCopy.dayOfWeek === 0 && courseCopy.startTime >= '12:00') ||
+          (courseCopy.dayOfWeek === 2 && courseCopy.startTime < '15:00')
+        ) {
+          console.log(`[ABSENCE] ${teacher.name} has unavailable member "${name}" on ${courseDate} at ${courseCopy.startTime} (Narayani KW 47 free-day shift to Monday).`);
+          isAnyAbsent = true;
+          break;
+        }
+      }
+
       const activeAbsence = sevafreiList.find(entry => {
         if (!entry) return false;
         return doesAbsenceMatchTeacher(entry, name) && courseDate >= entry.startDate && courseDate <= entry.endDate;
@@ -453,15 +481,15 @@ function getNext8WeekCodes(): string[] {
   return weeks;
 }
 
-const weeksToPlan = ["2026-W41", "2026-W42", "2026-W43", "2026-W44", "2026-W45", "2026-W46"];
+const weeksToPlan = ["2026-W41", "2026-W42", "2026-W43", "2026-W44", "2026-W45", "2026-W46", "2026-W47"];
 console.log(`[PREPLANNING] Planning for weeks: ${weeksToPlan.join(', ')}`);
 
 const existingWeekPlans = db.getWeekPlans();
 const results: Record<string, any[]> = {};
 for (const week of weeksToPlan) {
   const existingPlan = existingWeekPlans.find(p => p.targetWeekCode === week);
-  if (week !== "2026-W46" && existingPlan && (existingPlan.hasManualEdits || existingPlan.isManualOnly || existingPlan.isApproved || existingPlan.status === 'approved')) {
-    console.log(`[PREPLANNING] Preserving existing approved/manually-edited plan for ${week} (${existingPlan.courses.length} courses).`);
+  if (week !== "2026-W47" && existingPlan && (existingPlan.courses?.length > 0)) {
+    console.log(`[PREPLANNING] Preserving existing plan for ${week} (${existingPlan.courses.length} courses).`);
     results[week] = existingPlan.courses;
   } else {
     results[week] = planWeekWithAbsences(week, standardCourses);
@@ -504,33 +532,33 @@ const dbPath = './rapla-frontend/src/lib/db.ts';
 if (fs.existsSync(dbPath)) {
   let dbContent = fs.readFileSync(dbPath, 'utf-8');
 
-  // Insert or update plan-pre-2026-W46
-  const w46Courses = results['2026-W46'];
-  if (w46Courses) {
-    const w46PlanCode = `  {
-    "id": "plan-pre-2026-W46",
-    "name": "Vorplanung 2026-W46 (Automatisch)",
+  // Insert or update plan-pre-2026-W47
+  const w47Courses = results['2026-W47'];
+  if (w47Courses) {
+    const w47PlanCode = `  {
+    "id": "plan-pre-2026-W47",
+    "name": "Vorplanung 2026-W47 (Automatisch)",
     "status": "draft",
     "isApproved": false,
     "manuallyUnapproved": true,
-    "targetWeekCode": "2026-W46",
-    "courses": ${formatPlanCoursesCode(w46Courses)},
+    "targetWeekCode": "2026-W47",
+    "courses": ${formatPlanCoursesCode(w47Courses)},
     "createdAt": "${new Date().toISOString()}"
   }`;
 
-    const existingW46Idx = dbContent.indexOf('"id": "plan-pre-2026-W46"');
-    if (existingW46Idx !== -1) {
-      const braceStart = dbContent.lastIndexOf('  {', existingW46Idx);
-      const createdIdx = dbContent.indexOf('"createdAt":', existingW46Idx);
+    const existingW47Idx = dbContent.indexOf('"id": "plan-pre-2026-W47"');
+    if (existingW47Idx !== -1) {
+      const braceStart = dbContent.lastIndexOf('  {', existingW47Idx);
+      const createdIdx = dbContent.indexOf('"createdAt":', existingW47Idx);
       const braceEnd = dbContent.indexOf('  }', createdIdx) + 3;
-      dbContent = dbContent.substring(0, braceStart) + w46PlanCode + dbContent.substring(braceEnd);
-      console.log(`[PREPLANNING] Updated existing plan-pre-2026-W46 in db.ts.`);
+      dbContent = dbContent.substring(0, braceStart) + w47PlanCode + dbContent.substring(braceEnd);
+      console.log(`[PREPLANNING] Updated existing plan-pre-2026-W47 in db.ts.`);
     } else {
       const insertMarker = '\n];\n\n\n// Cloud-aware storage';
       const insertIdx = dbContent.indexOf(insertMarker);
       if (insertIdx !== -1) {
-        dbContent = dbContent.substring(0, insertIdx) + ',\n' + w46PlanCode + dbContent.substring(insertIdx);
-        console.log(`[PREPLANNING] Appended plan-pre-2026-W46 to DEFAULT_WEEK_PLANS in db.ts.`);
+        dbContent = dbContent.substring(0, insertIdx) + ',\n' + w47PlanCode + dbContent.substring(insertIdx);
+        console.log(`[PREPLANNING] Appended plan-pre-2026-W47 to DEFAULT_WEEK_PLANS in db.ts.`);
       } else {
         console.error('[PREPLANNING] Could not find insertion marker in db.ts');
       }
@@ -548,7 +576,7 @@ if (fs.existsSync(dbPath)) {
     );
 
     fs.writeFileSync(dbPath, dbContent, 'utf-8');
-    console.log(`[PREPLANNING] rapla-frontend/src/lib/db.ts wurde erfolgreich mit KW 46 aktualisiert (CURRENT_DB_VERSION erhöht).`);
+    console.log(`[PREPLANNING] rapla-frontend/src/lib/db.ts wurde erfolgreich mit KW 47 aktualisiert (CURRENT_DB_VERSION erhöht).`);
   }
 } else {
   console.error('[PREPLANNING] db.ts Pfad existiert nicht.');

@@ -2,7 +2,7 @@ import { db, doesAbsenceMatchTeacher, type Teacher, type Course, type Room, type
 import { EXCEL_ABSENCES } from './excel_absences';
 import wochenplanRules from './data/wochenplan_rules.json' with { type: 'json' };
 import { getYlaConflictForTeacher, isDateInYlaRange } from './ylaData';
-import { getSeminarConflictForTeacher } from './seminarData';
+import { getSeminarConflictForTeacher, getSeminarRoomConflict } from './seminarData';
 
 export interface ConflictMessage {
   type: 'hard' | 'soft'; // hard = invalid assignment, soft = warning/preference
@@ -100,13 +100,21 @@ export function getAbsenceDetails(teacherName: string, dayOfWeek: number, target
   if (teacherName) {
     const teacherKey = findRuleTeacherKey(teacherName);
     const tRules = teacherKey ? (wochenplanRules.teachers as any)[teacherKey] : null;
-    if (tRules && tRules.freeDays && tRules.freeDays.includes(dayOfWeek)) {
+    let effectiveFreeDays: number[] = tRules && tRules.freeDays ? [...tRules.freeDays] : [];
+    // In KW 47, Narayani exceptionally takes her free day on Monday (1) instead of Saturday (6)
+    if (teacherKey === 'narayani' && targetWeekCode === '2026-W47') {
+      effectiveFreeDays = effectiveFreeDays.filter(d => d !== 6);
+      if (!effectiveFreeDays.includes(1)) effectiveFreeDays.push(1);
+    }
+    if (effectiveFreeDays.includes(dayOfWeek)) {
       return {
         teacherName,
         type: 'Frei',
         startDate: courseDate,
         endDate: courseDate,
-        note: 'Regulärer freier Wochentag (Seva-frei)'
+        note: teacherKey === 'narayani' && targetWeekCode === '2026-W47' && dayOfWeek === 1
+          ? 'Freier Wochentag (in KW 47 auf Montag verschoben)'
+          : 'Regulärer freier Wochentag (Seva-frei)'
       };
     }
   }
@@ -132,7 +140,12 @@ export function isTeacherAbsent(teacherName: string, dayOfWeek: number, targetWe
   }
   const teacherKey = findRuleTeacherKey(teacherName);
   const tRules = teacherKey ? (wochenplanRules.teachers as any)[teacherKey] : null;
-  if (tRules && tRules.freeDays && tRules.freeDays.includes(dayOfWeek)) {
+  let effectiveFreeDays: number[] = tRules && tRules.freeDays ? [...tRules.freeDays] : [];
+  if (teacherKey === 'narayani' && targetWeekCode === '2026-W47') {
+    effectiveFreeDays = effectiveFreeDays.filter(d => d !== 6);
+    if (!effectiveFreeDays.includes(1)) effectiveFreeDays.push(1);
+  }
+  if (effectiveFreeDays.includes(dayOfWeek)) {
     return true;
   }
   return getAbsenceDetails(teacherName, dayOfWeek, targetWeekCode, absences) !== null;
@@ -327,7 +340,10 @@ export function validateAssignment(
   // 1. Check availability / Free days (Hard)
   const courseStart = timeToMinutes(course.startTime);
   const courseEnd = timeToMinutes(course.endTime);
-  const daySlots = teacher.rules.availability.filter(slot => slot.day === course.dayOfWeek);
+  const isNarayaniInW47 = teacherNameLower.includes('narayani') && targetWeekCode === '2026-W47';
+  const daySlots = isNarayaniInW47 && course.dayOfWeek === 6
+    ? [{ day: 6, start: '06:00', end: '22:00' }]
+    : teacher.rules.availability.filter(slot => slot.day === course.dayOfWeek);
   
   const fitsAvailability = daySlots.some(slot => {
     const availStart = timeToMinutes(slot.start);
@@ -335,10 +351,24 @@ export function validateAssignment(
     return courseStart >= availStart && courseEnd <= availEnd;
   });
 
+  if (isNarayaniInW47) {
+    if (course.dayOfWeek === 0 && courseStart >= timeToMinutes('12:00')) {
+      conflicts.push({
+        type: 'hard',
+        message: `Narayani macht in KW 47 am Montag ihren freien Tag und kann daher am Sonntag ab Nachmittag (ab 12:00 Uhr) für keine Slots eingeteilt werden.`
+      });
+    } else if (course.dayOfWeek === 2 && courseStart < timeToMinutes('15:00')) {
+      conflicts.push({
+        type: 'hard',
+        message: `Narayani macht in KW 47 am Montag ihren freien Tag und kann daher am Dienstag bis 15:00 Uhr für keine Slots eingeteilt werden.`
+      });
+    }
+  }
+
   if (!fitsAvailability) {
     const isWalk = courseNameLower.includes('spaziergang');
     const isPranava = teacherNameLower.includes('pranava');
-    const isNarayaniSundayOnn = isOnnForSevaka && teacherNameLower.includes('narayani') && course.dayOfWeek === 0;
+    const isNarayaniSundayOnn = isOnnForSevaka && teacherNameLower.includes('narayani') && course.dayOfWeek === 0 && targetWeekCode !== '2026-W47';
     if (!(isWalk && isPranava) && !isNarayaniSundayOnn) {
       if (teacherNameLower.includes('chandrashekara') && course.dayOfWeek === 2 && courseStart >= timeToMinutes('12:00') && courseStart < timeToMinutes('18:30')) {
         conflicts.push({
@@ -547,6 +577,16 @@ export function validateAssignment(
     }
 
     if (course.startTime === '07:00') {
+      if (
+        targetWeekCode === '2026-W47' &&
+        (course.dayOfWeek === 6 || course.dayOfWeek === 0) &&
+        (teacherNameLower.includes('anjali') || teacherNameLower.includes('karuna'))
+      ) {
+        conflicts.push({
+          type: 'hard',
+          message: `${teacher.name} soll in KW 47 am Samstag- und Sonntagmorgen nicht für den 7:00-Uhr-Satsang eingeteilt werden.`
+        });
+      }
       const courseDate = targetWeekCode ? getLocalDateForDay(targetWeekCode, course.dayOfWeek) : '';
       const inYla = isDateInYlaRange(courseDate);
       if (!inYla) {
@@ -1747,8 +1787,9 @@ export function runAiPlanning(
                        !workingCourses[index].name.toLowerCase().includes('om namo') &&
                        !workingCourses[index].name.toLowerCase().includes('narayanaya');
 
-        // Rule 5: Burnie beginner class rename
-        if (tNameLower.includes('burnie') && isYoga && workingCourses[index].name.toLowerCase().includes('anfänger')) {
+        // Rule 5: Burnie beginner class rename (excluding Friday/Sunday 16:30 Ankommensstunde)
+        const isAnkommenSlot = (workingCourses[index].dayOfWeek === 5 || workingCourses[index].dayOfWeek === 0) && workingCourses[index].startTime === '16:30';
+        if (tNameLower.includes('burnie') && isYoga && workingCourses[index].name.toLowerCase().includes('anfänger') && !isAnkommenSlot) {
           const hasPavan = workingCourses.some(wc => wc.teacherId === bestCandidate.teacher.id && (wc.name === 'Pavanmukt Asana' || wc.name === 'Yoga Vidya meets Pavanmuktasana' || wc.name === 'Yoga Vidya Pavanmuktasana'));
           if (!hasPavan) {
             workingCourses[index].name = 'Pavanmukt Asana';
@@ -1766,6 +1807,15 @@ export function runAiPlanning(
         if (workingCourses[index].dayOfWeek === 5 && workingCourses[index].startTime === '09:15' && workingCourses[index].name.toLowerCase().includes('mittelstufe')) {
           if (tNameLower.includes('pranava')) {
             workingCourses[index].name = 'Mittelstufe Klangyogastunde';
+          } else {
+            workingCourses[index].name = 'Mittelstufe';
+          }
+        }
+
+        // Saturday 16:15 intermediate class rename based on Anjali assignment
+        if (workingCourses[index].dayOfWeek === 6 && workingCourses[index].startTime === '16:15' && workingCourses[index].name.toLowerCase().includes('mittelstufe')) {
+          if (tNameLower.includes('anjali')) {
+            workingCourses[index].name = 'Mittelstufe Mantrayogastunde';
           } else {
             workingCourses[index].name = 'Mittelstufe';
           }
@@ -1795,10 +1845,11 @@ export function runAiPlanning(
     if (!teacher) return;
     const tNameLower = teacher.name.toLowerCase();
 
-    // Look up teacher custom course renames dynamically
+    const isAnkommenSlot = (c.dayOfWeek === 5 || c.dayOfWeek === 0) && c.startTime === '16:30';
+    // Look up teacher custom course renames dynamically (excluding Friday/Sunday 16:30 Ankommensstunde)
     const teacherKey = Object.keys(wochenplanRules.teachers).find(k => tNameLower.includes(k) || k.includes(tNameLower));
     const tRules = teacherKey ? (wochenplanRules.teachers as any)[teacherKey] : null;
-    if (tRules && tRules.customCourseNames && tRules.customCourseNames.length > 0) {
+    if (!isAnkommenSlot && tRules && tRules.customCourseNames && tRules.customCourseNames.length > 0) {
       tRules.customCourseNames.forEach((item: any) => {
         if (c.name.toLowerCase().includes(item.originalName.toLowerCase())) {
           c.name = item.customName;
@@ -1822,7 +1873,12 @@ export function runAiPlanning(
 
   let pavanCount = 0;
   burnieClasses.forEach(c => {
+    const isAnkommenSlot = (c.dayOfWeek === 5 || c.dayOfWeek === 0) && c.startTime === '16:30';
     if (c.name === 'Pavanmukt Asana' || c.name === 'Yoga Vidya meets Pavanmuktasana' || c.name === 'Yoga Vidya Pavanmuktasana') {
+      if (isAnkommenSlot) {
+        c.name = 'Anfänger Ankommensstunde';
+        return;
+      }
       pavanCount++;
       if (pavanCount > 1) {
         c.name = 'Anfänger'; // Revert any extra ones back to Anfänger
@@ -1833,8 +1889,10 @@ export function runAiPlanning(
   });
 
   if (pavanCount === 0) {
-    // If he doesn't have one yet, rename his first Anfänger class
+    // If he doesn't have one yet, rename his first regular Anfänger class (excluding 16:30 Ankommensstunde)
     const firstAnfaenger = burnieClasses.find(c => {
+      const isAnkommenSlot = (c.dayOfWeek === 5 || c.dayOfWeek === 0) && c.startTime === '16:30';
+      if (isAnkommenSlot) return false;
       const isYoga = !c.name.toLowerCase().includes('meditation') && !c.style.toLowerCase().includes('meditation') && !c.name.toLowerCase().includes('satsang') && !c.name.toLowerCase().includes('om namo') && !c.name.toLowerCase().includes('narayanaya');
       return isYoga && c.name.toLowerCase().includes('anfänger');
     });
@@ -1930,7 +1988,26 @@ export function validateRoomRules(
     }
   }
 
-  // 2. Beginner rule: Yoga beginner classes in Radhakrishna (room-2), except when parallel to Pranava's Klangyogastunde Mittelstufe (then Tripura room-5)
+  // 1b. Seminar room occupancy check (Hard): Check if the course's assigned room is blocked by an active seminar
+  if (targetWeekCode) {
+    const semRoomConflict = getSeminarRoomConflict(
+      course.roomId,
+      course.dayOfWeek,
+      course.startTime,
+      course.endTime,
+      targetWeekCode,
+      course.name,
+      course.style
+    );
+    if (semRoomConflict) {
+      conflicts.push({
+        type: 'hard',
+        message: `Raumkonflikt mit Seminar „${semRoomConflict.seminarShortTitle}“: Der Raum (${semRoomConflict.roomName}) ist zur Kurszeit durch „${semRoomConflict.slotTitle}“ (${semRoomConflict.timeRange}) belegt.`
+      });
+    }
+  }
+
+  // 2. Beginner rule: Yoga beginner classes in Radhakrishna (room-2), except when parallel to Pranava's Klangyogastunde Mittelstufe (then Tripura room-5) or when blocked by a seminar
   if (isBeginner) {
     // Check if there is a parallel Klangyogastunde taught by Pranava
     const hasParallelPranavaKlang = allCourses.some(c => {
@@ -1942,24 +2019,31 @@ export function validateRoomRules(
       return t && t.name.toLowerCase().includes('pranava');
     });
 
-    if (hasParallelPranavaKlang) {
-      if (course.roomId !== 'room-5') {
-        conflicts.push({
-          type: 'soft',
-          message: `Da parallel eine Klangyogastunde Mittelstufe von Pranava stattfindet, sollte die Anfängerstunde im Tripura Raum stattfinden.`
-        });
-      }
-    } else {
-      if (course.roomId !== 'room-2') {
-        conflicts.push({
-          type: 'soft',
-          message: `Yoga-Anfängerstunden finden standardmäßig im Radhakrishna Raum statt.`
-        });
+    const preferredRoom = hasParallelPranavaKlang ? 'room-5' : 'room-2';
+    const isPreferredRoomBlockedBySeminar = targetWeekCode
+      ? !!getSeminarRoomConflict(preferredRoom, course.dayOfWeek, course.startTime, course.endTime, targetWeekCode, course.name, course.style)
+      : false;
+
+    if (!isPreferredRoomBlockedBySeminar) {
+      if (hasParallelPranavaKlang) {
+        if (course.roomId !== 'room-5') {
+          conflicts.push({
+            type: 'soft',
+            message: `Da parallel eine Klangyogastunde Mittelstufe von Pranava stattfindet, sollte die Anfängerstunde im Tripura Raum stattfinden.`
+          });
+        }
+      } else {
+        if (course.roomId !== 'room-2') {
+          conflicts.push({
+            type: 'soft',
+            message: `Yoga-Anfängerstunden finden standardmäßig im Radhakrishna Raum statt.`
+          });
+        }
       }
     }
   }
 
-  // 3. Intermediate rule: Yoga intermediate classes in Tripura (room-5), except when taught by Pranava as Klangyogastunde (then Radhakrishna room-2)
+  // 3. Intermediate rule: Yoga intermediate classes in Tripura (room-5), except when taught by Pranava as Klangyogastunde (then Radhakrishna room-2) or when blocked by a seminar / open seminar class
   if (isIntermediate) {
     const isKlang = nameLower.includes('klang');
     let isPranava = false;
@@ -1970,19 +2054,33 @@ export function validateRoomRules(
       }
     }
 
-    if (isKlang && isPranava) {
-      if (course.roomId !== 'room-2') {
-        conflicts.push({
-          type: 'soft',
-          message: `Klangyogastunden Mittelstufe von Pranava sollten im Radhakrishna Raum stattfinden.`
-        });
-      }
-    } else {
-      if (course.roomId !== 'room-5') {
-        conflicts.push({
-          type: 'soft',
-          message: `Yoga-Mittelstufen sollten standardmäßig im Tripura Raum stattfinden.`
-        });
+    const preferredRoom = isKlang && isPranava ? 'room-2' : 'room-5';
+    const isPreferredRoomBlockedBySeminar = targetWeekCode
+      ? !!getSeminarRoomConflict(preferredRoom, course.dayOfWeek, course.startTime, course.endTime, targetWeekCode, course.name, course.style)
+      : false;
+    const isPreferredRoomOccupiedBySpecialYoga = allCourses.some(c =>
+      c.id !== course.id &&
+      c.dayOfWeek === course.dayOfWeek &&
+      isOverlapping(c.startTime, c.endTime, course.startTime, course.endTime) &&
+      c.roomId === preferredRoom &&
+      (c.name.toLowerCase().includes('räkel') || c.name.toLowerCase().includes('raekel'))
+    );
+
+    if (!isPreferredRoomBlockedBySeminar && !isPreferredRoomOccupiedBySpecialYoga) {
+      if (isKlang && isPranava) {
+        if (course.roomId !== 'room-2') {
+          conflicts.push({
+            type: 'soft',
+            message: `Klangyogastunden Mittelstufe von Pranava sollten im Radhakrishna Raum stattfinden.`
+          });
+        }
+      } else {
+        if (course.roomId !== 'room-5') {
+          conflicts.push({
+            type: 'soft',
+            message: `Yoga-Mittelstufen sollten standardmäßig im Tripura Raum stattfinden.`
+          });
+        }
       }
     }
   }
@@ -2047,9 +2145,22 @@ export function adjustRoomsForRules(courses: Course[], teachers: Teacher[], targ
       return;
     }
 
+    // 0d. Räkelyoga open class rule: always im Tripura-Raum (room-5)
+    if (nameLower.includes('räkel') || nameLower.includes('raekel')) {
+      course.roomId = 'room-5'; // Tripura
+      return;
+    }
+
+    // 0e. YL-Schulung rule: always im Tripura-Raum (room-5)
+    if (nameLower.includes('schulung') || styleLower.includes('schulung')) {
+      course.roomId = 'room-5'; // Tripura
+      return;
+    }
+
     const isBeginner = nameLower.includes('anfänger');
     const isIntermediate = nameLower.includes('mittelstufe');
     const isOnn = nameLower.includes('om namo') || nameLower.includes('narayanaya');
+    const isEntspannung = styleLower.includes('entspannung') || nameLower.includes('entspannung') || nameLower.includes('klangreise') || nameLower.includes('peziebälle');
 
     // Check 4-week Yogalehrerausbildung (YLA: 30.08.2026 – 27.09.2026)
     if (targetWeekCode) {
@@ -2107,8 +2218,91 @@ export function adjustRoomsForRules(courses: Course[], teachers: Teacher[], targ
       } else {
         course.roomId = 'room-5'; // Tripura
       }
+    } else if (isEntspannung) {
+      if (!course.roomId) {
+        course.roomId = 'room-2';
+      }
     }
   });
+
+  // Second pass: Relocate courses if their assigned room is blocked by an active seminar or occupied by a parallel course (e.g. Räkelyoga in Tripura)
+  if (targetWeekCode) {
+    const courseDateSample = getLocalDateForDay(targetWeekCode, 5);
+    if (!isDateInYlaRange(courseDateSample)) {
+      courses.forEach(course => {
+        if ((course.id || '').includes('-tdot-') || (targetWeekCode === '2026-W44' && course.dayOfWeek === 6)) {
+          return;
+        }
+        const nameLower = course.name.toLowerCase();
+        const styleLower = course.style.toLowerCase();
+        if (
+          nameLower.includes('schulung') ||
+          styleLower.includes('schulung') ||
+          nameLower.includes('räkel') ||
+          nameLower.includes('raekel') ||
+          nameLower.includes('am kamin') ||
+          nameLower.includes('spaziergang') ||
+          nameLower.includes('hausführung') ||
+          nameLower.includes('hausfuehrung')
+        ) {
+          return;
+        }
+
+        const isBeginner = nameLower.includes('anfänger');
+        const isIntermediate = nameLower.includes('mittelstufe');
+        const isEntspannung = styleLower.includes('entspannung') || nameLower.includes('entspannung') || nameLower.includes('klangreise') || nameLower.includes('peziebälle');
+
+        if (!isBeginner && !isIntermediate && !isEntspannung) {
+          return;
+        }
+
+        const isRoomTakenByParallelCourse = (candRoomId: string): boolean => {
+          return courses.some(other => {
+            if (other.id === course.id || other.dayOfWeek !== course.dayOfWeek) return false;
+            if (other.roomId !== candRoomId) return false;
+            const oName = other.name.toLowerCase();
+            const oStyle = (other.style || '').toLowerCase();
+            // YL-Schulung in Tripura is in harmony with Mittelstufe in Tripura
+            if (oName.includes('schulung') || oStyle.includes('schulung')) return false;
+            return isOverlapping(course.startTime, course.endTime, other.startTime, other.endTime);
+          });
+        };
+
+        const hasSemConflict = !!getSeminarRoomConflict(
+          course.roomId,
+          course.dayOfWeek,
+          course.startTime,
+          course.endTime,
+          targetWeekCode,
+          course.name,
+          course.style
+        );
+        const hasParallelConflict = isRoomTakenByParallelCourse(course.roomId);
+
+        if (hasSemConflict || hasParallelConflict) {
+          const fallbackOrder = isIntermediate
+            ? ['room-5', 'room-4', 'room-3', 'room-2', 'room-1']
+            : ['room-2', 'room-5', 'room-4', 'room-3', 'room-1'];
+
+          for (const candRoomId of fallbackOrder) {
+            const candSemConflict = getSeminarRoomConflict(
+              candRoomId,
+              course.dayOfWeek,
+              course.startTime,
+              course.endTime,
+              targetWeekCode,
+              course.name,
+              course.style
+            );
+            if (!candSemConflict && !isRoomTakenByParallelCourse(candRoomId)) {
+              course.roomId = candRoomId;
+              break;
+            }
+          }
+        }
+      });
+    }
+  }
 
   return courses;
 }
