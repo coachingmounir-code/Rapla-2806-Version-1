@@ -2171,6 +2171,8 @@ export interface SeminarTeacherWeekSlot {
   name: string;
   style: string;
   dayOfWeek: number; // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+  dayIndex?: number; // 0 = Start-Freitag .. 7 = End-Freitag
+  isEndFriday?: boolean;
   startTime: string; // HH:MM
   endTime: string;   // HH:MM
   roomId: string;
@@ -2243,7 +2245,7 @@ export function cleanSeminarSlotTitle(rawTitle: string): string {
 
 /**
  * Resolves all internal seminar slots (isOrange === true) assigned to a specific teacher
- * within a target Wochenplan week (Friday-to-Thursday cycle).
+ * within a target 8-day Wochenplan week (Friday-to-Friday cycle).
  */
 export function getSeminarSlotsForTeacherAndWeek(
   teacherName: string,
@@ -2257,11 +2259,12 @@ export function getSeminarSlotsForTeacherAndWeek(
   if (activeSeminars.length === 0) return [];
 
   const result: SeminarTeacherWeekSlot[] = [];
-  // Standard Rapla week cycle: Friday (Start) through Thursday
-  const DAYS_ORDER = [5, 6, 0, 1, 2, 3, 4];
+  // 8-day Rapla week cycle: Start-Friday (dayIndex 0) through End-Friday (dayIndex 7)
+  const weekDays = getDaysForSeminarWeek(targetWeekCode);
 
-  for (const dayVal of DAYS_ORDER) {
-    const isoDate = getLocalDateForDay(targetWeekCode, dayVal, false);
+  for (const day of weekDays) {
+    const dayVal = day.dayOfWeek;
+    const isoDate = day.dateStr;
     if (!isoDate) continue;
 
     for (const seminar of activeSeminars) {
@@ -2293,6 +2296,8 @@ export function getSeminarSlotsForTeacherAndWeek(
           name: `${seminar.shortTitle}: ${cleanTitle}`,
           style: 'Seminar',
           dayOfWeek: dayVal,
+          dayIndex: day.dayIndex,
+          isEndFriday: !!day.isEndFriday,
           startTime: slot.startTime,
           endTime: slot.endTime,
           roomId: slot.roomId || seminar.roomId || 'room-seminar',
@@ -2320,8 +2325,8 @@ export function getSeminarSlotsForTeacherAndWeek(
   }
 
   return result.sort((a, b) => {
-    const idxA = DAYS_ORDER.indexOf(a.dayOfWeek);
-    const idxB = DAYS_ORDER.indexOf(b.dayOfWeek);
+    const idxA = a.dayIndex ?? 0;
+    const idxB = b.dayIndex ?? 0;
     if (idxA !== idxB) return idxA - idxB;
     return a.startTime.localeCompare(b.startTime);
   });

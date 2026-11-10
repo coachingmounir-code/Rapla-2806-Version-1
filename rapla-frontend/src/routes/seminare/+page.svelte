@@ -1,29 +1,42 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import { goto } from '$app/navigation';
+  import { getStoredUserRole } from '$lib/authRole';
   import SeminarScheduleView from '$lib/components/SeminarScheduleView.svelte';
+  import { getWeekCodeFromDate, getOffsetWeekCode } from '$lib/db';
 
-  let currentWeekCode = $state('2026-W45');
+  function getCurrentRaplaWeekCode(): string {
+    const today = new Date();
+    const currentDay = today.getDay();
+    let daysToMonday = 0;
+    if (currentDay === 5) daysToMonday = 3;
+    else if (currentDay === 6) daysToMonday = 2;
+    else if (currentDay === 0) daysToMonday = 1;
+    else if (currentDay === 1) daysToMonday = 0;
+    else if (currentDay === 2) daysToMonday = -1;
+    else if (currentDay === 3) daysToMonday = -2;
+    else if (currentDay === 4) daysToMonday = -3;
+    const monday = new Date(today.getFullYear(), today.getMonth(), today.getDate() + daysToMonday);
+    return getWeekCodeFromDate(monday);
+  }
+
+  let currentWeekCode = $state(getCurrentRaplaWeekCode());
 
   onMount(() => {
     // If role is team, seamlessly redirect to /wochenplan?tab=seminare so they remain in the pure team view
-    const userRole = localStorage.getItem('rapla_user_role');
+    const userRole = getStoredUserRole();
     if (userRole === 'team') {
       goto('/wochenplan?tab=seminare', { replaceState: true });
     }
   });
 
   function handleNavigateWeek(delta: number) {
-    const match = currentWeekCode.match(/^(\d{4})-W(\d{2})$/);
-    if (match) {
-      const year = parseInt(match[1]);
-      let week = parseInt(match[2]) + delta;
-      currentWeekCode = `${year}-W${String(week).padStart(2, '0')}`;
-    }
+    const next = getOffsetWeekCode(currentWeekCode, delta);
+    if (next) currentWeekCode = next;
   }
 
   function handleGoToCurrentWeek() {
-    currentWeekCode = '2026-W45';
+    currentWeekCode = getCurrentRaplaWeekCode();
   }
 </script>
 

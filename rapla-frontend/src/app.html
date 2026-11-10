@@ -1,17 +1,141 @@
 <!doctype html>
-<html lang="en">
+<html lang="de">
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover" />
+		<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+		<meta http-equiv="Pragma" content="no-cache" />
+		<meta http-equiv="Expires" content="0" />
 		<meta name="text-scale" content="scale" />
 		<meta name="theme-color" content="#ea580c" />
 		<meta name="apple-mobile-web-app-capable" content="yes" />
 		<meta name="apple-mobile-web-app-status-bar-style" content="default" />
 		<meta name="apple-mobile-web-app-title" content="Rapla Wochenplan" />
 		<meta name="mobile-web-app-capable" content="yes" />
+
+		<!-- Non-blocking Google Fonts: never blocks initial page rendering on restricted or slow Wi-Fi -->
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+		<link
+			rel="stylesheet"
+			href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap"
+			media="print"
+			onload="this.media='all'"
+		/>
+		<noscript>
+			<link
+				rel="stylesheet"
+				href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap"
+			/>
+		</noscript>
+
+		<!-- Boot & Wi-Fi / Deployment Chunk-Mismatch Auto-Recovery Guard -->
+		<script>
+			(function () {
+				window.__raplaBootOk = false;
+				var RELOAD_KEY = 'rapla_chunk_recovery_ts';
+
+				function triggerFreshReload() {
+					try {
+						var now = Date.now();
+						var last = parseInt(sessionStorage.getItem(RELOAD_KEY) || '0', 10);
+						if (now - last < 20000) return false;
+						sessionStorage.setItem(RELOAD_KEY, String(now));
+					} catch (e) {}
+
+					var url = new URL(window.location.href);
+					url.searchParams.set('_r', String(Date.now()));
+					window.location.replace(url.toString());
+					return true;
+				}
+
+				window.__raplaTriggerFreshReload = function () {
+					try {
+						sessionStorage.removeItem(RELOAD_KEY);
+					} catch (e) {}
+					var url = new URL(window.location.href);
+					url.searchParams.set('_r', String(Date.now()));
+					window.location.replace(url.toString());
+				};
+
+				function isChunkLoadFailureMessage(msg) {
+					if (!msg) return false;
+					var lower = String(msg).toLowerCase();
+					return (
+						lower.indexOf('failed to fetch dynamically imported module') !== -1 ||
+						lower.indexOf('importing a module script failed') !== -1 ||
+						lower.indexOf('error loading dynamically imported module') !== -1 ||
+						lower.indexOf('unable to preload css') !== -1 ||
+						lower.indexOf('/_app/immutable/') !== -1
+					);
+				}
+
+				// 1. Vite / SvelteKit preload error (e.g. new Vercel deploy while switching Wi-Fi)
+				window.addEventListener('vite:preloadError', function (event) {
+					if (event && typeof event.preventDefault === 'function') {
+						event.preventDefault();
+					}
+					triggerFreshReload();
+				});
+
+				// 2. Script or stylesheet tag load failure for /_app/immutable/ bundles
+				window.addEventListener(
+					'error',
+					function (event) {
+						var target = event && event.target;
+						if (target && (target.tagName === 'SCRIPT' || target.tagName === 'LINK')) {
+							var assetUrl = target.src || target.href || '';
+							if (assetUrl.indexOf('/_app/') !== -1) {
+								triggerFreshReload();
+							}
+						} else if (event && isChunkLoadFailureMessage(event.message)) {
+							triggerFreshReload();
+						}
+					},
+					true
+				);
+
+				// 3. Dynamic import Promise rejections
+				window.addEventListener('unhandledrejection', function (event) {
+					var reason = event && event.reason;
+					var msg = reason && (reason.message || String(reason));
+					if (isChunkLoadFailureMessage(msg)) {
+						if (triggerFreshReload() && event && typeof event.preventDefault === 'function') {
+							event.preventDefault();
+						}
+					}
+				});
+
+				// 4. Clean up temporary cache-busting query param once URL is loaded
+				try {
+					if (window.location.search.indexOf('_r=') !== -1 && window.history && window.history.replaceState) {
+						var cleanUrl = new URL(window.location.href);
+						cleanUrl.searchParams.delete('_r');
+						window.history.replaceState(window.history.state, '', cleanUrl.pathname + cleanUrl.search + cleanUrl.hash);
+					}
+				} catch (e) {}
+
+				// 5. Boot Watchdog: if app has not mounted within 8s (e.g. Captive Portal or dropped Wi-Fi connection), show recovery UI
+				setTimeout(function () {
+					if (window.__raplaBootOk) return;
+					var loader = document.querySelector('.auth-loading-screen') || document.body;
+					if (!loader || document.getElementById('rapla-boot-recovery-box')) return;
+					var box = document.createElement('div');
+					box.id = 'rapla-boot-recovery-box';
+					box.style.cssText =
+						'margin-top:1.5rem;padding:1.25rem 1.5rem;max-width:420px;width:90%;background:#ffffff;border:1px solid #ffe082;border-radius:14px;box-shadow:0 8px 24px rgba(42,27,27,0.08);text-align:center;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;color:#2a1b1b;';
+					box.innerHTML =
+						'<p style="margin:0 0 0.5rem;font-weight:700;font-size:0.95rem;">Verbindung im aktuellen WLAN dauert ungewöhnlich lange</p>' +
+						'<p style="margin:0 0 1rem;font-size:0.82rem;color:#6b5151;line-height:1.45;">Falls du in einem Gäste- oder Hotel-WLAN bist, prüfe bitte kurz, ob eine WLAN-Anmeldeseite bestätigt werden muss, oder lade die Seite frisch neu.</p>' +
+						'<button type="button" onclick="window.__raplaTriggerFreshReload()" style="padding:0.65rem 1.25rem;border:none;border-radius:10px;background:#960040;color:#fff;font-weight:700;font-size:0.9rem;cursor:pointer;">🔄 Jetzt frisch neu laden</button>';
+					loader.appendChild(box);
+				}, 8000);
+			})();
+		</script>
+
 		%sveltekit.head%
 	</head>
-	<body data-sveltekit-preload-data="hover">
+	<body data-sveltekit-preload-data="tap">
 		<div style="display: contents">%sveltekit.body%</div>
 	</body>
 </html>

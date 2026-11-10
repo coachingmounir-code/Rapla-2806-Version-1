@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import { goto } from '$app/navigation';
+  import { getStoredUserRole } from '$lib/authRole';
   import {
     getWhatsAppGatewayConfig,
     saveWhatsAppGatewayConfig,
@@ -33,7 +34,7 @@
 
   onMount(() => {
     // Basic verification just in case layout guard hasn't triggered
-    const storedRole = localStorage.getItem('rapla_user_role');
+    const storedRole = getStoredUserRole();
     if (storedRole) userRole = storedRole;
     if (storedRole !== 'admin' && storedRole !== 'viewer') {
       goto('/wochenplan');

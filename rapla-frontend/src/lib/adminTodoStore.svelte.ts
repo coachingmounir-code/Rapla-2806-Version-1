@@ -565,29 +565,32 @@ export class AdminTodoStore {
 
   load() {
     if (typeof window !== 'undefined') {
-      const data = localStorage.getItem('yoga_admin_todos');
-      if (data) {
-        try {
+      try {
+        const data = localStorage.getItem('yoga_admin_todos');
+        if (data) {
           const parsed = JSON.parse(data);
           if (Array.isArray(parsed) && parsed.length > 0) {
             this.todos = parsed;
             this.isLoaded = true;
             return;
           }
-        } catch (e) {
-          console.error('Failed to parse admin todos from localStorage', e);
         }
+      } catch (e) {
+        console.error('Failed to parse admin todos from localStorage', e);
       }
-      // Initialize with default tasks from Yoga Vidya Aufgaben PDF
+      // Initialize in memory with default tasks (do not force localStorage write at module import time)
       this.todos = JSON.parse(JSON.stringify(DEFAULT_ADMIN_TODOS));
-      this.save();
       this.isLoaded = true;
     }
   }
 
   save() {
     if (typeof window !== 'undefined') {
-      localStorage.setItem('yoga_admin_todos', JSON.stringify(this.todos));
+      try {
+        localStorage.setItem('yoga_admin_todos', JSON.stringify(this.todos));
+      } catch (e) {
+        console.warn('Could not persist admin todos to localStorage', e);
+      }
     }
   }
 

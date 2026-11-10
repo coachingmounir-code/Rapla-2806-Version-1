@@ -5,7 +5,15 @@
 	import { onMount } from 'svelte';
 	import { todoManager } from '$lib/todoStore.svelte';
 	import { adminTodoStore } from '$lib/adminTodoStore.svelte';
-	import { db } from '$lib/db';
+	import { getStoredUserRole, clearStoredUserRole } from '$lib/authRole';
+
+	let dbModulePromise: Promise<typeof import('$lib/db')> | null = null;
+	function getDb() {
+		if (!dbModulePromise) {
+			dbModulePromise = import('$lib/db');
+		}
+		return dbModulePromise.then((m) => m.db);
+	}
 
 	let { children } = $props();
 
@@ -20,8 +28,16 @@
 	}
 
 	// Simple client-side page tracking
-	import { page } from '$app/state';
-	import { goto } from '$app/navigation';
+	import { page, updated } from '$app/state';
+	import { goto, beforeNavigate } from '$app/navigation';
+
+	// If a new Vercel deployment occurred while the tab/smartphone was open (e.g. across Wi-Fi switches),
+	// perform a clean full-page navigation instead of requesting deleted chunk hashes.
+	beforeNavigate(({ willUnload, to }) => {
+		if (updated.current && !willUnload && to?.url) {
+			window.location.href = to.url.href;
+		}
+	});
 
 	let showTeachersDropdown = $state(false);
 	let showScheduleDropdown = $state(false);
@@ -29,6 +45,44 @@
 
 	let userRole = $state<string | null>(null);
 	let authChecked = $state(false);
+	let redirectFallbackTimer: ReturnType<typeof setTimeout> | null = null;
+
+	function safeRedirect(targetUrl: string) {
+		if (typeof window === 'undefined') return;
+		if (redirectFallbackTimer) {
+			clearTimeout(redirectFallbackTimer);
+			redirectFallbackTimer = null;
+		}
+		const targetPath = targetUrl.split('?')[0];
+		redirectFallbackTimer = setTimeout(() => {
+			if (typeof window !== 'undefined' && !window.location.pathname.startsWith(targetPath)) {
+				window.location.replace(targetUrl);
+			}
+		}, 3500);
+
+		goto(targetUrl, { replaceState: true })
+			.then(() => {
+				if (redirectFallbackTimer) {
+					clearTimeout(redirectFallbackTimer);
+					redirectFallbackTimer = null;
+				}
+			})
+			.catch(() => {
+				if (redirectFallbackTimer) {
+					clearTimeout(redirectFallbackTimer);
+					redirectFallbackTimer = null;
+				}
+				window.location.replace(targetUrl);
+			});
+	}
+
+	let canRenderCurrentRoute = $derived(
+		authChecked &&
+			(page.url.pathname === '/login' ||
+				userRole === 'admin' ||
+				userRole === 'viewer' ||
+				(userRole === 'team' && page.url.pathname.startsWith('/wochenplan')))
+	);
 
 	$effect(() => {
 		if (typeof window === 'undefined') return;
@@ -42,27 +96,29 @@
 			showScheduleDropdown = true;
 		}
 
-		const storedRole = localStorage.getItem('rapla_user_role');
+		const storedRole = getStoredUserRole();
 		userRole = storedRole;
-		
+
 		if (!storedRole) {
+			clearStoredUserRole();
 			if (path !== '/login') {
-				goto('/login');
+				safeRedirect('/login');
 			}
 		} else if (storedRole === 'team') {
 			if (path.startsWith('/seminare')) {
-				goto('/wochenplan?tab=seminare');
+				safeRedirect('/wochenplan?tab=seminare');
 			} else if (!path.startsWith('/wochenplan') && path !== '/login') {
-				goto('/wochenplan');
+				safeRedirect('/wochenplan');
 			}
 		} else if (storedRole === 'admin' || storedRole === 'viewer') {
 			if (path === '/login') {
-				goto('/');
+				safeRedirect('/');
 			} else if (storedRole === 'viewer' && path.startsWith('/admin-todos')) {
-				goto('/');
+				safeRedirect('/');
 			}
 		}
 		authChecked = true;
+		(window as any).__raplaBootOk = true;
 	});
 
 	let isSyncing = $state(false);
@@ -71,6 +127,7 @@
 		if (isSyncing) return;
 		isSyncing = true;
 		try {
+			const db = await getDb();
 			await db.syncWithServerAndCloud();
 		} catch (e) {
 			console.error('Failed to sync data:', e);
@@ -80,53 +137,74 @@
 	}
 
 	onMount(() => {
-		syncData();
-		
+		(window as any).__raplaBootOk = true;
+		if (getStoredUserRole()) {
+			syncData();
+		}
+
 		todoManager.checkReminders();
 		const interval = setInterval(() => {
 			todoManager.checkReminders();
 		}, 10000);
 
-		// Smartphone resume & Wi-Fi reconnect listeners
+		// Smartphone resume, bfcache restore & Wi-Fi reconnect listeners
 		const handleVisibility = () => {
 			if (typeof document !== 'undefined' && document.visibilityState === 'visible') {
-				db.checkCloudUpdates();
+				updated.check().catch(() => {});
+				if (getStoredUserRole()) {
+					getDb().then((db) => db.checkCloudUpdates()).catch(() => {});
+				}
 			}
 		};
 		const handleOnline = () => {
-			syncData();
+			updated.check().catch(() => {});
+			if (getStoredUserRole()) {
+				syncData();
+			}
+		};
+		const handlePageShow = (event: PageTransitionEvent) => {
+			if (event.persisted) {
+				userRole = getStoredUserRole();
+				updated.check().catch(() => {});
+				if (userRole) {
+					syncData();
+				}
+			}
 		};
 		window.addEventListener('visibilitychange', handleVisibility);
 		window.addEventListener('focus', handleVisibility);
 		window.addEventListener('online', handleOnline);
+		window.addEventListener('pageshow', handlePageShow);
 
 		// Background polling heartbeat every 15s to keep all connected team/smartphone browsers live
 		const cloudPollInterval = setInterval(() => {
-			if (typeof document !== 'undefined' && document.visibilityState === 'visible') {
-				db.checkCloudUpdates();
+			if (typeof document !== 'undefined' && document.visibilityState === 'visible' && getStoredUserRole()) {
+				getDb().then((db) => db.checkCloudUpdates()).catch(() => {});
 			}
 		}, 15000);
-		
+
 		return () => {
+			if (redirectFallbackTimer) clearTimeout(redirectFallbackTimer);
 			clearInterval(interval);
 			clearInterval(cloudPollInterval);
 			window.removeEventListener('visibilitychange', handleVisibility);
 			window.removeEventListener('focus', handleVisibility);
 			window.removeEventListener('online', handleOnline);
+			window.removeEventListener('pageshow', handlePageShow);
 		};
 	});
 </script>
 
 <svelte:head>
-	<link rel="icon" href="https://www.yoga-vidya.de/typo3conf/ext/of_customisation/Resources/Public/Icons/favicon_icon.ico" />
+	<link rel="icon" href={favicon} />
+	<link rel="apple-touch-icon" href="/sivananda.png" />
 	<title>Yoga Vidya Rapla 2.0</title>
 </svelte:head>
 
-{#if authChecked}
-	{#if userRole === 'admin' || userRole === 'viewer' || (userRole === 'team' && page.url.pathname.startsWith('/wochenplan')) || page.url.pathname === '/login'}
-		{#if page.url.pathname.startsWith('/wochenplan') || page.url.pathname === '/login'}
-			{@render children()}
-		{:else}
+{#if canRenderCurrentRoute}
+	{#if page.url.pathname.startsWith('/wochenplan') || page.url.pathname === '/login'}
+		{@render children()}
+	{:else}
 			<div class="layout-container">
 				{#if mobileMenuOpen}
 					<!-- svelte-ignore a11y_click_events_have_key_events -->
@@ -289,7 +367,7 @@
 							type="button" 
 							class="logout-sidebar-btn" 
 							onclick={() => {
-								localStorage.removeItem('rapla_user_role');
+								clearStoredUserRole();
 								goto('/login');
 							}}
 						>
@@ -357,7 +435,6 @@
 					</div>
 				</main>
 			</div>
-		{/if}
 	{/if}
 
 	{#if todoManager.activeReminder}

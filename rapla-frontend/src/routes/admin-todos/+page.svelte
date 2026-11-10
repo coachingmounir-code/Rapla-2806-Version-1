@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import { goto } from '$app/navigation';
+  import { getStoredUserRole } from '$lib/authRole';
   import {
     adminTodoStore,
     CATEGORY_CONFIG,
@@ -68,7 +69,7 @@
   }
 
   onMount(() => {
-    const role = localStorage.getItem('rapla_user_role');
+    const role = getStoredUserRole();
     userRole = role;
     if (role !== 'admin') {
       goto('/');

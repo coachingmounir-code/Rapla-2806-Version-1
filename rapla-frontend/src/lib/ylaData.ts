@@ -769,6 +769,8 @@ export interface YlaTeacherWeekSlot {
   name: string;
   style: string;
   dayOfWeek: number; // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+  dayIndex?: number; // 0 = Start-Freitag .. 7 = End-Freitag
+  isEndFriday?: boolean;
   startTime: string; // HH:MM
   endTime: string;   // HH:MM
   roomId: string;
@@ -790,9 +792,9 @@ export interface YlaTeacherWeekSlot {
 }
 
 /**
- * Calculates ISO date (YYYY-MM-DD) for a day of week within a weekCode (Friday-to-Thursday cycle)
+ * Calculates ISO date (YYYY-MM-DD) for a day of week within a weekCode (8-day Friday-to-Friday cycle)
  */
-export function getYlaLocalDateForDay(weekCode: string, dayOfWeek: number): string {
+export function getYlaLocalDateForDay(weekCode: string, dayOfWeek: number, isEndFriday: boolean = false): string {
   if (!weekCode || !weekCode.includes('-W')) return '';
   const [yearStr, weekStr] = weekCode.split('-W');
   const year = parseInt(yearStr, 10);
@@ -811,7 +813,7 @@ export function getYlaLocalDateForDay(weekCode: string, dayOfWeek: number): stri
   targetFriday.setDate(targetMonday.getDate() - 3);
 
   let offset = 0;
-  if (dayOfWeek === 5) offset = 0;
+  if (dayOfWeek === 5) offset = isEndFriday ? 7 : 0;
   else if (dayOfWeek === 6) offset = 1;
   else if (dayOfWeek === 0) offset = 2;
   else if (dayOfWeek === 1) offset = 3;
@@ -829,7 +831,7 @@ export function getYlaLocalDateForDay(weekCode: string, dayOfWeek: number): stri
 }
 
 /**
- * Resolves all YLA teaching slots for a specific teacher within a target Wochenplan week (Friday to Thursday cycle).
+ * Resolves all YLA teaching slots for a specific teacher within a target 8-day Wochenplan week (Friday to Friday cycle).
  */
 export function getYlaSlotsForTeacherAndWeek(
   teacherNameOrId: string,
@@ -842,16 +844,25 @@ export function getYlaSlotsForTeacherAndWeek(
   const weeks = getYlaWeeks();
   const result: YlaTeacherWeekSlot[] = [];
 
-  // Friday through Thursday in the standard Rapla schedule cycle
-  const DAYS_ORDER = [5, 6, 0, 1, 2, 3, 4];
+  // 8-day Friday-to-Friday cycle in the Rapla schedule
+  const EIGHT_DAYS = [
+    { dayIndex: 0, dayOfWeek: 5, isEndFriday: false },
+    { dayIndex: 1, dayOfWeek: 6, isEndFriday: false },
+    { dayIndex: 2, dayOfWeek: 0, isEndFriday: false },
+    { dayIndex: 3, dayOfWeek: 1, isEndFriday: false },
+    { dayIndex: 4, dayOfWeek: 2, isEndFriday: false },
+    { dayIndex: 5, dayOfWeek: 3, isEndFriday: false },
+    { dayIndex: 6, dayOfWeek: 4, isEndFriday: false },
+    { dayIndex: 7, dayOfWeek: 5, isEndFriday: true }
+  ];
 
-  for (const dayVal of DAYS_ORDER) {
-    const isoDate = getYlaLocalDateForDay(targetWeekCode, dayVal);
+  for (const d of EIGHT_DAYS) {
+    const isoDate = getYlaLocalDateForDay(targetWeekCode, d.dayOfWeek, d.isEndFriday);
     if (!isDateInYlaRange(isoDate)) continue;
 
     // Find matching day in YLA weeks
     for (const week of weeks) {
-      const ylaDay = week.days.find(d => d.isoDate === isoDate);
+      const ylaDay = week.days.find(yd => yd.isoDate === isoDate);
       if (!ylaDay) continue;
 
       for (let slotIdx = 0; slotIdx < week.slots.length; slotIdx++) {
@@ -881,10 +892,12 @@ export function getYlaSlotsForTeacherAndWeek(
           const cleanTitle = getYlaCleanShortTitle(entry, slot.label);
 
           result.push({
-            id: `yla-slot-${week.weekNumber}-${ylaDay.col}-${slot.rowNumber}`,
+            id: `yla-slot-${week.weekNumber}-${ylaDay.col}-${slot.rowNumber}-${d.dayIndex}`,
             name: `4-Wochen YLA: ${cleanTitle}`,
             style: 'YLA',
             dayOfWeek: ylaDay.dayOfWeek,
+            dayIndex: d.dayIndex,
+            isEndFriday: d.isEndFriday,
             startTime: timeRange.start,
             endTime: timeRange.end,
             roomId: 'room-yla',
@@ -910,12 +923,9 @@ export function getYlaSlotsForTeacherAndWeek(
   }
 
   return result.sort((a, b) => {
-    if (a.dayOfWeek !== b.dayOfWeek) {
-      // Sort according to Friday-first week order
-      const orderA = (a.dayOfWeek + 2) % 7;
-      const orderB = (b.dayOfWeek + 2) % 7;
-      return orderA - orderB;
-    }
+    const idxA = a.dayIndex ?? 0;
+    const idxB = b.dayIndex ?? 0;
+    if (idxA !== idxB) return idxA - idxB;
     return a.startTime.localeCompare(b.startTime);
   });
 }

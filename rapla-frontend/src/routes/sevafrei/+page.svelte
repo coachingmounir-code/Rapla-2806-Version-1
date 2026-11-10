@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
+  import { getStoredUserRole } from '$lib/authRole';
   import { db, doesAbsenceMatchTeacher, type Teacher } from '$lib/db';
   import { EXCEL_ABSENCES, EXCEL_ABSENCES_STAND } from '$lib/excel_absences';
 
@@ -373,7 +374,7 @@
   }
 
   onMount(() => {
-    userRole = localStorage.getItem('rapla_user_role') || '';
+    userRole = getStoredUserRole() || '';
     loadSevafreiData();
 
     const handleSync = () => {

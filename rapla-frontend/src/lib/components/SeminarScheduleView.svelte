@@ -649,7 +649,7 @@
           ◀ Letzte Woche
         </button>
         <span class="week-title-badge">
-          KW {weekNumber} ({currentWeekCode})
+          KW {weekNumber} · {formatShortDate(currentDays[0]?.dateStr || '')} – {formatShortDate(currentDays[7]?.dateStr || '')} ({currentWeekCode})
         </span>
         <button type="button" class="btn btn-secondary btn-small" onclick={() => onNavigateWeek?.(1)}>
           Nächste Woche ▶
@@ -960,7 +960,7 @@
     </button>
     <button type="button" class="btn btn-secondary btn-small" onclick={() => onNavigateWeek?.(-1)}>◀</button>
     <span class="week-title-badge-mobile">
-      KW {weekNumber} ({currentWeekCode})
+      KW {weekNumber} ({formatShortDate(currentDays[0]?.dateStr || '')} – {formatShortDate(currentDays[7]?.dateStr || '')})
     </span>
     <button type="button" class="btn btn-secondary btn-small" onclick={() => onNavigateWeek?.(1)}>▶</button>
     {#if onSwitchToOccupancy}

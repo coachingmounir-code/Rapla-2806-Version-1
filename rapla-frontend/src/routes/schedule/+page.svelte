@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount, untrack } from 'svelte';
-  import { db, generateTeacherId, SPECIAL_SCHULUNG_COURSES, OPEN_DAY_2026_W44_SATURDAY_COURSES, type Course, type Teacher, type Room, type WeekPlan } from '$lib/db';
+  import { db, generateTeacherId, getNextWeekCode, SPECIAL_SCHULUNG_COURSES, OPEN_DAY_2026_W44_SATURDAY_COURSES, type Course, type Teacher, type Room, type WeekPlan } from '$lib/db';
   import { validateAssignment, type ConflictMessage, getLocalDateForDay } from '$lib/planningEngine';
   import { EXCEL_ABSENCES } from '$lib/excel_absences';
   import { isDateInYlaRange } from '$lib/ylaData';
@@ -99,20 +99,27 @@
   }
 
   let courses = $state<Course[]>([]);
+  let endFridayCourses = $state<Course[]>([]);
   let teachers = $state<Teacher[]>([]);
   let rooms = $state<Room[]>([]);
   let weekPlans = $state<WeekPlan[]>([]);
   let currentPlan = $state<WeekPlan | null>(null);
+  let nextPlan = $state<WeekPlan | null>(null);
   let currentWeekOffset = $state(0);
 
+  let todayIso = $derived.by(() => {
+    const now = new Date();
+    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+  });
+
   function getWeekCode(date: Date): string {
-    const year = date.getFullYear();
     const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
     const dayNum = d.getUTCDay() || 7;
     d.setUTCDate(d.getUTCDate() + 4 - dayNum);
-    const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+    const isoYear = d.getUTCFullYear();
+    const yearStart = new Date(Date.UTC(isoYear, 0, 1));
     const week = Math.ceil((((d.getTime() - yearStart.getTime()) / 86400000) + 1) / 7);
-    return `${year}-W${week.toString().padStart(2, '0')}`;
+    return `${isoYear}-W${week.toString().padStart(2, '0')}`;
   }
 
   // Deriving active plan ID from URL query param
@@ -180,17 +187,19 @@
   // Modal states
   let isModalOpen = $state(false);
   let editingCourse = $state<Course | null>(null);
+  let editingCourseIsEndFriday = $state(false);
   let isFullscreen = $state(false);
 
   // Quick Note Modal states for Agreed Slot
   let isQuickNoteModalOpen = $state(false);
   let quickNoteCourse = $state<Course | null>(null);
+  let quickNoteIsEndFriday = $state(false);
   let quickNoteText = $state('');
 
   // Form fields
   let formName = $state('');
   let formStyle = $state('Hatha');
-  let formDayOfWeek = $state(1); // Monday
+  let formDayIndex = $state(3); // 3 = Montag in 8-day week (0=Start-Fr .. 7=End-Fr)
   let formStartTime = $state('09:00');
   let formEndTime = $state('10:30');
   let formRoomId = $state('');
@@ -226,14 +235,18 @@
   let activeConflicts = $state<ConflictMessage[]>([]);
 
   const DAYS = [
-    { value: 5, label: 'Freitag' },
-    { value: 6, label: 'Samstag' },
-    { value: 0, label: 'Sonntag' },
-    { value: 1, label: 'Montag' },
-    { value: 2, label: 'Dienstag' },
-    { value: 3, label: 'Mittwoch' },
-    { value: 4, label: 'Donnerstag' }
+    { dayIndex: 0, value: 5, label: 'Freitag', isStartFriday: true, isEndFriday: false },
+    { dayIndex: 1, value: 6, label: 'Samstag', isStartFriday: false, isEndFriday: false },
+    { dayIndex: 2, value: 0, label: 'Sonntag', isStartFriday: false, isEndFriday: false },
+    { dayIndex: 3, value: 1, label: 'Montag', isStartFriday: false, isEndFriday: false },
+    { dayIndex: 4, value: 2, label: 'Dienstag', isStartFriday: false, isEndFriday: false },
+    { dayIndex: 5, value: 3, label: 'Mittwoch', isStartFriday: false, isEndFriday: false },
+    { dayIndex: 6, value: 4, label: 'Donnerstag', isStartFriday: false, isEndFriday: false },
+    { dayIndex: 7, value: 5, label: 'Freitag', isStartFriday: false, isEndFriday: true }
   ];
+
+  let formDayOfWeek = $derived(DAYS[formDayIndex]?.value ?? 1);
+  let formIsEndFriday = $derived(DAYS[formDayIndex]?.isEndFriday ?? false);
 
   const YOGA_STYLES = ['Hatha', 'Vinyasa', 'Yin', 'Meditation', 'Entspannung', 'Power Yoga', 'Kundalini', 'Sonstiges', 'Buffet', 'Schulung', 'Puja'];
 
@@ -325,10 +338,10 @@
     return Math.ceil((((d.getTime() - yearStart.getTime()) / 86400000) + 1) / 7);
   }
 
-  // Helper to calculate date of current week's days starting on Friday
-  function getDayDateString(dayValue: number): string {
+  // Helper to calculate date of current week's 8 days (Start-Freitag through End-Freitag)
+  function getDayDateString(dayValue: number, isEndFriday: boolean = false): string {
     if (currentPlan?.targetWeekCode) {
-      const dateStr = getLocalDateForDay(currentPlan.targetWeekCode, dayValue);
+      const dateStr = getLocalDateForDay(currentPlan.targetWeekCode, dayValue, isEndFriday);
       const parts = dateStr.split('-');
       if (parts.length === 3) {
         return `${parts[2]}.${parts[1]}.`;
@@ -336,7 +349,7 @@
     }
     const monday = getMondayOfCurrentWeek();
     let offset = 0;
-    if (dayValue === 5) offset = -3;
+    if (dayValue === 5) offset = isEndFriday ? 4 : -3;
     else if (dayValue === 6) offset = -2;
     else if (dayValue === 0) offset = -1;
     else if (dayValue === 1) offset = 0;
@@ -545,7 +558,9 @@
   );
 
   let allDisplayCourses = $derived<AdminDisplaySlot[]>(
-    selectedFilterTeacherObj ? [...courses, ...selectedTeacherSeminarSlots] : courses
+    selectedFilterTeacherObj
+      ? [...courses, ...endFridayCourses, ...selectedTeacherSeminarSlots]
+      : [...courses, ...endFridayCourses]
   );
 
   function isTeacherAssigned(courseTeacherId: string | null | undefined, targetTeacherId: string): boolean {
@@ -620,10 +635,21 @@
     return names.join(', ');
   }
 
-  // Get filtered courses for a specific day and hour
-  function getFilteredCoursesForHour(day: number, hour: number): AdminDisplaySlot[] {
-    return allDisplayCourses
-      .filter(c => c.dayOfWeek === day)
+  // Get filtered courses for a specific day column (Start-Freitag .. End-Freitag) and hour
+  function getFilteredCoursesForDayAndHour(
+    day: { dayIndex: number; value: number; isEndFriday: boolean },
+    hour: number
+  ): AdminDisplaySlot[] {
+    const regularSource = day.isEndFriday ? endFridayCourses : courses.filter(c => c.dayOfWeek === day.value);
+    const seminarSource = selectedFilterTeacherObj
+      ? selectedTeacherSeminarSlots.filter(s =>
+          day.isEndFriday
+            ? s.isEndFriday === true
+            : (!s.isEndFriday && s.dayOfWeek === day.value)
+        )
+      : [];
+
+    return [...regularSource, ...seminarSource]
       .filter(c => {
         const startHour = getEffectiveGridHour(c);
         return startHour === hour;
@@ -642,38 +668,28 @@
     });
   });
 
-  function loadData() {
-    weekPlans = db.getWeekPlans();
-    teachers = db.getTeachers();
-    rooms = db.getRooms();
-    registeredSeminars = db.getSeminars();
-    cachedAbsences = [...db.getSevafrei(), ...EXCEL_ABSENCES];
-    
-    if (planId) {
-      currentPlan = db.getWeekPlan(planId) || null;
-    } else {
-      const monday = getMondayOfCurrentWeek();
-      const weekCode = getWeekCode(monday);
-      let foundPlan = weekPlans.find(p => p.targetWeekCode === weekCode && p.status === 'approved')
-                   || weekPlans.find(p => p.targetWeekCode === weekCode);
-                   
-      if (!foundPlan) {
-        const template = weekPlans.find(p => p.id === 'plan-template-1') || weekPlans[0];
-        foundPlan = {
-          ...template,
-          id: `plan-blank-${weekCode}`,
-          targetWeekCode: weekCode,
-          courses: template ? template.courses
-            .filter(c => {
-              if (weekCode === '2026-W44' && c.dayOfWeek === 6) return false;
-              const isPranayama = c.name.toLowerCase().includes('pranayama') || c.style.toLowerCase().includes('pranayama');
-              if (isPranayama) {
-                const courseDate = getLocalDateForDay(weekCode, c.dayOfWeek);
-                if (isDateInYlaRange(courseDate)) return false;
-              }
-              return true;
-            })
-            .map(c => {
+  function resolveOrBuildPlanForWeekCode(weekCode: string): WeekPlan | null {
+    if (!weekCode) return null;
+    let foundPlan = weekPlans.find(p => p.targetWeekCode === weekCode && p.status === 'approved')
+                 || weekPlans.find(p => p.targetWeekCode === weekCode);
+
+    if (!foundPlan) {
+      const template = weekPlans.find(p => p.id === 'plan-template-1') || weekPlans[0];
+      foundPlan = {
+        ...template,
+        id: `plan-blank-${weekCode}`,
+        targetWeekCode: weekCode,
+        courses: template ? template.courses
+          .filter(c => {
+            if (weekCode === '2026-W44' && c.dayOfWeek === 6) return false;
+            const isPranayama = c.name.toLowerCase().includes('pranayama') || c.style.toLowerCase().includes('pranayama');
+            if (isPranayama) {
+              const courseDate = getLocalDateForDay(weekCode, c.dayOfWeek);
+              if (isDateInYlaRange(courseDate)) return false;
+            }
+            return true;
+          })
+          .map((c, idx) => {
             const courseDate = getLocalDateForDay(weekCode, c.dayOfWeek);
             const inYla = isDateInYlaRange(courseDate);
             const nameLower = c.name.toLowerCase();
@@ -685,58 +701,95 @@
                 else if (nameLower.includes('mittelstufe')) roomId = 'room-3';
               }
             }
-            return { ...c, roomId, teacherId: null, isAiPlanned: false, status: 'draft' };
+            const courseId = c.id.includes(weekCode) ? c.id : `course-${weekCode}-${c.id || idx}`;
+            return { ...c, id: courseId, roomId, teacherId: null, isAiPlanned: false, status: 'draft' };
           }) : []
-        };
+      };
 
-        if (weekCode === '2026-W44') {
-          for (const openDayCourse of OPEN_DAY_2026_W44_SATURDAY_COURSES) {
-            foundPlan.courses.push({ ...openDayCourse });
-          }
+      if (weekCode === '2026-W44') {
+        for (const openDayCourse of OPEN_DAY_2026_W44_SATURDAY_COURSES) {
+          foundPlan.courses.push({ ...openDayCourse });
         }
+      }
 
-        const schulungenForWeek = SPECIAL_SCHULUNG_COURSES.filter(s => s.targetWeekCode === weekCode);
-        for (const s of schulungenForWeek) {
-          foundPlan.courses.push({
-            id: `course-${s.targetWeekCode}-schulung-${s.name.toLowerCase().replace(/[^a-z0-9]/g, '-')}`,
-            name: s.name,
-            style: s.style,
-            dayOfWeek: s.dayOfWeek,
-            startTime: s.startTime,
-            endTime: s.endTime,
-            roomId: s.roomId,
-            teacherId: null,
-            isAiPlanned: false,
-            status: 'draft'
-          });
-        }
-        foundPlan.courses.sort((a, b) => {
-          if (a.dayOfWeek !== b.dayOfWeek) return a.dayOfWeek - b.dayOfWeek;
-          return a.startTime.localeCompare(b.startTime);
+      const schulungenForWeek = SPECIAL_SCHULUNG_COURSES.filter(s => s.targetWeekCode === weekCode);
+      for (const s of schulungenForWeek) {
+        foundPlan.courses.push({
+          id: `course-${s.targetWeekCode}-schulung-${s.name.toLowerCase().replace(/[^a-z0-9]/g, '-')}`,
+          name: s.name,
+          style: s.style,
+          dayOfWeek: s.dayOfWeek,
+          startTime: s.startTime,
+          endTime: s.endTime,
+          roomId: s.roomId,
+          teacherId: null,
+          isAiPlanned: false,
+          status: 'draft'
         });
       }
-      currentPlan = foundPlan;
+      foundPlan.courses.sort((a, b) => {
+        if (a.dayOfWeek !== b.dayOfWeek) return a.dayOfWeek - b.dayOfWeek;
+        return a.startTime.localeCompare(b.startTime);
+      });
+    }
+
+    const syncedFixed = syncCanonicalFixedSlotsToPlan(foundPlan, weekPlans);
+    if (syncedFixed && db.getWeekPlan(foundPlan.id)) {
+      db.updateWeekPlan(foundPlan);
+    }
+    return foundPlan;
+  }
+
+  function filterPlanCoursesForDisplay(planCourses: Course[], weekCode: string): Course[] {
+    return planCourses.filter(c => {
+      if (c.isManuallyEdited) return true;
+      const isPranayama = c.name.toLowerCase().includes('pranayama') || c.style.toLowerCase().includes('pranayama');
+      if (isPranayama) {
+        const courseDate = getLocalDateForDay(weekCode, c.dayOfWeek);
+        if (isDateInYlaRange(courseDate)) return false;
+      }
+      return true;
+    });
+  }
+
+  function loadData() {
+    weekPlans = db.getWeekPlans();
+    teachers = db.getTeachers();
+    rooms = db.getRooms();
+    registeredSeminars = db.getSeminars();
+    cachedAbsences = [...db.getSevafrei(), ...EXCEL_ABSENCES];
+    
+    if (planId) {
+      const explicitPlan = db.getWeekPlan(planId) || null;
+      if (explicitPlan) {
+        const syncedFixed = syncCanonicalFixedSlotsToPlan(explicitPlan, weekPlans);
+        if (syncedFixed) db.updateWeekPlan(explicitPlan);
+      }
+      currentPlan = explicitPlan;
+    } else {
+      const monday = getMondayOfCurrentWeek();
+      const weekCode = getWeekCode(monday);
+      currentPlan = resolveOrBuildPlanForWeekCode(weekCode);
     }
     
     if (currentPlan) {
-      const syncedFixed = syncCanonicalFixedSlotsToPlan(currentPlan, weekPlans);
-      if (syncedFixed && db.getWeekPlan(currentPlan.id)) {
-        db.updateWeekPlan(currentPlan);
-      }
       const weekCode = currentPlan.targetWeekCode || getWeekCode(getMondayOfCurrentWeek());
-      
-      courses = currentPlan.courses
-        .filter(c => {
-          if (c.isManuallyEdited) return true;
-          const isPranayama = c.name.toLowerCase().includes('pranayama') || c.style.toLowerCase().includes('pranayama');
-          if (isPranayama) {
-            const courseDate = getLocalDateForDay(weekCode, c.dayOfWeek);
-            if (isDateInYlaRange(courseDate)) return false;
-          }
-          return true;
-        });
+      courses = filterPlanCoursesForDisplay(currentPlan.courses, weekCode);
+
+      if (currentPlan.targetWeekCode) {
+        const followingWeekCode = getNextWeekCode(currentPlan.targetWeekCode);
+        nextPlan = resolveOrBuildPlanForWeekCode(followingWeekCode);
+        endFridayCourses = nextPlan
+          ? filterPlanCoursesForDisplay(nextPlan.courses, followingWeekCode).filter(c => c.dayOfWeek === 5)
+          : [];
+      } else {
+        nextPlan = null;
+        endFridayCourses = courses.filter(c => c.dayOfWeek === 5);
+      }
     } else {
       courses = [];
+      nextPlan = null;
+      endFridayCourses = [];
     }
     
     // Set default room for form
@@ -777,11 +830,14 @@
     }
   }
 
-  // Check conflicts for a course displayed in the list
-  function getCourseConflicts(course: Course): ConflictMessage[] {
+  // Check conflicts for a course displayed in the list (supports both main week and End-Freitag)
+  function getCourseConflicts(course: Course, isEndFriday: boolean = false): ConflictMessage[] {
     if (!course.teacherId) return [];
     const teacher = teachers.find(t => t.id === course.teacherId);
     if (!teacher) return [];
+    if (isEndFriday && nextPlan) {
+      return validateAssignment(teacher, course, nextPlan.courses || endFridayCourses, nextPlan.seminarLeaderIds || [], nextPlan.targetWeekCode, teachers, cachedAbsences);
+    }
     return validateAssignment(teacher, course, courses, currentPlan?.seminarLeaderIds || [], currentPlan?.targetWeekCode, teachers, cachedAbsences);
   }
 
@@ -811,7 +867,11 @@
       status: 'draft'
     };
 
-    activeConflicts = validateAssignment(selectedTeacher, tempCourse, courses, currentPlan?.seminarLeaderIds || [], currentPlan?.targetWeekCode, teachers, cachedAbsences);
+    if (formIsEndFriday && nextPlan) {
+      activeConflicts = validateAssignment(selectedTeacher, tempCourse, nextPlan.courses || endFridayCourses, nextPlan.seminarLeaderIds || [], nextPlan.targetWeekCode, teachers, cachedAbsences);
+    } else {
+      activeConflicts = validateAssignment(selectedTeacher, tempCourse, courses, currentPlan?.seminarLeaderIds || [], currentPlan?.targetWeekCode, teachers, cachedAbsences);
+    }
   });
 
   function toggleSeminarLeader(teacherId: string) {
@@ -831,9 +891,10 @@
 
   function openAddModal() {
     editingCourse = null;
+    editingCourseIsEndFriday = false;
     formName = '';
     formStyle = 'Hatha';
-    formDayOfWeek = 1;
+    formDayIndex = 3; // Montag
     formStartTime = '09:00';
     formEndTime = '10:30';
     formRoomId = rooms[0]?.id || '';
@@ -845,11 +906,14 @@
     isModalOpen = true;
   }
 
-  function openEditModal(course: Course) {
+  function openEditModal(course: Course, isEndFriday: boolean = false) {
     editingCourse = course;
+    editingCourseIsEndFriday = isEndFriday;
     formName = course.name;
     formStyle = YOGA_STYLES.includes(course.style) ? course.style : 'Sonstiges';
-    formDayOfWeek = course.dayOfWeek;
+    formDayIndex = isEndFriday
+      ? 7
+      : (DAYS.find(d => !d.isEndFriday && d.value === course.dayOfWeek)?.dayIndex ?? 0);
     formStartTime = course.startTime;
     formEndTime = course.endTime;
     const validRoom = rooms.find(r => r.id === course.roomId || r.name.toLowerCase() === (course.roomId || '').toLowerCase());
@@ -872,8 +936,10 @@
     isModalOpen = true;
   }
 
-  function saveCourseDirectly(courseData: Course) {
-    const existingInPlan = courses.find(c => c.id === courseData.id);
+  function saveCourseDirectly(courseData: Course, isEndFriday: boolean = false) {
+    const targetPlan = (isEndFriday && nextPlan) ? nextPlan : currentPlan;
+    const sourceCourses = (isEndFriday && nextPlan) ? endFridayCourses : courses;
+    const existingInPlan = sourceCourses.find(c => c.id === courseData.id);
     const prevSnapshot: Course | null = existingInPlan ? { ...existingInPlan } : null;
     const nowIso = new Date().toISOString();
     const agreedId = courseData.isFixedAgreement
@@ -888,23 +954,23 @@
       isAiPlanned: false,
       lastEditedAt: nowIso
     };
-    const wasPlanApproved = isPlanApproved(currentPlan);
-    if (currentPlan) {
-      db.upsertCourseInWeekPlan(currentPlan.targetWeekCode || currentPlan.id, stampedCourse, currentPlan);
-      propagateFixedAgreementAcrossPlans(stampedCourse, currentPlan.id);
+    const wasPlanApproved = isPlanApproved(targetPlan);
+    if (targetPlan) {
+      db.upsertCourseInWeekPlan(targetPlan.targetWeekCode || targetPlan.id, stampedCourse, targetPlan);
+      propagateFixedAgreementAcrossPlans(stampedCourse, targetPlan.id);
     } else {
       db.updateCourse(stampedCourse);
     }
     loadData();
-    if (wasPlanApproved && currentPlan) {
-      const editProposals = buildManualEditProposals(currentPlan, prevSnapshot, stampedCourse, teachers, rooms);
+    if (wasPlanApproved && targetPlan) {
+      const editProposals = buildManualEditProposals(targetPlan, prevSnapshot, stampedCourse, teachers, rooms);
       if (editProposals.length > 0) {
         openWhatsAppModalWithItems(editProposals, 'edit_on_approved');
       }
     }
   }
 
-  function toggleFixedAgreement(course: Course, e: MouseEvent) {
+  function toggleFixedAgreement(course: Course, e: MouseEvent, isEndFriday: boolean = false) {
     e.stopPropagation();
     const nextFixed = !course.isFixedAgreement;
     const agreedId = nextFixed ? (course.agreedTeacherId || course.teacherId || null) : null;
@@ -917,12 +983,13 @@
       agreedTeacherName: nextFixed ? (agreedTeacher?.name || course.agreedTeacherName || course.teacherName) : undefined,
       isManuallyEdited: true
     };
-    saveCourseDirectly(updatedCourse);
+    saveCourseDirectly(updatedCourse, isEndFriday);
   }
 
-  function openQuickNoteModal(course: Course, e: MouseEvent) {
+  function openQuickNoteModal(course: Course, e: MouseEvent, isEndFriday: boolean = false) {
     e.stopPropagation();
     quickNoteCourse = course;
+    quickNoteIsEndFriday = isEndFriday;
     quickNoteText = course.agreementNotes || '';
     isQuickNoteModalOpen = true;
   }
@@ -940,7 +1007,7 @@
       agreementNotes: quickNoteText.trim() ? quickNoteText.trim() : undefined,
       isManuallyEdited: true
     };
-    saveCourseDirectly(updatedCourse);
+    saveCourseDirectly(updatedCourse, quickNoteIsEndFriday);
     isQuickNoteModalOpen = false;
     quickNoteCourse = null;
   }
@@ -959,6 +1026,7 @@
       !editingCourse ||
       formTeacherId !== editingCourse.teacherId ||
       Number(formDayOfWeek) !== editingCourse.dayOfWeek ||
+      formIsEndFriday !== editingCourseIsEndFriday ||
       formStartTime !== editingCourse.startTime ||
       formEndTime !== editingCourse.endTime;
 
@@ -1006,9 +1074,11 @@
       : null;
     const agreedTeacherObj = effectiveAgreedId ? teachers.find(t => t.id === effectiveAgreedId) : null;
 
+    const targetPlan = (formIsEndFriday && nextPlan) ? nextPlan : currentPlan;
+    const originPlan = (editingCourseIsEndFriday && nextPlan) ? nextPlan : currentPlan;
     const prevSnapshot: Course | null = editingCourse ? { ...editingCourse } : null;
     const nowIso = new Date().toISOString();
-    const wasPlanApproved = isPlanApproved(currentPlan);
+    const wasPlanApproved = isPlanApproved(targetPlan);
     const courseData: Course = {
       id: editingCourse?.id || 'course-' + Date.now(),
       name: formName,
@@ -1034,10 +1104,14 @@
       agreementNotes: formAgreementNotes ? formAgreementNotes.trim() : undefined
     };
 
-    if (currentPlan) {
-      db.upsertCourseInWeekPlan(currentPlan.targetWeekCode || currentPlan.id, courseData, currentPlan);
+    if (editingCourse && originPlan && targetPlan && originPlan.id !== targetPlan.id) {
+      db.removeCourseFromWeekPlan(originPlan.targetWeekCode || originPlan.id, editingCourse.id, originPlan);
+    }
+
+    if (targetPlan) {
+      db.upsertCourseInWeekPlan(targetPlan.targetWeekCode || targetPlan.id, courseData, targetPlan);
       if (courseData.isFixedAgreement || editingCourse?.isFixedAgreement) {
-        propagateFixedAgreementAcrossPlans(courseData, currentPlan.id);
+        propagateFixedAgreementAcrossPlans(courseData, targetPlan.id);
       }
     } else {
       if (editingCourse) {
@@ -1049,8 +1123,8 @@
 
     isModalOpen = false;
     loadData();
-    if (wasPlanApproved && currentPlan) {
-      const editProposals = buildManualEditProposals(currentPlan, prevSnapshot, courseData, teachers, rooms);
+    if (wasPlanApproved && targetPlan) {
+      const editProposals = buildManualEditProposals(targetPlan, prevSnapshot, courseData, teachers, rooms);
       if (editProposals.length > 0) {
         openWhatsAppModalWithItems(editProposals, 'edit_on_approved');
       }
@@ -1059,18 +1133,20 @@
 
   function handleDelete(id: string) {
     if (confirm('Möchten Sie diesen Kurs wirklich löschen?')) {
-      const existingToDelete = courses.find(c => c.id === id);
+      const targetPlan = (editingCourseIsEndFriday && nextPlan) ? nextPlan : currentPlan;
+      const sourceCourses = (editingCourseIsEndFriday && nextPlan) ? endFridayCourses : courses;
+      const existingToDelete = sourceCourses.find(c => c.id === id);
       const deletedSnapshot: Course | null = existingToDelete ? { ...existingToDelete } : null;
-      const wasPlanApproved = isPlanApproved(currentPlan);
-      if (currentPlan) {
-        db.removeCourseFromWeekPlan(currentPlan.targetWeekCode || currentPlan.id, id, currentPlan);
+      const wasPlanApproved = isPlanApproved(targetPlan);
+      if (targetPlan) {
+        db.removeCourseFromWeekPlan(targetPlan.targetWeekCode || targetPlan.id, id, targetPlan);
       } else {
         db.deleteCourse(id);
       }
       isModalOpen = false;
       loadData();
-      if (wasPlanApproved && currentPlan && deletedSnapshot) {
-        const editProposals = buildManualEditProposals(currentPlan, deletedSnapshot, null, teachers, rooms);
+      if (wasPlanApproved && targetPlan && deletedSnapshot) {
+        const editProposals = buildManualEditProposals(targetPlan, deletedSnapshot, null, teachers, rooms);
         if (editProposals.length > 0) {
           openWhatsAppModalWithItems(editProposals, 'edit_on_approved');
         }
@@ -1079,16 +1155,16 @@
   }
 
   // Get courses filtered by selections
-  function getFilteredCourses(day: number): Course[] {
-    return courses
-      .filter(c => c.dayOfWeek === day)
+  function getFilteredCourses(day: number, isEndFriday: boolean = false): Course[] {
+    const source = isEndFriday ? endFridayCourses : courses.filter(c => c.dayOfWeek === day);
+    return source
       .filter(c => selectedRoomFilter === 'all' || c.roomId === selectedRoomFilter)
       .filter(c => selectedTeacherFilter === 'all' || isTeacherVisibleForCourse(c, selectedTeacherFilter))
       .sort((a, b) => a.startTime.localeCompare(b.startTime));
   }
   function getCourseDateForForm(): string {
     const weekCode = currentPlan?.targetWeekCode || getWeekCode(getMondayOfCurrentWeek());
-    return getLocalDateForDay(weekCode, Number(formDayOfWeek));
+    return getLocalDateForDay(weekCode, Number(formDayOfWeek), formIsEndFriday);
   }
 
   function formatStayLabel(t: Teacher): string {
@@ -1645,7 +1721,7 @@
       <button type="button" class="btn btn-current-week btn-small" onclick={goToCurrentWeek}>Aktuelle Woche</button>
       <button type="button" class="btn btn-secondary btn-small" onclick={() => navigateWeek(-1)}>◀ Letzte Woche</button>
       <span class="week-title-badge">
-        KW {currentPlan?.targetWeekCode ? parseInt(currentPlan.targetWeekCode.split('-W')[1], 10) : getWeekNumber(getMondayOfCurrentWeek())} ({currentPlan?.targetWeekCode || 'Kein Plan'})
+        KW {currentPlan?.targetWeekCode ? parseInt(currentPlan.targetWeekCode.split('-W')[1], 10) : getWeekNumber(getMondayOfCurrentWeek())} · {getDayDateString(5, false)} – {getDayDateString(5, true)} ({currentPlan?.targetWeekCode || 'Kein Plan'})
       </span>
       <button type="button" class="btn btn-secondary btn-small" onclick={() => navigateWeek(1)}>Nächste Woche ▶</button>
     </div>
@@ -1706,13 +1782,20 @@
         ▶
       </button>
     </div>
-    {#each DAYS as day}
-      {@const isToday = new Date().getDay() === day.value && currentWeekOffset === 0 && !planId}
+    {#each DAYS as day (day.dayIndex)}
       {@const currentWeekCode = currentPlan?.targetWeekCode || getWeekCode(getMondayOfCurrentWeek())}
-      {@const dayDateStr = getLocalDateForDay(currentWeekCode, day.value)}
+      {@const dayDateStr = getLocalDateForDay(currentWeekCode, day.value, day.isEndFriday)}
+      {@const isToday = dayDateStr === todayIso}
       {@const isYlaWednesday = day.value === 3 && isDateInYlaRange(dayDateStr)}
       {@const isOpenDaySaturday = day.value === 6 && dayDateStr === '2026-10-24'}
-      <div class="grid-header-cell day-header" class:header-today={isToday} class:header-schweigetag={isYlaWednesday} class:header-tdot={isOpenDaySaturday}>
+      <div
+        class="grid-header-cell day-header"
+        class:header-today={isToday}
+        class:header-schweigetag={isYlaWednesday}
+        class:header-tdot={isOpenDaySaturday}
+        class:header-start-friday={day.isStartFriday}
+        class:header-end-friday={day.isEndFriday}
+      >
         {#if isYlaWednesday}
           <div class="schweigetag-pill" title="Schweigen bis 12 Uhr wegen YLA">
             <div class="schweigetag-pill-title">🤫 Schweigetag</div>
@@ -1733,7 +1816,12 @@
           </div>
         {/if}
         <span class="day-label-short">{day.label.substring(0, 2)}</span>
-        <span class="day-date">{getDayDateString(day.value)}</span>
+        <span class="day-date">{getDayDateString(day.value, day.isEndFriday)}</span>
+        {#if day.isStartFriday}
+          <span class="day-cycle-pill start">Start</span>
+        {:else if day.isEndFriday}
+          <span class="day-cycle-pill end">Abschluss</span>
+        {/if}
       </div>
     {/each}
 
@@ -1751,12 +1839,12 @@
         <span>{hour.toString().padStart(2, '0')}:00</span>
       </div>
       
-      {#each DAYS as day}
+      {#each DAYS as day (day.dayIndex)}
         {@const currentWeekCode = currentPlan?.targetWeekCode || getWeekCode(getMondayOfCurrentWeek())}
-        {@const dayDateStr = getLocalDateForDay(currentWeekCode, day.value)}
+        {@const dayDateStr = getLocalDateForDay(currentWeekCode, day.value, day.isEndFriday)}
         {@const isOpenDaySaturday = day.value === 6 && dayDateStr === '2026-10-24'}
-        {@const coursesInSlot = getFilteredCoursesForHour(day.value, hour)}
-        <div class="grid-content-cell" class:tdot-column-cell={isOpenDaySaturday}>
+        {@const coursesInSlot = getFilteredCoursesForDayAndHour(day, hour)}
+        <div class="grid-content-cell" class:tdot-column-cell={isOpenDaySaturday} class:end-friday-column-cell={day.isEndFriday}>
           {#if isOpenDaySaturday}
             {@const primaryCourses = coursesInSlot.filter(c => {
               if ((c as any).isSeminarSlot === true) return true;
@@ -1924,7 +2012,7 @@
             {@const cardColors = getCourseColor(course)}
             {@const roomObj = rooms.find(r => r.id === course.roomId)}
             {@const teacherObj = teachers.find(t => t.id === course.teacherId)}
-            {@const courseConflicts = isSeminar ? [] : getCourseConflicts(course as Course)}
+            {@const courseConflicts = isSeminar ? [] : getCourseConflicts(course as Course, day.isEndFriday)}
             {@const hasHard = courseConflicts.some(c => c.type === 'hard')}
             <!-- svelte-ignore a11y_click_events_have_key_events -->
             <!-- svelte-ignore a11y_no_static_element_interactions -->
@@ -1953,7 +2041,7 @@
             {:else if isSivanandaPujaSlot(course)}
               <div 
                 class="course-card-rapla sivananda-puja-card"
-                onclick={() => openEditModal(course as Course)}
+                onclick={() => openEditModal(course as Course, day.isEndFriday)}
                 title="Swami Sivanandas Geburtstag Puja - Spezielles Festangebot (Klicken zum Bearbeiten)"
               >
                 <div class="puja-top-badge-row">
@@ -1992,7 +2080,7 @@
               {@const isSchulung = course.name.toLowerCase().includes('schulung') || (course.style && course.style.toLowerCase().includes('schulung'))}
               {@const isBuffet = isBuffetSlot(course)}
               {@const isAgreed = (course as Course).isFixedAgreement}
-              {@const courseConflicts = getCourseConflicts(course as Course)}
+              {@const courseConflicts = getCourseConflicts(course as Course, day.isEndFriday)}
               {@const hasHard = courseConflicts.some(c => c.type === 'hard')}
               <div 
                 class="course-card-rapla" 
@@ -2000,7 +2088,7 @@
                 class:is-agreed-card={isAgreed}
                 class:unassigned-card={(!course.teacherId || course.teacherId === 'teacher-gen-yl') && !isSchulung && !isBuffet}
                 style="background-color: {cardColors.bg}; border: 1px solid {cardColors.border}; border-left: {hasHard ? '5px solid #dc2626' : (isAgreed ? '4px solid #e11d48' : (isSchulung ? '5px solid #4338ca' : '1px solid ' + cardColors.border))};"
-                onclick={() => openEditModal(course as Course)}
+                onclick={() => openEditModal(course as Course, day.isEndFriday)}
                 title={isBuffet ? 'Vollwert-Buffet im Speisesaal (Keine Personen-Einteilung)' : (hasHard ? `⚠️ KONFLIKT: ${courseConflicts.find(c => c.type === 'hard')?.message}` : (isAgreed ? ((course as Course).agreementNotes ? `Fest vereinbarte Stunde:\n${(course as Course).agreementNotes}` : 'Fest vereinbarte Stunde (Klicken zum Bearbeiten)') : 'Klicken zum Einteilen / Bearbeiten'))}
               >
                 <!-- Top line: Time and Room -->
@@ -2191,9 +2279,11 @@
         <div class="grid-cols-3" style="gap: 1rem;">
           <div class="form-group">
             <label class="form-label" for="course-day">Wochentag</label>
-            <select id="course-day" class="form-select" bind:value={formDayOfWeek}>
-              {#each DAYS as d}
-                <option value={d.value}>{d.label}</option>
+            <select id="course-day" class="form-select" bind:value={formDayIndex}>
+              {#each DAYS as d (d.dayIndex)}
+                <option value={d.dayIndex}>
+                  {d.label} ({getDayDateString(d.value, d.isEndFriday)}{d.isStartFriday ? ' · Start' : d.isEndFriday ? ' · Abschluss' : ''})
+                </option>
               {/each}
             </select>
           </div>
@@ -2517,7 +2607,7 @@
         <div class="quick-note-course-meta">
           <div style="font-size: 1rem; font-weight: 700; color: #0f172a;">{quickNoteCourse.name}</div>
           <div style="color: #475569; font-size: 0.85rem; margin-top: 0.25rem;">
-            📅 {DAYS.find(d => d.value === quickNoteCourse?.dayOfWeek)?.label} • ⏰ {quickNoteCourse.startTime} - {quickNoteCourse.endTime} • 📍 {rooms.find(r => r.id === quickNoteCourse?.roomId)?.name || 'Raum'}
+            📅 {DAYS.find(d => d.isEndFriday === quickNoteIsEndFriday && d.value === quickNoteCourse?.dayOfWeek)?.label || 'Tag'} ({getDayDateString(quickNoteCourse.dayOfWeek, quickNoteIsEndFriday)}) • ⏰ {quickNoteCourse.startTime} - {quickNoteCourse.endTime} • 📍 {rooms.find(r => r.id === quickNoteCourse?.roomId)?.name || 'Raum'}
           </div>
           <div style="margin-top: 0.35rem; color: #065f46; font-size: 0.85rem; font-weight: 600;">
             👤 Eingeteilte Lehrkraft: {getTeacherDisplayName(quickNoteCourse.teacherId, quickNoteCourse.teacherName)}
@@ -3053,12 +3143,49 @@
 
   .calendar-grid {
     display: grid;
-    grid-template-columns: 80px repeat(7, minmax(130px, 1fr));
+    grid-template-columns: 74px repeat(8, minmax(122px, 1fr));
     grid-auto-rows: auto;
     background-color: #c8c8c8; /* border color between cells */
     gap: 1px; /* grid line gap */
     width: 100%;
-    min-width: 960px; /* prevent squishing */
+    min-width: 1050px; /* prevent squishing for 8-day Friday-to-Friday view */
+  }
+
+  .header-start-friday {
+    border-top: 3px solid #0284c7 !important;
+  }
+
+  .header-end-friday {
+    border-top: 3px solid #a21caf !important;
+    background: #fdfaff !important;
+  }
+
+  .end-friday-column-cell {
+    background: #fefcff;
+  }
+
+  .day-cycle-pill {
+    display: inline-block;
+    font-size: 0.6rem;
+    font-weight: 700;
+    padding: 0.06rem 0.34rem;
+    border-radius: 9999px;
+    margin-top: 2px;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    line-height: 1.25;
+  }
+
+  .day-cycle-pill.start {
+    background: #e0f2fe;
+    color: #0369a1;
+    border: 1px solid #bae6fd;
+  }
+
+  .day-cycle-pill.end {
+    background: #fae8ff;
+    color: #a21caf;
+    border: 1px solid #f5d0fe;
   }
 
   .grid-header-cell {
@@ -3908,7 +4035,7 @@
     height: auto !important;
     min-height: fit-content !important;
     grid-auto-rows: minmax(75px, auto) !important;
-    min-width: 1060px !important;
+    min-width: 1140px !important;
     overflow: visible !important;
     flex: none !important;
     width: 100% !important;

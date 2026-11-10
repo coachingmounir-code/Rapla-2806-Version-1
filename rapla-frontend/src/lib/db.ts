@@ -55,6 +55,29 @@ export function getLocalDateForDay(weekCode: string, dayOfWeek: number, isEndFri
   return `${yyyy}-${mm}-${dd}`;
 }
 
+export function getWeekCodeFromDate(date: Date): string {
+  const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+  const dayNum = d.getUTCDay() || 7;
+  d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+  const isoYear = d.getUTCFullYear();
+  const yearStart = new Date(Date.UTC(isoYear, 0, 1));
+  const week = Math.ceil((((d.getTime() - yearStart.getTime()) / 86400000) + 1) / 7);
+  return `${isoYear}-W${week.toString().padStart(2, '0')}`;
+}
+
+export function getOffsetWeekCode(weekCode: string, deltaWeeks: number): string {
+  if (!weekCode || !weekCode.includes('-W')) return '';
+  const mondayIso = getLocalDateForDay(weekCode, 1, false);
+  const parts = mondayIso.split('-').map(Number);
+  if (parts.length !== 3 || parts.some(isNaN)) return '';
+  const targetMonday = new Date(parts[0], parts[1] - 1, parts[2] + deltaWeeks * 7);
+  return getWeekCodeFromDate(targetMonday);
+}
+
+export function getNextWeekCode(weekCode: string): string {
+  return getOffsetWeekCode(weekCode, 1);
+}
+
 export interface TimeSlot {
   day: number; // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
   start: string; // "HH:MM"
@@ -14260,6 +14283,24 @@ function clearKeyPendingSync(key: string): void {
   } catch {}
 }
 
+function safeStorageGet(key: string): string | null {
+  if (typeof window === 'undefined') return null;
+  try {
+    return localStorage.getItem(key);
+  } catch {
+    return null;
+  }
+}
+
+function safeStorageSet(key: string, value: string): void {
+  if (typeof window === 'undefined') return;
+  try {
+    localStorage.setItem(key, value);
+  } catch (e) {
+    console.warn(`Could not persist ${key} to localStorage:`, e);
+  }
+}
+
 // Keep inMemoryStore synchronized across multiple tabs in the same browser
 if (typeof window !== 'undefined' && !(window as any).__rapla_storage_listener_attached) {
   (window as any).__rapla_storage_listener_attached = true;
@@ -14290,6 +14331,15 @@ if (typeof window !== 'undefined' && !(window as any).__rapla_storage_listener_a
   document.addEventListener('visibilitychange', triggerVisibilitySync);
   window.addEventListener('focus', triggerVisibilitySync);
   window.addEventListener('online', () => {
+    // Force Realtime channel recreation after switching Wi-Fi networks
+    if ((window as any).__rapla_realtime_channel && supabase) {
+      try {
+        supabase.removeChannel((window as any).__rapla_realtime_channel);
+      } catch {}
+      (window as any).__rapla_realtime_channel = null;
+      (window as any).__rapla_realtime_connected = false;
+    }
+    cloudSyncPromise = null;
     db.initializeCloudSync().catch(() => {});
   });
 }
@@ -14302,7 +14352,7 @@ function getStored<T>(key: string, defaultValue: T): T {
   if (typeof window === 'undefined') return defaultValue;
 
   // Fallback to localStorage without polluting localStorage with un-synced defaults
-  const stored = localStorage.getItem(key);
+  const stored = safeStorageGet(key);
   if (!stored) {
     const clonedDefault = JSON.parse(JSON.stringify(defaultValue)) as T;
     inMemoryStore[key] = clonedDefault;
@@ -14325,10 +14375,14 @@ let eventDebounceTimer: any = null;
 function isReadOnlyUserRole(): boolean {
   if (typeof window === 'undefined') return false;
   try {
-    const role = localStorage.getItem('rapla_user_role');
+    const role =
+      safeStorageGet('rapla_user_role') ||
+      (typeof sessionStorage !== 'undefined' ? sessionStorage.getItem('rapla_user_role') : null) ||
+      (window as any).__raplaSessionRole;
     return role === 'team' || role === 'viewer';
   } catch {
-    return false;
+    const memRole = (window as any).__raplaSessionRole;
+    return memRole === 'team' || memRole === 'viewer';
   }
 }
 
@@ -15696,7 +15750,8 @@ export const db = {
       return await cloudSyncPromise;
     }
 
-    cloudSyncPromise = (async () => {
+    let guardedPromise: Promise<void> | null = null;
+    const activePromise = (async () => {
       try {
         // Flush pending debounce timers for non-plan keys; for rapla_week_plans, let the read-merge-write below handle it
         for (const [key, timer] of Object.entries(syncDebounceTimers)) {
@@ -15707,9 +15762,12 @@ export const db = {
           }
         }
 
-        // Wait for any in-flight local upserts to finish before pulling from cloud
+        // Wait for any in-flight local upserts to finish before pulling from cloud (bounded to 6s so stale Wi-Fi sockets never block boot)
         if (inFlightUpserts.size > 0) {
-          await Promise.allSettled(Array.from(inFlightUpserts.values()));
+          await Promise.race([
+            Promise.allSettled(Array.from(inFlightUpserts.values())),
+            new Promise((resolve) => setTimeout(resolve, 6000))
+          ]);
         }
 
         const { data, error } = await supabase.from('app_state').select('*');
@@ -15718,8 +15776,8 @@ export const db = {
         if (!error && data && data.length > 0) {
           let changed = false;
           const pendingKeys = getPendingSyncKeys();
-          const hadLocalPlansInStorage = localStorage.getItem('rapla_week_plans') !== null;
-          const hadLocalTeachersInStorage = localStorage.getItem('rapla_teachers') !== null;
+          const hadLocalPlansInStorage = safeStorageGet('rapla_week_plans') !== null;
+          const hadLocalTeachersInStorage = safeStorageGet('rapla_teachers') !== null;
 
           // Process rapla_deleted_teacher_ids first if present in cloud
           const deletedTeachersRow = data.find(r => r.key === 'rapla_deleted_teacher_ids');
@@ -15729,8 +15787,8 @@ export const db = {
               const locDeleted = getStored<string[]>('rapla_deleted_teacher_ids', []);
               const mergedDeleted = Array.from(new Set([...locDeleted, ...(Array.isArray(remDeleted) ? remDeleted : [])]));
               const mergedDeletedStr = JSON.stringify(mergedDeleted);
-              if (localStorage.getItem('rapla_deleted_teacher_ids') !== mergedDeletedStr) {
-                localStorage.setItem('rapla_deleted_teacher_ids', mergedDeletedStr);
+              if (safeStorageGet('rapla_deleted_teacher_ids') !== mergedDeletedStr) {
+                safeStorageSet('rapla_deleted_teacher_ids', mergedDeletedStr);
                 changed = true;
               }
               inMemoryStore['rapla_deleted_teacher_ids'] = mergedDeleted;
@@ -15760,13 +15818,13 @@ export const db = {
                 const { plans: reconciled, hasChanges: reconciledChanged } = reconcilePlansWithDefaults(merged);
                 const mergedStr = JSON.stringify(reconciled);
 
-                const currentStr = localStorage.getItem('rapla_week_plans');
+                const currentStr = safeStorageGet('rapla_week_plans');
                 if (currentStr !== mergedStr) {
                   changed = true;
-                  localStorage.setItem('rapla_week_plans', mergedStr);
+                  safeStorageSet('rapla_week_plans', mergedStr);
                 }
                 inMemoryStore['rapla_week_plans'] = reconciled;
-                localStorage.setItem('rapla_db_version', CURRENT_DB_VERSION.toString());
+                safeStorageSet('rapla_db_version', CURRENT_DB_VERSION.toString());
 
                 if ((needsCloudPush || (reconciledChanged && !isReadOnlyUserRole())) && supabase) {
                   await upsertKeyToCloud('rapla_week_plans', mergedStr);
@@ -15782,10 +15840,10 @@ export const db = {
                 const { teachers: reconciled } = reconcileTeachersWithCloud(localTeachers, remoteTeachers, allowLocalNew);
 
                 const reconciledStr = JSON.stringify(reconciled);
-                const currentStr = localStorage.getItem('rapla_teachers');
+                const currentStr = safeStorageGet('rapla_teachers');
                 if (currentStr !== reconciledStr) {
                   changed = true;
-                  localStorage.setItem('rapla_teachers', reconciledStr);
+                  safeStorageSet('rapla_teachers', reconciledStr);
                 }
                 inMemoryStore['rapla_teachers'] = reconciled;
 
@@ -15805,10 +15863,10 @@ export const db = {
                   remoteRooms = DEFAULT_ROOMS;
                 }
                 const roomsStr = JSON.stringify(remoteRooms);
-                const currentStr = localStorage.getItem('rapla_rooms');
+                const currentStr = safeStorageGet('rapla_rooms');
                 if (currentStr !== roomsStr) {
                   changed = true;
-                  localStorage.setItem('rapla_rooms', roomsStr);
+                  safeStorageSet('rapla_rooms', roomsStr);
                 }
                 inMemoryStore['rapla_rooms'] = remoteRooms;
                 if (roomsStr !== row.value && supabase && !isReadOnlyUserRole()) {
@@ -15817,18 +15875,19 @@ export const db = {
                   clearKeyPendingSync('rapla_rooms');
                 }
               } else {
-                if (pendingKeys.has(row.key) && localStorage.getItem(row.key) !== null) {
-                  const localVal = localStorage.getItem(row.key)!;
+                const existingRaw = safeStorageGet(row.key);
+                if (pendingKeys.has(row.key) && existingRaw !== null) {
+                  const localVal = existingRaw;
                   if (localVal !== row.value) {
                     await upsertKeyToCloud(row.key, localVal);
                   } else {
                     clearKeyPendingSync(row.key);
                   }
                 } else {
-                  const currentStr = localStorage.getItem(row.key);
+                  const currentStr = existingRaw;
                   if (currentStr !== row.value) {
                     changed = true;
-                    localStorage.setItem(row.key, row.value);
+                    safeStorageSet(row.key, row.value);
                   }
                   inMemoryStore[row.key] = JSON.parse(row.value);
                   if (row.key === 'rapla_yla_assignments') {
@@ -15861,7 +15920,7 @@ export const db = {
                     const val = payload.new.value;
                     if (inFlightUpserts.has(key) || syncDebounceTimers[key]) return;
 
-                    const current = localStorage.getItem(key);
+                    const current = safeStorageGet(key);
                     if (current !== val) {
                       if (key === 'rapla_week_plans') {
                         const remotePlans: WeekPlan[] = JSON.parse(val);
@@ -15874,17 +15933,17 @@ export const db = {
                         const { plans: reconciled } = reconcilePlansWithDefaults(merged);
                         const reconciledStr = JSON.stringify(reconciled);
                         if (current === reconciledStr) return;
-                        localStorage.setItem(key, reconciledStr);
+                        safeStorageSet(key, reconciledStr);
                         inMemoryStore[key] = reconciled;
                       } else if (key === 'rapla_teachers') {
                         const remoteTeachers: Teacher[] = JSON.parse(val);
                         const { teachers: reconciled } = reconcileTeachersWithCloud([], remoteTeachers, false);
                         const reconciledStr = JSON.stringify(reconciled);
                         if (current === reconciledStr) return;
-                        localStorage.setItem(key, reconciledStr);
+                        safeStorageSet(key, reconciledStr);
                         inMemoryStore[key] = reconciled;
                       } else {
-                        localStorage.setItem(key, val);
+                        safeStorageSet(key, val);
                         inMemoryStore[key] = JSON.parse(val);
                       }
                       if (key === 'rapla_yla_assignments') {
@@ -15901,6 +15960,14 @@ export const db = {
                 const isConnected = status === 'SUBSCRIBED';
                 (window as any).__rapla_realtime_connected = isConnected;
                 window.dispatchEvent(new CustomEvent('rapla-realtime-status', { detail: { connected: isConnected, status } }));
+                if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT' || status === 'CLOSED') {
+                  if ((window as any).__rapla_realtime_channel === channel && supabase) {
+                    try {
+                      supabase.removeChannel(channel);
+                    } catch {}
+                    (window as any).__rapla_realtime_channel = null;
+                  }
+                }
               });
             (window as any).__rapla_realtime_channel = channel;
           } catch (subErr) {
@@ -15911,11 +15978,27 @@ export const db = {
         console.error('Failed to initialize cloud sync', e);
         cloudInitialized = true;
       } finally {
-        cloudSyncPromise = null;
+        if (cloudSyncPromise === guardedPromise) {
+          cloudSyncPromise = null;
+        }
       }
     })();
 
-    return await cloudSyncPromise;
+    guardedPromise = Promise.race([
+      activePromise,
+      new Promise<void>((resolve) =>
+        setTimeout(() => {
+          if (cloudSyncPromise === guardedPromise) {
+            cloudSyncPromise = null;
+          }
+          cloudInitialized = true;
+          resolve();
+        }, 15000)
+      )
+    ]);
+    cloudSyncPromise = guardedPromise;
+
+    return await guardedPromise;
   },
   getSevafrei: (): any[] => {
     const rawList = getStored<any[]>('rapla_sevafrei', []);
@@ -16750,7 +16833,7 @@ export const db = {
       let changed = false;
       for (const row of data) {
         if (!row.key || !row.value) continue;
-        const currentStr = localStorage.getItem(row.key);
+        const currentStr = safeStorageGet(row.key);
         if (currentStr !== row.value) {
           if (row.key === 'rapla_week_plans') {
             const remotePlans: WeekPlan[] = JSON.parse(row.value);
@@ -16758,7 +16841,7 @@ export const db = {
             const recStr = JSON.stringify(reconciled);
             if (currentStr !== recStr) {
               changed = true;
-              localStorage.setItem(row.key, recStr);
+              safeStorageSet(row.key, recStr);
               inMemoryStore[row.key] = reconciled;
             }
           } else if (row.key === 'rapla_teachers') {
@@ -16767,12 +16850,12 @@ export const db = {
             const recStr = JSON.stringify(reconciled);
             if (currentStr !== recStr) {
               changed = true;
-              localStorage.setItem(row.key, recStr);
+              safeStorageSet(row.key, recStr);
               inMemoryStore[row.key] = reconciled;
             }
           } else {
             changed = true;
-            localStorage.setItem(row.key, row.value);
+            safeStorageSet(row.key, row.value);
             try { inMemoryStore[row.key] = JSON.parse(row.value); } catch {}
           }
         }
@@ -16826,15 +16909,14 @@ export const db = {
       const weekStr = weekNum.toString().padStart(2, '0');
       const weekCode = `${year}-W${weekStr}`;
       
-      // Calculate date range string (Friday to Thursday)
-      // Wait, the scheduler starts on Friday! So let's calculate Friday to Thursday:
+      // Calculate 8-day date range string (Friday to next Friday)
       const friday = new Date(monday.getTime());
-      friday.setDate(monday.getDate() - 3); // Monday - 3 = Friday
-      const nextThursday = new Date(friday.getTime());
-      nextThursday.setDate(friday.getDate() + 6); // Friday + 6 = Thursday
+      friday.setDate(monday.getDate() - 3); // Monday - 3 = Start Friday
+      const nextFriday = new Date(friday.getTime());
+      nextFriday.setDate(friday.getDate() + 7); // Start Friday + 7 = End Friday
       
       const startStr = friday.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit' });
-      const endStr = nextThursday.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit' });
+      const endStr = nextFriday.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit' });
       const rangeLabel = `${startStr} - ${endStr}`;
       
       let plan = plans.find(p => p.targetWeekCode === weekCode);

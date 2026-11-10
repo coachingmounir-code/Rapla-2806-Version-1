@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount, untrack } from 'svelte';
+  import { getStoredUserRole } from '$lib/authRole';
   import { 
     getYlaWeeks, 
     getYlaWeek, 
@@ -101,7 +102,7 @@
   }
 
   onMount(() => {
-    userRole = localStorage.getItem('rapla_user_role') || '';
+    userRole = getStoredUserRole() || '';
     try {
       allTeachersList = db.getTeachers();
     } catch (e) {

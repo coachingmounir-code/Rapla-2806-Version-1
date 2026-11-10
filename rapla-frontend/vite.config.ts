@@ -36,6 +36,11 @@ export default defineConfig({
 					filename.split(/[/\\]/).includes('node_modules') ? undefined : true
 			},
 
+			// Poll for new deployments so open tabs / smartphones switching Wi-Fi seamlessly reload fresh chunks
+			version: {
+				pollInterval: 60000
+			},
+
 			// adapter-auto only supports some environments, see https://svelte.dev/docs/kit/adapter-auto for a list.
 			// If your environment is not supported, or you settled on a specific environment, switch out the adapter.
 			// See https://svelte.dev/docs/kit/adapters for more information about adapters.

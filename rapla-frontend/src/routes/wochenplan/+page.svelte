@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount, untrack } from 'svelte';
-  import { db, type Course, type Teacher, type Room, type WeekPlan } from '$lib/db';
+  import { db, getNextWeekCode, type Course, type Teacher, type Room, type WeekPlan } from '$lib/db';
   import { getLocalDateForDay } from '$lib/planningEngine';
   import { EXCEL_ABSENCES } from '$lib/excel_absences';
   import { 
@@ -25,6 +25,7 @@
   import sivanandaImg from '$lib/assets/sivananda.png';
   import { page } from '$app/state';
   import { goto } from '$app/navigation';
+  import { getStoredUserRole, clearStoredUserRole } from '$lib/authRole';
 
   type DisplaySlot = Course | YlaTeacherWeekSlot | SeminarTeacherWeekSlot;
 
@@ -103,15 +104,22 @@
   }
 
   let courses = $state<Course[]>([]);
+  let endFridayCourses = $state<Course[]>([]);
   let teachers = $state<Teacher[]>([]);
   let rooms = $state<Room[]>([]);
   let weekPlans = $state<WeekPlan[]>([]);
   let currentPlan = $state<WeekPlan | null>(null);
   let currentWeekOffset = $state(0);
   let isFullscreen = $state(false);
-  let activeMobileDay = $state(5);
+  let activeMobileDayIndex = $state(0);
   let isWeekApproved = $state(false);
+  let isNextWeekApproved = $state(false);
   let registeredSeminars = $state<Seminar[]>(db.getSeminars());
+
+  let todayIso = $derived.by(() => {
+    const now = new Date();
+    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+  });
 
   // Tab switcher state: 'wochenplan' | 'yla4' | 'yla4_w3' | 'yla4_w4' | 'seminare'
   let tabParam = $derived(page.url.searchParams.get('tab') || '');
@@ -324,28 +332,59 @@
     return result;
   });
 
-  // Regular weekly courses assigned to selectedTeacher
-  let selectedTeacherRegularCourses = $derived.by<Course[]>(() => {
+  const DAYS = [
+    { dayIndex: 0, value: 5, label: 'Freitag', isStartFriday: true, isEndFriday: false },
+    { dayIndex: 1, value: 6, label: 'Samstag', isStartFriday: false, isEndFriday: false },
+    { dayIndex: 2, value: 0, label: 'Sonntag', isStartFriday: false, isEndFriday: false },
+    { dayIndex: 3, value: 1, label: 'Montag', isStartFriday: false, isEndFriday: false },
+    { dayIndex: 4, value: 2, label: 'Dienstag', isStartFriday: false, isEndFriday: false },
+    { dayIndex: 5, value: 3, label: 'Mittwoch', isStartFriday: false, isEndFriday: false },
+    { dayIndex: 6, value: 4, label: 'Donnerstag', isStartFriday: false, isEndFriday: false },
+    { dayIndex: 7, value: 5, label: 'Freitag', isStartFriday: false, isEndFriday: true }
+  ];
+
+  // Regular weekly courses assigned to selectedTeacher across the 8-day Friday-to-Friday view
+  let selectedTeacherRegularCourses = $derived.by<(Course & { dayIndex?: number; isEndFriday?: boolean })[]>(() => {
     if (!selectedTeacher) return [];
-    return courses.filter(c => isTeacherVisibleForCourse(c, selectedTeacher!.id));
+    const mainWeekMatches = courses
+      .filter(c => isTeacherVisibleForCourse(c, selectedTeacher!.id))
+      .map(c => ({
+        ...c,
+        dayIndex: DAYS.find(d => !d.isEndFriday && d.value === c.dayOfWeek)?.dayIndex ?? 0,
+        isEndFriday: false
+      }));
+    const endFridayMatches = endFridayCourses
+      .filter(c => isTeacherVisibleForCourse(c, selectedTeacher!.id))
+      .map(c => ({
+        ...c,
+        id: `${c.id}-endfr`,
+        dayIndex: 7,
+        isEndFriday: true
+      }));
+    return [...mainWeekMatches, ...endFridayMatches];
   });
 
-  // Derived list of all courses + YLA slots + internal Seminar slots assigned/visible to the selected teacher in the current week
+  // Derived list of all courses + YLA slots + internal Seminar slots assigned/visible to the selected teacher in the current 8-day week
   let selectedTeacherAssignedCourses = $derived.by<DisplaySlot[]>(() => {
     if (!selectedTeacher) return [];
     return [...selectedTeacherRegularCourses, ...selectedTeacherYlaSlots, ...selectedTeacherSeminarSlots];
   });
 
-  // Grouped by day in DAYS order (Freitag -> Donnerstag) for the compact personal overview
+  // Grouped by day in 8-day DAYS order (Start-Freitag -> End-Freitag) for the compact personal overview
   let selectedTeacherAssignmentsByDay = $derived.by(() => {
     if (!selectedTeacher) return [];
     return DAYS.map(day => {
       const daySlots = selectedTeacherAssignedCourses
-        .filter(c => c.dayOfWeek === day.value)
+        .filter(c => {
+          const cIdx = (c as any).dayIndex;
+          if (cIdx !== undefined) return cIdx === day.dayIndex;
+          return !day.isEndFriday && c.dayOfWeek === day.value;
+        })
         .sort((a, b) => a.startTime.localeCompare(b.startTime));
       return {
         day,
-        dateStr: getDayDateString(day.value),
+        dateStr: getDayDateString(day.value, day.isEndFriday),
+        isoDate: getLocalDateForDay(activeWeekCode, day.value, day.isEndFriday),
         slots: daySlots
       };
     }).filter(group => group.slots.length > 0);
@@ -354,49 +393,46 @@
   // Derived combined courses for total displayed hours and counting
   let allDisplayCourses = $derived<DisplaySlot[]>(
     selectedTeacher
-      ? (onlyMySlotsParam ? selectedTeacherAssignedCourses : [...courses, ...selectedTeacherYlaSlots, ...selectedTeacherSeminarSlots])
-      : courses
+      ? (onlyMySlotsParam ? selectedTeacherAssignedCourses : [...courses, ...endFridayCourses, ...selectedTeacherYlaSlots, ...selectedTeacherSeminarSlots])
+      : [...courses, ...endFridayCourses]
   );
 
-  // Derived filtered courses for the mobile agenda view
+  // Derived filtered courses for the mobile agenda view (by 8-day index)
   let filteredMobileCourses = $derived.by<DisplaySlot[]>(() => {
-    const regular = courses
-      .filter(c => c.dayOfWeek === activeMobileDay)
+    const activeDayObj = DAYS[activeMobileDayIndex] || DAYS[0];
+    const regularSource = activeDayObj.isEndFriday
+      ? endFridayCourses
+      : courses.filter(c => c.dayOfWeek === activeDayObj.value);
+
+    const regular = regularSource
       .filter(c => !onlyMySlotsParam || !selectedTeacher || isTeacherVisibleForCourse(c, selectedTeacher.id));
 
     const yla = (selectedTeacher ? selectedTeacherYlaSlots : [])
-      .filter(s => s.dayOfWeek === activeMobileDay);
+      .filter(s => (s.dayIndex !== undefined ? s.dayIndex === activeDayObj.dayIndex : (!activeDayObj.isEndFriday && s.dayOfWeek === activeDayObj.value)));
 
     const semSlots = (selectedTeacher ? selectedTeacherSeminarSlots : [])
-      .filter(s => s.dayOfWeek === activeMobileDay);
+      .filter(s => (s.dayIndex !== undefined ? s.dayIndex === activeDayObj.dayIndex : (!activeDayObj.isEndFriday && s.dayOfWeek === activeDayObj.value)));
 
     return [...regular, ...yla, ...semSlots].sort((a, b) => a.startTime.localeCompare(b.startTime));
   });
 
-  const DAYS = [
-    { value: 5, label: 'Freitag' },
-    { value: 6, label: 'Samstag' },
-    { value: 0, label: 'Sonntag' },
-    { value: 1, label: 'Montag' },
-    { value: 2, label: 'Dienstag' },
-    { value: 3, label: 'Mittwoch' },
-    { value: 4, label: 'Donnerstag' }
-  ];
-
   let userManuallyChangedWeek = $state(false);
   let userRole = $state<string | null>(null);
 
+  function syncActiveMobileDayToToday() {
+    const code = currentPlan?.targetWeekCode || getWeekCode(getMondayOfCurrentWeek());
+    const matchedDay = DAYS.find(d => getLocalDateForDay(code, d.value, d.isEndFriday) === todayIso);
+    if (matchedDay) {
+      activeMobileDayIndex = matchedDay.dayIndex;
+    }
+  }
+
   onMount(() => {
-    userRole = localStorage.getItem('rapla_user_role') || 'team';
+    userRole = getStoredUserRole() || 'team';
     weekPlans = db.getWeekPlans();
     currentWeekOffset = findDefaultApprovedWeekOffset(weekPlans);
     loadData();
-    
-    // Set active mobile day to today if today is within our calendar cycle
-    const todayVal = new Date().getDay();
-    if (DAYS.some(d => d.value === todayVal)) {
-      activeMobileDay = todayVal;
-    }
+    syncActiveMobileDayToToday();
     
     // Add keypress listener for escaping fullscreen
     const handleKeydown = (e: KeyboardEvent) => {
@@ -491,13 +527,13 @@
   }
 
   function getWeekCode(date: Date): string {
-    const year = date.getFullYear();
     const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
     const dayNum = d.getUTCDay() || 7;
     d.setUTCDate(d.getUTCDate() + 4 - dayNum);
-    const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+    const isoYear = d.getUTCFullYear();
+    const yearStart = new Date(Date.UTC(isoYear, 0, 1));
     const week = Math.ceil((((d.getTime() - yearStart.getTime()) / 86400000) + 1) / 7);
-    return `${year}-W${week.toString().padStart(2, '0')}`;
+    return `${isoYear}-W${week.toString().padStart(2, '0')}`;
   }
 
   function getMondayForOffset(offset: number): Date {
@@ -575,9 +611,9 @@
     return Math.ceil((((d.getTime() - yearStart.getTime()) / 86400000) + 1) / 7);
   }
 
-  function getDayDateString(dayValue: number): string {
+  function getDayDateString(dayValue: number, isEndFriday: boolean = false): string {
     if (currentPlan?.targetWeekCode) {
-      const dateStr = getLocalDateForDay(currentPlan.targetWeekCode, dayValue);
+      const dateStr = getLocalDateForDay(currentPlan.targetWeekCode, dayValue, isEndFriday);
       const parts = dateStr.split('-');
       if (parts.length === 3) {
         return `${parts[2]}.${parts[1]}.`;
@@ -585,7 +621,7 @@
     }
     const monday = getMondayOfCurrentWeek();
     let offset = 0;
-    if (dayValue === 5) offset = -3;
+    if (dayValue === 5) offset = isEndFriday ? 4 : -3;
     else if (dayValue === 6) offset = -2;
     else if (dayValue === 0) offset = -1;
     else if (dayValue === 1) offset = 0;
@@ -824,9 +860,15 @@
     return Array.from(combined).sort((a, b) => a - b);
   }
 
-  function getFilteredCoursesForHour(day: number, hour: number): DisplaySlot[] {
-    const regular = courses
-      .filter(c => c.dayOfWeek === day)
+  function getFilteredCoursesForDayAndHour(
+    day: { dayIndex: number; value: number; isEndFriday: boolean },
+    hour: number
+  ): DisplaySlot[] {
+    const regularSource = day.isEndFriday
+      ? endFridayCourses
+      : courses.filter(c => c.dayOfWeek === day.value);
+
+    const regular = regularSource
       .filter(c => {
         const startHour = getEffectiveGridHour(c);
         return startHour === hour;
@@ -840,20 +882,34 @@
       });
 
     const yla = (selectedTeacher ? selectedTeacherYlaSlots : [])
-      .filter(s => s.dayOfWeek === day)
+      .filter(s => (s.dayIndex !== undefined ? s.dayIndex === day.dayIndex : (!day.isEndFriday && s.dayOfWeek === day.value)))
       .filter(s => {
         const startHour = getEffectiveGridHour(s);
         return startHour === hour;
       });
 
     const semSlots = (selectedTeacher ? selectedTeacherSeminarSlots : [])
-      .filter(s => s.dayOfWeek === day)
+      .filter(s => (s.dayIndex !== undefined ? s.dayIndex === day.dayIndex : (!day.isEndFriday && s.dayOfWeek === day.value)))
       .filter(s => {
         const startHour = getEffectiveGridHour(s);
         return startHour === hour;
       });
 
     return [...regular, ...yla, ...semSlots].sort((a, b) => a.startTime.localeCompare(b.startTime));
+  }
+
+  function filterApprovedCoursesForWeek(planCourses: Course[], targetWeekCode: string): Course[] {
+    return planCourses.filter(c => {
+      if (c.isManuallyEdited) return true;
+      const courseDate = getLocalDateForDay(targetWeekCode, c.dayOfWeek);
+      const isPranayama = c.name.toLowerCase().includes('pranayama') || c.style.toLowerCase().includes('pranayama');
+      if (isPranayama && isDateInYlaRange(courseDate)) return false;
+      // Specifically on Tuesday 08.09.2026, Meditativer Spaziergang is removed
+      if (courseDate === '2026-09-08' && c.name.toLowerCase().includes('spaziergang')) {
+        return false;
+      }
+      return true;
+    });
   }
 
   function loadData() {
@@ -872,20 +928,21 @@
     currentPlan = foundPlan || null;
     
     if (approved && currentPlan) {
-      courses = currentPlan.courses
-        .filter(c => {
-          if (c.isManuallyEdited) return true;
-          const courseDate = getLocalDateForDay(weekCode, c.dayOfWeek);
-          const isPranayama = c.name.toLowerCase().includes('pranayama') || c.style.toLowerCase().includes('pranayama');
-          if (isPranayama && isDateInYlaRange(courseDate)) return false;
-          // Specifically on Tuesday 08.09.2026, Meditativer Spaziergang is removed
-          if (courseDate === '2026-09-08' && c.name.toLowerCase().includes('spaziergang')) {
-            return false;
-          }
-          return true;
-        });
+      courses = filterApprovedCoursesForWeek(currentPlan.courses, weekCode);
     } else {
       courses = [];
+    }
+
+    // Load 8th day (End-Freitag = Start-Freitag of next week) if next week is approved
+    const followingWeekCode = getNextWeekCode(weekCode);
+    const foundNextPlan = followingWeekCode ? weekPlans.find(p => p.targetWeekCode === followingWeekCode) : undefined;
+    const nextApproved = !!foundNextPlan && foundNextPlan.isApproved !== false && foundNextPlan.status !== 'draft' && !(foundNextPlan as any).manuallyUnapproved && (foundNextPlan.isApproved === true || foundNextPlan.status === 'approved');
+    isNextWeekApproved = nextApproved;
+
+    if (nextApproved && foundNextPlan) {
+      endFridayCourses = filterApprovedCoursesForWeek(foundNextPlan.courses, followingWeekCode).filter(c => c.dayOfWeek === 5);
+    } else {
+      endFridayCourses = [];
     }
   }
 
@@ -922,6 +979,7 @@
     userManuallyChangedWeek = false;
     currentWeekOffset = findDefaultApprovedWeekOffset(weekPlans);
     loadData();
+    syncActiveMobileDayToToday();
   }
 
   function selectTeacher(teacherId: string) {
@@ -995,7 +1053,7 @@
         type="button" 
         class="btn logout-header-btn" 
         onclick={() => { 
-          localStorage.removeItem('rapla_user_role'); 
+          clearStoredUserRole(); 
           goto('/login'); 
         }}
       >
@@ -1102,7 +1160,7 @@
           <div class="teacher-details-row">
             <span>Rolle: <strong>{selectedTeacher.roleType === 'sevaka' ? 'Sevaka (Team)' : selectedTeacher.roleType === 'karma_yogi' ? 'Karma-Yogi' : selectedTeacher.roleType === 'guest_teacher' ? 'Gast-Seminarleiter' : 'Unterrichtende/r'}</strong></span>
             <span class="dot-separator">•</span>
-            <span>Woche: <strong>KW {currentWeekNum} ({getDayDateString(5)} – {getDayDateString(4)})</strong></span>
+            <span>Woche: <strong>KW {currentWeekNum} ({getDayDateString(5, false)} – {getDayDateString(5, true)})</strong></span>
             {#if activeTab === 'yla4'}
               <span class="dot-separator">•</span>
               <span class="yla-active-notice" style="color: #9333ea;">
@@ -1144,26 +1202,26 @@
         </button>
       </div>
 
-      {#if activeTab === 'wochenplan' && (isWeekApproved || selectedTeacherSeminarSlots.length > 0 || selectedTeacherYlaSlots.length > 0)}
+      {#if activeTab === 'wochenplan' && (isWeekApproved || isNextWeekApproved || selectedTeacherSeminarSlots.length > 0 || selectedTeacherYlaSlots.length > 0)}
         <div class="personal-compact-schedule">
           <div class="compact-schedule-header">
-            <span class="compact-schedule-title">⚡ Kompakte Übersicht deiner Stunden (KW {currentWeekNum}):</span>
+            <span class="compact-schedule-title">⚡ Kompakte Übersicht deiner Stunden (KW {currentWeekNum} · {getDayDateString(5, false)} – {getDayDateString(5, true)}):</span>
           </div>
           {#if selectedTeacherAssignmentsByDay.length === 0}
             <div class="compact-empty-notice">
-              ✨ Für <strong>{selectedTeacher.name}</strong> sind in KW {currentWeekNum} ({getDayDateString(5)} – {getDayDateString(4)}) keine Stunden eingetragen.
+              ✨ Für <strong>{selectedTeacher.name}</strong> sind in KW {currentWeekNum} ({getDayDateString(5, false)} – {getDayDateString(5, true)}) keine Stunden eingetragen.
             </div>
           {:else}
             <div class="personal-compact-days-grid">
-              {#each selectedTeacherAssignmentsByDay as group}
-                {@const isToday = new Date().getDay() === group.day.value && currentWeekOffset === 0}
+              {#each selectedTeacherAssignmentsByDay as group (group.day.dayIndex)}
+                {@const isToday = group.isoDate === todayIso}
                 <div 
                   class="compact-day-card" 
                   class:compact-day-today={isToday}
                   role="button"
                   tabindex="0"
-                  onclick={() => { activeMobileDay = group.day.value; }}
-                  onkeydown={(e) => { if (e.key === 'Enter' || e.key === ' ') activeMobileDay = group.day.value; }}
+                  onclick={() => { activeMobileDayIndex = group.day.dayIndex; }}
+                  onkeydown={(e) => { if (e.key === 'Enter' || e.key === ' ') activeMobileDayIndex = group.day.dayIndex; }}
                 >
                   <div class="compact-day-header">
                     <span class="compact-day-name">
@@ -1240,7 +1298,7 @@
             <button type="button" class="btn btn-current-week btn-small" onclick={() => { currentWeekOffset = 0; loadData(); }}>Aktuelle Woche</button>
             <button type="button" class="btn btn-secondary btn-small" onclick={() => navigateWeek(-1)}>◀ Letzte Woche</button>
             <span class="week-title-badge">
-              KW {currentPlan?.targetWeekCode ? parseInt(currentPlan.targetWeekCode.split('-W')[1], 10) : getWeekNumber(getMondayOfCurrentWeek())} ({currentPlan?.targetWeekCode || getWeekCode(getMondayOfCurrentWeek())})
+              KW {currentPlan?.targetWeekCode ? parseInt(currentPlan.targetWeekCode.split('-W')[1], 10) : getWeekNumber(getMondayOfCurrentWeek())} · {getDayDateString(5, false)} – {getDayDateString(5, true)} ({currentPlan?.targetWeekCode || getWeekCode(getMondayOfCurrentWeek())})
             </span>
             <button type="button" class="btn btn-secondary btn-small" onclick={() => navigateWeek(1)}>Nächste Woche ▶</button>
           </div>
@@ -1260,7 +1318,7 @@
           <div class="notice-icon-large">🔒</div>
           <h2>Wochenplan noch nicht freigegeben</h2>
           <p class="notice-main-text">
-            Der Wochenplan für <strong>KW {currentPlan?.targetWeekCode ? parseInt(currentPlan.targetWeekCode.split('-W')[1], 10) : getWeekNumber(getMondayOfCurrentWeek())} ({getDayDateString(5)} – {getDayDateString(4)})</strong> befindet sich noch in der Vorbereitung und wurde von der Leitung noch nicht genehmigt.
+            Der Wochenplan für <strong>KW {currentPlan?.targetWeekCode ? parseInt(currentPlan.targetWeekCode.split('-W')[1], 10) : getWeekNumber(getMondayOfCurrentWeek())} ({getDayDateString(5, false)} – {getDayDateString(5, true)})</strong> befindet sich noch in der Vorbereitung und wurde von der Leitung noch nicht genehmigt.
           </p>
           <p class="notice-sub-text">
             Sobald die Freigabe erteilt wird, werden alle Kurse, Zeiten und Zuweisungen hier automatisch für das gesamte Team sichtbar.
@@ -1291,14 +1349,21 @@
             <div class="week-label">TAG / ZEIT</div>
           </div>
 
-          <!-- Week Days Headers starting from Friday -->
-          {#each DAYS as day}
-            {@const isToday = new Date().getDay() === day.value && currentWeekOffset === 0}
+          <!-- Week Days Headers starting from Friday (8 Tage: Fr – Fr) -->
+          {#each DAYS as day (day.dayIndex)}
             {@const currentWeekCode = currentPlan?.targetWeekCode || getWeekCode(getMondayOfCurrentWeek())}
-            {@const dayDateStr = getLocalDateForDay(currentWeekCode, day.value)}
+            {@const dayDateStr = getLocalDateForDay(currentWeekCode, day.value, day.isEndFriday)}
+            {@const isToday = dayDateStr === todayIso}
             {@const isYlaWednesday = day.value === 3 && isDateInYlaRange(dayDateStr)}
             {@const isOpenDaySaturday = day.value === 6 && dayDateStr === '2026-10-24'}
-            <div class="grid-header-cell day-header" class:header-today={isToday} class:header-schweigetag={isYlaWednesday} class:header-tdot={isOpenDaySaturday}>
+            <div
+              class="grid-header-cell day-header"
+              class:header-today={isToday}
+              class:header-schweigetag={isYlaWednesday}
+              class:header-tdot={isOpenDaySaturday}
+              class:header-start-friday={day.isStartFriday}
+              class:header-end-friday={day.isEndFriday}
+            >
               {#if isYlaWednesday}
                 <div class="schweigetag-pill" title="Schweigen bis 12 Uhr wegen YLA">
                   <div class="schweigetag-pill-title">🤫 Schweigetag</div>
@@ -1319,7 +1384,15 @@
                 </div>
               {/if}
               <span class="day-label-short">{day.label}</span>
-              <span class="day-date">{getDayDateString(day.value)}</span>
+              <span class="day-date">{getDayDateString(day.value, day.isEndFriday)}</span>
+              {#if day.isStartFriday}
+                <span class="day-cycle-pill start">Start</span>
+              {:else if day.isEndFriday}
+                <span class="day-cycle-pill end">Abschluss</span>
+                {#if !isNextWeekApproved && isWeekApproved}
+                  <span class="day-cycle-pill draft-hint" title="Der Wochenplan der Folgewoche befindet sich noch in der Vorbereitung">i. Vorb.</span>
+                {/if}
+              {/if}
             </div>
           {/each}
 
@@ -1337,12 +1410,12 @@
               <span>{hour.toString().padStart(2, '0')}:00</span>
             </div>
 
-            {#each DAYS as day}
+            {#each DAYS as day (day.dayIndex)}
               {@const currentWeekCode = currentPlan?.targetWeekCode || getWeekCode(getMondayOfCurrentWeek())}
-              {@const dayDateStr = getLocalDateForDay(currentWeekCode, day.value)}
+              {@const dayDateStr = getLocalDateForDay(currentWeekCode, day.value, day.isEndFriday)}
               {@const isOpenDaySaturday = day.value === 6 && dayDateStr === '2026-10-24'}
-              {@const cellCourses = getFilteredCoursesForHour(day.value, hour)}
-              <div class="grid-content-cell" class:tdot-column-cell={isOpenDaySaturday}>
+              {@const cellCourses = getFilteredCoursesForDayAndHour(day, hour)}
+              <div class="grid-content-cell" class:tdot-column-cell={isOpenDaySaturday} class:end-friday-column-cell={day.isEndFriday}>
                 {#if isOpenDaySaturday}
                   {@const primaryCourses = cellCourses.filter(c => {
                     if ((c as any).isSeminarSlot === true) return true;
@@ -1629,7 +1702,7 @@
       <button type="button" class="btn btn-current-week btn-small" onclick={goToCurrentWeek}>Aktuelle Woche</button>
       <button type="button" class="btn btn-secondary btn-small" onclick={() => navigateWeek(-1)}>◀</button>
       <span class="week-title-badge-mobile">
-        KW {currentPlan?.targetWeekCode ? parseInt(currentPlan.targetWeekCode.split('-W')[1], 10) : getWeekNumber(getMondayOfCurrentWeek())} ({currentPlan?.targetWeekCode || getWeekCode(getMondayOfCurrentWeek())})
+        KW {currentPlan?.targetWeekCode ? parseInt(currentPlan.targetWeekCode.split('-W')[1], 10) : getWeekNumber(getMondayOfCurrentWeek())} ({getDayDateString(5, false)} – {getDayDateString(5, true)})
       </span>
       <button type="button" class="btn btn-secondary btn-small" onclick={() => navigateWeek(1)}>▶</button>
     </div>
@@ -1639,7 +1712,7 @@
         <div class="notice-icon-large">🔒</div>
         <h2 style="font-size: 1.25rem;">Wochenplan noch nicht freigegeben</h2>
         <p class="notice-main-text" style="font-size: 0.9rem;">
-          Der Wochenplan für <strong>KW {currentPlan?.targetWeekCode ? parseInt(currentPlan.targetWeekCode.split('-W')[1], 10) : getWeekNumber(getMondayOfCurrentWeek())}</strong> befindet sich noch in der Vorbereitung und wurde von der Leitung noch nicht genehmigt.
+          Der Wochenplan für <strong>KW {currentPlan?.targetWeekCode ? parseInt(currentPlan.targetWeekCode.split('-W')[1], 10) : getWeekNumber(getMondayOfCurrentWeek())} ({getDayDateString(5, false)} – {getDayDateString(5, true)})</strong> befindet sich noch in der Vorbereitung und wurde von der Leitung noch nicht genehmigt.
         </p>
         <p class="notice-sub-text">
           Sobald die Freigabe erfolgt ist, erscheint der Plan hier automatisch.
@@ -1664,22 +1737,22 @@
         </div>
       </div>
     {:else}
-      <!-- Day Selector Tabs -->
+      <!-- Day Selector Tabs (8 Tage: Start-Freitag bis Abschluss-Freitag) -->
       <div class="mobile-day-tabs">
-        {#each DAYS as day}
-          {@const isToday = new Date().getDay() === day.value && currentWeekOffset === 0}
+        {#each DAYS as day (day.dayIndex)}
           {@const currentWeekCode = currentPlan?.targetWeekCode || getWeekCode(getMondayOfCurrentWeek())}
-          {@const dayDateStr = getLocalDateForDay(currentWeekCode, day.value)}
+          {@const dayDateStr = getLocalDateForDay(currentWeekCode, day.value, day.isEndFriday)}
+          {@const isToday = dayDateStr === todayIso}
           {@const isYlaWednesday = day.value === 3 && isDateInYlaRange(dayDateStr)}
-          {@const teacherDayCount = selectedTeacher ? selectedTeacherAssignedCourses.filter(c => c.dayOfWeek === day.value).length : 0}
+          {@const teacherDayCount = selectedTeacher ? selectedTeacherAssignedCourses.filter(c => ((c as any).dayIndex !== undefined ? (c as any).dayIndex === day.dayIndex : (!day.isEndFriday && c.dayOfWeek === day.value))).length : 0}
           <button 
             type="button" 
             class="day-tab-btn" 
-            class:active={activeMobileDay === day.value}
+            class:active={activeMobileDayIndex === day.dayIndex}
             class:is-today={isToday}
             class:tab-schweigetag={isYlaWednesday}
             class:has-teacher-slots={selectedTeacher && teacherDayCount > 0}
-            onclick={() => activeMobileDay = day.value}
+            onclick={() => activeMobileDayIndex = day.dayIndex}
           >
             {#if isYlaWednesday}
               <span class="schweigetag-tab-pill">🤫 Schweigetag</span>
@@ -1690,14 +1763,14 @@
                 <span class="day-tab-slot-count">{teacherDayCount}</span>
               {/if}
             </span>
-            <span class="day-tab-date">{getDayDateString(day.value)}</span>
+            <span class="day-tab-date">{getDayDateString(day.value, day.isEndFriday)}</span>
           </button>
         {/each}
       </div>
 
       <!-- Timeline of Courses -->
       <div class="mobile-agenda-list">
-        {#if activeMobileDay === 3 && isDateInYlaRange(getLocalDateForDay(currentPlan?.targetWeekCode || getWeekCode(getMondayOfCurrentWeek()), 3))}
+        {#if DAYS[activeMobileDayIndex]?.value === 3 && isDateInYlaRange(getLocalDateForDay(currentPlan?.targetWeekCode || getWeekCode(getMondayOfCurrentWeek()), 3))}
           <div class="mobile-schweigetag-banner">
             <span class="banner-icon">🤫</span>
             <div class="banner-text">
@@ -1708,9 +1781,15 @@
         {/if}
 
         {#if filteredMobileCourses.length === 0}
-          <div class="empty-agenda-state">
-            📭 Keine Stunden für diesen Tag eingetragen.
-          </div>
+          {#if DAYS[activeMobileDayIndex]?.isEndFriday && !isNextWeekApproved && isWeekApproved}
+            <div class="empty-agenda-state">
+              🔒 Der Wochenplan für den Folge-Freitag ({getDayDateString(5, true)}) befindet sich noch in der Vorbereitung.
+            </div>
+          {:else}
+            <div class="empty-agenda-state">
+              📭 Keine Stunden für diesen Tag eingetragen.
+            </div>
+          {/if}
         {:else}
           {#each filteredMobileCourses as course}
             {@const isYla = (course as any).isYla === true}
@@ -1833,7 +1912,7 @@
 <style>
   .view-page-container {
     padding: 1.5rem 2rem;
-    max-width: 1400px;
+    max-width: 1580px;
     margin: 0 auto;
     font-family: 'Outfit', 'Inter', sans-serif;
     background-color: #fffbf7; /* warm ivory background */
@@ -2147,14 +2226,58 @@
 
   .calendar-grid {
     display: grid;
-    grid-template-columns: 80px repeat(7, minmax(140px, 1fr));
+    grid-template-columns: 76px repeat(8, minmax(126px, 1fr));
     grid-auto-rows: auto;
     background-color: #cbd5e1;
     gap: 1px;
     width: 100%;
-    min-width: 1060px;
+    min-width: 1100px;
     border-radius: 8px;
     overflow: hidden;
+  }
+
+  .header-start-friday {
+    border-top: 3px solid #0284c7 !important;
+  }
+
+  .header-end-friday {
+    border-top: 3px solid #a21caf !important;
+    background: #fdfaff;
+  }
+
+  .end-friday-column-cell {
+    background: #fefcff;
+  }
+
+  .day-cycle-pill {
+    display: inline-block;
+    font-size: 0.6rem;
+    font-weight: 700;
+    padding: 0.06rem 0.34rem;
+    border-radius: 9999px;
+    margin-top: 2px;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    line-height: 1.25;
+  }
+
+  .day-cycle-pill.start {
+    background: #e0f2fe;
+    color: #0369a1;
+    border: 1px solid #bae6fd;
+  }
+
+  .day-cycle-pill.end {
+    background: #fae8ff;
+    color: #a21caf;
+    border: 1px solid #f5d0fe;
+  }
+
+  .day-cycle-pill.draft-hint {
+    background: #fef3c7;
+    color: #92400e;
+    border: 1px solid #fde68a;
+    text-transform: none;
   }
 
   .grid-header-cell {
@@ -3791,9 +3914,10 @@
       background: transparent !important;
     }
 
-    /* Make grid responsive to the page */
+    /* Make 8-day grid responsive to the A4 landscape page */
     .calendar-grid {
       display: grid !important;
+      grid-template-columns: 48px repeat(8, minmax(0, 1fr)) !important;
       width: 100% !important;
       min-width: 100% !important;
       border-radius: 0 !important;

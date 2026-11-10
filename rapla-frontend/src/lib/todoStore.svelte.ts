@@ -19,20 +19,24 @@ export class TodoManager {
 
   load() {
     if (typeof window !== 'undefined') {
-      const data = localStorage.getItem('seminar_todos');
-      if (data) {
-        try {
+      try {
+        const data = localStorage.getItem('seminar_todos');
+        if (data) {
           this.todos = JSON.parse(data);
-        } catch (e) {
-          console.error('Failed to parse seminar todos', e);
         }
+      } catch (e) {
+        console.error('Failed to parse seminar todos', e);
       }
     }
   }
 
   save() {
     if (typeof window !== 'undefined') {
-      localStorage.setItem('seminar_todos', JSON.stringify(this.todos));
+      try {
+        localStorage.setItem('seminar_todos', JSON.stringify(this.todos));
+      } catch (e) {
+        console.warn('Could not persist seminar todos to localStorage', e);
+      }
     }
   }
 

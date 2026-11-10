@@ -2,6 +2,7 @@
   import { goto } from '$app/navigation';
   import { onMount } from 'svelte';
   import nataraja from '$lib/assets/nataraja.jpg';
+  import { getStoredUserRole, setStoredUserRole } from '$lib/authRole';
 
   let password = $state('');
   let error = $state('');
@@ -10,13 +11,39 @@
 
   onMount(() => {
     // If already logged in, redirect away from login
-    const storedRole = localStorage.getItem('rapla_user_role');
+    const storedRole = getStoredUserRole();
     if (storedRole === 'admin' || storedRole === 'viewer') {
-      goto('/');
+      goto('/', { replaceState: true }).catch(() => window.location.replace('/'));
     } else if (storedRole === 'team') {
-      goto('/wochenplan');
+      goto('/wochenplan', { replaceState: true }).catch(() => window.location.replace('/wochenplan'));
     }
   });
+
+  async function postAuthWithRetry(pwd: string): Promise<Response> {
+    const attempt = async () => {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), 8000);
+      try {
+        return await fetch('/api/auth', {
+          method: 'POST',
+          cache: 'no-store',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ password: pwd }),
+          signal: controller.signal
+        });
+      } finally {
+        clearTimeout(timer);
+      }
+    };
+
+    try {
+      return await attempt();
+    } catch {
+      // Retry once on a fresh socket (fixes half-open TCP/QUIC connections right after switching Wi-Fi)
+      await new Promise((r) => setTimeout(r, 350));
+      return await attempt();
+    }
+  }
 
   async function handleLogin(e: SubmitEvent) {
     e.preventDefault();
@@ -29,30 +56,32 @@
     error = '';
 
     try {
-      const response = await fetch('/api/auth', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password })
-      });
+      const response = await postAuthWithRetry(password);
+      const contentType = response.headers.get('content-type') || '';
+
+      if (!contentType.includes('application/json')) {
+        error =
+          'Dieses WLAN leitet die Anfrage um (z. B. Gäste-/Hotel-WLAN Anmeldeseite). Bitte WLAN-Zugang kurz im Browser bestätigen und erneut versuchen.';
+        return;
+      }
 
       const data = await response.json();
       if (response.ok && data.success) {
-        localStorage.setItem('rapla_user_role', data.role);
-        
-        // Broadcast role update or trigger redirect immediately
-        if (data.role === 'admin' || data.role === 'viewer') {
-          await goto('/');
-        } else {
-          await goto('/wochenplan');
+        setStoredUserRole(data.role);
+
+        const targetPath = data.role === 'admin' || data.role === 'viewer' ? '/' : '/wochenplan';
+        try {
+          await goto(targetPath, { replaceState: true });
+        } catch {
+          window.location.replace(targetPath);
         }
-        // Force reload of layout page states
-        window.location.reload();
       } else {
         error = data.error || 'Ungültiges Passwort';
       }
     } catch (err) {
       console.error('Login error:', err);
-      error = 'Verbindungsfehler zum Server';
+      error =
+        'Verbindungsfehler im aktuellen WLAN. Bitte prüfe kurz die Internetverbindung (oder eine eventuelle Gäste-WLAN-Anmeldung) und versuche es erneut.';
     } finally {
       loading = false;
     }

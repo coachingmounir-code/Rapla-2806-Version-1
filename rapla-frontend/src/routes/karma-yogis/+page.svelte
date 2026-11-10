@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
+  import { getStoredUserRole } from '$lib/authRole';
   import { db, generateTeacherId, type Teacher, type TimeSlot, type Room, getTeacherStayStatus } from '$lib/db';
 
   let teachers = $state<Teacher[]>([]);
@@ -51,7 +52,7 @@
   ];
 
   onMount(() => {
-    userRole = localStorage.getItem('rapla_user_role') || '';
+    userRole = getStoredUserRole() || '';
     loadData();
 
     const handleSync = () => {
