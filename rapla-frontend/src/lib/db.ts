@@ -15874,6 +15874,35 @@ export const db = {
                 } else {
                   clearKeyPendingSync('rapla_rooms');
                 }
+              } else if (row.key === 'rapla_seminars') {
+                const existingRaw = safeStorageGet(row.key);
+                let baseSeminars: Seminar[] = [];
+                if (pendingKeys.has(row.key) && existingRaw !== null) {
+                  baseSeminars = JSON.parse(existingRaw);
+                } else {
+                  baseSeminars = JSON.parse(row.value);
+                }
+                if (!Array.isArray(baseSeminars)) {
+                  baseSeminars = JSON.parse(JSON.stringify(DEFAULT_SEMINARS));
+                }
+                let semMutated = false;
+                for (const defSem of DEFAULT_SEMINARS) {
+                  if (!baseSeminars.some(s => s.id === defSem.id)) {
+                    baseSeminars.push(JSON.parse(JSON.stringify(defSem)));
+                    semMutated = true;
+                  }
+                }
+                const reconciledSemStr = JSON.stringify(baseSeminars);
+                if (existingRaw !== reconciledSemStr) {
+                  changed = true;
+                  safeStorageSet('rapla_seminars', reconciledSemStr);
+                }
+                inMemoryStore['rapla_seminars'] = baseSeminars;
+                if ((semMutated || (pendingKeys.has(row.key) && reconciledSemStr !== row.value)) && supabase && !isReadOnlyUserRole()) {
+                  await upsertKeyToCloud('rapla_seminars', reconciledSemStr);
+                } else {
+                  clearKeyPendingSync('rapla_seminars');
+                }
               } else {
                 const existingRaw = safeStorageGet(row.key);
                 if (pendingKeys.has(row.key) && existingRaw !== null) {
@@ -16178,6 +16207,11 @@ export const db = {
     }
     if (mutated) {
       inMemoryStore['rapla_seminars'] = stored;
+      if (typeof window !== 'undefined' && localStorage.getItem('rapla_seminars') !== null) {
+        try {
+          localStorage.setItem('rapla_seminars', JSON.stringify(stored));
+        } catch {}
+      }
     }
     return stored;
   },

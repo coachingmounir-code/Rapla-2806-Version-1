@@ -408,7 +408,20 @@
       s => isIndoorSeminarRoomSlot(s) && s.roomId && s.roomId !== seminar.roomId
     );
     semFormApplyRoomAll = focusField === 'room' ? true : !hasDeviatingSlots;
-    semFormApplyLeaderAll = true;
+    const hasDeviatingTeachers = seminar.slots.some(
+      s => s.isOrange && s.teacher && s.teacher.trim() !== (seminar.leader || '').trim()
+    );
+    semFormApplyLeaderAll = focusField === 'leader' ? true : !hasDeviatingTeachers;
+  }
+
+  function handleSelectSeminarChip(sem: Seminar) {
+    selectedSeminarId = sem.id;
+    const tType = getSeminarTransitionType(sem, currentWeekCode);
+    if (tType === 'arriving-end-fr' && onNavigateWeek) {
+      onNavigateWeek(1);
+    } else if (tType === 'departing-start-fr' && onNavigateWeek) {
+      onNavigateWeek(-1);
+    }
   }
 
   function closeSeminarEditModal() {
@@ -483,6 +496,7 @@
   let slotFormStartTime = $state<string>('08:10');
   let slotFormEndTime = $state<string>('09:00');
   let slotFormLocationHint = $state<string>('');
+  let slotFormDescription = $state<string>('');
 
   function openSlotModal(slot: SeminarSlot, seminar: Seminar) {
     selectedSlotModal = { slot, seminar };
@@ -506,6 +520,7 @@
     slotFormStartTime = slot.startTime;
     slotFormEndTime = slot.endTime;
     slotFormLocationHint = slot.locationHint || '';
+    slotFormDescription = slot.description || '';
   }
 
   function closeSlotModal() {
@@ -564,6 +579,7 @@
       startTime: slotFormStartTime || slot.startTime,
       endTime: slotFormEndTime || slot.endTime,
       locationHint: slotFormLocationHint.trim() || undefined,
+      description: slotFormDescription.trim() || slot.description,
       dateStr: slot.dateStr,
       dayOfWeek: slot.dayOfWeek,
       dayName: slot.dayName
@@ -707,7 +723,7 @@
                 class:transition-chip={transitionType !== null}
                 class:cancelled-chip={isSemHidden}
                 style="--sem-accent: {sem.color};"
-                onclick={() => selectedSeminarId = sem.id}
+                onclick={() => handleSelectSeminarChip(sem)}
                 title="{sem.title} · {sem.subtitle} · Leitung: {sem.leader}{roomShort ? ` · Raum: ${roomShort}` : ''}{isSemHidden ? ' · STORNIERT (In Team-Ansicht ausgeblendet)' : ''}"
               >
                 <span class="chip-color-dot" style="background-color: {isSemHidden ? '#94a3b8' : sem.color};"></span>
@@ -779,6 +795,24 @@
           </button>
         </div>
       </div>
+
+      {#if coreWeekSeminars.length === 0 && weekSeminars.some(s => getSeminarTransitionType(s, currentWeekCode) === 'arriving-end-fr')}
+        <div class="selected-seminar-strip" style="border-left: 4px solid #ea580c; background: #fff7ed;">
+          <div class="strip-main">
+            <span class="strip-title" style="color: #9a3412;">📅 Wochenend-Seminare ab Freitag, {formatShortDate(currentDays[7]?.dateStr || '')}</span>
+            <span class="strip-meta">In dieser Woche (KW {weekNumber}) ist rechts der Anreise-Freitag ({formatShortDate(currentDays[7]?.dateStr || '')}) sichtbar. Für das komplette Wochenende (Fr–So) zur Folgewoche wechseln:</span>
+          </div>
+          <div class="strip-actions">
+            <button
+              type="button"
+              class="btn btn-current-week btn-small"
+              onclick={() => onNavigateWeek?.(1)}
+            >
+              ▶ Komplettes Wochenende (Fr–So) anzeigen
+            </button>
+          </div>
+        </div>
+      {/if}
 
       {#if activeSeminar}
         {@const isActiveSemHidden = !isSeminarVisibleInTeam(activeSeminar)}
@@ -1005,7 +1039,7 @@
           class:active={selectedSeminarId === sem.id}
           class:cancelled-chip={isSemHidden}
           style="--sem-accent: {sem.color};"
-          onclick={() => selectedSeminarId = sem.id}
+          onclick={() => handleSelectSeminarChip(sem)}
         >
           <span class="chip-color-dot" style="background-color: {isSemHidden ? '#94a3b8' : sem.color};"></span>
           <span class:strikethrough-title={isSemHidden}>{sem.shortTitle}</span>
@@ -1461,6 +1495,16 @@
                     <label for="slot-end-input">Bis:</label>
                     <input id="slot-end-input" type="time" class="admin-input" bind:value={slotFormEndTime} />
                   </div>
+                </div>
+              </div>
+              <div class="slot-extra-fields" style="margin-top: 0.5rem;">
+                <div class="edit-field-group">
+                  <label for="slot-hint-input">Orts- / Raumhinweis (optional):</label>
+                  <input id="slot-hint-input" type="text" class="admin-input" placeholder="z. B. Radhakrishna-Raum / Laut Aushang..." bind:value={slotFormLocationHint} />
+                </div>
+                <div class="edit-field-group">
+                  <label for="slot-desc-input">Beschreibung / Notiz:</label>
+                  <input id="slot-desc-input" type="text" class="admin-input" placeholder="Beschreibung zum Slot..." bind:value={slotFormDescription} />
                 </div>
               </div>
             {:else}

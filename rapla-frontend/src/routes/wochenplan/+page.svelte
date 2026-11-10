@@ -181,31 +181,37 @@
     const base = [...teachers];
     for (const sem of registeredSeminars) {
       if (sem.isCancelled || sem.isHiddenFromTeam) continue;
-      if (!sem.leader || sem.leader === 'Offen') continue;
-      const leaders = sem.leader.split(/[,+/&]+|\bund\b/i).map((s: string) => s.trim()).filter((s: string) => s && s !== 'Offen');
-      for (const leaderName of leaders) {
-        const alreadyExists = base.some(t => doesSeminarPersonMatchTeacher(leaderName, t.name, t.id));
-        if (!alreadyExists) {
-          const slug = leaderName
-            .toLowerCase()
-            .replace(/[ä]/g, 'ae')
-            .replace(/[ö]/g, 'oe')
-            .replace(/[ü]/g, 'ue')
-            .replace(/[ß]/g, 'ss')
-            .replace(/[^a-z0-9]+/g, '-')
-            .replace(/^-|-$/g, '');
-          base.push({
-            id: `teacher-sem-${slug}`,
-            name: leaderName,
-            email: '',
-            phone: '',
-            avatarColor: sem.color || '#ea580c',
-            specialties: ['Seminar'],
-            isYogaTeacher: true,
-            availabilityMode: 'seminar_only',
-            roleType: 'external',
-            rules: { preferredRooms: [], availability: [] }
-          });
+      const rawPersons = [
+        sem.leader,
+        ...sem.slots.filter(sl => sl.isOrange && sl.teacher).map(sl => sl.teacher!)
+      ].filter(Boolean);
+      for (const rawPerson of rawPersons) {
+        if (!rawPerson || rawPerson === 'Offen') continue;
+        const leaders = rawPerson.split(/[,+/&]+|\bund\b/i).map((s: string) => s.trim()).filter((s: string) => s && s !== 'Offen' && s.toLowerCase() !== 'team' && !s.toLowerCase().includes('yoga vidya'));
+        for (const leaderName of leaders) {
+          const alreadyExists = base.some(t => doesSeminarPersonMatchTeacher(leaderName, t.name, t.id));
+          if (!alreadyExists) {
+            const slug = leaderName
+              .toLowerCase()
+              .replace(/[ä]/g, 'ae')
+              .replace(/[ö]/g, 'oe')
+              .replace(/[ü]/g, 'ue')
+              .replace(/[ß]/g, 'ss')
+              .replace(/[^a-z0-9]+/g, '-')
+              .replace(/^-|-$/g, '');
+            base.push({
+              id: `teacher-sem-${slug}`,
+              name: leaderName,
+              email: '',
+              phone: '',
+              avatarColor: sem.color || '#ea580c',
+              specialties: ['Seminar'],
+              isYogaTeacher: true,
+              availabilityMode: 'seminar_only',
+              roleType: 'external',
+              rules: { preferredRooms: [], availability: [] }
+            });
+          }
         }
       }
     }

@@ -239,7 +239,13 @@
     { title: "Tag der offenen Tür - Haus Yoga Vidya Nordsee", date: "24.10.26", isWE: true, location: "Nordsee", maxTN: 20, currentTN: 4, leader: "Karuna M. Wapke" },
     { title: "Hatha Yoga Prävention Ferienwoche", date: "25.-30.10.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 2, leader: "Pranava Heinz Pauly" },
     { title: "Yin Yoga meets Vipassana", date: "25.-30.10.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 3, leader: "Christian Bliedtner" },
-    { title: "Yoga und Meditation Einführung", date: "30.10.-1.11.26", isWE: true, location: "Nordsee", maxTN: 10, currentTN: 2, leader: "" },
+    { title: "Yoga und Meditation Einführung", date: "30.10.-1.11.26", isWE: true, location: "Nordsee", maxTN: 10, currentTN: 2, leader: "Gopala Kirill Serov" },
+    { title: "Yoga Ferienwoche", date: "1.-6.11.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 6, leader: "Narayani Kedenburg" },
+    { title: "Ayurveda Wohlfühl-Retreat", date: "1.-6.11.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 5, leader: "Dr. phil. Marlene Vogel" },
+    { title: "Ganzheitliche Faceyoga Ausbildung", date: "1.-6.11.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 4, leader: "Charry Devi Ruiz" },
+    { title: "WE 4 – Yoga Anatomie (2J-YLA, 1. Jahr)", date: "13.-15.11.26", isWE: true, location: "Nordsee", maxTN: 15, currentTN: 8, leader: "" },
+    { title: "Räkelyoga (Wochenend-Seminar)", date: "13.-15.11.26", isWE: true, location: "Nordsee", maxTN: 10, currentTN: 6, leader: "Erkan Batmaz" },
+    { title: "Yoga Ferienwoche", date: "15.-20.11.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 6, leader: "Erkan Batmaz" },
   ];
 
   const today = new Date();

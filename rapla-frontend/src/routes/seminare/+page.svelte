@@ -3,7 +3,8 @@
   import { goto } from '$app/navigation';
   import { getStoredUserRole } from '$lib/authRole';
   import SeminarScheduleView from '$lib/components/SeminarScheduleView.svelte';
-  import { getWeekCodeFromDate, getOffsetWeekCode } from '$lib/db';
+  import { db, getWeekCodeFromDate, getOffsetWeekCode } from '$lib/db';
+  import { getSeminarsForWeek, getSeminarTransitionType } from '$lib/seminarData';
 
   function getCurrentRaplaWeekCode(): string {
     const today = new Date();
@@ -20,7 +21,19 @@
     return getWeekCodeFromDate(monday);
   }
 
-  let currentWeekCode = $state(getCurrentRaplaWeekCode());
+  function getInitialSeminarWeekCode(): string {
+    const baseCode = getCurrentRaplaWeekCode();
+    const allSeminars = db.getSeminars();
+    const currentWeekSems = getSeminarsForWeek(baseCode, allSeminars, { includeHidden: true });
+    const coreCount = currentWeekSems.filter(s => getSeminarTransitionType(s, baseCode) === null).length;
+    const hasArrivingNextWeekend = currentWeekSems.some(s => getSeminarTransitionType(s, baseCode) === 'arriving-end-fr');
+    if (coreCount === 0 && hasArrivingNextWeekend) {
+      return getOffsetWeekCode(baseCode, 1) || baseCode;
+    }
+    return baseCode;
+  }
+
+  let currentWeekCode = $state(getInitialSeminarWeekCode());
 
   onMount(() => {
     // If role is team, seamlessly redirect to /wochenplan?tab=seminare so they remain in the pure team view
