@@ -1,6 +1,5 @@
 <script lang="ts">
 	import '../global.css';
-	import favicon from '$lib/assets/favicon.svg';
 	import nataraja from '$lib/assets/nataraja.jpg';
 	import { onMount } from 'svelte';
 	import { todoManager } from '$lib/todoStore.svelte';
@@ -196,7 +195,8 @@
 </script>
 
 <svelte:head>
-	<link rel="icon" href={favicon} />
+	<link rel="icon" href="https://www.yoga-vidya.de/typo3conf/ext/of_customisation/Resources/Public/Icons/favicon_icon.ico" />
+	<link rel="shortcut icon" href="/favicon.ico" />
 	<link rel="apple-touch-icon" href="/sivananda.png" />
 	<title>Yoga Vidya Rapla 2.0</title>
 </svelte:head>
