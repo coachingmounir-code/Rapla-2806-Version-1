@@ -94,9 +94,21 @@
     }).sort((a, b) => a.name.localeCompare(b.name))
   );
 
+  function toLocalIsoDate(d: Date): string {
+    const yyyy = d.getFullYear();
+    const mm = (d.getMonth() + 1).toString().padStart(2, '0');
+    const dd = d.getDate().toString().padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}`;
+  }
+
+  function parseLocalIsoDate(isoDate: string): Date {
+    const [y, m, d] = isoDate.split('-').map(Number);
+    return new Date(y, (m || 1) - 1, d || 1);
+  }
+
   let daysInMonth = $derived(new Date(currentYear, currentMonth + 1, 0).getDate());
   let daysArray = $derived(Array.from({ length: daysInMonth }, (_, i) => i + 1));
-  let todayStr = $derived(new Date().toISOString().split('T')[0]);
+  let todayStr = $derived(toLocalIsoDate(new Date()));
 
   function getWeekdayLabel(day: number): string {
     const d = new Date(currentYear, currentMonth, day);
@@ -116,10 +128,50 @@
     return matches.find(m => m.type !== 'Frei') || matches[0];
   }
 
+  // Canonical regular Seva-frei weekdays (0 = Sunday, 1 = Monday, ..., 6 = Saturday)
+  // Note: We do NOT derive this blindly from teacher.rules.availability because some Sevakas
+  // (e.g. burnie/Narayani on Fridays, Satyam on all days) have Wochenplan teaching restrictions
+  // on days where they are NOT Seva-frei in the Ashram!
+  function getCanonicalSevafreiDays(teacher: Teacher): number[] {
+    const id = (teacher.id || '').toLowerCase();
+    const name = (teacher.name || '').toLowerCase().trim();
+    if (id === 'teacher-gen-karuna-wapke' || name.includes('karuna')) return [1]; // Mo
+    if (id === 'teacher-gen-pranava-pauly' || name.includes('pranava')) return [2, 3]; // Di, Mi
+    if (id === 'teacher-gen-anjali-gelzleichter' || name.includes('anjali')) return [3]; // Mi
+    if (id === 'teacher-gen-burnie-bansemer' || name.includes('burnie')) return [2, 6]; // Di, Sa
+    if (id === 'teacher-gen-nirmaya-fodor' || name.includes('nirmaya')) return [2, 3]; // Di, Mi
+    if (id === 'teacher-gen-alexander-melior' || name === 'alexander') return [0, 1]; // So, Mo
+    if (id === 'teacher-gen-abha-morkoetter' || name.includes('abha')) return [3, 5]; // Mi, Fr (ab Nov 2026)
+    if (id === 'teacher-gen-hu-buerkle' || name === 'hu') return [2]; // Di
+    if (id === 'teacher-gen-narayani-kedenburg' || name.includes('narayani')) return [6]; // Sa
+    if (id === 'teacher-gen-mouniir-jaber' || name.includes('mounir') || name.includes('mouniir')) return [1]; // Mo
+    if (id === 'teacher-gen-satyam' || name === 'satyam') return [1]; // Mo
+    if (id === 'teacher-gen-teresa-allgaeu' || name.includes('teresa')) return [4]; // Do
+    if (id === 'teacher-gen-chandrashekara' || name.includes('chandrashekara')) return [1]; // Mo
+    if (id === 'teacher-gen-christopher' || name.includes('christopher')) return [3]; // Mi
+    if (id === 'teacher-guest-1791278735445' || name.includes('suryani')) return [1]; // Mo
+    if (id === 'teacher-gen-jyoti-rudolphi' || name.startsWith('jyoti')) return [5, 6]; // Fr, Sa
+    return getGeneralFreeDays(teacher);
+  }
+
+  function isPausedFromTeam(teacher: Teacher): boolean {
+    const id = (teacher.id || '').toLowerCase();
+    const name = (teacher.name || '').toLowerCase().trim();
+    return id === 'teacher-gen-teresa-allgaeu' || name.includes('teresa');
+  }
+
   function isRegularFreeDay(teacher: Teacher, day: number): boolean {
     const d = new Date(currentYear, currentMonth, day);
-    const adjustedWeekday = d.getDay() === 0 ? 6 : d.getDay() - 1;
-    return getGeneralFreeDays(teacher).includes(adjustedWeekday);
+    return getCanonicalSevafreiDays(teacher).includes(d.getDay());
+  }
+
+  function isRegularFreeDayByDateStr(teacher: Teacher, dateStr: string): boolean {
+    const d = parseLocalIsoDate(dateStr);
+    // Before Nov 2026, Abha had Wed + Sun instead of Wed + Fri; Excel entries already cover 2026
+    if ((teacher.id === 'teacher-gen-abha-morkoetter' || teacher.name.toLowerCase().includes('abha')) && dateStr < '2026-11-02') {
+      return [0, 3].includes(d.getDay());
+    }
+    return getCanonicalSevafreiDays(teacher).includes(d.getDay());
   }
 
   function getAbsenceAbbreviation(type: string): string {
@@ -149,7 +201,7 @@
   }
 
   function getAbsenceCountForDate(dateStr: string): number {
-    const d = new Date(dateStr);
+    const d = parseLocalIsoDate(dateStr);
     const dayNum = d.getDate();
     return filteredSevakas.filter(sev => {
       if (getAbsenceForDate(sev.id, dateStr)) return true;
@@ -173,9 +225,8 @@
     const days: { dateStr: string; label: string; weekday: string }[] = [];
     const today = new Date();
     for (let i = 0; i < 7; i++) {
-      const d = new Date(today);
-      d.setDate(today.getDate() + i);
-      const dateStr = d.toISOString().split('T')[0];
+      const d = new Date(today.getFullYear(), today.getMonth(), today.getDate() + i);
+      const dateStr = toLocalIsoDate(d);
       
       let label = '';
       if (i === 0) label = 'Heute';
@@ -194,43 +245,66 @@
 
   interface AvailabilityStatus {
     teacher: Teacher;
-    status: 'available' | 'absent' | 'free';
+    status: 'available' | 'absent' | 'free' | 'paused';
+    badgeLabel?: string;
     reason?: string;
   }
 
-  function getAvailabilityForDate(dateStr: string, weekdayLabel: string): AvailabilityStatus[] {
-    const weekdayIndex = getAdjustedWeekdayIndex(dateStr);
-    
-    return sevakas.map(s => {
-      const abs = sevafreiList.find(e => e.teacherId === s.id && dateStr >= e.startDate && dateStr <= e.endDate);
-      if (abs) {
-        return {
-          teacher: s,
-          status: 'absent',
-          reason: `${abs.type}${abs.note ? ' (' + abs.note + ')' : ''}`
-        };
-      }
-      
-      const isRegFree = getGeneralFreeDays(s).includes(weekdayIndex);
-      if (isRegFree) {
-        return {
-          teacher: s,
-          status: 'free',
-          reason: 'Regulärer freier Tag'
-        };
-      }
-      
-      return {
-        teacher: s,
-        status: 'available'
-      };
-    });
+  function formatShortAbsenceBadge(abs: SevafreiEntry): string {
+    const noteLower = (abs.note || '').toLowerCase();
+    if (abs.type === 'Frei') return 'Frei';
+    if (abs.type === 'Urlaub') return 'Sevafrei';
+    if (abs.type === 'Seminartage') return 'Seminartage';
+    if (abs.type === 'Seminarleitung') return 'Seminarleitung';
+    if (abs.type === 'Krank') return 'Krank';
+    if (abs.type === 'Freizeitausgleich') return 'Ausgleich';
+    if (abs.type === 'Fortbildung') return 'Fortbildung';
+    if (noteLower.includes('unbezahlt')) return 'Unbezahlt';
+    if (noteLower.includes('sonder')) return 'Sonder-Sevafrei';
+    return abs.note || abs.type;
   }
 
-  function getAdjustedWeekdayIndex(dateStr: string): number {
-    const d = new Date(dateStr);
-    const day = d.getDay(); // 0 = Sun, 1 = Mon ...
-    return day === 0 ? 6 : day - 1;
+  function getAvailabilityForDate(dateStr: string, _weekdayLabel: string): AvailabilityStatus[] {
+    return activeSevakaPool
+      .slice()
+      .sort((a, b) => a.name.localeCompare(b.name))
+      .map(s => {
+        // Use the exact same lookup as the Timeline (prefers non-'Frei' over 'Frei')
+        const abs = getAbsenceForDate(s.id, dateStr);
+        if (abs) {
+          return {
+            teacher: s,
+            status: abs.type === 'Frei' ? 'free' : 'absent',
+            badgeLabel: formatShortAbsenceBadge(abs),
+            reason: `${abs.type}${abs.note ? ' (' + abs.note + ')' : ''}`
+          };
+        }
+
+        if (isPausedFromTeam(s)) {
+          return {
+            teacher: s,
+            status: 'paused',
+            badgeLabel: 'Pausiert',
+            reason: 'Bis auf weiteres komplett herausgenommen'
+          };
+        }
+
+        // Only apply fallback regular weekday check outside 2026 (within 2026, all [f] days are already in EXCEL_ABSENCES,
+        // so removed [f] days in Excel are respected 1:1!)
+        if (!dateStr.startsWith('2026-') && isRegularFreeDayByDateStr(s, dateStr)) {
+          return {
+            teacher: s,
+            status: 'free',
+            badgeLabel: 'Frei',
+            reason: 'Regulärer freier Tag'
+          };
+        }
+
+        return {
+          teacher: s,
+          status: 'available'
+        };
+      });
   }
 
   const EXTENDED_EXCEL_IDS: { id: string; displayName: string }[] = [
@@ -402,7 +476,7 @@
 
 
   function formatDateString(isoString: string): string {
-    const d = new Date(isoString);
+    const d = parseLocalIsoDate(isoString);
     return d.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' });
   }
 
@@ -488,10 +562,7 @@
 
 
   let activeTodayCount = $derived(
-    sevakas.filter(s => {
-      const todayIso = new Date().toISOString().split('T')[0];
-      return Boolean(getAbsenceForDate(s.id, todayIso));
-    }).length
+    getAvailabilityForDate(todayStr, '').filter(s => s.status !== 'available').length
   );
 </script>
 
@@ -695,7 +766,7 @@
                   <span class="name-badge unavailable-badge" title={entry.reason}>
                     {entry.teacher.name}
                     <span class="reason-tag">
-                      {entry.status === 'free' ? '❌ Frei' : `❌ ${entry.reason?.split(' ')[0]}`}
+                      {entry.status === 'paused' ? `⏸️ ${entry.badgeLabel}` : `❌ ${entry.badgeLabel || 'Frei'}`}
                     </span>
                   </span>
                 {/each}
