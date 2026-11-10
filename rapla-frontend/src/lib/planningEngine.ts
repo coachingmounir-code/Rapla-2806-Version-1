@@ -1,4 +1,4 @@
-import { db, type Teacher, type Course, type Room, type TimeSlot } from './db';
+import { db, doesAbsenceMatchTeacher, type Teacher, type Course, type Room, type TimeSlot } from './db';
 import { EXCEL_ABSENCES } from './excel_absences';
 import wochenplanRules from './data/wochenplan_rules.json' with { type: 'json' };
 import { getYlaConflictForTeacher, isDateInYlaRange } from './ylaData';
@@ -67,6 +67,20 @@ export function getDayName(day: number): string {
   return dayNames[day] || '';
 }
 
+function findRuleTeacherKey(rawName: string): string | undefined {
+  const nameLower = (rawName || '').toLowerCase().trim();
+  if (!nameLower) return undefined;
+  if (nameLower.includes('meinberg') || nameLower.includes('alex karma') || nameLower.includes('marlene externe')) {
+    return undefined;
+  }
+  return Object.keys(wochenplanRules.teachers).find(k => {
+    if (k === 'hu') return nameLower === 'hu' || nameLower === 'hu bürkle' || nameLower === 'hu buerkle' || nameLower === 'teacher-gen-hu-buerkle';
+    if (k === 'mounir' || k === 'mouniir') return nameLower === 'mounir' || nameLower === 'mouniir' || nameLower.includes('mouniir-jaber');
+    const firstToken = nameLower.split(/[\s,#]+/)[0];
+    return nameLower === k || firstToken === k || (nameLower.startsWith('teacher-gen-') && nameLower.includes(`-${k}`));
+  });
+}
+
 export function getAbsenceDetails(teacherName: string, dayOfWeek: number, targetWeekCode?: string, absences?: any[]): any | null {
   if (!targetWeekCode) return null;
   const courseDate = getLocalDateForDay(targetWeekCode, dayOfWeek);
@@ -76,21 +90,14 @@ export function getAbsenceDetails(teacherName: string, dayOfWeek: number, target
   if (allAbsencesToCheck.length > 0) {
     const entry = allAbsencesToCheck.find((entry: any) => {
       if (!entry) return false;
-      const rawName = entry.teacherName || entry.excelName || '';
-      const entryName = rawName.toLowerCase().trim();
-      const tNameLower = teacherName.toLowerCase().trim();
-      const isMatch = (entry.teacherId && entry.teacherId.toLowerCase() === tNameLower) ||
-                      entryName.includes(tNameLower) || 
-                      tNameLower.includes(entryName.split(' ')[0]);
-      return isMatch && courseDate >= entry.startDate && courseDate <= entry.endDate;
+      return doesAbsenceMatchTeacher(entry, teacherName) && courseDate >= entry.startDate && courseDate <= entry.endDate;
     });
     if (entry) return entry;
   }
 
   // Regular free days (Seva-frei) from rules
   if (teacherName) {
-    const nameLower = teacherName.toLowerCase().trim();
-    const teacherKey = Object.keys(wochenplanRules.teachers).find(k => nameLower.includes(k) || k.includes(nameLower));
+    const teacherKey = findRuleTeacherKey(teacherName);
     const tRules = teacherKey ? (wochenplanRules.teachers as any)[teacherKey] : null;
     if (tRules && tRules.freeDays && tRules.freeDays.includes(dayOfWeek)) {
       return {
@@ -122,8 +129,7 @@ export function isTeacherAbsent(teacherName: string, dayOfWeek: number, targetWe
   if (teacherName.includes(',')) {
     return teacherName.split(',').some(part => isTeacherAbsent(part.trim(), dayOfWeek, targetWeekCode, absences));
   }
-  const nameLower = teacherName.toLowerCase().trim();
-  const teacherKey = Object.keys(wochenplanRules.teachers).find(k => nameLower.includes(k) || k.includes(nameLower));
+  const teacherKey = findRuleTeacherKey(teacherName);
   const tRules = teacherKey ? (wochenplanRules.teachers as any)[teacherKey] : null;
   if (tRules && tRules.freeDays && tRules.freeDays.includes(dayOfWeek)) {
     return true;
@@ -314,7 +320,7 @@ export function validateAssignment(
   const counts = getWeeklyCounts();
 
   // Look up teacher rules dynamically from wochenplanRules.teachers
-  const teacherKey = Object.keys(wochenplanRules.teachers).find(k => teacherNameLower.includes(k) || k.includes(teacherNameLower));
+  const teacherKey = findRuleTeacherKey(teacher.name);
   const tRules = teacherKey ? (wochenplanRules.teachers as any)[teacherKey] : null;
 
   // 1. Check availability / Free days (Hard)
@@ -592,7 +598,7 @@ export function validateAssignment(
     const primaryName = (wochenplanRules.meditation.dailyPrimary as any)[course.dayOfWeek];
     if (primaryName) {
       const isPrimaryAbsent = isTeacherAbsent(primaryName, course.dayOfWeek, targetWeekCode, absences);
-      const primaryTeacher = teachers?.find(t => t.name.toLowerCase().includes(primaryName));
+      const primaryTeacher = teachers?.find(t => findRuleTeacherKey(t.name) === primaryName || t.name.toLowerCase().trim() === primaryName);
       let isPrimaryAvailable = !isPrimaryAbsent;
       if (primaryTeacher && isPrimaryAvailable) {
         const cStart = timeToMinutes(course.startTime);
@@ -600,8 +606,27 @@ export function validateAssignment(
         const dSlots = primaryTeacher.rules.availability.filter(s => s.day === course.dayOfWeek);
         const fits = dSlots.some(s => cStart >= timeToMinutes(s.start) && cEnd <= timeToMinutes(s.end));
         if (!fits) isPrimaryAvailable = false;
+
+        // Prevent deadlock if primary already has a parallel slot or reached maxMeditationPerWeek
+        if (isPrimaryAvailable) {
+          const primaryOtherCourses = allCourses.filter(c => c.teacherId === primaryTeacher.id && c.id !== course.id);
+          const hasParallel = primaryOtherCourses.some(c => c.dayOfWeek === course.dayOfWeek && isOverlapping(c.startTime, c.endTime, course.startTime, course.endTime));
+          if (hasParallel) isPrimaryAvailable = false;
+          const pRulesKey = findRuleTeacherKey(primaryTeacher.name);
+          const pRules = pRulesKey ? (wochenplanRules.teachers as any)[pRulesKey] : null;
+          const maxMed = pRules?.maxMeditationPerWeek ?? primaryTeacher.rules.maxMeditationPerWeek;
+          if (maxMed !== undefined && maxMed !== null) {
+            const currentMedCount = primaryOtherCourses.filter(c => {
+              const cn = c.name.toLowerCase();
+              const cs = c.style.toLowerCase();
+              const onn = cn.includes('om namo') || cn.includes('narayanaya');
+              return (cn.includes('meditation') || cn.includes('medi.') || (cs.includes('meditation') && !onn)) && !cn.includes('satsang') && !onn;
+            }).length;
+            if (currentMedCount >= maxMed) isPrimaryAvailable = false;
+          }
+        }
       }
-      if (isPrimaryAvailable && !teacherNameLower.includes(primaryName)) {
+      if (isPrimaryAvailable && findRuleTeacherKey(teacher.name) !== primaryName && teacherNameLower !== primaryName) {
         conflicts.push({
           type: 'hard',
           message: `Die geführte Meditation am ${getDayName(course.dayOfWeek)} darf nur von ${primaryName.toUpperCase()} geleitet werden (es sei denn, ${primaryName.toUpperCase()} ist laut sevafrei-Kalender/Regeln abwesend).`
@@ -632,8 +657,28 @@ export function validateAssignment(
         const hasBackupYla = targetWeekCode ? !!getYlaConflictForTeacher(backupName, course.dayOfWeek, course.startTime, course.endTime, targetWeekCode, course.name) : false;
         const isBackupAbsent = isTeacherAbsent(backupName, course.dayOfWeek, targetWeekCode, absences) || hasBackupYla;
         if (!isBackupAbsent) {
-          assignedBackup = backupName;
-          break;
+          const backupTeacher = teachers?.find(t => findRuleTeacherKey(t.name) === backupName || t.name.toLowerCase().includes(backupName));
+          let canBackupTakeSlot = true;
+          if (backupTeacher) {
+            const bOther = allCourses.filter(c => c.teacherId === backupTeacher.id && c.id !== course.id);
+            const hasParallel = bOther.some(c => c.dayOfWeek === course.dayOfWeek && isOverlapping(c.startTime, c.endTime, course.startTime, course.endTime));
+            const bKey = findRuleTeacherKey(backupTeacher.name);
+            const bRules = bKey ? (wochenplanRules.teachers as any)[bKey] : null;
+            const bYogaCourses = bOther.filter(c => {
+              const cn = c.name.toLowerCase();
+              const cs = c.style.toLowerCase();
+              return !cn.includes('meditation') && !cn.includes('satsang') && !cn.includes('om namo') && !cn.includes('narayanaya') && !cs.includes('entspannung') && !cn.includes('spaziergang') && !cs.includes('sonstiges') && !cn.includes('hausführung') && !cn.includes('pranayama');
+            });
+            const hasSameDayYoga = bYogaCourses.some(c => c.dayOfWeek === course.dayOfWeek);
+            const maxYoga = bRules?.maxYogaClassesPerWeek ?? backupTeacher.rules.maxYogaClassesPerWeek;
+            if (hasParallel || hasSameDayYoga || (maxYoga && bYogaCourses.length >= maxYoga)) {
+              canBackupTakeSlot = false;
+            }
+          }
+          if (canBackupTakeSlot) {
+            assignedBackup = backupName;
+            break;
+          }
         }
       }
       if (assignedBackup && !teacherNameLower.includes(assignedBackup)) {
@@ -1114,6 +1159,30 @@ export function runAiPlanning(
         c.name = 'Mittelstufe';
       }
     }
+  });
+
+  // Order coursesToPlan so fixed-primary / high-constraint slots and Rapla week order (Fr -> Do) are planned first
+  const raplaDayOrder: Record<number, number> = { 5: 0, 6: 1, 0: 2, 1: 3, 2: 4, 3: 5, 4: 6 };
+  const getCoursePlanPriority = (c: Course): number => {
+    const cn = c.name.toLowerCase();
+    if (c.isFixedAgreement) return 0;
+    if ((c.dayOfWeek === 5 || c.dayOfWeek === 0) && c.startTime === '16:30' && cn.includes('mittelstufe')) return 1;
+    if ((c.dayOfWeek === 6 && c.startTime === '09:15' && cn.includes('mittelstufe')) || (c.dayOfWeek === 2 && c.startTime === '09:15' && cn.includes('anfänger'))) return 1;
+    if (c.dayOfWeek === 5 && c.startTime === '09:15' && cn.includes('anfänger')) return 1;
+    if (cn.includes('meditation') && c.startTime === '07:00' && (wochenplanRules.meditation.dailyPrimary as any)[c.dayOfWeek]) return 2;
+    if (cn.includes('hausführung') || cn.includes('hausfuehrung')) return 2;
+    if (cn.includes('pranayama')) return 2;
+    if (cn.includes('satsang')) return 3;
+    return 4;
+  };
+  coursesToPlan.sort((a, b) => {
+    const pa = getCoursePlanPriority(a);
+    const pb = getCoursePlanPriority(b);
+    if (pa !== pb) return pa - pb;
+    const da = raplaDayOrder[a.dayOfWeek] ?? a.dayOfWeek;
+    const dbDay = raplaDayOrder[b.dayOfWeek] ?? b.dayOfWeek;
+    if (da !== dbDay) return da - dbDay;
+    return a.startTime.localeCompare(b.startTime);
   });
 
   // Plan course by course

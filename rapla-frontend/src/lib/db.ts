@@ -117,6 +117,72 @@ export function isTeacherInHouseOnDate(teacher: Teacher, dateStr: string): boole
   return true;
 }
 
+export function doesAbsenceMatchTeacher(entry: any, teacherIdOrName: string): boolean {
+  if (!entry || !teacherIdOrName) return false;
+  const query = teacherIdOrName.toLowerCase().trim();
+  if (!query) return false;
+
+  const entryTid = (entry.teacherId || '').toLowerCase().trim();
+  const entryName = (entry.teacherName || entry.excelName || '').toLowerCase().trim();
+
+  // 1. Direct teacherId match when query is a teacher ID
+  if (query.startsWith('teacher-')) {
+    if (entryTid) {
+      return entryTid === query;
+    }
+    if (query === 'teacher-gen-satyam-bm' || query === 'teacher-guest-1790942126763') return false;
+    if (query === 'teacher-karma-krishnajyoti') return entryName === 'krishnajyoti';
+    if (query === 'teacher-custom-alex-karma-yogi') return entryName.includes('karma');
+    if (query === 'teacher-custom-marlene-externe-seminarleiterin') return entryName.includes('externe');
+    if (entryName === 'hu') return query === 'teacher-gen-hu-buerkle';
+    if (entryName === 'satyam') return query === 'teacher-gen-satyam';
+    if (entryName === 'jyoti') return query === 'teacher-gen-jyoti-rudolphi';
+    if (entryName === 'maitri' || entryName.startsWith('martina')) return query === 'teacher-gen-martina-schloms';
+    if (entryName === 'marlen') return query === 'teacher-karma-marlene';
+    if (entryName === 'suryani') return query === 'teacher-guest-1791278735445' || query.includes('suryani');
+    if (entryName === 'mounir' || entryName === 'mouniir') return query === 'teacher-gen-mouniir-jaber' || query.includes('mounir') || query.includes('mouniir');
+    const slug = query.replace(/^teacher-(gen|karma|guest|custom)-/, '').split('-')[0];
+    return Boolean(slug && slug.length > 2 && (entryName === slug || entryName.split(/\s+/)[0] === slug));
+  }
+
+  // 2. Name-based match: prevent collisions between distinct teachers with overlapping substrings
+  if (query.includes('meinberg')) {
+    return entryName.includes('meinberg') || entryTid === 'teacher-gen-satyam-bm' || entryTid === 'teacher-guest-1790942126763';
+  }
+  if (query === 'krishnajyoti' || query.includes('krishnajyoti')) {
+    return entryName.includes('krishnajyoti') || entryTid === 'teacher-karma-krishnajyoti';
+  }
+  if (query.includes('alex karma')) {
+    return entryName.includes('alex karma') || entryTid === 'teacher-custom-alex-karma-yogi';
+  }
+  if (query.includes('marlene externe')) {
+    return entryName.includes('marlene externe') || entryTid === 'teacher-custom-marlene-externe-seminarleiterin';
+  }
+  if (query.includes('melanie') && query.includes('jyoti')) {
+    return entryTid === 'teacher-custom-melanie-jyoti';
+  }
+
+  if (entryTid && entryTid === query) return true;
+  if (!entryName) return false;
+
+  if (entryName === query) return true;
+  if ((query === 'mounir' || query === 'mouniir') && (entryName === 'mounir' || entryName === 'mouniir')) return true;
+  if ((query === 'karuna' || query === 'karuna mayi') && (entryName === 'karuna' || entryName === 'karuna mayi' || entryName.startsWith('karuna '))) return true;
+  if (query.startsWith('martina schloms') && (entryName === 'maitri' || entryName.startsWith('martina'))) return true;
+  if (query.startsWith('jyoti rudolphi') && (entryName === 'jyoti' || entryName.startsWith('jyoti'))) return true;
+  if (query.startsWith('melanie vagt') && (entryName === 'melanie' || entryName.startsWith('melanie vagt'))) return true;
+  if (query.startsWith('shantara nickler') && (entryName === 'shantara' || entryName.startsWith('shantara'))) return true;
+
+  // Short name "hu" must only match exact token "hu", never substrings like "sukhu"
+  if (entryName === 'hu' || query === 'hu') {
+    return entryName === 'hu' && (query === 'hu' || query === 'hu bürkle' || query === 'hu buerkle');
+  }
+
+  const queryFirst = query.split(/[\s,#]+/)[0];
+  const entryFirst = entryName.split(/[\s,#]+/)[0];
+  return queryFirst.length >= 3 && queryFirst === entryFirst;
+}
+
 export function isTeacherAbsentOnDate(teacherIdOrName: string, dateStr: string): boolean {
   if (!teacherIdOrName || !dateStr) return false;
   const idOrNameLower = teacherIdOrName.toLowerCase().trim();
@@ -128,11 +194,7 @@ export function isTeacherAbsentOnDate(teacherIdOrName: string, dateStr: string):
   const allAbsences = [...(typeof window !== 'undefined' ? db.getSevafrei() : []), ...EXCEL_ABSENCES];
   return allAbsences.some((entry: any) => {
     if (!entry) return false;
-    const rawName = entry.teacherName || entry.excelName || '';
-    const entryName = rawName.toLowerCase().trim();
-    if (!entryName) return false;
-    const isMatch = idOrNameLower.includes(entryName) || entryName.includes(idOrNameLower.replace('teacher-gen-', '').split('-')[0]);
-    return isMatch && dateStr >= entry.startDate && dateStr <= entry.endDate;
+    return doesAbsenceMatchTeacher(entry, teacherIdOrName) && dateStr >= entry.startDate && dateStr <= entry.endDate;
   });
 }
 
@@ -15622,7 +15684,7 @@ export function reconcilePlansWithDefaults(plans: WeekPlan[]): { plans: WeekPlan
   return { plans: list, hasChanges: beforeJson !== afterJson };
 }
 
-const CURRENT_DB_VERSION = 156;
+const CURRENT_DB_VERSION = 157;
 
 // Database Actions
 export const db = {
@@ -15856,81 +15918,28 @@ export const db = {
     return await cloudSyncPromise;
   },
   getSevafrei: (): any[] => {
-    const list = [...getStored<any[]>('rapla_sevafrei', [])];
-    let changed = false;
-
-    const ensureEntries = [
-      {
-        id: 'sf-christopher-2026-10-31-2026-11-01',
-        teacherId: 'teacher-gen-christopher',
-        teacherName: 'Christopher',
-        avatarColor: 'from-amber-400 to-orange-500',
-        startDate: '2026-10-31',
-        endDate: '2026-11-01',
-        type: 'Urlaub',
-        status: 'Genehmigt',
-        note: 'Sevafrei'
-      },
-      {
-        id: 'sf-alexander-2026-10-28-2026-10-30',
-        teacherId: 'teacher-gen-alexander-melior',
-        teacherName: 'Alexander',
-        avatarColor: 'from-emerald-400 to-teal-600',
-        startDate: '2026-10-28',
-        endDate: '2026-10-30',
-        type: 'Urlaub',
-        status: 'Genehmigt',
-        note: 'Sevafrei'
-      },
-      {
-        id: 'sf-alexander-2026-11-19-2026-11-24',
-        teacherId: 'teacher-gen-alexander-melior',
-        teacherName: 'Alexander',
-        avatarColor: 'from-emerald-400 to-teal-600',
-        startDate: '2026-11-19',
-        endDate: '2026-11-24',
-        type: 'Urlaub',
-        status: 'Genehmigt',
-        note: 'Sevafrei'
-      },
-      {
-        id: 'sf-christopher-2026-12-13-2026-12-13',
-        teacherId: 'teacher-gen-christopher',
-        teacherName: 'Christopher',
-        avatarColor: 'from-cyan-400 to-blue-500',
-        startDate: '2026-12-13',
-        endDate: '2026-12-13',
-        type: 'Urlaub',
-        status: 'Genehmigt',
-        note: 'Sevafrei'
-      }
-    ];
-
-    for (const entry of ensureEntries) {
-      const exists = list.some((a: any) =>
-        (a.id === entry.id) ||
-        ((a.teacherName?.toLowerCase().includes(entry.teacherName.toLowerCase()) || a.teacherId === entry.teacherId) &&
-          a.startDate === entry.startDate &&
-          a.endDate === entry.endDate &&
-          a.note === entry.note)
-      );
-      if (!exists) {
-        list.push(entry);
-        changed = true;
-      }
-    }
-
-    if (changed) {
-      inMemoryStore['rapla_sevafrei'] = list;
-      if (typeof window !== 'undefined' && localStorage.getItem('rapla_sevafrei') !== null) {
-        try {
-          localStorage.setItem('rapla_sevafrei', JSON.stringify(list));
-        } catch (e) {}
-      }
-    }
+    const rawList = getStored<any[]>('rapla_sevafrei', []);
+    // Strip legacy cached excel-sf-* entries and superseded pre-03.11. helper IDs because EXCEL_ABSENCES is always merged fresh
+    const supersededIds = new Set([
+      'sf-christopher-2026-10-31-2026-11-01',
+      'sf-alexander-2026-10-28-2026-10-30',
+      'sf-alexander-2026-11-19-2026-11-24',
+      'sf-christopher-2026-12-13-2026-12-13'
+    ]);
+    const list = rawList.filter((a: any) => {
+      if (!a) return false;
+      const id = String(a.id || '');
+      if (id.startsWith('excel-sf-')) return false;
+      if (supersededIds.has(id)) return false;
+      if (id.startsWith('sf-abha-2026-') && id.endsWith('-f')) return false;
+      return true;
+    });
     return list;
   },
-  saveSevafrei: (list: any[]): void => { setStored('rapla_sevafrei', list); },
+  saveSevafrei: (list: any[]): void => {
+    const manualOnly = (list || []).filter((a: any) => a && !String(a.id || '').startsWith('excel-sf-'));
+    setStored('rapla_sevafrei', manualOnly);
+  },
   getDefaultCourses: (): Course[] => DEFAULT_COURSES,
   getTeachers: (): Teacher[] => {
     const stored = getStored<Teacher[]>('rapla_teachers', DEFAULT_TEACHERS);

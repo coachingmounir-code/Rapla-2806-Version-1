@@ -9,7 +9,7 @@ import fs from 'fs';
 //   console.error('[PREPLANNING ERROR] Failed compiling rules:', e);
 // }
 
-import { db, SPECIAL_SCHULUNG_COURSES, OPEN_DAY_2026_W44_SATURDAY_COURSES } from './rapla-frontend/src/lib/db.ts';
+import { db, doesAbsenceMatchTeacher, SPECIAL_SCHULUNG_COURSES, OPEN_DAY_2026_W44_SATURDAY_COURSES } from './rapla-frontend/src/lib/db.ts';
 import { runAiPlanning } from './rapla-frontend/src/lib/planningEngine.ts';
 import { EXCEL_ABSENCES } from './rapla-frontend/src/lib/excel_absences.ts';
 
@@ -30,30 +30,9 @@ const teachers = db.getTeachers();
 localStorage.setItem('rapla_teachers', JSON.stringify(teachers));
 
 // Populate rapla_sevafrei in mock localStorage from EXCEL_ABSENCES
-const sevafreiList = EXCEL_ABSENCES.map((abs, i) => {
-  const match = teachers.find(t => {
-    const cleanExcel = abs.excelName.toLowerCase().trim();
-    const dbName = t.name.toLowerCase().trim();
-    if (cleanExcel === "abha" && dbName.includes("abha")) return true;
-    if (cleanExcel === "adam" && dbName.includes("adam")) return true;
-    if (cleanExcel === "alexander" && dbName.includes("alexander")) return true;
-    if (cleanExcel === "anjali" && dbName.includes("anjali")) return true;
-    if (cleanExcel === "burnie" && dbName.includes("burnie")) return true;
-    if (cleanExcel === "harishakti" && dbName.includes("harishakti")) return true;
-    if (cleanExcel === "hu" && dbName.includes("hu")) return true;
-    if (cleanExcel === "karuna" && dbName.includes("karuna")) return true;
-    if (cleanExcel === "mounir" && (dbName.includes("mouniir") || dbName.includes("mounir"))) return true;
-    if (cleanExcel === "narayani" && dbName.includes("narayani")) return true;
-    if (cleanExcel === "nirmaya" && dbName.includes("nirmaya")) return true;
-    if (cleanExcel === "pranava" && dbName.includes("pranava")) return true;
-    if (cleanExcel === "satyam" && dbName.includes("satyam")) return true;
-    if (cleanExcel === "ulrich" && dbName.includes("ulrich")) return true;
-    if (cleanExcel === "christopher" && dbName.includes("christopher")) return true;
-    
-    const firstName = dbName.split(' ')[0];
-    if (firstName === "karuna" && cleanExcel !== "karuna") return false;
-    return cleanExcel.includes(firstName) && firstName.length > 2;
-  });
+const sevafreiList = EXCEL_ABSENCES.map((abs: any, i) => {
+  const match = (abs.teacherId ? teachers.find(t => t.id === abs.teacherId) : undefined)
+    || teachers.find(t => doesAbsenceMatchTeacher(abs, t.id) || doesAbsenceMatchTeacher(abs, t.name));
 
   return match ? {
     id: `excel-sf-${i}`,
@@ -196,10 +175,7 @@ function planWeekWithAbsences(weekCode: string, standardCourses: any[]) {
     for (const name of namesToCheck) {
       const activeAbsence = sevafreiList.find(entry => {
         if (!entry) return false;
-        const entryName = entry.teacherName.toLowerCase().trim();
-        // Match entry name with namesToCheck
-        const isMatch = entryName.includes(name) || name.includes(entryName.split(' ')[0]);
-        return isMatch && courseDate >= entry.startDate && courseDate <= entry.endDate;
+        return doesAbsenceMatchTeacher(entry, name) && courseDate >= entry.startDate && courseDate <= entry.endDate;
       });
 
       if (activeAbsence) {

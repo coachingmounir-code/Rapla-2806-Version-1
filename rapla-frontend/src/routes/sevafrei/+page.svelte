@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { db, type Teacher } from '$lib/db';
-  import { EXCEL_ABSENCES } from '$lib/excel_absences';
+  import { db, doesAbsenceMatchTeacher, type Teacher } from '$lib/db';
+  import { EXCEL_ABSENCES, EXCEL_ABSENCES_STAND } from '$lib/excel_absences';
 
   interface SevafreiEntry {
     id: string;
@@ -28,9 +28,11 @@
 
   let sevafreiList = $state<SevafreiEntry[]>([]);
   let sevakas = $state<Teacher[]>([]);
+  let extendedExcelSevakas = $state<Teacher[]>([]);
   let showModal = $state(false);
   let activeView = $state<'timeline' | 'availability'>('timeline');
   let showRegularFreeDaysInTimeline = $state(false);
+  let showExtendedExcelTeam = $state(false);
 
   // Month tracking
   let currentYear = $state(new Date().getFullYear());
@@ -57,30 +59,34 @@
   let isFullscreen = $state(false);
   let userRole = $state('');
 
-  // Excel Quota Data
+  // Excel Quota Data (Stand 03.11.2026)
   const quotas: QuotaEntry[] = [
-    { spiritualName: "Karuna Mayi", firstName: "Karuna", lastName: "Wapke", team: "AL", seminarSoll: 18, seminarIst: 6, sevafreiSoll: 24, sevafreiIst: 8 },
-    { spiritualName: "Pranava", firstName: "Heinz", lastName: "Pauly", team: "Hum/Shop", seminarSoll: 18, seminarIst: 6, sevafreiSoll: 29, sevafreiIst: 19 },
-    { spiritualName: "Jyoti", firstName: "Melanie", lastName: "Rudolphi", team: "Jaya", seminarSoll: 0, seminarIst: 0, sevafreiSoll: 25, sevafreiIst: 0 },
-    { spiritualName: "Anjali", firstName: "Magdalena", lastName: "Gelzleichter", team: "Seva/Karmayoga", seminarSoll: 18, seminarIst: 12, sevafreiSoll: 24, sevafreiIst: 19 },
-    { spiritualName: "Marlen", firstName: "Marlen", lastName: "Posnien", team: "ZV", seminarSoll: 0, seminarIst: 0, sevafreiSoll: 25, sevafreiIst: 0 },
+    { spiritualName: "Karuna Mayi", firstName: "Karuna", lastName: "Wapke", team: "AL", seminarSoll: 18, seminarIst: 10, sevafreiSoll: 24, sevafreiIst: 6 },
+    { spiritualName: "Pranava", firstName: "Heinz", lastName: "Pauly", team: "Hum/Shop", seminarSoll: 18, seminarIst: 6, sevafreiSoll: 29, sevafreiIst: 22 },
+    { spiritualName: "Jyoti", firstName: "Melanie", lastName: "Rudolphi", team: "Jaya", seminarSoll: 0, seminarIst: 0, sevafreiSoll: 25, sevafreiIst: 14 },
+    { spiritualName: "Anjali", firstName: "Magdalena", lastName: "Gelzleichter", team: "Seva/Karmayoga", seminarSoll: 18, seminarIst: 13, sevafreiSoll: 24, sevafreiIst: 24 },
+    { spiritualName: "Marlen", firstName: "Marlen", lastName: "Posnien", team: "ZV", seminarSoll: 0, seminarIst: 0, sevafreiSoll: 25, sevafreiIst: 10 },
     { spiritualName: "Melanie", firstName: "Melanie", lastName: "Vagt", team: "Jaya", seminarSoll: 0, seminarIst: 0, sevafreiSoll: 0, sevafreiIst: 0 },
     { spiritualName: "burnie", firstName: "Bernhard", lastName: "Bansemer", team: "Vishnu", seminarSoll: 18, seminarIst: 0, sevafreiSoll: 24, sevafreiIst: 12 },
     { spiritualName: "Nirmaya", firstName: "Karin", lastName: "Fodor", team: "Sattva", seminarSoll: 18, seminarIst: 18, sevafreiSoll: 24, sevafreiIst: 19 },
     { spiritualName: "Maitri", firstName: "Martina", lastName: "Schloms", team: "SPL", seminarSoll: 0, seminarIst: 0, sevafreiSoll: 25, sevafreiIst: 21 },
-    { spiritualName: "Alexander", firstName: "Alexander", lastName: "Melior", team: "Küche", seminarSoll: 16, seminarIst: 18, sevafreiSoll: 24, sevafreiIst: 0 },
+    { spiritualName: "Alexander", firstName: "Alexander", lastName: "Melior", team: "Küche", seminarSoll: 16, seminarIst: 16, sevafreiSoll: 24, sevafreiIst: 9 },
     { spiritualName: "Abha", firstName: "Ann-Katrin", lastName: "Morkötter", team: "Jaya, Hum", seminarSoll: 16, seminarIst: 17, sevafreiSoll: 24, sevafreiIst: 17 },
     { spiritualName: "Hu", firstName: "Katja", lastName: "Bürkle", team: "Vishnu, socM", seminarSoll: 14, seminarIst: 16, sevafreiSoll: 24, sevafreiIst: 24 },
     { spiritualName: "Shantara", firstName: "Jessica", lastName: "Nickler", team: "Küche", seminarSoll: 0, seminarIst: 0, sevafreiSoll: 25, sevafreiIst: 18 },
-    { spiritualName: "Adam", firstName: "Adam", lastName: "Zmuda", team: "Küche", seminarSoll: 12, seminarIst: 0, sevafreiSoll: 24, sevafreiIst: 6 },
-    { spiritualName: "Narayani", firstName: "Katja", lastName: "Kedenburg", team: "ZV", seminarSoll: 18, seminarIst: 16, sevafreiSoll: 24, sevafreiIst: 17 },
-    { spiritualName: "Mounir", firstName: "Mounir", lastName: "Jaber", team: "SPL", seminarSoll: 12, seminarIst: 0, sevafreiSoll: 22, sevafreiIst: 8 },
-    { spiritualName: "Christopher", firstName: "Christopher", lastName: "Mader", team: "Core Team", seminarSoll: 0, seminarIst: 0, sevafreiSoll: 24, sevafreiIst: 2 },
-    { spiritualName: "Suryani", firstName: "Justyna", lastName: "", team: "", seminarSoll: 0, seminarIst: 0, sevafreiSoll: 24, sevafreiIst: 0 }
+    { spiritualName: "Narayani", firstName: "Katja", lastName: "Kedenburg", team: "ZV", seminarSoll: 18, seminarIst: 16, sevafreiSoll: 24, sevafreiIst: 22 },
+    { spiritualName: "Mounir", firstName: "Mounir", lastName: "Jaber", team: "SPL", seminarSoll: 12, seminarIst: 12, sevafreiSoll: 22, sevafreiIst: 16 },
+    { spiritualName: "Satyam", firstName: "Jens", lastName: "Paasche", team: "Rezeption", seminarSoll: 5, seminarIst: 0, sevafreiSoll: 11, sevafreiIst: 6 },
+    { spiritualName: "Teresa", firstName: "Teresa", lastName: "Maurer", team: "Rezeption", seminarSoll: 4, seminarIst: 0, sevafreiSoll: 8, sevafreiIst: 0 },
+    { spiritualName: "Suryani", firstName: "Justyna", lastName: "", team: "Core Team", seminarSoll: 4, seminarIst: 0, sevafreiSoll: 8, sevafreiIst: 6 },
+    { spiritualName: "Chandrashekara", firstName: "Frank", lastName: "Burandt", team: "Core Team", seminarSoll: 4, seminarIst: 0, sevafreiSoll: 7, sevafreiIst: 0 },
+    { spiritualName: "Christopher", firstName: "Christopher", lastName: "Mader", team: "Core Team", seminarSoll: 4, seminarIst: 0, sevafreiSoll: 8, sevafreiIst: 3 }
   ];
 
+  let activeSevakaPool = $derived(showExtendedExcelTeam ? [...sevakas, ...extendedExcelSevakas] : sevakas);
+
   let filteredSevakas = $derived(
-    sevakas.filter(s => {
+    activeSevakaPool.filter(s => {
       if (searchQuery.trim() !== '') {
         return s.name.toLowerCase().includes(searchQuery.toLowerCase());
       }
@@ -105,7 +111,9 @@
   }
 
   function getAbsenceForDate(teacherId: string, dateStr: string): SevafreiEntry | undefined {
-    return sevafreiList.find(e => e.teacherId === teacherId && dateStr >= e.startDate && dateStr <= e.endDate);
+    const matches = sevafreiList.filter(e => e.teacherId === teacherId && dateStr >= e.startDate && dateStr <= e.endDate);
+    if (matches.length === 0) return undefined;
+    return matches.find(m => m.type !== 'Frei') || matches[0];
   }
 
   function isRegularFreeDay(teacher: Teacher, day: number): boolean {
@@ -141,15 +149,23 @@
   }
 
   function getAbsenceCountForDate(dateStr: string): number {
-    return sevafreiList.filter(e => dateStr >= e.startDate && dateStr <= e.endDate).length;
+    const d = new Date(dateStr);
+    const dayNum = d.getDate();
+    return filteredSevakas.filter(sev => {
+      if (getAbsenceForDate(sev.id, dateStr)) return true;
+      if (showRegularFreeDaysInTimeline && isRegularFreeDay(sev, dayNum)) return true;
+      return false;
+    }).length;
   }
 
   function getTeacherTeam(teacherName: string): string {
-    const cleanName = teacherName.toLowerCase();
-    const q = quotas.find(entry => 
-      cleanName.includes(entry.spiritualName.toLowerCase()) || 
-      cleanName.includes(entry.firstName.toLowerCase())
-    );
+    const cleanName = teacherName.toLowerCase().trim();
+    const q = quotas.find(entry => {
+      const sp = entry.spiritualName.toLowerCase().trim();
+      const fn = entry.firstName.toLowerCase().trim();
+      if (sp === 'hu') return cleanName === 'hu';
+      return (sp && cleanName.includes(sp)) || (fn && cleanName.includes(fn));
+    });
     return q ? q.team : 'Core Team';
   }
 
@@ -217,19 +233,46 @@
     return day === 0 ? 6 : day - 1;
   }
 
+  const EXTENDED_EXCEL_IDS: { id: string; displayName: string }[] = [
+    { id: 'teacher-gen-jyoti-rudolphi', displayName: 'Jyoti (Melanie Rudolphi)' },
+    { id: 'teacher-gen-martina-schloms', displayName: 'Maitri (Martina Schloms)' },
+    { id: 'teacher-karma-marlene', displayName: 'Marlen' },
+    { id: 'teacher-gen-melanie-vagt', displayName: 'Melanie Vagt' },
+    { id: 'teacher-gen-shantara-nickler', displayName: 'Shantara' },
+    { id: 'teacher-guest-1791278735445', displayName: 'Suryani' }
+  ];
+
   function loadSevafreiData() {
     const dbTeachers = db.getTeachers();
     sevakas = dbTeachers.filter(t => t.roleType === 'sevaka');
+    extendedExcelSevakas = EXTENDED_EXCEL_IDS.map(({ id, displayName }) => {
+      const found = dbTeachers.find(t => t.id === id);
+      if (found) {
+        return { ...found, name: displayName };
+      }
+      return {
+        id,
+        name: displayName,
+        email: '',
+        phone: '',
+        avatarColor: '#960040',
+        specialties: [],
+        roleType: 'external',
+        rules: { preferredRooms: [], availability: [0, 1, 2, 3, 4, 5, 6].map(d => ({ day: d, start: '06:00', end: '22:00' })) }
+      } as Teacher;
+    });
+
     if (sevakas.length > 0 && !formTeacherId) {
       formTeacherId = sevakas[0].id;
     }
 
     const storedList = db.getSevafrei();
     const list: SevafreiEntry[] = storedList.filter((e: any) => !e.id?.startsWith('excel-sf-'));
+    const allLookupTeachers = [...dbTeachers, ...extendedExcelSevakas];
 
     // Merge Excel absences in memory without triggering cloud writes on read
     EXCEL_ABSENCES.forEach((abs, i) => {
-      const match = findTeacherForExcelName(abs.excelName, dbTeachers);
+      const match = findTeacherForExcelEntry(abs, allLookupTeachers);
       if (match) {
         const exists = list.some(e =>
           e.teacherId === match.id &&
@@ -298,63 +341,20 @@
     }
   }
 
-  function findTeacherForExcelName(excelName: string, dbTeachers: Teacher[]): Teacher | undefined {
-    const cleanExcel = excelName.toLowerCase();
-    return dbTeachers.find(t => {
-      const dbName = t.name.toLowerCase();
-      if (cleanExcel.includes("karuna") && dbName.includes("karuna")) return true;
-      if (cleanExcel.includes("pranava") && dbName.includes("pranava")) return true;
-      if (cleanExcel.includes("jyoti") && dbName.includes("jyoti")) return true;
-      if (cleanExcel.includes("anjali") && dbName.includes("anjali")) return true;
-      if (cleanExcel.includes("adinatha") && dbName.includes("adinatha")) return true;
-      if (cleanExcel.includes("marlen") && dbName.includes("marlen")) return true;
-      if (cleanExcel.includes("melanie") && dbName.includes("melanie") && dbName.includes("vagt")) return true;
-      if (cleanExcel.includes("burnie") && dbName.includes("burnie")) return true;
-      if (cleanExcel.includes("nirmaya") && dbName.includes("nirmaya")) return true;
-      if (cleanExcel.includes("maitri") && dbName.includes("martina")) return true; // Maitri = Martina Schloms
-      if (cleanExcel.includes("alexander") && dbName.includes("alexander")) return true;
-      if (cleanExcel.includes("abha") && dbName.includes("abha")) return true;
-      if (cleanExcel.includes("hu") && dbName.includes("hu")) return true;
-      if (cleanExcel.includes("ulrich") && dbName.includes("ulrich")) return true;
-      if (cleanExcel.includes("shantara") && dbName.includes("shantara")) return true;
-      if (cleanExcel.includes("adam") && dbName.includes("adam")) return true;
-      if (cleanExcel.includes("narayani") && dbName.includes("narayani")) return true;
-      if (cleanExcel.includes("linda") && dbName.includes("linda")) return true;
-      if (cleanExcel.includes("mounir") && dbName.includes("mounir")) return true;
-      if (cleanExcel.includes("harishakti") && dbName.includes("harishakti")) return true;
-      if (cleanExcel.includes("christopher") && dbName.includes("christopher")) return true;
-      
-      const firstName = dbName.split(' ')[0];
-      return cleanExcel.includes(firstName) && firstName.length > 2;
-    });
+  function findTeacherForExcelEntry(abs: any, dbTeachers: Teacher[]): Teacher | undefined {
+    if (abs.teacherId) {
+      const byId = dbTeachers.find(t => t.id === abs.teacherId);
+      if (byId) return byId;
+    }
+    return dbTeachers.find(t => doesAbsenceMatchTeacher(abs, t.id) || doesAbsenceMatchTeacher(abs, t.name));
   }
 
   function importExcelData(showFeedback = true) {
-    const list: SevafreiEntry[] = [];
-    const dbTeachers = db.getTeachers();
-
-    EXCEL_ABSENCES.forEach((abs, i) => {
-      const match = findTeacherForExcelName(abs.excelName, dbTeachers);
-      if (match) {
-        list.push({
-          id: `excel-sf-${i}`,
-          teacherId: match.id,
-          teacherName: match.name,
-          avatarColor: match.avatarColor || '#960040',
-          startDate: abs.startDate,
-          endDate: abs.endDate,
-          type: abs.type,
-          status: abs.status,
-          note: abs.note
-        });
-      }
-    });
-
-    sevafreiList = list;
+    loadSevafreiData();
     saveToStorage();
 
     if (showFeedback) {
-      alert(`Erfolgreich ${list.length} Abwesenheiten aus der Excel-Planung importiert.`);
+      alert(`Erfolgreich ${sevafreiList.length} Abwesenheiten aus der Excel-Planung (Stand: ${EXCEL_ABSENCES_STAND.split('-').reverse().join('.')}) geladen.`);
     }
   }
 
@@ -488,9 +488,9 @@
 
 
   let activeTodayCount = $derived(
-    sevafreiList.filter(e => {
-      const todayStr = new Date().toISOString().split('T')[0];
-      return todayStr >= e.startDate && todayStr <= e.endDate;
+    sevakas.filter(s => {
+      const todayIso = new Date().toISOString().split('T')[0];
+      return Boolean(getAbsenceForDate(s.id, todayIso));
     }).length
   );
 </script>
@@ -527,6 +527,10 @@
 
   <div class="stats-pills">
     <span class="stat-pill glass-card">
+      <span class="pill-label">Excel-Stand:</span>
+      <strong>{EXCEL_ABSENCES_STAND.split('-').reverse().join('.')}</strong>
+    </span>
+    <span class="stat-pill glass-card">
       <span class="pill-label">Heute abwesend:</span>
       <strong class:text-highlight={activeTodayCount > 0}>{activeTodayCount} Sevakas</strong>
     </span>
@@ -559,6 +563,7 @@
         <div class="legend-item"><span class="legend-box sl">SL</span> Seminarleitung</div>
         <div class="legend-item"><span class="legend-box fb">FB</span> Fortbildung</div>
         <div class="legend-item"><span class="legend-box k">K</span> Krank</div>
+        <div class="legend-item"><span class="legend-box x">X</span> Sonstiges / Unbezahlt</div>
         <div class="legend-item"><span class="legend-box f">F</span> Regulär Frei</div>
       </div>
       
@@ -577,6 +582,10 @@
         <label class="checkbox-label" style="display: flex; align-items: center; gap: 0.4rem; font-size: 0.85rem; font-weight: 600; margin: 0;">
           <input type="checkbox" bind:checked={showRegularFreeDaysInTimeline} />
           Reguläre freie Tage anzeigen
+        </label>
+        <label class="checkbox-label" style="display: flex; align-items: center; gap: 0.4rem; font-size: 0.85rem; font-weight: 600; margin: 0;" title="Blendet zusätzlich Jyoti, Maitri, Marlen, Melanie Vagt, Shantara und Suryani aus der Excel-Liste ein">
+          <input type="checkbox" bind:checked={showExtendedExcelTeam} />
+          Weitere Haus-Sevakas (Excel)
         </label>
       </div>
     </div>
