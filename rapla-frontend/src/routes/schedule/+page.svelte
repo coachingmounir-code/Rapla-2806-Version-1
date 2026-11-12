@@ -19,8 +19,16 @@
   import sivanandaImg from '$lib/assets/sivananda.png';
   import SeminarScheduleView from '$lib/components/SeminarScheduleView.svelte';
   import { getSeminarsForWeek, getSeminarTransitionType, getSeminarSlotsForTeacherAndWeek, doesSeminarPersonMatchTeacher, type SeminarTeacherWeekSlot } from '$lib/seminarData';
+  import {
+    getLocalTodayIso,
+    getNextStartingSeminars,
+    getDaysUntilSeminarStart,
+    getRaplaMondayForIsoDate,
+    getIsoWeekNumberForRaplaDate,
+    type UpcomingSeminarItem
+  } from '$lib/upcomingSeminarsData';
   import { page } from '$app/state';
-  import { goto } from '$app/navigation';
+  import { goto, afterNavigate } from '$app/navigation';
 
   type AdminDisplaySlot = Course | SeminarTeacherWeekSlot;
 
@@ -107,9 +115,17 @@
   let nextPlan = $state<WeekPlan | null>(null);
   let currentWeekOffset = $state(0);
 
-  let todayIso = $derived.by(() => {
-    const now = new Date();
-    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+  let nowTick = $state(Date.now());
+  let todayIso = $derived(getLocalTodayIso(new Date(nowTick)));
+  let nextEightSeminars = $derived<UpcomingSeminarItem[]>(getNextStartingSeminars(todayIso, 8));
+  let isUpcomingEightExpanded = $state(true);
+
+  afterNavigate(({ to }) => {
+    const tabParam = to?.url.searchParams.get('tab') || '';
+    if (tabParam === '' || tabParam === 'calendar' || tabParam === 'wochenplan') {
+      isUpcomingEightExpanded = true;
+      nowTick = Date.now();
+    }
   });
 
   function getWeekCode(date: Date): string {
@@ -137,12 +153,19 @@
     if (scheduleTabParam === 'seminare' || scheduleTabParam === 'seminar' || scheduleTabParam === 'seminarplan') {
       if (activeScheduleTab !== 'seminare') activeScheduleTab = 'seminare';
     } else if (scheduleTabParam === '' || scheduleTabParam === 'calendar' || scheduleTabParam === 'wochenplan') {
-      if (activeScheduleTab !== 'calendar') activeScheduleTab = 'calendar';
+      if (activeScheduleTab !== 'calendar') {
+        activeScheduleTab = 'calendar';
+        isUpcomingEightExpanded = true;
+      }
     }
   });
 
   function switchScheduleTab(tab: 'calendar' | 'seminare') {
     activeScheduleTab = tab;
+    if (tab === 'calendar') {
+      isUpcomingEightExpanded = true;
+      nowTick = Date.now();
+    }
     const params = new URLSearchParams(page.url.searchParams);
     if (tab === 'seminare') {
       params.set('tab', 'seminare');
@@ -253,6 +276,11 @@
   onMount(() => {
     loadData();
 
+    const refreshClock = () => {
+      nowTick = Date.now();
+    };
+    const clockInterval = setInterval(refreshClock, 60000);
+
     const handleKeydown = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && isFullscreen) {
         toggleFullscreen();
@@ -271,16 +299,21 @@
     window.addEventListener('storage', handleYlaChange);
     window.addEventListener('yla-assignment-changed', handleYlaChange);
     window.addEventListener('rapla-data-synced', handleYlaChange);
+    window.addEventListener('focus', refreshClock);
+    document.addEventListener('visibilitychange', refreshClock);
     document.addEventListener('fullscreenchange', handleFullscreenChange);
     document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
     document.addEventListener('mozfullscreenchange', handleFullscreenChange);
     document.addEventListener('MSFullscreenChange', handleFullscreenChange);
 
     return () => {
+      clearInterval(clockInterval);
       window.removeEventListener('keydown', handleKeydown);
       window.removeEventListener('storage', handleYlaChange);
       window.removeEventListener('yla-assignment-changed', handleYlaChange);
       window.removeEventListener('rapla-data-synced', handleYlaChange);
+      window.removeEventListener('focus', refreshClock);
+      document.removeEventListener('visibilitychange', refreshClock);
       document.removeEventListener('fullscreenchange', handleFullscreenChange);
       document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
       document.removeEventListener('mozfullscreenchange', handleFullscreenChange);
@@ -373,6 +406,21 @@
 
   function goToCurrentWeek() {
     currentWeekOffset = 0;
+    if (planId) {
+      goto('/schedule');
+    } else {
+      loadData();
+    }
+  }
+
+  function jumpToSeminarWeek(seminarStartIso: string) {
+    const targetMonday = getRaplaMondayForIsoDate(seminarStartIso);
+    const baseMonday = getRaplaMondayForIsoDate(todayIso);
+    if (!targetMonday || !baseMonday) return;
+    targetMonday.setHours(12, 0, 0, 0);
+    baseMonday.setHours(12, 0, 0, 0);
+    const weekDiff = Math.round((targetMonday.getTime() - baseMonday.getTime()) / (7 * 86400000));
+    currentWeekOffset = weekDiff;
     if (planId) {
       goto('/schedule');
     } else {
@@ -1537,6 +1585,115 @@
     }
   }
 </script>
+
+{#if activeScheduleTab === 'calendar' && nextEightSeminars.length > 0}
+  <section class="upcoming-eight-showcase" aria-label="Die nächsten 8 kommenden Seminare">
+    <div class="u8-header">
+      <div class="u8-header-left">
+        <div class="u8-eyebrow-row">
+          <span class="u8-eyebrow-badge">🪷 NÄCHSTE 8 SEMINARE · VORSCHAU</span>
+          <span class="u8-auto-rule-pill">⏱️ Auto-Wechsel spätestens 1 Tag nach Seminarbeginn</span>
+        </div>
+        <h2 class="u8-section-title">Kommende 8 Seminare im Überblick</h2>
+      </div>
+      <div class="u8-header-actions">
+        <a href="/" class="u8-all-seminars-link" title="Alle kommenden Seminare anzeigen">
+          Alle kommenden Seminare →
+        </a>
+        <button
+          type="button"
+          class="u8-collapse-btn"
+          onclick={() => (isUpcomingEightExpanded = !isUpcomingEightExpanded)}
+          aria-expanded={isUpcomingEightExpanded}
+        >
+          {isUpcomingEightExpanded ? '▲ Einklappen' : `▼ Alle ${nextEightSeminars.length} anzeigen`}
+        </button>
+      </div>
+    </div>
+
+    {#if isUpcomingEightExpanded}
+      <div class="u8-cards-grid">
+        {#each nextEightSeminars as sem, idx (sem.id)}
+          {@const daysUntil = getDaysUntilSeminarStart(sem.startDate, todayIso)}
+          {@const semKw = getIsoWeekNumberForRaplaDate(sem.startDate)}
+          <article
+            class="u8-seminar-card"
+            class:u8-unassigned={sem.leader === ''}
+            class:u8-starts-today={daysUntil === 0}
+            class:u8-strikethrough={sem.isStrikethrough}
+          >
+            <div class="u8-card-top">
+              <div class="u8-date-group">
+                <span class="u8-rank-badge">#{idx + 1}</span>
+                <span class="u8-date-text">📅 {sem.date}</span>
+                {#if sem.isWE}
+                  <span class="u8-we-tag">WE</span>
+                {/if}
+              </div>
+              {#if daysUntil === 0}
+                <span class="u8-countdown-pill today">🟢 Startet heute</span>
+              {:else if daysUntil === 1}
+                <span class="u8-countdown-pill tomorrow">🟠 Morgen</span>
+              {:else if daysUntil <= 7}
+                <span class="u8-countdown-pill soon">In {daysUntil} Tg.</span>
+              {:else}
+                <span class="u8-countdown-pill future">In {daysUntil} Tg.</span>
+              {/if}
+            </div>
+
+            <div class="u8-card-body">
+              {#if sem.isStrikethrough}
+                <span class="u8-strike-badge" title={sem.note || ''}>🚫 Durchgestrichen</span>
+              {/if}
+              <h3 class="u8-card-title">
+                {#if sem.isStrikethrough}
+                  <del>{sem.title}</del>
+                {:else}
+                  {sem.title}
+                {/if}
+              </h3>
+
+              {#if sem.leader !== ''}
+                <div class="u8-leader-row">
+                  <span class="u8-leader-icon">🧘</span>
+                  {#if sem.leaderPrefixBadge}
+                    <span class="u8-leader-green-badge" title={sem.note || ''}>{sem.leaderPrefixBadge}</span>
+                  {/if}
+                  <span class="u8-leader-name">{sem.leader}</span>
+                </div>
+              {:else}
+                <div class="u8-leader-row u8-leader-open">
+                  <span>⚠️ Leitung offen</span>
+                </div>
+              {/if}
+            </div>
+
+            <div class="u8-card-footer">
+              <div
+                class="u8-stats-pill"
+                class:u8-overbooked={sem.maxTN > 0 && sem.currentTN > sem.maxTN}
+                title="Max. / TN / ?: {sem.maxTN} / {sem.currentTN} / {sem.extraStat ?? 0}"
+              >
+                <span>👥 TN: <strong>{sem.currentTN}</strong>{sem.maxTN > 0 ? ` / ${sem.maxTN}` : ' (Max. 0)'}</span>
+                <span class="u8-extra-stat">· ? {sem.extraStat ?? 0}</span>
+              </div>
+              {#if semKw}
+                <button
+                  type="button"
+                  class="u8-jump-kw-btn"
+                  onclick={() => jumpToSeminarWeek(sem.startDate)}
+                  title="Wochenplan direkt zu KW {semKw} öffnen"
+                >
+                  KW {semKw} ➔
+                </button>
+              {/if}
+            </div>
+          </article>
+        {/each}
+      </div>
+    {/if}
+  </section>
+{/if}
 
 <div class="page-header">
   <div class="title-section">
@@ -4745,5 +4902,376 @@
   .wa-settings-link:hover {
     color: var(--primary);
     text-decoration: underline;
+  }
+
+  /* ==========================================================================
+     Kommende 8 Seminare — High-Visibility Top Showcase above Wochenplan Header
+     ========================================================================== */
+  .upcoming-eight-showcase {
+    background: linear-gradient(135deg, #fffdf9 0%, #fff7ed 55%, #fef3c7 100%);
+    border: 2px solid #f59e0b;
+    border-left: 6px solid #960040;
+    border-radius: 16px;
+    padding: 1.05rem 1.25rem;
+    margin-bottom: 1.35rem;
+    box-shadow: 0 8px 24px rgba(150, 0, 64, 0.08), 0 2px 6px rgba(234, 88, 12, 0.06);
+  }
+
+  .u8-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.75rem 1.25rem;
+  }
+
+  .u8-header-left {
+    display: flex;
+    flex-direction: column;
+    gap: 0.22rem;
+  }
+
+  .u8-eyebrow-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .u8-eyebrow-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    background: linear-gradient(135deg, #960040, #be123c);
+    color: #ffffff;
+    font-size: 0.68rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    padding: 0.2rem 0.6rem;
+    border-radius: 999px;
+    text-transform: uppercase;
+    box-shadow: 0 2px 5px rgba(150, 0, 64, 0.22);
+  }
+
+  .u8-auto-rule-pill {
+    display: inline-flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.85);
+    border: 1px solid #fde68a;
+    color: #92400e;
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 0.16rem 0.55rem;
+    border-radius: 999px;
+  }
+
+  .u8-section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: #1e293b;
+    margin: 0;
+    line-height: 1.25;
+  }
+
+  .u8-header-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.55rem;
+  }
+
+  .u8-all-seminars-link {
+    display: inline-flex;
+    align-items: center;
+    background: #ffffff;
+    border: 1px solid rgba(150, 0, 64, 0.25);
+    color: #960040;
+    font-size: 0.78rem;
+    font-weight: 700;
+    padding: 0.38rem 0.75rem;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: all 0.18s ease;
+  }
+
+  .u8-all-seminars-link:hover {
+    background: #960040;
+    color: #ffffff;
+    border-color: #960040;
+  }
+
+  .u8-collapse-btn {
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid #cbd5e1;
+    color: #334155;
+    font-family: inherit;
+    font-size: 0.76rem;
+    font-weight: 700;
+    padding: 0.38rem 0.7rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.18s ease;
+  }
+
+  .u8-collapse-btn:hover {
+    background: #ffffff;
+    border-color: #94a3b8;
+    color: #0f172a;
+  }
+
+  .u8-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.75rem;
+    margin-top: 0.9rem;
+  }
+
+  @media (max-width: 1280px) {
+    .u8-cards-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 680px) {
+    .u8-cards-grid {
+      grid-template-columns: 1fr;
+    }
+    .upcoming-eight-showcase {
+      padding: 0.9rem 0.95rem;
+    }
+  }
+
+  .u8-seminar-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 0.5rem;
+    background: #ffffff;
+    border: 1px solid #eadfce;
+    border-top: 3px solid #960040;
+    border-radius: 12px;
+    padding: 0.75rem 0.85rem;
+    box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04);
+    transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+  }
+
+  .u8-seminar-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(150, 0, 64, 0.1);
+    border-color: #f59e0b;
+  }
+
+  .u8-seminar-card.u8-unassigned {
+    border-top-color: #ea580c;
+    border-left: 4px solid #ea580c;
+    background: #fffaf5;
+  }
+
+  .u8-seminar-card.u8-starts-today {
+    border-top-color: #16a34a;
+    box-shadow: 0 4px 12px rgba(22, 163, 74, 0.12);
+  }
+
+  .u8-seminar-card.u8-strikethrough {
+    border-top-color: #9ca3af;
+    background: #f8fafc;
+    opacity: 0.86;
+  }
+
+  .u8-card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.35rem;
+    flex-wrap: wrap;
+  }
+
+  .u8-date-group {
+    display: flex;
+    align-items: center;
+    gap: 0.32rem;
+    flex-wrap: wrap;
+  }
+
+  .u8-rank-badge {
+    font-size: 0.68rem;
+    font-weight: 800;
+    color: #960040;
+    background: rgba(150, 0, 64, 0.09);
+    padding: 0.08rem 0.36rem;
+    border-radius: 5px;
+  }
+
+  .u8-date-text {
+    font-size: 0.76rem;
+    font-weight: 800;
+    color: #1e293b;
+  }
+
+  .u8-we-tag {
+    font-size: 0.64rem;
+    font-weight: 800;
+    background: #fef3c7;
+    color: #92400e;
+    border: 1px solid #fde68a;
+    padding: 0.05rem 0.34rem;
+    border-radius: 4px;
+    text-transform: uppercase;
+  }
+
+  .u8-countdown-pill {
+    font-size: 0.67rem;
+    font-weight: 800;
+    padding: 0.1rem 0.45rem;
+    border-radius: 999px;
+    white-space: nowrap;
+  }
+
+  .u8-countdown-pill.today {
+    background: #dcfce7;
+    color: #166534;
+    border: 1px solid #86efac;
+  }
+
+  .u8-countdown-pill.tomorrow {
+    background: #ffedd5;
+    color: #c2410c;
+    border: 1px solid #fdba74;
+  }
+
+  .u8-countdown-pill.soon {
+    background: #ffe4e6;
+    color: #9f1239;
+    border: 1px solid #fecdd3;
+  }
+
+  .u8-countdown-pill.future {
+    background: #f1f5f9;
+    color: #475569;
+    border: 1px solid #e2e8f0;
+  }
+
+  .u8-card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.32rem;
+    flex: 1;
+  }
+
+  .u8-strike-badge {
+    display: inline-block;
+    width: fit-content;
+    font-size: 0.65rem;
+    font-weight: 800;
+    background: #fee2e2;
+    color: #991b1b;
+    border: 1px solid #fca5a5;
+    padding: 0.06rem 0.4rem;
+    border-radius: 4px;
+  }
+
+  .u8-card-title {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0;
+    line-height: 1.3;
+  }
+
+  .u8-card-title del {
+    color: #64748b;
+    text-decoration-thickness: 2px;
+  }
+
+  .u8-leader-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+    font-size: 0.78rem;
+    color: #334155;
+  }
+
+  .u8-leader-icon {
+    font-size: 0.85rem;
+  }
+
+  .u8-leader-green-badge {
+    background: #dcfce7;
+    color: #15803d;
+    border: 1px solid #86efac;
+    font-size: 0.66rem;
+    font-weight: 800;
+    padding: 0.04rem 0.32rem;
+    border-radius: 4px;
+  }
+
+  .u8-leader-name {
+    font-weight: 700;
+    color: #960040;
+  }
+
+  .u8-leader-open {
+    background: #ffedd5;
+    border: 1px solid #fdba74;
+    color: #c2410c;
+    font-size: 0.72rem;
+    font-weight: 800;
+    padding: 0.14rem 0.48rem;
+    border-radius: 6px;
+    width: fit-content;
+  }
+
+  .u8-card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.4rem;
+    padding-top: 0.42rem;
+    border-top: 1px dashed #e2e8f0;
+  }
+
+  .u8-stats-pill {
+    font-size: 0.73rem;
+    color: #475569;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.22rem;
+    flex-wrap: wrap;
+  }
+
+  .u8-stats-pill strong {
+    color: #0f172a;
+    font-weight: 800;
+  }
+
+  .u8-stats-pill.u8-overbooked strong {
+    color: #15803d;
+  }
+
+  .u8-extra-stat {
+    color: #64748b;
+    font-size: 0.69rem;
+  }
+
+  .u8-jump-kw-btn {
+    background: #fdf2f8;
+    border: 1px solid rgba(150, 0, 64, 0.24);
+    color: #960040;
+    font-family: inherit;
+    font-size: 0.7rem;
+    font-weight: 800;
+    padding: 0.16rem 0.48rem;
+    border-radius: 6px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.15s ease;
+  }
+
+  .u8-jump-kw-btn:hover {
+    background: #960040;
+    color: #ffffff;
+    border-color: #960040;
   }
 </style>

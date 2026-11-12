@@ -2,6 +2,13 @@
   import { onMount } from 'svelte';
   import { todoManager } from '$lib/todoStore.svelte';
   import { db } from '$lib/db';
+  import {
+    ALL_NORDSEE_SEMINARS,
+    NORDSEE_SEMINAR_LIST_2026_2027,
+    getLocalTodayIso,
+    isSeminarUpcomingOrOngoing,
+    type UpcomingSeminarItem
+  } from '$lib/upcomingSeminarsData';
 
   interface OpenDayProgramItem {
     id: string;
@@ -159,153 +166,41 @@
     }
   ];
 
-  interface Seminar {
-    title: string;
-    date: string;
-    isWE: boolean;
-    location: string;
-    maxTN: number;
-    currentTN: number;
-    leader: string;
-  }
+  let nowTick = $state(Date.now());
+  let todayIso = $derived(getLocalTodayIso(new Date(nowTick)));
 
-  const seminars: Seminar[] = [
-    { title: "Yoga Ferienwoche", date: "9.-14.8.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 19, leader: "Beate Menkarski" },
-    { title: "Insel-Yoga", date: "9.-14.8.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 13, leader: "Ananda Schaak" },
-    { title: "Yoga für Kinder 7-12 Jahre", date: "9.-14.8.26", isWE: false, location: "Nordsee", maxTN: 8, currentTN: 2, leader: "Suniti Jacob" },
-    { title: "Yoga für den Rücken", date: "9.-14.8.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 0, leader: "Kamala Lubina" },
-    { title: "Yin Yoga", date: "9.-14.8.26", isWE: false, location: "Nordsee", maxTN: 15, currentTN: 8, leader: "Cornelia Surya Haag" },
-    { title: "Die Satsang-Trommeln der Kirtan-Musik", date: "14.-16.8.26", isWE: true, location: "Nordsee", maxTN: 10, currentTN: 11, leader: "Bernardo Juni" },
-    { title: "Vinyasa Power Yoga - Meditation in Bewegung", date: "14.-16.8.26", isWE: true, location: "Nordsee", maxTN: 10, currentTN: 8, leader: "Kamala Lubina" },
-    { title: "Weg mit der Brille - Yoga für die Augen", date: "14.-16.8.26", isWE: true, location: "Nordsee", maxTN: 10, currentTN: 3, leader: "Susan Holze" },
-    { title: "Yoga Ferienwoche", date: "16.-21.8.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 7, leader: "Ananda Schaak" },
-    { title: "Shakti Yoga - Erwecke die Kraft deiner Weiblichkeit", date: "16.-21.8.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 7, leader: "Susan Holze" },
-    { title: "Swings, Vibrations, Rotations", date: "16.-21.8.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 5, leader: "Monika Adele Camara" },
-    { title: "Yogaferien mit Surfen", date: "16.-21.8.26", isWE: false, location: "Nordsee", maxTN: 8, currentTN: 3, leader: "Abha Morkötter" },
-    { title: "Yoga und Meditation Einführung", date: "21.-23.8.26", isWE: true, location: "Nordsee", maxTN: 10, currentTN: 4, leader: "Jnanadev David Ianni" },
-    { title: "Hawaiianischer Tanz und Yoga am Meer", date: "21.-23.8.26", isWE: true, location: "Nordsee", maxTN: 10, currentTN: 4, leader: "Monika Adele Camara" },
-    { title: "Yogatherapie für die Atemwege an der Nordsee", date: "21.-23.8.26", isWE: true, location: "Nordsee", maxTN: 10, currentTN: 1, leader: "Susan Holze" },
-    { title: "Yoga Ferienwoche", date: "23.-28.8.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 11, leader: "Jnanadev David Ianni" },
-    { title: "Yoga rund um die Geburt - Yogalehrer Weiterbildung", date: "23.-30.8.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 2, leader: "Susan Holze" },
-    { title: "Schamanisches Kundalini Retreat", date: "23.-28.8.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 19, leader: "Satyadevi Bretz, Yogita Sari" },
-    { title: "Yoga, Wandern und Fahrradfahren", date: "23.-28.8.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 4, leader: "Ananda Schaak" },
-    { title: "Yoga und Meditation Einführung", date: "28.-30.8.26", isWE: true, location: "Nordsee", maxTN: 10, currentTN: 6, leader: "" },
-    { title: "Meditation und Qi Gong", date: "28.-30.8.26", isWE: true, location: "Nordsee", maxTN: 10, currentTN: 3, leader: "Michael Büchel" },
-    { title: "Yoga Ferienwoche - Yin Yoga", date: "30.8.-4.9.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 6, leader: "Beate Menkarski" },
-    { title: "Themenwoche: Indische Rituale und Rezitationen mit Swami Nivedanananda", date: "30.8.-4.9.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 0, leader: "Swami Nivedanananda" },
-    { title: "Yogalehrer Ausbildung Intensivkurs Woche 1", date: "30.8.-4.9.26", isWE: false, location: "Nordsee", maxTN: 5, currentTN: 3, leader: "Karuna M. Wapke" },
-    { title: "Yogalehrer Ausbildung Intensivkurs", date: "30.8.-27.9.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 3, leader: "Karuna M. Wapke" },
-    { title: "Yogalehrer Ausbildung Intensivkurs Woche 1+2", date: "30.8.-11.9.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 4, leader: "Karuna M. Wapke" },
-    { title: "Yoga und Meditation Einführung", date: "4.-6.9.26", isWE: true, location: "Nordsee", maxTN: 10, currentTN: 3, leader: "" },
-    { title: "Erleben mit dem Bauchraum", date: "4.-6.9.26", isWE: true, location: "Nordsee", maxTN: 10, currentTN: 1, leader: "Erkan Batmaz" },
-    { title: "Krishna Jayanti", date: "4.9.26", isWE: false, location: "Nordsee", maxTN: 2, currentTN: 0, leader: "" },
-    { title: "Yogalehrer Ausbildung Intensivkurs Woche 2", date: "4.-11.9.26", isWE: false, location: "Nordsee", maxTN: 8, currentTN: 4, leader: "Karuna M. Wapke" },
-    { title: "Yoga Ferienwoche", date: "6.-11.9.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 5, leader: "Erkan Batmaz" },
-    { title: "Insel-Yoga", date: "6.-11.9.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 5, leader: "Pranava Heinz Pauly" },
-    { title: "Sivanandas Geburtstag", date: "8.9.26", isWE: false, location: "Nordsee", maxTN: 0, currentTN: 0, leader: "" },
-    { title: "Harmonium Lernseminar", date: "11.-13.9.26", isWE: true, location: "Nordsee", maxTN: 10, currentTN: 5, leader: "Jürgen Wade" },
-    { title: "Yogalehrer Ausbildung Intensivkurs Woche 3", date: "11.-18.9.26", isWE: false, location: "Nordsee", maxTN: 5, currentTN: 4, leader: "Karuna M. Wapke" },
-    { title: "Yogalehrer Ausbildung Intensivkurs Woche 3+4", date: "11.-27.9.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 6, leader: "Karuna M. Wapke" },
-    { title: "Yoga Ferienwoche", date: "13.-18.9.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 4, leader: "Madhavi Füllen, Gopala Kirill Serov" },
-    { title: "Yoga, Wandern und Fahrradfahren", date: "13.-18.9.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 5, leader: "Pranava Heinz Pauly" },
-    { title: "Yoga und Meditation Einführung", date: "18.-20.9.26", isWE: true, location: "Nordsee", maxTN: 10, currentTN: 4, leader: "Gopala Kirill Serov" },
-    { title: "Schamanismus als Medizin", date: "18.-20.9.26", isWE: true, location: "Nordsee", maxTN: 0, currentTN: 1, leader: "Maharani Fritsch de Navarrete" },
-    { title: "Yogalehrer Ausbildung Intensivkurs Woche 4", date: "18.-27.9.26", isWE: false, location: "Nordsee", maxTN: 5, currentTN: 1, leader: "Karuna M. Wapke" },
-    { title: "Yoga Ferienwoche", date: "20.-25.9.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 1, leader: "Chandradevi Winterhalter" },
-    { title: "Yoga und Meditation Einführung", date: "24.-26.9.26", isWE: true, location: "Nordsee", maxTN: 10, currentTN: 0, leader: "" },
-    { title: "Acro Yoga", date: "25.-27.9.26", isWE: true, location: "Nordsee", maxTN: 10, currentTN: 3, leader: "Jnanadev Wallaschkowski" },
-    { title: "Freude im Herzen - Mantra Singen und Yoga", date: "25.-27.9.26", isWE: true, location: "Nordsee", maxTN: 10, currentTN: 0, leader: "Gruppe Mudita" },
-    { title: "YLA Prüfungswochenende", date: "25.-27.9.26", isWE: true, location: "Nordsee", maxTN: 5, currentTN: 0, leader: "Karuna M. Wapke" },
-    { title: "Ayurvedisches Fasten für Pitta und Vata", date: "27.9.-2.10.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 6, leader: "Satyananda Wahl, Aziza Lena Alemi" },
-    { title: "Yoga Ferienwoche", date: "27.9.-2.10.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 1, leader: "Gita Irene Hofmann" },
-    { title: "Ayur-Yoga-Therapie für Schultern und Nacken", date: "2.-4.10.26", isWE: true, location: "Nordsee", maxTN: 10, currentTN: 5, leader: "Gita Irene Hofmann" },
-    { title: "Yoga und Meditation Einführung", date: "2.-4.10.26", isWE: true, location: "Nordsee", maxTN: 10, currentTN: 0, leader: "Parashakti Küttner" },
-    { title: "Meditation Intensiv Schweigend", date: "2.-4.10.26", isWE: true, location: "Nordsee", maxTN: 20, currentTN: 24, leader: "Karuna M. Wapke" },
-    { title: "Aufrichtung in der Asana erleben und verstehen", date: "4.-9.10.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 6, leader: "Gita Irene Hofmann" },
-    { title: "Wellnesswoche: Ayurveda, Massagen, Yoga & Medi(t)", date: "4.-9.10.26", isWE: false, location: "Nordsee", maxTN: 8, currentTN: 10, leader: "Madhavi Veronika Broszinski, Venulo Bernd Broszinski" },
-    { title: "Yin Yoga Übungsleiter Ausbildung", date: "4.-16.10.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 3, leader: "" },
-    { title: "Die 10-Wochenend-Weiterbildung für Yogalehrer", date: "9.10.26-21.5.28", isWE: false, location: "Nordsee", maxTN: 0, currentTN: 0, leader: "" },
-    { title: "Raja Yoga 2", date: "9.-11.10.26", isWE: true, location: "Nordsee", maxTN: 20, currentTN: 1, leader: "Karuna M. Wapke, Sukadev Bretz" },
-    { title: "Yoga Ferienwoche", date: "11.-16.10.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 3, leader: "Shankara Stefan Maune" },
-    { title: "Navaratri", date: "11.-20.10.26", isWE: false, location: "Nordsee", maxTN: 2, currentTN: 0, leader: "" },
-    { title: "Stärke deine Weiblichkeit im Frauentempel", date: "11.-16.10.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 0, leader: "Rajeshwari Gemnich" },
-    { title: "Yoga und Meditation Einführung", date: "16.-18.10.26", isWE: true, location: "Nordsee", maxTN: 10, currentTN: 0, leader: "Pranava Heinz Pauly" },
-    { title: "Jnana Yoga, Vedanta, Meditation und Schweigen", date: "16.-18.10.26", isWE: true, location: "Nordsee", maxTN: 20, currentTN: 0, leader: "Karuna M. Wapke" },
-    { title: "Mantra-Begleitung mit Ukulele | Aufbauseminar", date: "16.-18.10.26", isWE: true, location: "Nordsee", maxTN: 10, currentTN: 2, leader: "Shankari Susanne Hill" },
-    { title: "Yoga Ferienwoche", date: "18.-23.10.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 6, leader: "Erkan Batmaz" },
-    { title: "Nordsee Special: Yoga und Klangthemenwoche", date: "18.-23.10.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 2, leader: "Wolfgang Meisel, Jutta Kremer" },
-    { title: "Time out statt Burn out", date: "18.-23.10.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 1, leader: "Nicole Padmini Neumann" },
-    { title: "Vijaya Dashami", date: "20.10.26", isWE: false, location: "Nordsee", maxTN: 2, currentTN: 0, leader: "" },
-    { title: "Tag der offenen Tür - Haus Yoga Vidya Nordsee", date: "24.10.26", isWE: true, location: "Nordsee", maxTN: 20, currentTN: 4, leader: "Karuna M. Wapke" },
-    { title: "Hatha Yoga Prävention Ferienwoche", date: "25.-30.10.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 2, leader: "Pranava Heinz Pauly" },
-    { title: "Yin Yoga meets Vipassana", date: "25.-30.10.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 3, leader: "Christian Bliedtner" },
-    { title: "Yoga und Meditation Einführung", date: "30.10.-1.11.26", isWE: true, location: "Nordsee", maxTN: 10, currentTN: 2, leader: "Gopala Kirill Serov" },
-    { title: "Yoga Ferienwoche", date: "1.-6.11.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 6, leader: "Narayani Kedenburg" },
-    { title: "Ayurveda Wohlfühl-Retreat", date: "1.-6.11.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 5, leader: "Dr. phil. Marlene Vogel" },
-    { title: "Ganzheitliche Faceyoga Ausbildung", date: "1.-6.11.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 4, leader: "Charry Devi Ruiz" },
-    { title: "WE 4 – Yoga Anatomie (2J-YLA, 1. Jahr)", date: "13.-15.11.26", isWE: true, location: "Nordsee", maxTN: 15, currentTN: 8, leader: "" },
-    { title: "Räkelyoga (Wochenend-Seminar)", date: "13.-15.11.26", isWE: true, location: "Nordsee", maxTN: 10, currentTN: 6, leader: "Erkan Batmaz" },
-    { title: "Yoga Ferienwoche", date: "15.-20.11.26", isWE: false, location: "Nordsee", maxTN: 10, currentTN: 6, leader: "Erkan Batmaz" },
-  ];
-
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-
-  function getEndDate(dateStr: string): Date | null {
-    try {
-      const cleanStr = dateStr.replace(/WE/g, '').replace(/–/g, '-').trim();
-      const rangeParts = cleanStr.split('-');
-      const endPartStr = rangeParts[rangeParts.length - 1].trim();
-      const dateComponents = endPartStr.split('.').map(c => c.trim()).filter(Boolean);
-      
-      if (dateComponents.length < 3) return null;
-      
-      const day = parseInt(dateComponents[0], 10);
-      const month = parseInt(dateComponents[1], 10) - 1; // JS Month is 0-indexed
-      let year = parseInt(dateComponents[2], 10);
-      
-      if (year < 100) year += 2000;
-      
-      return new Date(year, month, day, 23, 59, 59); // End of the day
-    } catch (e) {
-      return null;
-    }
-  }
-
-  function isUpcoming(dateStr: string): boolean {
-    const endDate = getEndDate(dateStr);
-    if (!endDate) return true;
-    return endDate >= today;
-  }
-
-  const upcomingSeminars = seminars.filter(s => isUpcoming(s.date));
+  let upcomingSeminars = $derived(
+    ALL_NORDSEE_SEMINARS.filter((s) => isSeminarUpcomingOrOngoing(s, todayIso))
+  );
 
   let searchQuery = $state('');
   let filterStatus = $state<'all' | 'open' | 'assigned'>('all');
 
   let filteredSeminars = $derived(
-    upcomingSeminars.filter(s => {
+    upcomingSeminars.filter((s) => {
       // Filter by open/assigned status
       if (filterStatus === 'open' && s.leader !== '') return false;
       if (filterStatus === 'assigned' && s.leader === '') return false;
 
       // Filter by search query
       if (searchQuery.trim() !== '') {
-        const query = searchQuery.toLowerCase();
+        const query = searchQuery.toLowerCase().trim();
+        const normalizedQuery = query.replace(/–/g, '-');
         const matchesTitle = s.title.toLowerCase().includes(query);
         const matchesLeader = s.leader.toLowerCase().includes(query);
-        const matchesDate = s.date.includes(query);
-        return matchesTitle || matchesLeader || matchesDate;
+        const matchesDate = s.date.toLowerCase().includes(query) || s.date.replace(/–/g, '-').toLowerCase().includes(normalizedQuery);
+        const matchesNote = s.note ? s.note.toLowerCase().includes(query) : false;
+        return matchesTitle || matchesLeader || matchesDate || matchesNote;
       }
 
       return true;
     })
   );
 
-  let openCount = $derived(upcomingSeminars.filter(s => s.leader === '').length);
-  let assignedCount = $derived(upcomingSeminars.filter(s => s.leader !== '').length);
+  let openCount = $derived(upcomingSeminars.filter((s) => s.leader === '').length);
+  let assignedCount = $derived(upcomingSeminars.filter((s) => s.leader !== '').length);
 
-  let activeSeminarForTodo = $state<Seminar | null>(null);
+  let activeSeminarForTodo = $state<UpcomingSeminarItem | null>(null);
   let newTodoText = $state('');
   let newTodoCategory = $state<'check' | 'prepare' | 'communicate' | 'materials'>('check');
   let newTodoReminderTime = $state('');
@@ -384,11 +279,18 @@
     if (typeof window !== 'undefined') {
       syncOpenDayWithPlan();
       const handleSync = () => syncOpenDayWithPlan();
+      const refreshClock = () => { nowTick = Date.now(); };
+      const clockInterval = setInterval(refreshClock, 60000);
       window.addEventListener('rapla-data-synced', handleSync);
       window.addEventListener('storage', handleSync);
+      window.addEventListener('focus', refreshClock);
+      document.addEventListener('visibilitychange', refreshClock);
       return () => {
+        clearInterval(clockInterval);
         window.removeEventListener('rapla-data-synced', handleSync);
         window.removeEventListener('storage', handleSync);
+        window.removeEventListener('focus', refreshClock);
+        document.removeEventListener('visibilitychange', refreshClock);
       };
     }
   });
@@ -665,13 +567,14 @@
         <p>Bitte passe deine Suchkriterien oder Filter an.</p>
       </div>
     {:else}
-      {#each filteredSeminars as seminar}
+      {#each filteredSeminars as seminar (seminar.id)}
         {@const todos = getSeminarTodos(seminar.title, seminar.date)}
         {@const openTodos = todos.filter(t => t.status === 'pending')}
         <div 
           class="seminar-card glass-card" 
           class:unassigned={seminar.leader === ''}
           class:special-event={seminar.title.includes('Tag der offenen Tür')}
+          class:strikethrough-card={seminar.isStrikethrough}
         >
           <!-- Left Column: Date & Location Info -->
           <div class="seminar-date-sec">
@@ -692,18 +595,38 @@
                 <span>⭐ Besonderes Event</span>
               </div>
             {/if}
-            <h3 class="seminar-title">{seminar.title}</h3>
+            {#if seminar.isStrikethrough}
+              <div class="strikethrough-pill">
+                <span>🚫 Durchgestrichen (Absage unbestätigt)</span>
+              </div>
+            {/if}
+            <h3 class="seminar-title">
+              {#if seminar.isStrikethrough}
+                <del>{seminar.title}</del>
+              {:else}
+                {seminar.title}
+              {/if}
+            </h3>
             
             {#if seminar.leader !== ''}
               <div class="leader-row">
                 <span class="leader-icon">🧘</span>
                 <span class="leader-label">Seminarleiter:</span>
+                {#if seminar.leaderPrefixBadge}
+                  <span class="leader-prefix-green-badge" title={seminar.note || ''}>{seminar.leaderPrefixBadge}</span>
+                {/if}
                 <strong class="leader-names">{seminar.leader}</strong>
               </div>
             {:else}
               <div class="leader-row open-leader">
                 <span class="leader-icon">⚠️</span>
                 <strong class="open-label">Offen / Nicht belegt</strong>
+              </div>
+            {/if}
+
+            {#if seminar.note}
+              <div class="seminar-note-hint">
+                <span>ℹ️ {seminar.note}</span>
               </div>
             {/if}
 
@@ -730,18 +653,27 @@
             </div>
             <div class="participants-count">
               {#if seminar.maxTN > 0}
-                <strong>{seminar.currentTN}</strong> <span class="cap-slash">/</span> <span class="cap-total">{seminar.maxTN}</span>
+                <strong class:overbooked-num={seminar.currentTN > seminar.maxTN}>{seminar.currentTN}</strong>
+                <span class="cap-slash">/</span>
+                <span class="cap-total">{seminar.maxTN}</span>
+                {#if seminar.currentTN > seminar.maxTN}
+                  <span class="overbooked-pill" title="Teilnehmerzahl übersteigt angegebene Maximalzahl">+{seminar.currentTN - seminar.maxTN}</span>
+                {/if}
               {:else}
-                <strong>{seminar.currentTN}</strong> <span class="cap-unlimited">(unbegrenzt)</span>
+                <strong>{seminar.currentTN}</strong> <span class="cap-unlimited">(Max. 0)</span>
               {/if}
             </div>
 
             {#if seminar.maxTN > 0}
               {@const pct = (seminar.currentTN / seminar.maxTN) * 100}
               <div class="progress-bar-bg">
-                <div class="progress-bar-fill" style="width: {Math.min(pct, 100)}%;"></div>
+                <div class="progress-bar-fill" class:overbooked-fill={seminar.currentTN > seminar.maxTN} style="width: {Math.min(pct, 100)}%;"></div>
               </div>
             {/if}
+
+            <div class="stats-tuple-sub" title="Maximalzahl / Teilnehmer / Zusatzspalte (?)">
+              Max. / TN / ?: <strong>{seminar.maxTN} / {seminar.currentTN} / {seminar.extraStat ?? 0}</strong>
+            </div>
           </div>
         </div>
       {/each}
@@ -750,7 +682,7 @@
 
   <!-- Footer Info -->
   <div class="seminar-list-footer">
-    <p class="footer-timestamp">Stand: 04.07.2026 13:19:47 — Seite 1 & 2 von 8</p>
+    <p class="footer-timestamp">Seminar- und Kursliste Nordsee (Oktober 2025 – März 2027 · {NORDSEE_SEMINAR_LIST_2026_2027.length} übertragene Einträge)</p>
   </div>
 </div>
 
@@ -1735,6 +1667,27 @@
     gap: 0.45rem;
   }
 
+  .seminar-card.strikethrough-card {
+    border-left: 6px solid #9ca3af;
+    background: #f9fafb;
+    opacity: 0.85;
+  }
+
+  .strikethrough-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    background: #fee2e2;
+    border: 1px solid #fca5a5;
+    color: #991b1b;
+    font-size: 0.72rem;
+    font-weight: 800;
+    padding: 0.15rem 0.55rem;
+    border-radius: 6px;
+    margin-bottom: 0.2rem;
+    width: fit-content;
+  }
+
   .seminar-title {
     font-family: 'Playfair Display', serif;
     font-size: 1.15rem;
@@ -1744,11 +1697,42 @@
     line-height: 1.3;
   }
 
+  .seminar-title del {
+    color: #6b7280;
+    text-decoration-thickness: 2px;
+  }
+
   .leader-row {
     display: flex;
     align-items: center;
+    flex-wrap: wrap;
     gap: 0.45rem;
     font-size: 0.88rem;
+  }
+
+  .leader-prefix-green-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #dcfce7;
+    color: #15803d;
+    border: 1px solid #86efac;
+    font-size: 0.74rem;
+    font-weight: 800;
+    padding: 0.08rem 0.42rem;
+    border-radius: 6px;
+    line-height: 1.2;
+  }
+
+  .seminar-note-hint {
+    font-size: 0.76rem;
+    color: var(--text-secondary);
+    background: #faf6eb;
+    border: 1px dashed #e5dec9;
+    border-radius: 6px;
+    padding: 0.22rem 0.55rem;
+    width: fit-content;
+    margin-top: 0.1rem;
   }
 
   .leader-icon {
@@ -1846,6 +1830,38 @@
 
   .seminar-card.unassigned .progress-bar-fill {
     background: var(--accent);
+  }
+
+  .progress-bar-fill.overbooked-fill {
+    background: #15803d;
+  }
+
+  .overbooked-num {
+    color: #15803d;
+  }
+
+  .overbooked-pill {
+    display: inline-block;
+    margin-left: 0.35rem;
+    font-size: 0.7rem;
+    font-weight: 800;
+    background: #dcfce7;
+    color: #15803d;
+    border: 1px solid #86efac;
+    padding: 0.05rem 0.35rem;
+    border-radius: 999px;
+    vertical-align: middle;
+  }
+
+  .stats-tuple-sub {
+    font-size: 0.72rem;
+    color: var(--text-secondary);
+    margin-top: 0.15rem;
+  }
+
+  .stats-tuple-sub strong {
+    color: var(--text-primary);
+    font-weight: 700;
   }
 
   /* Seminar Footer styling */
