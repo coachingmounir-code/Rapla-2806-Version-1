@@ -3259,7 +3259,22 @@ const NORDSEE_CALENDAR_SEMINAR_SEEDS: NordseeSeminarSeed[] = [
 
   // 25.10. – 30.10.2026 (endet am Start-Freitag 30.10. von KW 45)
   { id: 'sem-2026-10-25-fewo-praevention', title: 'Hatha Yoga Prävention Ferienwoche', shortTitle: 'Hatha Prävention FEWO', startDate: '2026-10-25', endDate: '2026-10-30', isWE: false, leader: 'Pranava Heinz Pauly' },
-  { id: 'sem-2026-10-25-yin-vipassana', title: 'Yin Yoga meets Vipassana', startDate: '2026-10-25', endDate: '2026-10-30', isWE: false, leader: 'Christian Bliedtner', colorIndex: 2 }
+  { id: 'sem-2026-10-25-yin-vipassana', title: 'Yin Yoga meets Vipassana', startDate: '2026-10-25', endDate: '2026-10-30', isWE: false, leader: 'Christian Bliedtner', colorIndex: 2 },
+
+  // 20.11. – 06.12.2026 (Seminarauswertung Nordsee: 13 Seminare)
+  { id: 'sem-2026-11-20-we-intro', title: 'Yoga und Meditation Einführung', shortTitle: 'Yoga & Meditation (WE)', startDate: '2026-11-20', endDate: '2026-11-22', isWE: true, leader: 'Monika Adele Camara', colorIndex: 0 },
+  { id: 'sem-2026-11-20-we-schatten', title: 'Selbsthilfe-Praktiken für Schatten-Bewusstsein', shortTitle: 'Schatten-Bewusstsein (WE)', startDate: '2026-11-20', endDate: '2026-11-22', isWE: true, leader: 'Erkan Batmaz', colorIndex: 1 },
+  { id: 'sem-2026-11-20-we-pilates', title: 'Yoga und Pilates', shortTitle: 'Yoga & Pilates (WE)', startDate: '2026-11-20', endDate: '2026-11-22', isWE: true, leader: 'Carina van Anken', colorIndex: 2 },
+  { id: 'sem-2026-11-22-fewo-beate', title: 'Yoga Ferienwoche', shortTitle: 'FEWO Beate Menkalski', startDate: '2026-11-22', endDate: '2026-11-27', isWE: false, leader: 'Beate Menkalski' },
+  { id: 'sem-2026-11-22-schweigeretreat', title: 'Schweigeretreat an der Nordsee', shortTitle: 'Schweigeretreat Nordsee', startDate: '2026-11-22', endDate: '2026-11-27', isWE: false, leader: 'Pranava Heinz Pauly', colorIndex: 4 },
+  { id: 'sem-2026-11-27-we-autogene', title: 'Autogene Entspannung', shortTitle: 'Autogene Entspannung (WE)', startDate: '2026-11-27', endDate: '2026-11-29', isWE: true, leader: 'Roswitha Breitkopf', colorIndex: 3 },
+  { id: 'sem-2026-11-27-we-stress', title: 'Hatha Yoga, Entspannung und Stress Management – Yogalehrer Weiterbildung', shortTitle: 'Stress Management YLW (WE)', startDate: '2026-11-27', endDate: '2026-11-29', isWE: true, leader: 'Michael Büchel', colorIndex: 1 },
+  { id: 'sem-2026-11-27-we-yinyoga', title: 'Yin Yoga & Selbstakupressur', shortTitle: 'Yin Yoga & Akupressur (WE)', startDate: '2026-11-27', endDate: '2026-11-29', isWE: true, leader: 'Maharani Schons', colorIndex: 5 },
+  { id: 'sem-2026-11-29-fewo-offen', title: 'Yoga Ferienwoche', shortTitle: 'Yoga Ferienwoche', startDate: '2026-11-29', endDate: '2026-12-04', isWE: false, leader: 'Offen' },
+  { id: 'sem-2026-11-29-yinthai', title: 'YinThai – Erfahre deine innere Stille', shortTitle: 'YinThai – Innere Stille', startDate: '2026-11-29', endDate: '2026-12-04', isWE: false, leader: 'Cara Osterholzer', colorIndex: 2 },
+  { id: 'sem-2026-12-04-we-intro', title: 'Yoga und Meditation Einführung', shortTitle: 'Yoga & Meditation (WE)', startDate: '2026-12-04', endDate: '2026-12-06', isWE: true, leader: 'Offen', colorIndex: 0 },
+  { id: 'sem-2026-12-04-we-yla2j-pruefung', title: '2-Jahres-YLA Praktische Prüfung, Samyama, Wiederholung Sanskrit', shortTitle: '2J-YLA Praktische Prüfung (WE)', startDate: '2026-12-04', endDate: '2026-12-06', isWE: true, leader: 'Offen', colorIndex: 4 },
+  { id: 'sem-2026-12-04-we-beckenboden', title: 'Yoga für den Beckenboden', shortTitle: 'Yoga Beckenboden (WE)', startDate: '2026-12-04', endDate: '2026-12-06', isWE: true, leader: 'Parashakti Küttner', colorIndex: 3 }
 ];
 
 export const HISTORICAL_NORDSEE_SEMINARS: Seminar[] = NORDSEE_CALENDAR_SEMINAR_SEEDS.map(buildNordseeBlueprintSeminar);
@@ -3576,6 +3591,7 @@ function tokenizePersonName(raw: string): string[] {
   if (!raw) return [];
   return raw
     .toLowerCase()
+    .replace(/menkalski/g, 'menkarski')
     .replace(/^(?:prof\.|dr\.|phil\.|med\.|rer\.|nat\.|dipl\.-[a-z]+\.?)\s*/gi, '')
     .replace(/\b(?:prof|dr|phil|med|rer|nat|dipl)\b\.?/gi, '')
     .replace(/[#?!()]/g, ' ')

@@ -1,3 +1,5 @@
+import { db } from './db';
+
 export interface UpcomingSeminarItem {
   id: string;
   title: string;
@@ -7,11 +9,21 @@ export interface UpcomingSeminarItem {
   isWE: boolean;
   location: string;
   maxTN: number;
-  currentTN: number;
-  extraStat?: number; // 3rd value from "Max. / TN / ?"
+  currentTN: number; // Zahlende Gäste
+  extraStat?: number; // Nicht zahlende Gäste (3. Spalte aus Max. / Zahlend / Nicht zahlend)
   leader: string;
   isStrikethrough?: boolean;
+  isManuallyCancelled?: boolean;
   leaderPrefixBadge?: string;
+  note?: string;
+}
+
+export interface UpcomingSeminarOverride {
+  currentTN?: number;
+  extraStat?: number;
+  maxTN?: number;
+  leader?: string;
+  title?: string;
   note?: string;
 }
 
@@ -269,7 +281,7 @@ export const NORDSEE_SEMINAR_LIST_2026_2027: UpcomingSeminarItem[] = [
     location: 'Nordsee',
     maxTN: 5,
     currentTN: 0,
-    extraStat: 1,
+    extraStat: 0,
     leader: 'Erkan Batmaz'
   },
   {
@@ -281,7 +293,7 @@ export const NORDSEE_SEMINAR_LIST_2026_2027: UpcomingSeminarItem[] = [
     isWE: true,
     location: 'Nordsee',
     maxTN: 10,
-    currentTN: 17,
+    currentTN: 18,
     extraStat: 1,
     leader: 'Carina van Anken'
   },
@@ -296,7 +308,7 @@ export const NORDSEE_SEMINAR_LIST_2026_2027: UpcomingSeminarItem[] = [
     maxTN: 10,
     currentTN: 4,
     extraStat: 1,
-    leader: 'Beate Menkarski'
+    leader: 'Beate Menkalski'
   },
   {
     id: 'ns-b1-16',
@@ -321,7 +333,7 @@ export const NORDSEE_SEMINAR_LIST_2026_2027: UpcomingSeminarItem[] = [
     location: 'Nordsee',
     maxTN: 8,
     currentTN: 0,
-    extraStat: 1,
+    extraStat: 0,
     leader: 'Roswitha Breitkopf'
   },
   {
@@ -346,7 +358,7 @@ export const NORDSEE_SEMINAR_LIST_2026_2027: UpcomingSeminarItem[] = [
     isWE: true,
     location: 'Nordsee',
     maxTN: 10,
-    currentTN: 3,
+    currentTN: 4,
     extraStat: 2,
     leader: 'Maharani Schons'
   },
@@ -1104,6 +1116,113 @@ export const ALL_NORDSEE_SEMINARS: UpcomingSeminarItem[] = [
   ...NORDSEE_SEMINAR_LIST_2026_2027
 ];
 
+export const DELETED_UPCOMING_SEMINARS_KEY = 'rapla_deleted_upcoming_seminars';
+export const UPCOMING_SEMINAR_OVERRIDES_KEY = 'rapla_upcoming_seminar_overrides';
+
+export function getDeletedUpcomingSeminarIds(): string[] {
+  const stored = db.getStored<string[]>(DELETED_UPCOMING_SEMINARS_KEY, []);
+  return Array.isArray(stored) ? stored : [];
+}
+
+export function getUpcomingSeminarOverrides(): Record<string, UpcomingSeminarOverride> {
+  const stored = db.getStored<Record<string, UpcomingSeminarOverride>>(UPCOMING_SEMINAR_OVERRIDES_KEY, {});
+  return stored && typeof stored === 'object' && !Array.isArray(stored) ? stored : {};
+}
+
+function dispatchUpcomingSeminarsChanged(): void {
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new CustomEvent('upcoming-seminars-updated'));
+  }
+}
+
+export function deleteUpcomingSeminar(seminarId: string): void {
+  if (!seminarId) return;
+  const current = new Set(getDeletedUpcomingSeminarIds());
+  current.add(seminarId);
+  db.setStored(DELETED_UPCOMING_SEMINARS_KEY, Array.from(current), true);
+
+  // If a matching seminar exists in the detailed SeminarScheduleView DB, mark it as cancelled as well
+  const target = ALL_NORDSEE_SEMINARS.find((s) => s.id === seminarId);
+  if (target) {
+    try {
+      const regSeminars = db.getSeminars();
+      const match = regSeminars.find(
+        (rs) =>
+          rs.startDate === target.startDate &&
+          rs.endDate === target.endDate &&
+          rs.title.toLowerCase().trim() === target.title.toLowerCase().trim()
+      );
+      if (match && !match.isCancelled) {
+        db.updateSeminarGlobal(match.id, { isCancelled: true, isHiddenFromTeam: true });
+      }
+    } catch {}
+  }
+  dispatchUpcomingSeminarsChanged();
+}
+
+export function restoreUpcomingSeminar(seminarId: string): void {
+  if (!seminarId) return;
+  const current = getDeletedUpcomingSeminarIds().filter((id) => id !== seminarId);
+  db.setStored(DELETED_UPCOMING_SEMINARS_KEY, current, true);
+
+  const target = ALL_NORDSEE_SEMINARS.find((s) => s.id === seminarId);
+  if (target) {
+    try {
+      const regSeminars = db.getSeminars();
+      const match = regSeminars.find(
+        (rs) =>
+          rs.startDate === target.startDate &&
+          rs.endDate === target.endDate &&
+          rs.title.toLowerCase().trim() === target.title.toLowerCase().trim()
+      );
+      if (match && match.isCancelled) {
+        db.updateSeminarGlobal(match.id, { isCancelled: false, isHiddenFromTeam: false });
+      }
+    } catch {}
+  }
+  dispatchUpcomingSeminarsChanged();
+}
+
+export function updateUpcomingSeminarItem(seminarId: string, updates: UpcomingSeminarOverride): void {
+  if (!seminarId) return;
+  const current = { ...getUpcomingSeminarOverrides() };
+  current[seminarId] = {
+    ...(current[seminarId] || {}),
+    ...updates
+  };
+  db.setStored(UPCOMING_SEMINAR_OVERRIDES_KEY, current, true);
+  dispatchUpcomingSeminarsChanged();
+}
+
+export function getEffectiveNordseeSeminars(options?: {
+  includeDeleted?: boolean;
+  deletedIds?: string[];
+  overrides?: Record<string, UpcomingSeminarOverride>;
+}): UpcomingSeminarItem[] {
+  const includeDeleted = options?.includeDeleted ?? false;
+  const deletedSet = new Set(options?.deletedIds ?? getDeletedUpcomingSeminarIds());
+  const overrides = options?.overrides ?? getUpcomingSeminarOverrides();
+
+  return ALL_NORDSEE_SEMINARS
+    .map((sem) => {
+      const ov = overrides[sem.id];
+      const isManuallyCancelled = deletedSet.has(sem.id);
+      return {
+        ...sem,
+        ...(ov ? {
+          currentTN: ov.currentTN !== undefined ? ov.currentTN : sem.currentTN,
+          extraStat: ov.extraStat !== undefined ? ov.extraStat : sem.extraStat,
+          maxTN: ov.maxTN !== undefined ? ov.maxTN : sem.maxTN,
+          leader: ov.leader !== undefined ? ov.leader : sem.leader,
+          title: ov.title !== undefined ? ov.title : sem.title,
+          note: ov.note !== undefined ? ov.note : sem.note
+        } : {}),
+        isManuallyCancelled
+      };
+    })
+    .filter((sem) => includeDeleted || !sem.isManuallyCancelled);
+}
+
 export function getLocalTodayIso(refDate: Date = new Date()): string {
   const yyyy = refDate.getFullYear();
   const mm = String(refDate.getMonth() + 1).padStart(2, '0');
@@ -1128,17 +1247,19 @@ export function isSeminarWithinOneDayOfStart(seminar: UpcomingSeminarItem, today
 }
 
 /**
- * Returns the next `limit` (default 8) seminars that will start (or started today).
+ * Returns the next `limit` (default 6) active seminars that will start (or started today).
+ * Manually deleted/cancelled seminars are excluded so the next upcoming seminar automatically moves up.
  * Once 1 day has passed after a seminar's start date, it is automatically hidden
- * and the subsequent seminars move into the 8 visible slots.
+ * and the subsequent seminars move into the visible slots.
  */
 export function getNextStartingSeminars(
   todayIso: string,
-  limit = 8,
-  source: UpcomingSeminarItem[] = ALL_NORDSEE_SEMINARS
+  limit = 6,
+  source?: UpcomingSeminarItem[]
 ): UpcomingSeminarItem[] {
-  return source
-    .filter((s) => isSeminarWithinOneDayOfStart(s, todayIso))
+  const list = source ?? getEffectiveNordseeSeminars({ includeDeleted: false });
+  return list
+    .filter((s) => !s.isManuallyCancelled && isSeminarWithinOneDayOfStart(s, todayIso))
     .sort((a, b) => a.startDate.localeCompare(b.startDate))
     .slice(0, limit);
 }

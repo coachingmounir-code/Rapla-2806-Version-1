@@ -7,6 +7,12 @@
     NORDSEE_SEMINAR_LIST_2026_2027,
     getLocalTodayIso,
     isSeminarUpcomingOrOngoing,
+    getDeletedUpcomingSeminarIds,
+    getUpcomingSeminarOverrides,
+    getEffectiveNordseeSeminars,
+    deleteUpcomingSeminar,
+    restoreUpcomingSeminar,
+    updateUpcomingSeminarItem,
     type UpcomingSeminarItem
   } from '$lib/upcomingSeminarsData';
 
@@ -169,18 +175,96 @@
   let nowTick = $state(Date.now());
   let todayIso = $derived(getLocalTodayIso(new Date(nowTick)));
 
+  let deletedUpcomingIds = $state<string[]>(getDeletedUpcomingSeminarIds());
+  let upcomingOverrides = $state(getUpcomingSeminarOverrides());
+
+  let effectiveSeminars = $derived<UpcomingSeminarItem[]>(
+    getEffectiveNordseeSeminars({
+      includeDeleted: false,
+      deletedIds: deletedUpcomingIds,
+      overrides: upcomingOverrides
+    })
+  );
+
+  let cancelledSeminars = $derived<UpcomingSeminarItem[]>(
+    getEffectiveNordseeSeminars({
+      includeDeleted: true,
+      deletedIds: deletedUpcomingIds,
+      overrides: upcomingOverrides
+    }).filter((s) => s.isManuallyCancelled)
+  );
+
   let upcomingSeminars = $derived(
-    ALL_NORDSEE_SEMINARS.filter((s) => isSeminarUpcomingOrOngoing(s, todayIso))
+    effectiveSeminars.filter((s) => isSeminarUpcomingOrOngoing(s, todayIso))
+  );
+
+  // Seminarauswertung (20.11. bis 06.12.2026)
+  let evalNovDecSeminars = $derived(
+    effectiveSeminars.filter(
+      (s) => s.startDate >= '2026-11-20' && s.endDate <= '2026-12-06'
+    )
+  );
+  let evalNovDecPayingTotal = $derived(
+    evalNovDecSeminars.reduce((sum, s) => sum + (s.currentTN || 0), 0)
+  );
+  let evalNovDecNonPayingTotal = $derived(
+    evalNovDecSeminars.reduce((sum, s) => sum + (s.extraStat ?? 0), 0)
   );
 
   let searchQuery = $state('');
-  let filterStatus = $state<'all' | 'open' | 'assigned'>('all');
+  let filterStatus = $state<'all' | 'open' | 'assigned' | 'eval_nov_dec' | 'cancelled'>('all');
+  let lastDeletedSeminar = $state<UpcomingSeminarItem | null>(null);
+  let editingSeminarId = $state<string | null>(null);
+  let editZahlend = $state(0);
+  let editNichtZahlend = $state(0);
+  let editMaxTN = $state(10);
+  let editLeader = $state('');
 
-  let filteredSeminars = $derived(
-    upcomingSeminars.filter((s) => {
-      // Filter by open/assigned status
+  function refreshUpcomingState() {
+    deletedUpcomingIds = getDeletedUpcomingSeminarIds();
+    upcomingOverrides = getUpcomingSeminarOverrides();
+  }
+
+  function handleDeleteSeminarCard(sem: UpcomingSeminarItem) {
+    lastDeletedSeminar = sem;
+    deleteUpcomingSeminar(sem.id);
+    refreshUpcomingState();
+  }
+
+  function handleRestoreSeminarCard(semId: string) {
+    restoreUpcomingSeminar(semId);
+    if (lastDeletedSeminar?.id === semId) {
+      lastDeletedSeminar = null;
+    }
+    refreshUpcomingState();
+  }
+
+  function openEditSeminarCard(sem: UpcomingSeminarItem) {
+    editingSeminarId = sem.id;
+    editZahlend = sem.currentTN;
+    editNichtZahlend = sem.extraStat ?? 0;
+    editMaxTN = sem.maxTN;
+    editLeader = sem.leader;
+  }
+
+  function saveEditSeminarCard(semId: string) {
+    updateUpcomingSeminarItem(semId, {
+      currentTN: Math.max(0, Number(editZahlend) || 0),
+      extraStat: Math.max(0, Number(editNichtZahlend) || 0),
+      maxTN: Math.max(0, Number(editMaxTN) || 0),
+      leader: editLeader.trim()
+    });
+    editingSeminarId = null;
+    refreshUpcomingState();
+  }
+
+  let filteredSeminars = $derived.by(() => {
+    const baseList = filterStatus === 'cancelled' ? cancelledSeminars : upcomingSeminars;
+    return baseList.filter((s) => {
+      // Filter by status
       if (filterStatus === 'open' && s.leader !== '') return false;
       if (filterStatus === 'assigned' && s.leader === '') return false;
+      if (filterStatus === 'eval_nov_dec' && !(s.startDate >= '2026-11-20' && s.endDate <= '2026-12-06')) return false;
 
       // Filter by search query
       if (searchQuery.trim() !== '') {
@@ -194,8 +278,8 @@
       }
 
       return true;
-    })
-  );
+    });
+  });
 
   let openCount = $derived(upcomingSeminars.filter((s) => s.leader === '').length);
   let assignedCount = $derived(upcomingSeminars.filter((s) => s.leader !== '').length);
@@ -278,16 +362,22 @@
   onMount(() => {
     if (typeof window !== 'undefined') {
       syncOpenDayWithPlan();
-      const handleSync = () => syncOpenDayWithPlan();
+      refreshUpcomingState();
+      const handleSync = () => {
+        syncOpenDayWithPlan();
+        refreshUpcomingState();
+      };
       const refreshClock = () => { nowTick = Date.now(); };
       const clockInterval = setInterval(refreshClock, 60000);
       window.addEventListener('rapla-data-synced', handleSync);
+      window.addEventListener('upcoming-seminars-updated', refreshUpcomingState);
       window.addEventListener('storage', handleSync);
       window.addEventListener('focus', refreshClock);
       document.addEventListener('visibilitychange', refreshClock);
       return () => {
         clearInterval(clockInterval);
         window.removeEventListener('rapla-data-synced', handleSync);
+        window.removeEventListener('upcoming-seminars-updated', refreshUpcomingState);
         window.removeEventListener('storage', handleSync);
         window.removeEventListener('focus', refreshClock);
         document.removeEventListener('visibilitychange', refreshClock);
@@ -515,6 +605,37 @@
 <div id="seminars-list-anchor"></div>
 
 <div class="seminars-container animate-fade-in">
+  <!-- Seminarauswertung Highlight Card (20.11. – 06.12.2026) -->
+  <div class="eval-summary-card glass-card">
+    <div class="eval-summary-left">
+      <span class="eval-eyebrow">📊 SEMINARAUSWERTUNG · YOGA VIDYA NORDSEE</span>
+      <h3>Zeitraum: 20. November bis 6. Dezember 2026</h3>
+      <p>Mittlere Zahl = <strong>zahlende Gäste</strong> · Rechte Zahl = <strong>nicht zahlende Gäste</strong></p>
+    </div>
+    <div class="eval-metrics-row">
+      <div class="eval-metric-box">
+        <span class="eval-metric-num">{evalNovDecSeminars.length}</span>
+        <span class="eval-metric-label">Seminare</span>
+      </div>
+      <div class="eval-metric-box paying">
+        <span class="eval-metric-num">{evalNovDecPayingTotal}</span>
+        <span class="eval-metric-label">Zahlende Gäste</span>
+      </div>
+      <div class="eval-metric-box nonpaying">
+        <span class="eval-metric-num">{evalNovDecNonPayingTotal}</span>
+        <span class="eval-metric-label">Nicht zahlende</span>
+      </div>
+      <button
+        type="button"
+        class="eval-filter-btn"
+        class:active={filterStatus === 'eval_nov_dec'}
+        onclick={() => (filterStatus = filterStatus === 'eval_nov_dec' ? 'all' : 'eval_nov_dec')}
+      >
+        {filterStatus === 'eval_nov_dec' ? '✓ Gefiltert (Alle zeigen)' : '🔍 Nur 20.11.–06.12. anzeigen'}
+      </button>
+    </div>
+  </div>
+
   <!-- Interactive Filters Toolbar -->
   <div class="filters-toolbar glass-card">
     <div class="search-input-wrapper">
@@ -540,6 +661,14 @@
         <span class="chip-count">{upcomingSeminars.length}</span>
       </button>
       <button 
+        class="chip-btn" 
+        class:active={filterStatus === 'eval_nov_dec'} 
+        onclick={() => filterStatus = 'eval_nov_dec'}
+      >
+        <span>📊 20.11.–06.12.</span>
+        <span class="chip-count">{evalNovDecSeminars.length}</span>
+      </button>
+      <button 
         class="chip-btn chip-open" 
         class:active={filterStatus === 'open'} 
         onclick={() => filterStatus = 'open'}
@@ -555,8 +684,32 @@
         <span>✓ Belegt</span>
         <span class="chip-count count-assigned">{assignedCount}</span>
       </button>
+      {#if cancelledSeminars.length > 0}
+        <button 
+          class="chip-btn chip-cancelled" 
+          class:active={filterStatus === 'cancelled'} 
+          onclick={() => filterStatus = 'cancelled'}
+        >
+          <span>🚫 Storniert</span>
+          <span class="chip-count">{cancelledSeminars.length}</span>
+        </button>
+      {/if}
     </div>
   </div>
+
+  {#if lastDeletedSeminar}
+    <div class="seminar-undo-banner">
+      <span>
+        🗑️ Seminar <strong>„{lastDeletedSeminar.title}“</strong> ({lastDeletedSeminar.date}) wurde manuell als storniert gelöscht.
+      </span>
+      <div class="seminar-undo-actions">
+        <button type="button" class="btn-undo-restore" onclick={() => lastDeletedSeminar && handleRestoreSeminarCard(lastDeletedSeminar.id)}>
+          ↩️ Rückgängig
+        </button>
+        <button type="button" class="btn-undo-close" onclick={() => (lastDeletedSeminar = null)}>✕</button>
+      </div>
+    </div>
+  {/if}
 
   <!-- Seminars Grid / List -->
   <div class="seminars-list">
@@ -574,7 +727,7 @@
           class="seminar-card glass-card" 
           class:unassigned={seminar.leader === ''}
           class:special-event={seminar.title.includes('Tag der offenen Tür')}
-          class:strikethrough-card={seminar.isStrikethrough}
+          class:strikethrough-card={seminar.isStrikethrough || seminar.isManuallyCancelled}
         >
           <!-- Left Column: Date & Location Info -->
           <div class="seminar-date-sec">
@@ -595,13 +748,17 @@
                 <span>⭐ Besonderes Event</span>
               </div>
             {/if}
-            {#if seminar.isStrikethrough}
+            {#if seminar.isManuallyCancelled}
+              <div class="strikethrough-pill">
+                <span>🚫 Intern storniert / manuell gelöscht</span>
+              </div>
+            {:else if seminar.isStrikethrough}
               <div class="strikethrough-pill">
                 <span>🚫 Durchgestrichen (Absage unbestätigt)</span>
               </div>
             {/if}
             <h3 class="seminar-title">
-              {#if seminar.isStrikethrough}
+              {#if seminar.isStrikethrough || seminar.isManuallyCancelled}
                 <del>{seminar.title}</del>
               {:else}
                 {seminar.title}
@@ -630,7 +787,38 @@
               </div>
             {/if}
 
-            <!-- To-Dos Section -->
+            {#if editingSeminarId === seminar.id}
+              <div class="inline-sem-edit-card">
+                <div class="inline-sem-edit-grid">
+                  <label>
+                    <span>Zahlend</span>
+                    <input type="number" min="0" bind:value={editZahlend} />
+                  </label>
+                  <label>
+                    <span>Nicht zahlend</span>
+                    <input type="number" min="0" bind:value={editNichtZahlend} />
+                  </label>
+                  <label>
+                    <span>Max. TN</span>
+                    <input type="number" min="0" bind:value={editMaxTN} />
+                  </label>
+                </div>
+                <label class="inline-sem-leader-label">
+                  <span>Seminarleitung</span>
+                  <input type="text" placeholder="Name der Seminarleitung (leer = offen)" bind:value={editLeader} />
+                </label>
+                <div class="inline-sem-edit-actions">
+                  <button type="button" class="btn-inline-save" onclick={() => saveEditSeminarCard(seminar.id)}>
+                    ✓ Speichern
+                  </button>
+                  <button type="button" class="btn-inline-cancel" onclick={() => (editingSeminarId = null)}>
+                    Abbrechen
+                  </button>
+                </div>
+              </div>
+            {/if}
+
+            <!-- To-Dos & Quick Actions Section -->
             <div class="todo-badge-wrapper">
               <button type="button" class="btn-card-todo" onclick={() => activeSeminarForTodo = seminar}>
                 📋 To-Dos
@@ -642,6 +830,33 @@
                   <span class="badge-count empty">0 Aufgaben</span>
                 {/if}
               </button>
+              <button
+                type="button"
+                class="btn-card-edit-stats"
+                onclick={() => (editingSeminarId === seminar.id ? (editingSeminarId = null) : openEditSeminarCard(seminar))}
+                title="Anmeldezahlen (Zahlend / Nicht zahlend) oder Seminarleitung bearbeiten"
+              >
+                ✏️ Zahlen / SL bearbeiten
+              </button>
+              {#if seminar.isManuallyCancelled}
+                <button
+                  type="button"
+                  class="btn-card-restore-sem"
+                  onclick={() => handleRestoreSeminarCard(seminar.id)}
+                  title="Storniertes Seminar wiederherstellen"
+                >
+                  ↩️ Wiederherstellen
+                </button>
+              {:else}
+                <button
+                  type="button"
+                  class="btn-card-delete-sem"
+                  onclick={() => handleDeleteSeminarCard(seminar)}
+                  title="Seminar intern stornieren / manuell löschen"
+                >
+                  🗑️ Stornieren
+                </button>
+              {/if}
             </div>
           </div>
 
@@ -649,7 +864,7 @@
           <div class="seminar-stats-sec">
             <div class="stats-header">
               <span class="stats-icon">👥</span>
-              <span>Anmeldungen:</span>
+              <span>Zahlend:</span>
             </div>
             <div class="participants-count">
               {#if seminar.maxTN > 0}
@@ -657,7 +872,7 @@
                 <span class="cap-slash">/</span>
                 <span class="cap-total">{seminar.maxTN}</span>
                 {#if seminar.currentTN > seminar.maxTN}
-                  <span class="overbooked-pill" title="Teilnehmerzahl übersteigt angegebene Maximalzahl">+{seminar.currentTN - seminar.maxTN}</span>
+                  <span class="overbooked-pill" title="Zahlende Gäste übersteigen angegebene Maximalzahl">+{seminar.currentTN - seminar.maxTN}</span>
                 {/if}
               {:else}
                 <strong>{seminar.currentTN}</strong> <span class="cap-unlimited">(Max. 0)</span>
@@ -671,8 +886,8 @@
               </div>
             {/if}
 
-            <div class="stats-tuple-sub" title="Maximalzahl / Teilnehmer / Zusatzspalte (?)">
-              Max. / TN / ?: <strong>{seminar.maxTN} / {seminar.currentTN} / {seminar.extraStat ?? 0}</strong>
+            <div class="stats-tuple-sub" title="Zahlende Gäste / Nicht zahlende Gäste (Max. {seminar.maxTN})">
+              Zahlend: <strong>{seminar.currentTN}</strong> · Nicht zahlend: <strong>{seminar.extraStat ?? 0}</strong>
             </div>
           </div>
         </div>
@@ -2066,5 +2281,276 @@
     height: 1px;
     background: var(--border-color);
     margin: 1.5rem 0;
+  }
+
+  .eval-summary-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1.25rem;
+    padding: 1.15rem 1.5rem;
+    margin-bottom: 1.25rem;
+    background: linear-gradient(135deg, #fffdf9 0%, #fff7ed 60%, #fef3c7 100%);
+    border: 1.5px solid #f59e0b;
+    border-left: 6px solid #960040;
+    border-radius: 16px;
+  }
+
+  .eval-summary-left {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
+  .eval-eyebrow {
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    color: #960040;
+    text-transform: uppercase;
+  }
+
+  .eval-summary-left h3 {
+    margin: 0;
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: #1e293b;
+  }
+
+  .eval-summary-left p {
+    margin: 0;
+    font-size: 0.82rem;
+    color: #475569;
+  }
+
+  .eval-metrics-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .eval-metric-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 0.45rem 0.95rem;
+    min-width: 92px;
+    box-shadow: 0 2px 5px rgba(15, 23, 42, 0.04);
+  }
+
+  .eval-metric-box.paying {
+    border-color: #86efac;
+    background: #f0fdf4;
+  }
+
+  .eval-metric-box.nonpaying {
+    border-color: #fde68a;
+    background: #fffbeb;
+  }
+
+  .eval-metric-num {
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: #0f172a;
+    line-height: 1.1;
+  }
+
+  .eval-metric-box.paying .eval-metric-num {
+    color: #15803d;
+  }
+
+  .eval-metric-box.nonpaying .eval-metric-num {
+    color: #b45309;
+  }
+
+  .eval-metric-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: #475569;
+  }
+
+  .eval-filter-btn {
+    background: #960040;
+    color: #ffffff;
+    border: none;
+    border-radius: 10px;
+    padding: 0.55rem 0.95rem;
+    font-family: inherit;
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.18s ease;
+  }
+
+  .eval-filter-btn:hover,
+  .eval-filter-btn.active {
+    background: #7d0034;
+  }
+
+  .seminar-undo-banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    padding: 0.7rem 1.1rem;
+    margin-bottom: 1rem;
+    background: #fff1f2;
+    border: 1px solid #fecdd3;
+    border-radius: 12px;
+    color: #881337;
+    font-size: 0.85rem;
+  }
+
+  .seminar-undo-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+  }
+
+  .btn-undo-restore {
+    background: #960040;
+    color: #ffffff;
+    border: none;
+    border-radius: 6px;
+    padding: 0.3rem 0.75rem;
+    font-family: inherit;
+    font-size: 0.78rem;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .btn-undo-close {
+    background: transparent;
+    border: none;
+    color: #881337;
+    font-size: 0.95rem;
+    cursor: pointer;
+  }
+
+  .btn-card-edit-stats,
+  .btn-card-delete-sem,
+  .btn-card-restore-sem {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.34rem 0.7rem;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 0.76rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .btn-card-edit-stats {
+    background: #f8fafc;
+    border: 1px solid #cbd5e1;
+    color: #334155;
+  }
+
+  .btn-card-edit-stats:hover {
+    background: #eff6ff;
+    border-color: #93c5fd;
+    color: #1d4ed8;
+  }
+
+  .btn-card-delete-sem {
+    background: #fef2f2;
+    border: 1px solid #fca5a5;
+    color: #dc2626;
+  }
+
+  .btn-card-delete-sem:hover {
+    background: #dc2626;
+    color: #ffffff;
+    border-color: #dc2626;
+  }
+
+  .btn-card-restore-sem {
+    background: #f0fdf4;
+    border: 1px solid #86efac;
+    color: #15803d;
+  }
+
+  .btn-card-restore-sem:hover {
+    background: #16a34a;
+    color: #ffffff;
+  }
+
+  .inline-sem-edit-card {
+    margin-top: 0.5rem;
+    padding: 0.75rem;
+    background: #f8fafc;
+    border: 1px solid #cbd5e1;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    max-width: 440px;
+  }
+
+  .inline-sem-edit-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.5rem;
+  }
+
+  .inline-sem-edit-grid label,
+  .inline-sem-leader-label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    font-size: 0.74rem;
+    font-weight: 700;
+    color: #475569;
+  }
+
+  .inline-sem-edit-grid input,
+  .inline-sem-leader-label input {
+    padding: 0.32rem 0.5rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #0f172a;
+    background: #ffffff;
+  }
+
+  .inline-sem-edit-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+  }
+
+  .btn-inline-save {
+    background: #16a34a;
+    color: #ffffff;
+    border: none;
+    border-radius: 6px;
+    padding: 0.32rem 0.75rem;
+    font-family: inherit;
+    font-size: 0.78rem;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .btn-inline-cancel {
+    background: #ffffff;
+    color: #475569;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    padding: 0.32rem 0.75rem;
+    font-family: inherit;
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
   }
 </style>

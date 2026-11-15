@@ -25,6 +25,12 @@
     getDaysUntilSeminarStart,
     getRaplaMondayForIsoDate,
     getIsoWeekNumberForRaplaDate,
+    getDeletedUpcomingSeminarIds,
+    getUpcomingSeminarOverrides,
+    getEffectiveNordseeSeminars,
+    deleteUpcomingSeminar,
+    restoreUpcomingSeminar,
+    updateUpcomingSeminarItem,
     type UpcomingSeminarItem
   } from '$lib/upcomingSeminarsData';
   import { page } from '$app/state';
@@ -117,8 +123,74 @@
 
   let nowTick = $state(Date.now());
   let todayIso = $derived(getLocalTodayIso(new Date(nowTick)));
-  let nextEightSeminars = $derived<UpcomingSeminarItem[]>(getNextStartingSeminars(todayIso, 8));
+  let upcomingPreviewLimit = $state<6 | 8>(6);
+  let deletedUpcomingIds = $state<string[]>(getDeletedUpcomingSeminarIds());
+  let upcomingOverrides = $state(getUpcomingSeminarOverrides());
+  let effectiveNordseeSeminars = $derived<UpcomingSeminarItem[]>(
+    getEffectiveNordseeSeminars({
+      includeDeleted: false,
+      deletedIds: deletedUpcomingIds,
+      overrides: upcomingOverrides
+    })
+  );
+  let deletedUpcomingSeminars = $derived<UpcomingSeminarItem[]>(
+    getEffectiveNordseeSeminars({
+      includeDeleted: true,
+      deletedIds: deletedUpcomingIds,
+      overrides: upcomingOverrides
+    }).filter((s) => s.isManuallyCancelled)
+  );
+  let nextEightSeminars = $derived<UpcomingSeminarItem[]>(
+    getNextStartingSeminars(todayIso, upcomingPreviewLimit, effectiveNordseeSeminars)
+  );
   let isUpcomingEightExpanded = $state(true);
+  let showDeletedUpcomingPanel = $state(false);
+  let lastDeletedUpcomingSem = $state<UpcomingSeminarItem | null>(null);
+  let editingUpcomingSemId = $state<string | null>(null);
+  let editUpcomingZahlend = $state(0);
+  let editUpcomingNichtZahlend = $state(0);
+  let editUpcomingMaxTN = $state(10);
+  let editUpcomingLeader = $state('');
+
+  function refreshUpcomingSeminarsState() {
+    deletedUpcomingIds = getDeletedUpcomingSeminarIds();
+    upcomingOverrides = getUpcomingSeminarOverrides();
+  }
+
+  function handleDeleteUpcomingCard(sem: UpcomingSeminarItem) {
+    lastDeletedUpcomingSem = sem;
+    deleteUpcomingSeminar(sem.id);
+    refreshUpcomingSeminarsState();
+    registeredSeminars = db.getSeminars();
+  }
+
+  function handleRestoreUpcomingCard(semId: string) {
+    restoreUpcomingSeminar(semId);
+    if (lastDeletedUpcomingSem?.id === semId) {
+      lastDeletedUpcomingSem = null;
+    }
+    refreshUpcomingSeminarsState();
+    registeredSeminars = db.getSeminars();
+  }
+
+  function openEditUpcomingCard(sem: UpcomingSeminarItem) {
+    editingUpcomingSemId = sem.id;
+    editUpcomingZahlend = sem.currentTN;
+    editUpcomingNichtZahlend = sem.extraStat ?? 0;
+    editUpcomingMaxTN = sem.maxTN;
+    editUpcomingLeader = sem.leader;
+  }
+
+  function saveEditUpcomingCard(semId: string) {
+    updateUpcomingSeminarItem(semId, {
+      currentTN: Math.max(0, Number(editUpcomingZahlend) || 0),
+      extraStat: Math.max(0, Number(editUpcomingNichtZahlend) || 0),
+      maxTN: Math.max(0, Number(editUpcomingMaxTN) || 0),
+      leader: editUpcomingLeader.trim()
+    });
+    editingUpcomingSemId = null;
+    refreshUpcomingSeminarsState();
+  }
 
   afterNavigate(({ to }) => {
     const tabParam = to?.url.searchParams.get('tab') || '';
@@ -292,6 +364,7 @@
     };
 
     const handleYlaChange = () => {
+      refreshUpcomingSeminarsState();
       loadData();
     };
 
@@ -299,6 +372,7 @@
     window.addEventListener('storage', handleYlaChange);
     window.addEventListener('yla-assignment-changed', handleYlaChange);
     window.addEventListener('rapla-data-synced', handleYlaChange);
+    window.addEventListener('upcoming-seminars-updated', refreshUpcomingSeminarsState);
     window.addEventListener('focus', refreshClock);
     document.addEventListener('visibilitychange', refreshClock);
     document.addEventListener('fullscreenchange', handleFullscreenChange);
@@ -312,6 +386,7 @@
       window.removeEventListener('storage', handleYlaChange);
       window.removeEventListener('yla-assignment-changed', handleYlaChange);
       window.removeEventListener('rapla-data-synced', handleYlaChange);
+      window.removeEventListener('upcoming-seminars-updated', refreshUpcomingSeminarsState);
       window.removeEventListener('focus', refreshClock);
       document.removeEventListener('visibilitychange', refreshClock);
       document.removeEventListener('fullscreenchange', handleFullscreenChange);
@@ -1586,17 +1661,47 @@
   }
 </script>
 
-{#if activeScheduleTab === 'calendar' && nextEightSeminars.length > 0}
-  <section class="upcoming-eight-showcase" aria-label="Die nächsten 8 kommenden Seminare">
+{#if activeScheduleTab === 'calendar' && (nextEightSeminars.length > 0 || deletedUpcomingSeminars.length > 0)}
+  <section class="upcoming-eight-showcase" aria-label="Die nächsten {upcomingPreviewLimit} kommenden Seminare">
     <div class="u8-header">
       <div class="u8-header-left">
         <div class="u8-eyebrow-row">
-          <span class="u8-eyebrow-badge">🪷 NÄCHSTE 8 SEMINARE · VORSCHAU</span>
+          <span class="u8-eyebrow-badge">🪷 NÄCHSTE {upcomingPreviewLimit} SEMINARE · VORSCHAU</span>
           <span class="u8-auto-rule-pill">⏱️ Auto-Wechsel spätestens 1 Tag nach Seminarbeginn</span>
+          <span class="u8-auto-rule-pill">🗑️ Stornierte Seminare manuell löschbar (Nachrück-Automatik)</span>
         </div>
-        <h2 class="u8-section-title">Kommende 8 Seminare im Überblick</h2>
+        <h2 class="u8-section-title">Kommende {upcomingPreviewLimit} Seminare im Überblick</h2>
       </div>
       <div class="u8-header-actions">
+        <div class="u8-limit-switcher" title="Anzahl der angezeigten kommenden Seminare wählen">
+          <button
+            type="button"
+            class="u8-limit-btn"
+            class:active={upcomingPreviewLimit === 6}
+            onclick={() => (upcomingPreviewLimit = 6)}
+          >
+            6 Seminare
+          </button>
+          <button
+            type="button"
+            class="u8-limit-btn"
+            class:active={upcomingPreviewLimit === 8}
+            onclick={() => (upcomingPreviewLimit = 8)}
+          >
+            8 Seminare
+          </button>
+        </div>
+        {#if deletedUpcomingSeminars.length > 0}
+          <button
+            type="button"
+            class="u8-deleted-toggle-btn"
+            class:active={showDeletedUpcomingPanel}
+            onclick={() => (showDeletedUpcomingPanel = !showDeletedUpcomingPanel)}
+            title="Manuell gelöschte / stornierte Seminare anzeigen oder wiederherstellen"
+          >
+            🚫 Storniert ({deletedUpcomingSeminars.length})
+          </button>
+        {/if}
         <a href="/" class="u8-all-seminars-link" title="Alle kommenden Seminare anzeigen">
           Alle kommenden Seminare →
         </a>
@@ -1611,8 +1716,62 @@
       </div>
     </div>
 
+    {#if lastDeletedUpcomingSem}
+      <div class="u8-undo-toast">
+        <span>
+          🗑️ Seminar <strong>„{lastDeletedUpcomingSem.title}“</strong> ({lastDeletedUpcomingSem.date}) als storniert aus der Vorschau entfernt — das nächste Seminar ist nachgerückt.
+        </span>
+        <div class="u8-undo-actions">
+          <button
+            type="button"
+            class="u8-undo-btn"
+            onclick={() => lastDeletedUpcomingSem && handleRestoreUpcomingCard(lastDeletedUpcomingSem.id)}
+          >
+            ↩️ Rückgängig
+          </button>
+          <button
+            type="button"
+            class="u8-undo-dismiss"
+            onclick={() => (lastDeletedUpcomingSem = null)}
+            aria-label="Hinweis schließen"
+          >
+            ✕
+          </button>
+        </div>
+      </div>
+    {/if}
+
+    {#if showDeletedUpcomingPanel && deletedUpcomingSeminars.length > 0}
+      <div class="u8-deleted-panel">
+        <div class="u8-deleted-panel-header">
+          <strong>🚫 Manuell stornierte / gelöschte Seminare ({deletedUpcomingSeminars.length})</strong>
+          <span>Klicke auf „Wiederherstellen“, falls ein storniertes Seminar wieder eingeblendet werden soll:</span>
+        </div>
+        <div class="u8-deleted-list">
+          {#each deletedUpcomingSeminars as delSem (delSem.id)}
+            <div class="u8-deleted-item">
+              <div class="u8-deleted-info">
+                <span class="u8-deleted-date">📅 {delSem.date}</span>
+                <strong>{delSem.title}</strong>
+                {#if delSem.leader}
+                  <span class="u8-deleted-leader">· 🧘 {delSem.leader}</span>
+                {/if}
+              </div>
+              <button
+                type="button"
+                class="u8-restore-btn"
+                onclick={() => handleRestoreUpcomingCard(delSem.id)}
+              >
+                ↩️ Wiederherstellen
+              </button>
+            </div>
+          {/each}
+        </div>
+      </div>
+    {/if}
+
     {#if isUpcomingEightExpanded}
-      <div class="u8-cards-grid">
+      <div class="u8-cards-grid" class:u8-grid-six={upcomingPreviewLimit === 6}>
         {#each nextEightSeminars as sem, idx (sem.id)}
           {@const daysUntil = getDaysUntilSeminarStart(sem.startDate, todayIso)}
           {@const semKw = getIsoWeekNumberForRaplaDate(sem.startDate)}
@@ -1630,15 +1789,33 @@
                   <span class="u8-we-tag">WE</span>
                 {/if}
               </div>
-              {#if daysUntil === 0}
-                <span class="u8-countdown-pill today">🟢 Startet heute</span>
-              {:else if daysUntil === 1}
-                <span class="u8-countdown-pill tomorrow">🟠 Morgen</span>
-              {:else if daysUntil <= 7}
-                <span class="u8-countdown-pill soon">In {daysUntil} Tg.</span>
-              {:else}
-                <span class="u8-countdown-pill future">In {daysUntil} Tg.</span>
-              {/if}
+              <div class="u8-top-right-group">
+                {#if daysUntil === 0}
+                  <span class="u8-countdown-pill today">🟢 Startet heute</span>
+                {:else if daysUntil === 1}
+                  <span class="u8-countdown-pill tomorrow">🟠 Morgen</span>
+                {:else if daysUntil <= 7}
+                  <span class="u8-countdown-pill soon">In {daysUntil} Tg.</span>
+                {:else}
+                  <span class="u8-countdown-pill future">In {daysUntil} Tg.</span>
+                {/if}
+                <button
+                  type="button"
+                  class="u8-card-icon-btn edit"
+                  onclick={() => (editingUpcomingSemId === sem.id ? (editingUpcomingSemId = null) : openEditUpcomingCard(sem))}
+                  title="Anmeldezahlen (Zahlend / Nicht zahlend) oder Seminarleitung bearbeiten"
+                >
+                  ✏️
+                </button>
+                <button
+                  type="button"
+                  class="u8-card-icon-btn delete"
+                  onclick={() => handleDeleteUpcomingCard(sem)}
+                  title="Seminar intern stornieren / manuell aus der Vorschau löschen"
+                >
+                  🗑️
+                </button>
+              </div>
             </div>
 
             <div class="u8-card-body">
@@ -1666,16 +1843,47 @@
                   <span>⚠️ Leitung offen</span>
                 </div>
               {/if}
+
+              {#if editingUpcomingSemId === sem.id}
+                <div class="u8-inline-edit-box">
+                  <div class="u8-inline-edit-grid">
+                    <label>
+                      <span>Zahlend</span>
+                      <input type="number" min="0" bind:value={editUpcomingZahlend} />
+                    </label>
+                    <label>
+                      <span>Nicht zahlend</span>
+                      <input type="number" min="0" bind:value={editUpcomingNichtZahlend} />
+                    </label>
+                    <label>
+                      <span>Max. TN</span>
+                      <input type="number" min="0" bind:value={editUpcomingMaxTN} />
+                    </label>
+                  </div>
+                  <label class="u8-inline-leader-field">
+                    <span>Seminarleitung</span>
+                    <input type="text" placeholder="Name der Seminarleitung (leer = offen)" bind:value={editUpcomingLeader} />
+                  </label>
+                  <div class="u8-inline-edit-actions">
+                    <button type="button" class="u8-save-edit-btn" onclick={() => saveEditUpcomingCard(sem.id)}>
+                      ✓ Speichern
+                    </button>
+                    <button type="button" class="u8-cancel-edit-btn" onclick={() => (editingUpcomingSemId = null)}>
+                      Abbrechen
+                    </button>
+                  </div>
+                </div>
+              {/if}
             </div>
 
             <div class="u8-card-footer">
               <div
                 class="u8-stats-pill"
                 class:u8-overbooked={sem.maxTN > 0 && sem.currentTN > sem.maxTN}
-                title="Max. / TN / ?: {sem.maxTN} / {sem.currentTN} / {sem.extraStat ?? 0}"
+                title="Zahlende Gäste: {sem.currentTN}{sem.maxTN > 0 ? ` (Max. ${sem.maxTN})` : ''} · Nicht zahlende Gäste: {sem.extraStat ?? 0}"
               >
-                <span>👥 TN: <strong>{sem.currentTN}</strong>{sem.maxTN > 0 ? ` / ${sem.maxTN}` : ' (Max. 0)'}</span>
-                <span class="u8-extra-stat">· ? {sem.extraStat ?? 0}</span>
+                <span class="u8-stat-paying">👥 Zahlend: <strong>{sem.currentTN}</strong>{sem.maxTN > 0 ? ` / ${sem.maxTN}` : ''}</span>
+                <span class="u8-extra-stat">· Nicht zahlend: <strong>{sem.extraStat ?? 0}</strong></span>
               </div>
               {#if semKw}
                 <button
@@ -5025,6 +5233,279 @@
     grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 0.75rem;
     margin-top: 0.9rem;
+  }
+
+  .u8-cards-grid.u8-grid-six {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .u8-limit-switcher {
+    display: inline-flex;
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    padding: 2px;
+    gap: 2px;
+  }
+
+  .u8-limit-btn {
+    background: transparent;
+    border: none;
+    color: #475569;
+    font-family: inherit;
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 0.25rem 0.55rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .u8-limit-btn.active {
+    background: #960040;
+    color: #ffffff;
+  }
+
+  .u8-deleted-toggle-btn {
+    background: #fef2f2;
+    border: 1px solid #fca5a5;
+    color: #b91c1c;
+    font-family: inherit;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.36rem 0.68rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .u8-deleted-toggle-btn:hover,
+  .u8-deleted-toggle-btn.active {
+    background: #dc2626;
+    color: #ffffff;
+    border-color: #dc2626;
+  }
+
+  .u8-undo-toast {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-top: 0.75rem;
+    padding: 0.55rem 0.85rem;
+    background: #fff1f2;
+    border: 1px solid #fecdd3;
+    border-radius: 10px;
+    font-size: 0.8rem;
+    color: #881337;
+  }
+
+  .u8-undo-actions {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .u8-undo-btn {
+    background: #960040;
+    color: #ffffff;
+    border: none;
+    border-radius: 6px;
+    padding: 0.26rem 0.65rem;
+    font-family: inherit;
+    font-size: 0.75rem;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .u8-undo-dismiss {
+    background: transparent;
+    border: none;
+    color: #881337;
+    font-size: 0.9rem;
+    cursor: pointer;
+    padding: 0.1rem 0.35rem;
+  }
+
+  .u8-deleted-panel {
+    margin-top: 0.75rem;
+    padding: 0.75rem 0.9rem;
+    background: rgba(255, 255, 255, 0.92);
+    border: 1px dashed #f87171;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .u8-deleted-panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    font-size: 0.78rem;
+    color: #7f1d1d;
+  }
+
+  .u8-deleted-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.38rem;
+  }
+
+  .u8-deleted-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 0.38rem 0.65rem;
+    background: #fef2f2;
+    border: 1px solid #fee2e2;
+    border-radius: 8px;
+    font-size: 0.78rem;
+  }
+
+  .u8-deleted-info {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  .u8-deleted-date {
+    font-weight: 700;
+    color: #475569;
+  }
+
+  .u8-deleted-leader {
+    color: #64748b;
+  }
+
+  .u8-restore-btn {
+    background: #ffffff;
+    border: 1px solid #16a34a;
+    color: #15803d;
+    border-radius: 6px;
+    padding: 0.22rem 0.58rem;
+    font-family: inherit;
+    font-size: 0.73rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .u8-restore-btn:hover {
+    background: #16a34a;
+    color: #ffffff;
+  }
+
+  .u8-top-right-group {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+
+  .u8-card-icon-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    border-radius: 6px;
+    border: 1px solid #e2e8f0;
+    background: #f8fafc;
+    font-size: 0.72rem;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .u8-card-icon-btn.edit:hover {
+    background: #eff6ff;
+    border-color: #93c5fd;
+  }
+
+  .u8-card-icon-btn.delete {
+    border-color: rgba(220, 38, 38, 0.25);
+    background: #fef2f2;
+  }
+
+  .u8-card-icon-btn.delete:hover {
+    background: #dc2626;
+    color: #ffffff;
+    border-color: #dc2626;
+  }
+
+  .u8-inline-edit-box {
+    margin-top: 0.35rem;
+    padding: 0.55rem;
+    background: #f8fafc;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+  }
+
+  .u8-inline-edit-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.35rem;
+  }
+
+  .u8-inline-edit-grid label,
+  .u8-inline-leader-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: #475569;
+  }
+
+  .u8-inline-edit-grid input,
+  .u8-inline-leader-field input {
+    padding: 0.24rem 0.4rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 5px;
+    font-family: inherit;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #0f172a;
+    background: #ffffff;
+  }
+
+  .u8-inline-edit-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+
+  .u8-save-edit-btn {
+    background: #16a34a;
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    padding: 0.24rem 0.55rem;
+    font-family: inherit;
+    font-size: 0.72rem;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .u8-cancel-edit-btn {
+    background: #ffffff;
+    color: #475569;
+    border: 1px solid #cbd5e1;
+    border-radius: 5px;
+    padding: 0.24rem 0.55rem;
+    font-family: inherit;
+    font-size: 0.72rem;
+    font-weight: 600;
+    cursor: pointer;
   }
 
   @media (max-width: 1280px) {
