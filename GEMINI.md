@@ -33,6 +33,9 @@ Bitte bei zukünftigen Zuweisungen und Planungen entsprechend beachten!
   - Sonntags hat sie dafür nicht mehr regulär frei.
   - Sie darf wöchentlich bis zu drei Anfänger-Yogastunden geben (an Tagen, an denen sie nicht frei hat).
   - In den 4 Wochen der Yogalehrerausbildung (YLA: 30.08.2026 – 27.09.2026) steht sie komplett nicht zur Verfügung.
+  - Seva-freie Zeiten: 29.11.2026 – 06.12.2026 (Sevafrei).
+- Nirmaya:
+  - Seva-freie Zeiten: 26.11.2026 – 27.11.2026 (Sevafrei).
 - Alexander Melior:
   - Seva-freie Zeiten: 28.10.2026 – 30.10.2026 (3 Kalendertage) sowie 19.11.2026 – 24.11.2026 (6 Kalendertage).
 - Christopher Mader:

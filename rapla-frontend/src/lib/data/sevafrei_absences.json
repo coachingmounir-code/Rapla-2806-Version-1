@@ -5944,6 +5944,17 @@
     "teacherId": "teacher-gen-nirmaya-fodor",
     "teacherName": "Nirmaya",
     "avatarColor": "from-blue-400 to-indigo-500",
+    "startDate": "2026-11-26",
+    "endDate": "2026-11-27",
+    "type": "Urlaub",
+    "status": "Genehmigt",
+    "note": "Sevafrei"
+  },
+  {
+    "id": "excel-sf-541",
+    "teacherId": "teacher-gen-nirmaya-fodor",
+    "teacherName": "Nirmaya",
+    "avatarColor": "from-blue-400 to-indigo-500",
     "startDate": "2026-12-01",
     "endDate": "2026-12-02",
     "type": "Frei",
@@ -5951,7 +5962,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-541",
+    "id": "excel-sf-542",
     "teacherId": "teacher-gen-nirmaya-fodor",
     "teacherName": "Nirmaya",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -5962,7 +5973,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-542",
+    "id": "excel-sf-543",
     "teacherId": "teacher-gen-nirmaya-fodor",
     "teacherName": "Nirmaya",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -5973,7 +5984,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-543",
+    "id": "excel-sf-544",
     "teacherId": "teacher-gen-nirmaya-fodor",
     "teacherName": "Nirmaya",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -5984,7 +5995,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-544",
+    "id": "excel-sf-545",
     "teacherId": "teacher-gen-nirmaya-fodor",
     "teacherName": "Nirmaya",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -5995,7 +6006,7 @@
     "note": "Seminartage"
   },
   {
-    "id": "excel-sf-545",
+    "id": "excel-sf-546",
     "teacherId": "teacher-gen-nirmaya-fodor",
     "teacherName": "Nirmaya",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -6006,7 +6017,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-546",
+    "id": "excel-sf-547",
     "teacherId": "teacher-gen-nirmaya-fodor",
     "teacherName": "Nirmaya",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -6017,7 +6028,7 @@
     "note": "Seminartage"
   },
   {
-    "id": "excel-sf-547",
+    "id": "excel-sf-548",
     "teacherId": "teacher-gen-martina-schloms",
     "teacherName": "Maitri",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -6028,7 +6039,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-548",
+    "id": "excel-sf-549",
     "teacherId": "teacher-gen-martina-schloms",
     "teacherName": "Maitri",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -6039,7 +6050,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-549",
+    "id": "excel-sf-550",
     "teacherId": "teacher-gen-martina-schloms",
     "teacherName": "Maitri",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -6050,7 +6061,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-550",
+    "id": "excel-sf-551",
     "teacherId": "teacher-gen-martina-schloms",
     "teacherName": "Maitri",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -6061,7 +6072,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-551",
+    "id": "excel-sf-552",
     "teacherId": "teacher-gen-martina-schloms",
     "teacherName": "Maitri",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -6072,7 +6083,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-552",
+    "id": "excel-sf-553",
     "teacherId": "teacher-gen-martina-schloms",
     "teacherName": "Maitri",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -6083,7 +6094,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-553",
+    "id": "excel-sf-554",
     "teacherId": "teacher-gen-martina-schloms",
     "teacherName": "Maitri",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -6094,7 +6105,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-554",
+    "id": "excel-sf-555",
     "teacherId": "teacher-gen-martina-schloms",
     "teacherName": "Maitri",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -6105,7 +6116,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-555",
+    "id": "excel-sf-556",
     "teacherId": "teacher-gen-martina-schloms",
     "teacherName": "Maitri",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -6116,7 +6127,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-556",
+    "id": "excel-sf-557",
     "teacherId": "teacher-gen-martina-schloms",
     "teacherName": "Maitri",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -6127,7 +6138,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-557",
+    "id": "excel-sf-558",
     "teacherId": "teacher-gen-martina-schloms",
     "teacherName": "Maitri",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -6138,7 +6149,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-558",
+    "id": "excel-sf-559",
     "teacherId": "teacher-gen-martina-schloms",
     "teacherName": "Maitri",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -6149,7 +6160,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-559",
+    "id": "excel-sf-560",
     "teacherId": "teacher-gen-martina-schloms",
     "teacherName": "Maitri",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -6160,7 +6171,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-560",
+    "id": "excel-sf-561",
     "teacherId": "teacher-gen-martina-schloms",
     "teacherName": "Maitri",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -6171,7 +6182,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-561",
+    "id": "excel-sf-562",
     "teacherId": "teacher-gen-martina-schloms",
     "teacherName": "Maitri",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -6182,7 +6193,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-562",
+    "id": "excel-sf-563",
     "teacherId": "teacher-gen-martina-schloms",
     "teacherName": "Maitri",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -6193,7 +6204,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-563",
+    "id": "excel-sf-564",
     "teacherId": "teacher-gen-martina-schloms",
     "teacherName": "Maitri",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -6204,7 +6215,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-564",
+    "id": "excel-sf-565",
     "teacherId": "teacher-gen-martina-schloms",
     "teacherName": "Maitri",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -6215,7 +6226,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-565",
+    "id": "excel-sf-566",
     "teacherId": "teacher-gen-martina-schloms",
     "teacherName": "Maitri",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -6226,7 +6237,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-566",
+    "id": "excel-sf-567",
     "teacherId": "teacher-gen-martina-schloms",
     "teacherName": "Maitri",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -6237,7 +6248,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-567",
+    "id": "excel-sf-568",
     "teacherId": "teacher-gen-martina-schloms",
     "teacherName": "Maitri",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -6248,7 +6259,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-568",
+    "id": "excel-sf-569",
     "teacherId": "teacher-gen-martina-schloms",
     "teacherName": "Maitri",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -6259,7 +6270,7 @@
     "note": "Sevafrei"
   },
   {
-    "id": "excel-sf-569",
+    "id": "excel-sf-570",
     "teacherId": "teacher-gen-martina-schloms",
     "teacherName": "Maitri",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -6270,7 +6281,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-570",
+    "id": "excel-sf-571",
     "teacherId": "teacher-gen-martina-schloms",
     "teacherName": "Maitri",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -6281,7 +6292,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-571",
+    "id": "excel-sf-572",
     "teacherId": "teacher-gen-martina-schloms",
     "teacherName": "Maitri",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -6292,7 +6303,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-572",
+    "id": "excel-sf-573",
     "teacherId": "teacher-gen-martina-schloms",
     "teacherName": "Maitri",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -6303,7 +6314,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-573",
+    "id": "excel-sf-574",
     "teacherId": "teacher-gen-martina-schloms",
     "teacherName": "Maitri",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -6314,7 +6325,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-574",
+    "id": "excel-sf-575",
     "teacherId": "teacher-gen-martina-schloms",
     "teacherName": "Maitri",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -6325,7 +6336,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-575",
+    "id": "excel-sf-576",
     "teacherId": "teacher-gen-martina-schloms",
     "teacherName": "Maitri",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -6336,7 +6347,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-576",
+    "id": "excel-sf-577",
     "teacherId": "teacher-gen-martina-schloms",
     "teacherName": "Maitri",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -6347,7 +6358,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-577",
+    "id": "excel-sf-578",
     "teacherId": "teacher-gen-martina-schloms",
     "teacherName": "Maitri",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -6358,7 +6369,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-578",
+    "id": "excel-sf-579",
     "teacherId": "teacher-gen-martina-schloms",
     "teacherName": "Maitri",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -6369,7 +6380,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-579",
+    "id": "excel-sf-580",
     "teacherId": "teacher-gen-martina-schloms",
     "teacherName": "Maitri",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -6380,7 +6391,7 @@
     "note": "Sevafrei"
   },
   {
-    "id": "excel-sf-580",
+    "id": "excel-sf-581",
     "teacherId": "teacher-gen-martina-schloms",
     "teacherName": "Maitri",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -6391,7 +6402,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-581",
+    "id": "excel-sf-582",
     "teacherId": "teacher-gen-martina-schloms",
     "teacherName": "Maitri",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -6402,7 +6413,7 @@
     "note": "Sevafrei"
   },
   {
-    "id": "excel-sf-582",
+    "id": "excel-sf-583",
     "teacherId": "teacher-gen-martina-schloms",
     "teacherName": "Maitri",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -6413,7 +6424,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-583",
+    "id": "excel-sf-584",
     "teacherId": "teacher-gen-martina-schloms",
     "teacherName": "Maitri",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -6424,7 +6435,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-584",
+    "id": "excel-sf-585",
     "teacherId": "teacher-gen-martina-schloms",
     "teacherName": "Maitri",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -6435,7 +6446,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-585",
+    "id": "excel-sf-586",
     "teacherId": "teacher-gen-martina-schloms",
     "teacherName": "Maitri",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -6446,7 +6457,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-586",
+    "id": "excel-sf-587",
     "teacherId": "teacher-gen-martina-schloms",
     "teacherName": "Maitri",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -6457,7 +6468,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-587",
+    "id": "excel-sf-588",
     "teacherId": "teacher-gen-martina-schloms",
     "teacherName": "Maitri",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -6468,7 +6479,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-588",
+    "id": "excel-sf-589",
     "teacherId": "teacher-gen-martina-schloms",
     "teacherName": "Maitri",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -6479,7 +6490,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-589",
+    "id": "excel-sf-590",
     "teacherId": "teacher-gen-martina-schloms",
     "teacherName": "Maitri",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -6490,7 +6501,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-590",
+    "id": "excel-sf-591",
     "teacherId": "teacher-gen-martina-schloms",
     "teacherName": "Maitri",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -6501,7 +6512,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-591",
+    "id": "excel-sf-592",
     "teacherId": "teacher-gen-martina-schloms",
     "teacherName": "Maitri",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -6512,7 +6523,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-592",
+    "id": "excel-sf-593",
     "teacherId": "teacher-gen-martina-schloms",
     "teacherName": "Maitri",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -6523,7 +6534,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-593",
+    "id": "excel-sf-594",
     "teacherId": "teacher-gen-martina-schloms",
     "teacherName": "Maitri",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -6534,7 +6545,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-594",
+    "id": "excel-sf-595",
     "teacherId": "teacher-gen-martina-schloms",
     "teacherName": "Maitri",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -6545,7 +6556,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-595",
+    "id": "excel-sf-596",
     "teacherId": "teacher-gen-martina-schloms",
     "teacherName": "Maitri",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -6556,7 +6567,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-596",
+    "id": "excel-sf-597",
     "teacherId": "teacher-gen-martina-schloms",
     "teacherName": "Maitri",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -6567,7 +6578,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-597",
+    "id": "excel-sf-598",
     "teacherId": "teacher-gen-martina-schloms",
     "teacherName": "Maitri",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -6578,7 +6589,7 @@
     "note": "Sevafrei"
   },
   {
-    "id": "excel-sf-598",
+    "id": "excel-sf-599",
     "teacherId": "teacher-gen-martina-schloms",
     "teacherName": "Maitri",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -6589,7 +6600,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-599",
+    "id": "excel-sf-600",
     "teacherId": "teacher-gen-martina-schloms",
     "teacherName": "Maitri",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -6600,7 +6611,7 @@
     "note": "Sevafrei"
   },
   {
-    "id": "excel-sf-600",
+    "id": "excel-sf-601",
     "teacherId": "teacher-gen-martina-schloms",
     "teacherName": "Maitri",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -6611,7 +6622,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-601",
+    "id": "excel-sf-602",
     "teacherId": "teacher-gen-martina-schloms",
     "teacherName": "Maitri",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -6622,7 +6633,7 @@
     "note": "Sevafrei"
   },
   {
-    "id": "excel-sf-602",
+    "id": "excel-sf-603",
     "teacherId": "teacher-gen-martina-schloms",
     "teacherName": "Maitri",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -6633,7 +6644,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-603",
+    "id": "excel-sf-604",
     "teacherId": "teacher-gen-martina-schloms",
     "teacherName": "Maitri",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -6644,7 +6655,7 @@
     "note": "Sevafrei"
   },
   {
-    "id": "excel-sf-604",
+    "id": "excel-sf-605",
     "teacherId": "teacher-gen-martina-schloms",
     "teacherName": "Maitri",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -6655,7 +6666,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-605",
+    "id": "excel-sf-606",
     "teacherId": "teacher-gen-martina-schloms",
     "teacherName": "Maitri",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -6666,7 +6677,7 @@
     "note": "Sevafrei"
   },
   {
-    "id": "excel-sf-606",
+    "id": "excel-sf-607",
     "teacherId": "teacher-gen-martina-schloms",
     "teacherName": "Maitri",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -6677,7 +6688,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-607",
+    "id": "excel-sf-608",
     "teacherId": "teacher-gen-martina-schloms",
     "teacherName": "Maitri",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -6688,7 +6699,7 @@
     "note": "Sevafrei"
   },
   {
-    "id": "excel-sf-608",
+    "id": "excel-sf-609",
     "teacherId": "teacher-gen-martina-schloms",
     "teacherName": "Maitri",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -6699,7 +6710,7 @@
     "note": "Krank"
   },
   {
-    "id": "excel-sf-609",
+    "id": "excel-sf-610",
     "teacherId": "teacher-gen-alexander-melior",
     "teacherName": "Alexander",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -6710,7 +6721,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-610",
+    "id": "excel-sf-611",
     "teacherId": "teacher-gen-alexander-melior",
     "teacherName": "Alexander",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -6721,7 +6732,7 @@
     "note": "Sevafrei"
   },
   {
-    "id": "excel-sf-611",
+    "id": "excel-sf-612",
     "teacherId": "teacher-gen-alexander-melior",
     "teacherName": "Alexander",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -6732,7 +6743,7 @@
     "note": "Seminartage"
   },
   {
-    "id": "excel-sf-612",
+    "id": "excel-sf-613",
     "teacherId": "teacher-gen-alexander-melior",
     "teacherName": "Alexander",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -6743,7 +6754,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-613",
+    "id": "excel-sf-614",
     "teacherId": "teacher-gen-alexander-melior",
     "teacherName": "Alexander",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -6754,7 +6765,7 @@
     "note": "Seminartage"
   },
   {
-    "id": "excel-sf-614",
+    "id": "excel-sf-615",
     "teacherId": "teacher-gen-alexander-melior",
     "teacherName": "Alexander",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -6765,7 +6776,7 @@
     "note": "Sevafrei"
   },
   {
-    "id": "excel-sf-615",
+    "id": "excel-sf-616",
     "teacherId": "teacher-gen-alexander-melior",
     "teacherName": "Alexander",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -6776,7 +6787,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-616",
+    "id": "excel-sf-617",
     "teacherId": "teacher-gen-alexander-melior",
     "teacherName": "Alexander",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -6787,7 +6798,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-617",
+    "id": "excel-sf-618",
     "teacherId": "teacher-gen-alexander-melior",
     "teacherName": "Alexander",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -6798,7 +6809,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-618",
+    "id": "excel-sf-619",
     "teacherId": "teacher-gen-alexander-melior",
     "teacherName": "Alexander",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -6809,7 +6820,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-619",
+    "id": "excel-sf-620",
     "teacherId": "teacher-gen-alexander-melior",
     "teacherName": "Alexander",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -6820,7 +6831,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-620",
+    "id": "excel-sf-621",
     "teacherId": "teacher-gen-alexander-melior",
     "teacherName": "Alexander",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -6831,7 +6842,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-621",
+    "id": "excel-sf-622",
     "teacherId": "teacher-gen-alexander-melior",
     "teacherName": "Alexander",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -6842,7 +6853,7 @@
     "note": "Sevafrei"
   },
   {
-    "id": "excel-sf-622",
+    "id": "excel-sf-623",
     "teacherId": "teacher-gen-alexander-melior",
     "teacherName": "Alexander",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -6853,7 +6864,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-623",
+    "id": "excel-sf-624",
     "teacherId": "teacher-gen-alexander-melior",
     "teacherName": "Alexander",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -6864,7 +6875,7 @@
     "note": "Sevafrei"
   },
   {
-    "id": "excel-sf-624",
+    "id": "excel-sf-625",
     "teacherId": "teacher-gen-alexander-melior",
     "teacherName": "Alexander",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -6875,7 +6886,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-625",
+    "id": "excel-sf-626",
     "teacherId": "teacher-gen-alexander-melior",
     "teacherName": "Alexander",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -6886,7 +6897,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-626",
+    "id": "excel-sf-627",
     "teacherId": "teacher-gen-alexander-melior",
     "teacherName": "Alexander",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -6897,7 +6908,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-627",
+    "id": "excel-sf-628",
     "teacherId": "teacher-gen-alexander-melior",
     "teacherName": "Alexander",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -6908,7 +6919,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-628",
+    "id": "excel-sf-629",
     "teacherId": "teacher-gen-alexander-melior",
     "teacherName": "Alexander",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -6919,7 +6930,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-629",
+    "id": "excel-sf-630",
     "teacherId": "teacher-gen-alexander-melior",
     "teacherName": "Alexander",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -6930,7 +6941,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-630",
+    "id": "excel-sf-631",
     "teacherId": "teacher-gen-alexander-melior",
     "teacherName": "Alexander",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -6941,7 +6952,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-631",
+    "id": "excel-sf-632",
     "teacherId": "teacher-gen-alexander-melior",
     "teacherName": "Alexander",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -6952,7 +6963,7 @@
     "note": "Seminartage"
   },
   {
-    "id": "excel-sf-632",
+    "id": "excel-sf-633",
     "teacherId": "teacher-gen-alexander-melior",
     "teacherName": "Alexander",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -6963,7 +6974,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-633",
+    "id": "excel-sf-634",
     "teacherId": "teacher-gen-alexander-melior",
     "teacherName": "Alexander",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -6974,7 +6985,7 @@
     "note": "Seminartage"
   },
   {
-    "id": "excel-sf-634",
+    "id": "excel-sf-635",
     "teacherId": "teacher-gen-alexander-melior",
     "teacherName": "Alexander",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -6985,7 +6996,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-635",
+    "id": "excel-sf-636",
     "teacherId": "teacher-gen-alexander-melior",
     "teacherName": "Alexander",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -6996,7 +7007,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-636",
+    "id": "excel-sf-637",
     "teacherId": "teacher-gen-alexander-melior",
     "teacherName": "Alexander",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -7007,7 +7018,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-637",
+    "id": "excel-sf-638",
     "teacherId": "teacher-gen-alexander-melior",
     "teacherName": "Alexander",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -7018,7 +7029,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-638",
+    "id": "excel-sf-639",
     "teacherId": "teacher-gen-alexander-melior",
     "teacherName": "Alexander",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -7029,7 +7040,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-639",
+    "id": "excel-sf-640",
     "teacherId": "teacher-gen-alexander-melior",
     "teacherName": "Alexander",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -7040,7 +7051,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-640",
+    "id": "excel-sf-641",
     "teacherId": "teacher-gen-alexander-melior",
     "teacherName": "Alexander",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -7051,7 +7062,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-641",
+    "id": "excel-sf-642",
     "teacherId": "teacher-gen-alexander-melior",
     "teacherName": "Alexander",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -7062,7 +7073,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-642",
+    "id": "excel-sf-643",
     "teacherId": "teacher-gen-alexander-melior",
     "teacherName": "Alexander",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -7073,7 +7084,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-643",
+    "id": "excel-sf-644",
     "teacherId": "teacher-gen-alexander-melior",
     "teacherName": "Alexander",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -7084,7 +7095,7 @@
     "note": "Seminartage"
   },
   {
-    "id": "excel-sf-644",
+    "id": "excel-sf-645",
     "teacherId": "teacher-gen-alexander-melior",
     "teacherName": "Alexander",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -7095,7 +7106,7 @@
     "note": "Sevafrei"
   },
   {
-    "id": "excel-sf-645",
+    "id": "excel-sf-646",
     "teacherId": "teacher-gen-alexander-melior",
     "teacherName": "Alexander",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -7106,7 +7117,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-646",
+    "id": "excel-sf-647",
     "teacherId": "teacher-gen-alexander-melior",
     "teacherName": "Alexander",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -7117,7 +7128,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-647",
+    "id": "excel-sf-648",
     "teacherId": "teacher-gen-alexander-melior",
     "teacherName": "Alexander",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -7128,7 +7139,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-648",
+    "id": "excel-sf-649",
     "teacherId": "teacher-gen-alexander-melior",
     "teacherName": "Alexander",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -7139,7 +7150,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-649",
+    "id": "excel-sf-650",
     "teacherId": "teacher-gen-alexander-melior",
     "teacherName": "Alexander",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -7150,7 +7161,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-650",
+    "id": "excel-sf-651",
     "teacherId": "teacher-gen-alexander-melior",
     "teacherName": "Alexander",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -7161,7 +7172,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-651",
+    "id": "excel-sf-652",
     "teacherId": "teacher-gen-alexander-melior",
     "teacherName": "Alexander",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -7172,7 +7183,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-652",
+    "id": "excel-sf-653",
     "teacherId": "teacher-gen-alexander-melior",
     "teacherName": "Alexander",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -7183,7 +7194,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-653",
+    "id": "excel-sf-654",
     "teacherId": "teacher-gen-alexander-melior",
     "teacherName": "Alexander",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -7194,7 +7205,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-654",
+    "id": "excel-sf-655",
     "teacherId": "teacher-gen-alexander-melior",
     "teacherName": "Alexander",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -7205,7 +7216,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-655",
+    "id": "excel-sf-656",
     "teacherId": "teacher-gen-alexander-melior",
     "teacherName": "Alexander",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -7216,7 +7227,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-656",
+    "id": "excel-sf-657",
     "teacherId": "teacher-gen-alexander-melior",
     "teacherName": "Alexander",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -7227,7 +7238,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-657",
+    "id": "excel-sf-658",
     "teacherId": "teacher-gen-alexander-melior",
     "teacherName": "Alexander",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -7238,7 +7249,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-658",
+    "id": "excel-sf-659",
     "teacherId": "teacher-gen-alexander-melior",
     "teacherName": "Alexander",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -7249,7 +7260,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-659",
+    "id": "excel-sf-660",
     "teacherId": "teacher-gen-alexander-melior",
     "teacherName": "Alexander",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -7260,7 +7271,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-660",
+    "id": "excel-sf-661",
     "teacherId": "teacher-gen-alexander-melior",
     "teacherName": "Alexander",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -7271,7 +7282,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-661",
+    "id": "excel-sf-662",
     "teacherId": "teacher-gen-alexander-melior",
     "teacherName": "Alexander",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -7282,7 +7293,7 @@
     "note": "Sevafrei"
   },
   {
-    "id": "excel-sf-662",
+    "id": "excel-sf-663",
     "teacherId": "teacher-gen-alexander-melior",
     "teacherName": "Alexander",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -7293,7 +7304,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-663",
+    "id": "excel-sf-664",
     "teacherId": "teacher-gen-alexander-melior",
     "teacherName": "Alexander",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -7304,7 +7315,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-664",
+    "id": "excel-sf-665",
     "teacherId": "teacher-gen-alexander-melior",
     "teacherName": "Alexander",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -7315,7 +7326,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-665",
+    "id": "excel-sf-666",
     "teacherId": "teacher-gen-alexander-melior",
     "teacherName": "Alexander",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -7326,7 +7337,7 @@
     "note": "Sevafrei"
   },
   {
-    "id": "excel-sf-666",
+    "id": "excel-sf-667",
     "teacherId": "teacher-gen-alexander-melior",
     "teacherName": "Alexander",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -7337,7 +7348,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-667",
+    "id": "excel-sf-668",
     "teacherId": "teacher-gen-alexander-melior",
     "teacherName": "Alexander",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -7348,7 +7359,7 @@
     "note": "Sevafrei"
   },
   {
-    "id": "excel-sf-668",
+    "id": "excel-sf-669",
     "teacherId": "teacher-gen-alexander-melior",
     "teacherName": "Alexander",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -7359,7 +7370,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-669",
+    "id": "excel-sf-670",
     "teacherId": "teacher-gen-alexander-melior",
     "teacherName": "Alexander",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -7370,7 +7381,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-670",
+    "id": "excel-sf-671",
     "teacherId": "teacher-gen-alexander-melior",
     "teacherName": "Alexander",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -7381,7 +7392,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-671",
+    "id": "excel-sf-672",
     "teacherId": "teacher-gen-alexander-melior",
     "teacherName": "Alexander",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -7392,7 +7403,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-672",
+    "id": "excel-sf-673",
     "teacherId": "teacher-gen-alexander-melior",
     "teacherName": "Alexander",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -7403,7 +7414,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-673",
+    "id": "excel-sf-674",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -7414,7 +7425,7 @@
     "note": "Seminartage"
   },
   {
-    "id": "excel-sf-674",
+    "id": "excel-sf-675",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -7425,7 +7436,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-675",
+    "id": "excel-sf-676",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -7436,7 +7447,7 @@
     "note": "Sevafrei"
   },
   {
-    "id": "excel-sf-676",
+    "id": "excel-sf-677",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -7447,7 +7458,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-677",
+    "id": "excel-sf-678",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -7458,7 +7469,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-678",
+    "id": "excel-sf-679",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -7469,7 +7480,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-679",
+    "id": "excel-sf-680",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -7480,7 +7491,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-680",
+    "id": "excel-sf-681",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -7491,7 +7502,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-681",
+    "id": "excel-sf-682",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -7502,7 +7513,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-682",
+    "id": "excel-sf-683",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -7513,7 +7524,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-683",
+    "id": "excel-sf-684",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -7524,7 +7535,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-684",
+    "id": "excel-sf-685",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -7535,7 +7546,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-685",
+    "id": "excel-sf-686",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -7546,7 +7557,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-686",
+    "id": "excel-sf-687",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -7557,7 +7568,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-687",
+    "id": "excel-sf-688",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -7568,7 +7579,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-688",
+    "id": "excel-sf-689",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -7579,7 +7590,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-689",
+    "id": "excel-sf-690",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -7590,7 +7601,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-690",
+    "id": "excel-sf-691",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -7601,7 +7612,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-691",
+    "id": "excel-sf-692",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -7612,7 +7623,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-692",
+    "id": "excel-sf-693",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -7623,7 +7634,7 @@
     "note": "Sevafrei"
   },
   {
-    "id": "excel-sf-693",
+    "id": "excel-sf-694",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -7634,7 +7645,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-694",
+    "id": "excel-sf-695",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -7645,7 +7656,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-695",
+    "id": "excel-sf-696",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -7656,7 +7667,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-696",
+    "id": "excel-sf-697",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -7667,7 +7678,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-697",
+    "id": "excel-sf-698",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -7678,7 +7689,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-698",
+    "id": "excel-sf-699",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -7689,7 +7700,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-699",
+    "id": "excel-sf-700",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -7700,7 +7711,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-700",
+    "id": "excel-sf-701",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -7711,7 +7722,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-701",
+    "id": "excel-sf-702",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -7722,7 +7733,7 @@
     "note": "Sevafrei"
   },
   {
-    "id": "excel-sf-702",
+    "id": "excel-sf-703",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -7733,7 +7744,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-703",
+    "id": "excel-sf-704",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -7744,7 +7755,7 @@
     "note": "Sevafrei"
   },
   {
-    "id": "excel-sf-704",
+    "id": "excel-sf-705",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -7755,7 +7766,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-705",
+    "id": "excel-sf-706",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -7766,7 +7777,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-706",
+    "id": "excel-sf-707",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -7777,7 +7788,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-707",
+    "id": "excel-sf-708",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -7788,7 +7799,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-708",
+    "id": "excel-sf-709",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -7799,7 +7810,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-709",
+    "id": "excel-sf-710",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -7810,7 +7821,7 @@
     "note": "Seminartage"
   },
   {
-    "id": "excel-sf-710",
+    "id": "excel-sf-711",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -7821,7 +7832,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-711",
+    "id": "excel-sf-712",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -7832,7 +7843,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-712",
+    "id": "excel-sf-713",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -7843,7 +7854,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-713",
+    "id": "excel-sf-714",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -7854,7 +7865,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-714",
+    "id": "excel-sf-715",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -7865,7 +7876,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-715",
+    "id": "excel-sf-716",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -7876,7 +7887,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-716",
+    "id": "excel-sf-717",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -7887,7 +7898,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-717",
+    "id": "excel-sf-718",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -7898,7 +7909,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-718",
+    "id": "excel-sf-719",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -7909,7 +7920,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-719",
+    "id": "excel-sf-720",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -7920,7 +7931,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-720",
+    "id": "excel-sf-721",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -7931,7 +7942,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-721",
+    "id": "excel-sf-722",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -7942,7 +7953,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-722",
+    "id": "excel-sf-723",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -7953,7 +7964,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-723",
+    "id": "excel-sf-724",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -7964,7 +7975,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-724",
+    "id": "excel-sf-725",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -7975,7 +7986,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-725",
+    "id": "excel-sf-726",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -7986,7 +7997,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-726",
+    "id": "excel-sf-727",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -7997,7 +8008,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-727",
+    "id": "excel-sf-728",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -8008,7 +8019,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-728",
+    "id": "excel-sf-729",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -8019,7 +8030,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-729",
+    "id": "excel-sf-730",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -8030,7 +8041,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-730",
+    "id": "excel-sf-731",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -8041,7 +8052,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-731",
+    "id": "excel-sf-732",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -8052,7 +8063,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-732",
+    "id": "excel-sf-733",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -8063,7 +8074,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-733",
+    "id": "excel-sf-734",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -8074,7 +8085,7 @@
     "note": "Sevafrei"
   },
   {
-    "id": "excel-sf-734",
+    "id": "excel-sf-735",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -8085,7 +8096,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-735",
+    "id": "excel-sf-736",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -8096,7 +8107,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-736",
+    "id": "excel-sf-737",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -8107,7 +8118,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-737",
+    "id": "excel-sf-738",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -8118,7 +8129,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-738",
+    "id": "excel-sf-739",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -8129,7 +8140,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-739",
+    "id": "excel-sf-740",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -8140,7 +8151,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-740",
+    "id": "excel-sf-741",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -8151,7 +8162,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-741",
+    "id": "excel-sf-742",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -8162,7 +8173,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-742",
+    "id": "excel-sf-743",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -8173,7 +8184,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-743",
+    "id": "excel-sf-744",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -8184,7 +8195,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-744",
+    "id": "excel-sf-745",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -8195,7 +8206,7 @@
     "note": "Ausgleich für Mehrarbeit"
   },
   {
-    "id": "excel-sf-745",
+    "id": "excel-sf-746",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -8206,7 +8217,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-746",
+    "id": "excel-sf-747",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -8217,7 +8228,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-747",
+    "id": "excel-sf-748",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -8228,7 +8239,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-748",
+    "id": "excel-sf-749",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -8239,7 +8250,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-749",
+    "id": "excel-sf-750",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -8250,7 +8261,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-750",
+    "id": "excel-sf-751",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -8261,7 +8272,7 @@
     "note": "Sevafrei"
   },
   {
-    "id": "excel-sf-751",
+    "id": "excel-sf-752",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -8272,7 +8283,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-752",
+    "id": "excel-sf-753",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -8283,7 +8294,7 @@
     "note": "Seminartage"
   },
   {
-    "id": "excel-sf-753",
+    "id": "excel-sf-754",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -8294,7 +8305,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-754",
+    "id": "excel-sf-755",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -8305,7 +8316,7 @@
     "note": "Sevafrei"
   },
   {
-    "id": "excel-sf-755",
+    "id": "excel-sf-756",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -8316,7 +8327,7 @@
     "note": "Seminartage"
   },
   {
-    "id": "excel-sf-756",
+    "id": "excel-sf-757",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -8327,7 +8338,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-757",
+    "id": "excel-sf-758",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -8338,7 +8349,7 @@
     "note": "Seminartage"
   },
   {
-    "id": "excel-sf-758",
+    "id": "excel-sf-759",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -8349,7 +8360,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-759",
+    "id": "excel-sf-760",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -8360,7 +8371,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-760",
+    "id": "excel-sf-761",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -8371,7 +8382,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-761",
+    "id": "excel-sf-762",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -8382,7 +8393,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-762",
+    "id": "excel-sf-763",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -8393,7 +8404,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-763",
+    "id": "excel-sf-764",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -8404,7 +8415,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-764",
+    "id": "excel-sf-765",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -8415,7 +8426,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-765",
+    "id": "excel-sf-766",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -8426,7 +8437,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-766",
+    "id": "excel-sf-767",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -8437,7 +8448,7 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-767",
+    "id": "excel-sf-768",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
@@ -8448,37 +8459,26 @@
     "note": "Regulärer freier Wochentag"
   },
   {
-    "id": "excel-sf-768",
-    "teacherId": "teacher-gen-abha-morkoetter",
-    "teacherName": "Abha",
-    "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-11-26",
-    "endDate": "2026-12-01",
-    "type": "Seminarleitung",
-    "status": "Genehmigt",
-    "note": "Seminarleitung / Seva außer Haus"
-  },
-  {
     "id": "excel-sf-769",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-12-02",
-    "endDate": "2026-12-02",
-    "type": "Frei",
+    "startDate": "2026-11-26",
+    "endDate": "2026-11-28",
+    "type": "Seminarleitung",
     "status": "Genehmigt",
-    "note": "Regulärer freier Wochentag"
+    "note": "Seminarleitung / Seva außer Haus"
   },
   {
     "id": "excel-sf-770",
     "teacherId": "teacher-gen-abha-morkoetter",
     "teacherName": "Abha",
     "avatarColor": "from-blue-400 to-indigo-500",
-    "startDate": "2026-12-04",
-    "endDate": "2026-12-04",
-    "type": "Frei",
+    "startDate": "2026-11-29",
+    "endDate": "2026-12-06",
+    "type": "Urlaub",
     "status": "Genehmigt",
-    "note": "Regulärer freier Wochentag"
+    "note": "Sevafrei"
   },
   {
     "id": "excel-sf-771",

@@ -131,6 +131,19 @@ def main():
             del person_days['Narayani'][sat_w47]
         person_days['Narayani'][mon_w47] = 'f'
 
+    # 4. Nirmaya: Sevafrei ('u') on 26.11.2026 and 27.11.2026.
+    if 'Nirmaya' in person_days:
+        person_days['Nirmaya'][datetime.datetime(2026, 11, 26)] = 'u'
+        person_days['Nirmaya'][datetime.datetime(2026, 11, 27)] = 'u'
+
+    # 5. Abha: Sevafrei ('u') from 29.11.2026 through 06.12.2026.
+    if 'Abha' in person_days:
+        cur = datetime.datetime(2026, 11, 29)
+        end = datetime.datetime(2026, 12, 6)
+        while cur <= end:
+            person_days['Abha'][cur] = 'u'
+            cur += datetime.timedelta(days=1)
+
     # Convert daily codes into contiguous blocks per person
     blocks = []
     for excel_name in person_order:
