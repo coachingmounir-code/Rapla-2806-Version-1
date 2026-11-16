@@ -1,0 +1,23 @@
+/* The orbit and its links use the same 1000 × 700 coordinate system. */
+#shiva-landing{position:relative;isolation:isolate;height:100svh;min-height:600px;max-height:1100px;overflow:hidden;background:#fff1dc;color:#241e19}
+body.landing-active{padding:0;background:#fff1dc}
+.landing-active>.shell{display:none}
+.shiva-art{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-2}
+.shiva-brand{position:absolute;top:28px;left:3.3%;font:bold clamp(24px,3vw,42px) Georgia,serif;color:#241e19;text-decoration:none;line-height:1;z-index:2}
+.shiva-brand span{display:block;color:#be7a12;font-size:1.3em;line-height:.6;text-align:center}
+/* Translucent parchment reveals Shiva while a light text halo preserves readability. */
+.shiva-title{position:absolute;top:18px;left:21%;right:21%;z-index:3;padding:16px 22px 18px;text-align:center;background:rgba(255,243,223,.68);text-shadow:0 1px 3px #fff3df,0 0 8px #fff3df;border:1px solid #cda769;border-radius:22px;box-shadow:0 5px 22px #62421e20}
+.shiva-title h1{font:bold clamp(40px,5.5vw,78px)/1.05 Georgia,serif;letter-spacing:-2px;color:#241e19;margin:0}
+.shiva-title p{font:600 clamp(18px,1.8vw,26px)/1.45 Georgia,serif;color:#39291d;margin:10px auto 0;max-width:38ch;text-wrap:balance}
+.shiva-orbit{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}
+.shiva-orbit ellipse{fill:none;stroke:#b47413;stroke-width:7}
+.shiva-orbit .orbit-light{stroke:#ffc44b;stroke-width:3}
+.orbit-button{position:absolute;left:80%;top:49.3%;transform:translate(-50%,-50%);display:flex;align-items:center;justify-content:center;gap:16px;padding:20px 25px;min-height:84px;border:2px solid #30271f;border-radius:26px;background:linear-gradient(165deg,#ffce7c 0%,#fff0d6 25%,#fff2dd 80%,#77a8a0 81%,#d9dfc2 87%,#fff1da 88%);box-shadow:inset 0 0 0 4px #fff2d9,0 7px 18px #744a2025;color:#241e19;text-decoration:none;white-space:nowrap;font:bold clamp(20px,2.5vw,38px)/1.2 Georgia,serif;touch-action:manipulation;z-index:2}
+.orbit-button[data-orbit="1"]{left:20%;top:70.7%}
+.orbit-icon{font-size:1.45em;font-weight:normal;padding-right:16px;border-right:1px solid #443424;color:#a5660d}
+.orbit-button:hover,.orbit-button:focus-visible{background-color:#fff8e9;box-shadow:inset 0 0 0 4px #fff2d9,0 8px 30px #6f431744;outline:3px solid #a66b1b;outline-offset:5px}
+.shiva-controls{position:absolute;bottom:18px;left:0;right:0;display:flex;justify-content:center;align-items:center;gap:16px;font-size:12px;color:#392e24}
+.shiva-controls>span,.shiva-controls button{background:#fff4e5ed;border:1px solid #d5b887;border-radius:30px;padding:9px 15px}
+.shiva-controls button{font-size:12px;min-height:38px}
+.shiva-back{display:inline-block;margin-bottom:18px;color:#773d2c;text-underline-offset:4px;font-size:14px}
+@media(max-width:700px){#shiva-landing{min-height:660px;max-height:950px}.shiva-art{object-position:50% 50%}.shiva-brand{top:20px;left:20px;font-size:25px}.shiva-title{top:72px;left:15px;right:15px;padding:14px 12px 16px;border-radius:18px}.shiva-title h1{font-size:clamp(34px,8vw,46px);letter-spacing:-1px}.shiva-title p{font-size:18px}.orbit-button{gap:8px;padding:14px 12px;min-height:64px;border-radius:18px;font-size:18px}.orbit-icon{padding-right:8px;font-size:1.2em}.orbit-button>span:last-child{display:none}.shiva-controls{bottom:18px;gap:8px}.shiva-controls>span{display:none}}

@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#773d2c"><meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="SEVA-K">
+  <title>Digital Shiva · ZeitFlow</title>
+  <link rel="manifest" href="/seva/manifest.webmanifest"><link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+  <link rel="stylesheet" href="/seva/style.css">
+  <link rel="stylesheet" href="/seva/shiva-landing-v2.css">
+  <link rel="stylesheet" href="/seva/workspace.css">
+  <link rel="stylesheet" href="/seva/seminars.css">
+  <link rel="stylesheet" href="/seva/ideas.css">
+</head>
+<body class="landing-active">
+  <section id="shiva-landing" aria-labelledby="shiva-title">
+    <a class="shiva-brand" href="/">ZeitFlow<span aria-hidden="true">〜</span></a>
+    <div class="shiva-title"><h1 id="shiva-title">Digital Shiva</h1><p>Für ein transformatives, sattviges Leben.</p></div>
+    <img class="shiva-art" src="/seva/assets/shiva-landing.jpg" alt="Shiva meditiert vor einer Berglandschaft, umgeben von warmem Gold und Türkis." fetchpriority="high">
+    <svg class="shiva-orbit" viewBox="0 0 1000 700" preserveAspectRatio="none" aria-hidden="true"><g transform="matrix(1 -.25 0 1 0 125)"><ellipse cx="500" cy="420" rx="300" ry="125"/><ellipse class="orbit-light" cx="500" cy="420" rx="300" ry="125"/></g></svg>
+    <nav class="shiva-links" aria-label="Bereich wählen">
+      <a class="orbit-button" data-orbit="0" href="#ki-projekte"><span class="orbit-icon" aria-hidden="true">▦</span><span>KI-Projekte</span><span aria-hidden="true">→</span></a>
+      <a class="orbit-button" data-orbit="1" href="#tagesseva"><span class="orbit-icon" aria-hidden="true">☼</span><span>Tagesseva</span><span aria-hidden="true">→</span></a>
+    </nav>
+    <div class="shiva-controls"><span>Wähle deinen Bereich</span><button id="orbit-toggle" type="button" aria-pressed="false">Animation pausieren</button></div>
+  </section>
+  <div class="workspace-topbar"><a class="workspace-brand" href="/">ZeitFlow<span aria-hidden="true">〜</span></a>    <a class="shiva-back" href="#start">← Digital Shiva</a>    <nav class="workspace-tabs" role="tablist" aria-label="SEVA-Bereiche">
+      <button id="daily-tab" type="button" role="tab" data-workspace="daily" aria-selected="false" aria-controls="daily-panel" tabindex="0">Tagesseva</button>
+      <button id="rapla-tab" type="button" role="tab" data-workspace="rapla" aria-selected="false" aria-controls="rapla-panel" tabindex="-1">KI-Projekte</button>
+    </nav>    <div class="statusbar"><span id="sync-status" role="status">Nur auf diesem Gerät gespeichert</span><button id="sync" class="link">Abgleichen</button><button id="settings-toggle" class="link" aria-expanded="false" aria-controls="settings">Geräte & Sicherung</button></div></div>
+  <section class="upcoming-seminars" aria-labelledby="upcoming-seminars-title">
+    <div class="seminar-heading"><h2 id="upcoming-seminars-title">Die nächsten 6 Seminare</h2><p>Nordsee · Liste vom 10.11.2026</p></div>
+    <ol id="upcoming-seminars-list" class="seminar-list"></ol>
+    <p id="seminar-status" role="status">Seminarübersicht wird geladen …</p>
+  </section>
+  <details id="workspace-menu" class="workspace-sidebar" aria-label="Seitennavigation">
+    <summary>Menü &amp; Bereiche</summary>
+    <div class="daily-navigation"><button id="nav-today" type="button">☼ <span>Heute</span></button>    <nav class="tabs" aria-label="Bereich"><button class="selected" data-view="tasks" aria-pressed="true">Aufgaben</button><button data-view="knowledge" aria-pressed="false">Wissen & Zusammenhänge</button><button data-view="onboarding" aria-pressed="false">Onboarding-Ideen</button><button data-view="review" aria-pressed="false">Nachbereitung</button></nav>
+    <div class="sidebar-secondary"><button type="button" data-task-filter="hidden">▤ <span>Ausgeblendet</span></button><button type="button" data-task-filter="trash">♲ <span>Papierkorb</span></button></div></div>
+    <div class="project-navigation"><p class="eyebrow">DEINE KI-PROJEKTE</p><a href="#ki-projekte" aria-current="page">▦ <span>Rapla 2.0 Workflow</span></a><p class="hint">Ideen, Wissen und nächste Schritte für deine Projekte.</p></div>
+    <div class="sidebar-tools"><h2>Geräte &amp; Sicherung</h2><button type="button" data-proxy="open-login">♙ <span>Anmelden</span></button><button type="button" data-proxy="export">↓ <span>Sicherung herunterladen</span></button><button type="button" data-proxy="import">↑ <span>Sicherung einlesen</span></button></div>
+  </details>
+  <main class="shell">
+    <section class="workspace-hero">    <header class="heading"><div><p class="eyebrow">YOGA VIDYA NORDSEE · SEMINARPLANUNG</p><h1 id="workspace-title">Tagesseva</h1></div><button id="close" class="icon" hidden aria-label="Aufgabenliste schließen">✕</button></header>    <div id="progress-summary" class="progress-summary"><div class="progress-labels"><strong id="progress-count">0 von 0 Aufgaben erledigt</strong><span id="progress-percent">0 %</span></div><div id="progress-track" class="progress-track" role="progressbar" aria-label="Aufgabenfortschritt" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-valuetext="0 von 0 Aufgaben erledigt"><div id="progress-fill" class="progress-fill"></div></div></div>    <div class="overview"><div><span id="open-count" class="number">0</span><span>offene Aufgaben</span></div><div><span id="waiting-count" class="number">0</span><span>warten auf Rückmeldung</span></div><div><span id="done-count" class="number">0</span><span>erledigt</span></div></div><p class="project-intro">Raum für Ideen. Klarheit für den nächsten Schritt.</p><img src="/seva/assets/shiva-landing.jpg" alt="" class="workspace-art"></section>
+    <section id="settings" class="panel" hidden aria-label="Geräte und Sicherung">
+      <h2>Auf iPhone und Computer</h2><p>Melde dich auf beiden Geräten mit derselben E-Mail-Adresse an. Die SEVA-K Liste bleibt getrennt von deinen anderen Planer-Daten.</p>
+      <form id="login-form" class="row"><label>E-Mail-Adresse<input id="email" type="email" autocomplete="email" required placeholder="Deine E-Mail-Adresse"></label><button class="primary" type="submit">Anmeldelink senden</button></form>
+      <div id="account" hidden><p id="account-name"></p><div class="row"><button id="adopt">Lokale Aufgaben in dieses Konto übernehmen</button><button id="logout">Abmelden</button></div></div>
+      <p id="auth-message" role="status"></p>
+      <section id="team-sharing" class="team-sharing" hidden aria-label="Teamzugriff">
+        <h2>Teamzugriff auf diese Liste</h2>
+        <p class="hint">Gib jede E-Mail-Adresse einzeln frei. Nur angemeldete Personen mit freigegebener Adresse können die gemeinsame Liste sehen und bearbeiten. Dein Tagesplaner bleibt privat.</p>
+        <div class="row"><input id="team-link" readonly aria-label="Link zur gemeinsamen Aufgabenliste"><button id="copy-team-link" type="button">Link kopieren</button></div>
+        <form id="team-invite-form" class="row"><label>E-Mail-Adresse freigeben<input id="team-email" type="email" autocomplete="off" required placeholder="name@beispiel.de"></label><button type="submit">Freigeben</button></form>
+        <ul id="team-members" class="team-members"></ul>
+      </section>
+      <p class="hint">Auf dem iPhone: Diese Seite in Safari öffnen → Teilen → Zum Home-Bildschirm. Der Abgleich erfolgt beim Öffnen, während der Nutzung und nach Wiederverbindung. Bei geschlossener App führt iOS keinen dauerhaften Abgleich aus.</p>
+      <div class="row"><button id="export">Sicherung herunterladen</button><label class="file-button">Sicherung einlesen<input id="import" type="file" accept="application/json,.json"></label></div>
+      <p class="hint">Sicherungen enthalten nur diesen SEVA-K Aufgaben- und Wissensbestand. Beim Einlesen werden Änderungen zusammengeführt.</p>
+    </section>
+
+
+
+    <div id="notice" role="status" class="notice" hidden></div>
+    <section id="daily-panel" role="tabpanel" aria-labelledby="daily-tab" tabindex="0" hidden>
+
+
+    <section id="sync-guidance" class="notice" hidden aria-label="Anmeldung für Geräteabgleich"><strong>Aufgaben aus deinem anderen Browser laden</strong><p>Dieser Browser ist noch nicht für SEVA-K angemeldet. Melde dich mit derselben E-Mail-Adresse an wie im Browser mit deinen Aufgaben. Die Anmeldung des Tagesplaners allein reicht dafür nicht aus.</p><button id="open-login" type="button">Anmelden & Aufgaben laden</button></section>
+    <p id="sync-identity" class="hint" hidden></p>
+    <section id="team-access" class="notice" hidden role="status"></section>
+
+    <div id="team-work">
+    <details id="checklist-section" class="checklist-panel">
+      <summary><span>✓ Bearbeitungscheckliste</span><span id="checklist-count" class="chip">0 von 0 erledigt</span></summary>
+      <div class="checklist-content">
+        <p class="hint">Dein Ablauf auf einen Blick. Punkte abhaken, über ihren Titel bearbeiten und mit ↑ / ↓ umsortieren. Die Liste bleibt erhalten, bis du sie änderst.</p>
+        <div id="checklist-list"></div>
+        <form id="checklist-form"><label for="checklist-title">Neuer Checklistenpunkt</label><div class="row"><input id="checklist-title" required maxlength="300" autocomplete="off" placeholder="Welcher Schritt gehört zu deinem Ablauf?"><button type="submit" class="primary">+ Punkt hinzufügen</button></div></form>
+        <details id="checklist-trash"><summary>Entfernte Punkte <span id="checklist-trash-count">0</span></summary><div id="checklist-trash-list"></div></details>
+        <p id="checklist-feedback" class="hint" role="status" aria-live="polite"></p>
+      </div>
+    </details>
+    <section id="today-section" class="today-panel" aria-labelledby="today-heading">
+      <div class="list-heading"><h2 id="today-heading">Heute <span id="today-count" class="chip">0</span></h2><span>Deine Reihenfolge</span></div>
+      <p class="hint">Was du zuerst angehen möchtest, steht oben. Ordne alle Aufgaben mit ↑ / ↓ oder durch Ziehen. Neue Aufgaben mit weniger als 48 Stunden bis zur Frist erscheinen zunächst oben und lassen sich ebenfalls einordnen.</p>
+      <div id="today-list" class="today-drop" aria-label="Aufgaben für heute"></div>
+      <p id="today-feedback" class="sr-only" role="status" aria-live="polite"></p>
+    </section>
+    <section class="capture panel" aria-label="Aufgabe erfassen"><form id="quick-form"><label for="quick-title" class="capture-label">Was steht an?</label><div class="row"><input id="quick-title" maxlength="300" required placeholder="Neue Aufgabe notieren …" autocomplete="off"><button type="submit" class="primary" aria-label="Aufgabe hinzufügen">+ Hinzufügen</button></div><p class="hint">Ein Satz genügt. Details kannst du später ergänzen. Diktieren funktioniert über die iPhone-Tastatur.</p></form></section>
+
+
+    <section id="tasks-view">
+      <div class="toolbar"><label class="search-label"><span class="sr-only">Aufgaben durchsuchen</span><input id="search" type="search" placeholder="Aufgabe oder Seminar suchen …"></label><label><span class="sr-only">Aufgaben filtern</span><select id="filter"><option value="active">Alle offenen</option><option value="open">Offen</option><option value="doing">In Arbeit</option><option value="waiting">Warten</option><option value="done">Erledigt</option><option value="hidden">Ausgeblendet</option><option value="trash">Papierkorb</option></select></label></div>
+      <div class="list-heading"><h2 id="list-title">Deine nächsten Schritte</h2><span>Automatisch nach Priorität</span></div>
+      <div id="task-list" class="task-drop" aria-label="Weitere Aufgaben"></div>
+      <details class="rules"><summary>Wie entsteht die Reihenfolge?</summary><p>Fristen, deine Wichtigkeit und Abhängigkeiten bestimmen die Reihenfolge. Aufgaben, die andere ermöglichen, rücken nach oben. Bei offenen Voraussetzungen werden zuerst diese geklärt. Wartende Aufgaben erscheinen zur Wiedervorlage wieder weiter oben.</p><p>Die Bewertung wird bei Änderungen und während der Nutzung regelmäßig neu berechnet. Das ist eine nachvollziehbare Regelbewertung. Eine KI-Auswertung deiner Texte und eine direkte Chat-Verbindung sind noch nicht eingerichtet.</p></details>
+    </section>
+    <section id="knowledge-view" hidden><div class="list-heading"><div><h2>Wissen, das mitkommt</h2><p class="hint">Notizen aus Gesprächen oder diesem Chat hier übernehmen. Gleiche Seminarbezeichnungen verknüpfen Aufgaben und Wissen.</p></div><button id="add-knowledge">+ Notiz</button></div><div id="knowledge-list"></div></section>
+    <section id="onboarding-view" hidden><div class="list-heading"><div><h2>Onboarding für Karma Yoginis</h2><p class="hint">Sammle hier Ideen für Abläufe und Aufgaben, die du an Karma Yoginis delegieren möchtest. Halte fest, was erklärt, vorbereitet oder übergeben werden müsste.</p></div><button id="add-onboarding">+ Idee</button></div><div id="onboarding-list"></div></section>
+    <section id="review-view" hidden><div class="list-heading"><div><h2>Nachbereitung</h2><p class="hint">Was darf zukünftig besser umgesetzt werden? Sammle hier Erfahrungen und Verbesserungspunkte. Unter „+ Punkt“ kannst du Notizen schreiben oder mit „Notiz einsprechen“ diktieren.</p></div><button id="add-review">+ Punkt</button></div><div id="review-list"></div></section>
+    <footer>SEVA-K · Dein eigener Aufgabenbereich</footer>
+    </div>
+    </section>
+    <section id="rapla-panel" class="panel" role="tabpanel" aria-labelledby="rapla-tab" tabindex="0" hidden>
+      <section id="ideas-band" aria-labelledby="ideas-heading">
+        <div class="ideas-heading"><h2 id="ideas-heading">KI-Ideen & Projekte</h2><div class="ideas-actions"><button id="ideas-pause" type="button" aria-pressed="false">Pausieren</button><button id="add-idea" type="button" class="primary">+ Idee hinzufügen</button></div></div>
+        <p id="ideas-empty" class="hint">Was möchtest du mit KI bewegen? Halte hier dein erstes Projekt oder deine erste Idee fest.</p>
+        <div id="ideas-viewport" aria-hidden="true"><div id="ideas-track"></div></div>
+        <details id="ideas-manage"><summary>Einträge ansehen & bearbeiten <span id="ideas-count"></span></summary><div id="ideas-list"></div></details>
+      </section>
+      <div id="rapla-work">
+        <div class="list-heading rapla-heading"><h2>Rapla 2.0 Workflow</h2><button id="add-rapla" type="button" class="primary">+ Punkt hinzufügen</button></div>
+        <p class="hint">Plane deine KI-Projekte von Montag bis Sonntag. Klappe einen Tag auf und ordne seine Schritte mit ↑ und ↓ nach Tagespriorität. Über den Titel kannst du Notizen bearbeiten und den Wochentag ändern. Die Wochenabläufe bleiben für die nächste Woche erhalten.</p>
+        <div id="rapla-list"></div>
+        <details id="rapla-trash" hidden><summary>Entfernte Punkte <span id="rapla-trash-count"></span></summary><div id="rapla-trash-list"></div></details>
+      </div>
+    </section>
+  </main>
+  <dialog id="editor"><form id="edit-form"><div class="dialog-heading"><h2 id="editor-heading">Aufgabe bearbeiten</h2><button type="button" id="cancel-edit" class="icon" aria-label="Bearbeitung schließen">✕</button></div>
+    <label>Titel<input id="edit-title" required maxlength="300"></label>
+    <label>Seminar / Zusammenhang<input id="edit-seminar" maxlength="300" list="seminars" placeholder="Optional, z. B. Yoga-Wochenende im Oktober"><datalist id="seminars"></datalist></label>
+    <div id="rapla-fields" hidden><label>Wochentag<select id="edit-raplaDay"><option value="">Noch keinem Tag zugeordnet</option><option value="mon">Montag</option><option value="tue">Dienstag</option><option value="wed">Mittwoch</option><option value="thu">Donnerstag</option><option value="fri">Freitag</option><option value="sat">Samstag</option><option value="sun">Sonntag</option></select></label><p class="hint">Die Reihenfolge im Tag bestimmt die Tagespriorität. Bei einem Tageswechsel wird der Punkt hinten eingeordnet.</p></div>
+    <div id="task-fields"><div class="fields"><label>Status<select id="edit-status"><option value="open">Offen</option><option value="doing">In Arbeit</option><option value="waiting">Wartet auf Rückmeldung</option><option value="done">Erledigt</option></select></label><label>Wichtigkeit<select id="edit-importance"><option value="0">Kann warten</option><option value="1">Normal</option><option value="2">Wichtig</option></select></label><label>Fristdatum<input id="edit-due" type="date"></label><label>Uhrzeit der Frist (optional)<input id="edit-dueTime" type="time"></label><label>Wiedervorlage<input id="edit-followUp" type="date"></label></div><fieldset><legend>Sichtbarkeit (optional)</legend><div class="fields"><label>Sichtbar ab<input id="edit-visibleFrom" type="date"></label><label>Sichtbar bis (optional)<input id="edit-visibleUntil" type="date"></label></div><p class="hint">Außerhalb dieses Zeitfensters ist die Aufgabe ausgeblendet, auch in Heute und bei naher Frist. Start- und Endtag zählen vollständig dazu. Ohne Enddatum bleibt sie ab dem Start sichtbar. Beide Felder leer: immer sichtbar. Über den Filter „Ausgeblendet“ kannst du sie jederzeit wiederfinden.</p></fieldset><label>Erst diese Aufgabe abschließen<select id="edit-dependency"><option value="">Keine Voraussetzung</option></select></label><p class="hint">Ohne Uhrzeit gilt die Frist bis zum Ende des gewählten Tages. Die Wiedervorlage legt fest, wann du bei einer wartenden Aufgabe nachfasst.</p></div>
+    <label>Hintergrund / Notizen<textarea id="edit-notes" rows="5" maxlength="12000" placeholder="Was muss ich dazu wissen?"></textarea></label>
+    <div class="dictation-controls"><button id="dictate-notes" type="button" aria-controls="edit-notes" aria-pressed="false">🎙 Notiz einsprechen</button><span class="hint">Deutsch · Gesprochenes wird als Text ergänzt.</span></div>
+    <p id="dictation-status" class="hint" role="status" aria-live="polite"></p>
+    <p id="dictation-preview" class="hint dictation-preview"></p>
+    <p class="hint">Die Spracherkennung deines Browsers kann Audio an dessen Sprachdienst senden. Bitte prüfe den Text vor dem Speichern.</p>
+    <div id="connections" class="connections"></div><p id="edit-error" role="alert"></p>
+    <div class="row dialog-actions"><button type="button" id="delete" class="danger">In den Papierkorb</button><button type="submit" class="primary">Speichern</button></div>
+  </form></dialog>
+  <script src="/seva/app-updates.js"></script>
+  <script src="/seva/shiva-landing.js"></script>
+  <script src="/seva/workspace.js"></script>
+  <script src="/seva/seminars-data.js"></script>
+  <script src="/seva/seminars.js"></script>
+  <script src="/seva/ideas.js"></script>
+  <script src="/seva/text.js"></script>
+  <script src="/seva/model.js"></script><script src="/seva/store.js"></script><script src="/seva/config.js"></script>
+  <script src="/seva/vendor/supabase.js" defer></script><script src="/seva/ui.js" defer></script><script src="/seva/dictation.js" defer></script>
+</body></html>

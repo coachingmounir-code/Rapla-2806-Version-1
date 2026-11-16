@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1200" preserveAspectRatio="xMidYMin slice">
+<g fill="none" stroke="#9e643f" opacity=".21">
+ <g transform="translate(1140 165)">
+  <circle r="130" stroke-width="2"/><circle r="111" stroke-width="1"/><circle r="86" stroke-width="1.7"/><circle r="54" stroke-width="1"/><circle r="25" stroke-width="1.5"/>
+  <path d="M0-85C28-60 35-35 0-14-35-35-28-60 0-85Zm0 170C28 60 35 35 0 14-35 35-28 60 0 85Zm-85-85C-60-28-35-35-14 0-35 35-60 28-85 0Zm170 0C60-28 35-35 14 0 35 35 60 28 85 0Z" stroke-width="1.4"/>
+  <path d="M0-105V-130M0 105v25M-105 0h-25M105 0h25M-75-75l-18-18M75 75l18 18M75-75l18-18M-75 75l-18 18" stroke-width="1.7"/>
+ </g>
+ <g transform="translate(60 890)" stroke-width="2">
+  <circle r="125"/><circle r="104" stroke-width="1"/><circle r="75"/><circle r="30"/>
+  <path d="M0-70c22 16 31 37 0 55-31-18-22-39 0-55Zm0 140c22-16 31-37 0-55-31 18-22 39 0 55Zm-70-70c16-22 37-31 55 0-18 31-39 22-55 0Zm140 0c-16-22-37-31-55 0 18 31 39 22 55 0Z"/>
+  <path d="M-55-55c25 3 37 15 38 38-23-1-35-13-38-38Zm110 0c-25 3-37 15-38 38 23-1 35-13 38-38Zm-110 110c25-3 37-15 38-38-23 1-35 13-38 38Zm110 0c-25-3-37-15-38-38 23 1 35 13 38 38Z"/>
+ </g>
+</g>
+<path d="M810 290c64-26 105-72 118-127M817 295c42-5 77 12 97 42M270 1035c-65-33-99-74-110-124" fill="none" stroke="#ae7848" stroke-width="2" opacity=".16"/>
+</svg>

@@ -1,0 +1,16 @@
+{
+  "id": "/seva/",
+  "name": "SEVA-K Aufgaben – Seminarplanung",
+  "short_name": "SEVA-K",
+  "description": "Deine Aufgaben für die Seminarplanung bei Yoga Vidya Nordsee",
+  "lang": "de",
+  "start_url": "/seva/",
+  "scope": "/seva/",
+  "display": "standalone",
+  "background_color": "#fffaf3",
+  "theme_color": "#773d2c",
+  "icons": [
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}

@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 150" preserveAspectRatio="xMidYMid slice">
+<defs>
+ <pattern id="petals" width="80" height="80" patternUnits="userSpaceOnUse"><path d="M40 7c8 14 8 20 0 26C32 27 32 21 40 7Zm0 66c8-14 8-20 0-26-8 6-8 12 0 26ZM7 40c14-8 20-8 26 0-6 8-12 8-26 0Zm66 0c-14-8-20-8-26 0 6 8 12 8 26 0Z" fill="none" stroke="#af7650" stroke-width="1.4" opacity=".48"/><circle cx="40" cy="40" r="5" fill="none" stroke="#994d37" stroke-width="1.2" opacity=".55"/><circle cx="40" cy="40" r="2" fill="#a97336" opacity=".55"/></pattern>
+ <radialGradient id="warm"><stop stop-color="#f6e0b4"/><stop offset="1" stop-color="#fff7ec"/></radialGradient>
+</defs>
+<rect width="1200" height="150" fill="url(#warm)"/>
+<rect width="1200" height="150" fill="url(#petals)" opacity=".55"/>
+<path d="M0 133H1200M0 140H1200" stroke="#b68155" opacity=".46"/>
+<path d="M0 136H1200" stroke="#8f473e" stroke-width="1.3" opacity=".55"/>
+<g transform="translate(1015 65)" fill="none" stroke="#8b4b37" opacity=".45">
+ <circle r="43" stroke-width="1.7"/><circle r="37" stroke-width=".8"/><circle r="25" stroke-width="1.5"/><circle r="12" stroke-width="1"/>
+ <path d="M0-18c6 8 7 13 0 20-7-7-6-12 0-20Zm0 36c6-8 7-13 0-20-7 7-6 12 0 20Z" stroke-width="1.2"/>
+ <path d="M-18 0c8-6 13-7 20 0-7 7-12 6-20 0Zm36 0c-8-6-13-7-20 0 7 7 12 6 20 0Z" stroke-width="1.2"/>
+ <path d="M0-54v8M0 46v8M-54 0h8M46 0h8M-38-38l6 6M32 32l6 6M38-38l-6 6M-32 32l-6 6" stroke-width="1.3"/>
+</g>
+<g transform="translate(160 76)" fill="none" stroke="#af7650" stroke-width="1.5" opacity=".5">
+ <path d="M0 33c-21-10-30-24-24-42 11 2 20 8 24 19 4-11 13-17 24-19 6 18-3 32-24 42Z"/>
+ <path d="M0 31c-8-18-7-32 0-47 7 15 8 29 0 47Zm-2 2c-18-3-31-9-38-19 11-3 23 0 32 8m10 11c18-3 31-9 38-19-11-3-23 0-32 8"/>
+ <path d="M-32 39H32"/>
+</g>
+</svg>
