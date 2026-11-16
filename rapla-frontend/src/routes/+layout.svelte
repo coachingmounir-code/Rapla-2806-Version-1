@@ -41,6 +41,42 @@
 	let showTeachersDropdown = $state(false);
 	let showScheduleDropdown = $state(false);
 	let mobileMenuOpen = $state(false);
+	let shivaOpenCount = $state(0);
+
+	function refreshShivaOpenCount() {
+		if (typeof window === 'undefined' || typeof localStorage === 'undefined') return;
+		try {
+			const PREFIX = 'zeitflow_seva_v1:';
+			const last = localStorage.getItem(PREFIX + 'active-account') || 'local';
+			const scope = /^(team|pending):/.test(last) ? 'local' : last;
+			const opPrefix = PREFIX + scope + ':op:';
+			const ops: any[] = [];
+			for (let i = 0; i < localStorage.length; i++) {
+				const k = localStorage.key(i);
+				if (k && k.startsWith(opPrefix)) {
+					try {
+						ops.push(JSON.parse(localStorage.getItem(k) || ''));
+					} catch (_) {}
+				}
+			}
+			ops.sort((a, b) => (a.time || 0) - (b.time || 0) || String(a.id).localeCompare(String(b.id)));
+			const entities = new Map<string, any>();
+			for (const op of ops) {
+				if (!op || !op.entityId || !op.kind || !op.patch) continue;
+				const key = `${op.kind}:${op.entityId}`;
+				const prev = entities.get(key) || { id: op.entityId, kind: op.kind, status: 'open', deleted: false };
+				Object.assign(prev, op.patch);
+				entities.set(key, prev);
+			}
+			let openTasks = 0;
+			for (const ent of entities.values()) {
+				if (ent.kind === 'task' && !ent.deleted && ent.status !== 'done') {
+					openTasks++;
+				}
+			}
+			shivaOpenCount = openTasks;
+		} catch (_) {}
+	}
 
 	let userRole = $state<string | null>(null);
 	let authChecked = $state(false);
@@ -174,6 +210,9 @@
 		window.addEventListener('focus', handleVisibility);
 		window.addEventListener('online', handleOnline);
 		window.addEventListener('pageshow', handlePageShow);
+		refreshShivaOpenCount();
+		window.addEventListener('storage', refreshShivaOpenCount);
+		window.addEventListener('seva-operations-changed', refreshShivaOpenCount);
 
 		// Background polling heartbeat every 15s to keep all connected team/smartphone browsers live
 		const cloudPollInterval = setInterval(() => {
@@ -190,6 +229,8 @@
 			window.removeEventListener('focus', handleVisibility);
 			window.removeEventListener('online', handleOnline);
 			window.removeEventListener('pageshow', handlePageShow);
+			window.removeEventListener('storage', refreshShivaOpenCount);
+			window.removeEventListener('seva-operations-changed', refreshShivaOpenCount);
 		};
 	});
 </script>
@@ -234,19 +275,41 @@
 							<span class="nav-label">Kommende Seminare</span>
 						</a>
 
-						<!-- Admin-only Seminar To-Do List (Tagesübersicht) -->
+						<!-- Admin-only Digital Shiva -->
 						{#if userRole === 'admin'}
-							<a 
-								href="/admin-todos" 
-								class="nav-item admin-nav-item" 
-								class:active={page.url.pathname.startsWith('/admin-todos')}
-							>
-								<span class="nav-icon">📋</span>
-								<span class="nav-label">Seminar To-Dos</span>
-								{#if adminTodoStore.pendingCount > 0}
-									<span class="admin-todo-badge">{adminTodoStore.pendingCount}</span>
+							<div class="nav-dropdown-container">
+								<a 
+									href="/admin-todos#start" 
+									class="nav-item admin-nav-item" 
+									class:active={page.url.pathname.startsWith('/admin-todos')}
+								>
+									<span class="nav-icon">🕉️</span>
+									<span class="nav-label">Digital Shiva</span>
+									{#if shivaOpenCount > 0}
+										<span class="admin-todo-badge">{shivaOpenCount}</span>
+									{/if}
+								</a>
+								{#if page.url.pathname.startsWith('/admin-todos')}
+									<div class="nav-dropdown-menu">
+										<a 
+											href="/admin-todos#tagesseva" 
+											class="nav-dropdown-item"
+											class:active={page.url.hash === '#tagesseva'}
+										>
+											<span class="nav-icon">☼</span>
+											<span class="nav-label">Tagesseva</span>
+										</a>
+										<a 
+											href="/admin-todos#ki-projekte" 
+											class="nav-dropdown-item"
+											class:active={page.url.hash === '#ki-projekte'}
+										>
+											<span class="nav-icon">▦</span>
+											<span class="nav-label">KI-Projekte</span>
+										</a>
+									</div>
 								{/if}
-							</a>
+							</div>
 						{/if}
 
 						<!-- Wochenplan -->
@@ -430,7 +493,7 @@
 						</div>
 					</header>
 
-					<div class="content-wrapper">
+					<div class="content-wrapper" class:shiva-full-bleed={page.url.pathname.startsWith('/admin-todos')}>
 						{@render children()}
 					</div>
 				</main>
@@ -761,6 +824,12 @@
 		margin: 0 auto;
 		width: 100%;
 		padding: 2.5rem;
+	}
+
+	.content-wrapper.shiva-full-bleed {
+		max-width: none;
+		padding: 0;
+		margin: 0;
 	}
 
 	/* Navigation Dropdown Styles */

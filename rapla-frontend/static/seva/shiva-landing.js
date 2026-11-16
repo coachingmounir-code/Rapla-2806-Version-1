@@ -20,7 +20,12 @@
       tab.tabIndex = active || (!selected && index === 0) ? 0 : -1;
       document.getElementById(tab.getAttribute('aria-controls')).hidden = !active;
     });
-    document.title = selected === 'daily' ? 'Tagesseva · ZeitFlow' : selected === 'rapla' ? 'KI-Projekte · ZeitFlow' : 'Digital Shiva · ZeitFlow';
+    document.title = selected === 'daily' ? 'Tagesseva · Digital Shiva' : selected === 'rapla' ? 'KI-Projekte · Digital Shiva' : 'Digital Shiva · Rapla 2.0';
+    try {
+      if (window.parent && window.parent !== window) {
+        window.parent.postMessage({ type: 'shiva-hash', hash: location.hash || '#start' }, location.origin);
+      }
+    } catch (_) {}
     if (focus) {
       (selected ? tabs.find(t => t.dataset.workspace === selected) : links[0]).focus({ preventScroll: true });
       window.scrollTo(0, 0);

@@ -7,6 +7,11 @@
   function notifyOpsChanged() {
     if (typeof root.dispatchEvent === 'function' && typeof CustomEvent === 'function') {
       try { root.dispatchEvent(new CustomEvent('seva-operations-changed')); } catch (_) {}
+      try {
+        if (root.parent && root.parent !== root) {
+          root.parent.dispatchEvent(new CustomEvent('seva-operations-changed'));
+        }
+      } catch (_) {}
     }
   }
   class Store {

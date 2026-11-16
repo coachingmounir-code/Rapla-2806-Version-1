@@ -20,7 +20,8 @@
   function accountChanged(user) {
     pointerCleanup();
     if ($('editor').open) { $('editor').close(); notify('Konto gewechselt. Bitte öffne die Aufgabe im gewünschten Konto erneut.'); }
-    $('sync-guidance').hidden = !!user;
+    const sharedSync = typeof cloud.sharedSyncEnabled === 'function' && cloud.sharedSyncEnabled();
+    $('sync-guidance').hidden = !!user || sharedSync;
     if (cloud.teamId && !user) {
       $('sync-guidance').querySelector('strong').textContent = 'Für die gemeinsame SEVA-K Liste anmelden';
       $('sync-guidance').querySelector('p').textContent = 'Melde dich mit der E-Mail-Adresse an, die für diese Liste freigegeben wurde. Ein eigener Tagesplaner-Zugang ist dafür nicht nötig.';
@@ -33,7 +34,9 @@
     $('team-access').textContent = cloud.checking ? 'Dein Teamzugriff wird geprüft …' : cloud.accessError ? 'Der Teamzugriff konnte gerade nicht geprüft werden. Bitte versuche es mit „Abgleichen“ erneut.' : 'Diese E-Mail-Adresse ist für die Teamliste nicht freigegeben. Bitte melde dich bei Bedarf mit einer anderen Adresse an oder wende dich an die Person, die dir den Link geschickt hat.';
     $('sync-identity').hidden = !user;
     $('sync-identity').textContent = user ? 'Angemeldet als ' + user.email + (cloud.teamId && cloud.authorized ? ' · gemeinsame Liste' : '') : '';
-    $('login-form').hidden = !!user; $('account').hidden = !user;
+    $('login-form').hidden = !!user;
+    if ($('magic-link-form')) $('magic-link-form').hidden = !!user;
+    $('account').hidden = !user;
     $('account-name').textContent = user ? 'Angemeldet als ' + user.email : '';
     $('adopt').hidden = !!cloud.teamId;
     $('team-sharing').hidden = !teamSharingReady || !user || !cloud.authorized || cloud.workspaceId !== user.id;
@@ -353,13 +356,28 @@
   $('search').oninput = render; $('filter').onchange = render;
   $('settings-toggle').onclick = () => { $('settings').hidden = !$('settings').hidden; $('settings-toggle').setAttribute('aria-expanded', String(!$('settings').hidden)); };
   $('open-login').onclick = () => { $('settings').hidden = false; $('settings-toggle').setAttribute('aria-expanded', 'true'); $('email').focus(); };
-  $('sync').onclick = () => { if (!cloud.user) $('open-login').click(); else cloud.resume(); };
+  $('sync').onclick = () => { if (!cloud.user && !(typeof cloud.sharedSyncEnabled === 'function' && cloud.sharedSyncEnabled())) $('open-login').click(); else cloud.resume(); };
   $('login-form').onsubmit = safe(async event => {
     event.preventDefault();
     const button = event.submitter; button.disabled = true;
-    try { await cloud.login($('email').value.trim()); $('auth-message').textContent = 'Bitte öffne den Anmeldelink aus deiner E-Mail auf diesem Gerät. Auf anderen Geräten dieselbe E-Mail-Adresse verwenden.'; }
+    try { await cloud.login($('email').value.trim()); $('auth-message').textContent = 'Bitte öffne den Anmeldelink aus deiner E-Mail (oder füge den Link unten direkt ein).'; }
     finally { button.disabled = false; }
   });
+  if ($('magic-link-form')) {
+    $('magic-link-form').onsubmit = safe(async event => {
+      event.preventDefault();
+      const input = $('magic-link-input').value.trim();
+      if (!input) return;
+      const button = event.submitter; if (button) button.disabled = true;
+      try {
+        await cloud.verifyLoginLink(input);
+        $('magic-link-input').value = '';
+        $('auth-message').textContent = 'Erfolgreich verbunden! Aufgaben werden abgeglichen …';
+      } finally {
+        if (button) button.disabled = false;
+      }
+    });
+  }
   $('logout').onclick = safe(() => cloud.logout());
   $('copy-team-link').onclick = safe(async () => {
     await navigator.clipboard.writeText($('team-link').value);
@@ -413,5 +431,4 @@
     });
   });
   render(); safe(() => cloud.init())();
-  if ('serviceWorker' in navigator) navigator.serviceWorker.register('/seva/sw.js', { scope: '/seva/' }).catch(() => notify('Offline-Installation noch nicht möglich. Online kannst du weiterarbeiten.', true));
 })();

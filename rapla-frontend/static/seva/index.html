@@ -14,7 +14,7 @@
 </head>
 <body class="landing-active">
   <section id="shiva-landing" aria-labelledby="shiva-title">
-    <a class="shiva-brand" href="/">ZeitFlow<span aria-hidden="true">〜</span></a>
+    <a class="shiva-brand" href="#start">ZeitFlow<span aria-hidden="true">〜</span></a>
     <div class="shiva-title"><h1 id="shiva-title">Digital Shiva</h1><p>Für ein transformatives, sattviges Leben.</p></div>
     <img class="shiva-art" src="/seva/assets/shiva-landing.jpg" alt="Shiva meditiert vor einer Berglandschaft, umgeben von warmem Gold und Türkis." fetchpriority="high">
     <svg class="shiva-orbit" viewBox="0 0 1000 700" preserveAspectRatio="none" aria-hidden="true"><g transform="matrix(1 -.25 0 1 0 125)"><ellipse cx="500" cy="420" rx="300" ry="125"/><ellipse class="orbit-light" cx="500" cy="420" rx="300" ry="125"/></g></svg>
@@ -24,7 +24,7 @@
     </nav>
     <div class="shiva-controls"><span>Wähle deinen Bereich</span><button id="orbit-toggle" type="button" aria-pressed="false">Animation pausieren</button></div>
   </section>
-  <div class="workspace-topbar"><a class="workspace-brand" href="/">ZeitFlow<span aria-hidden="true">〜</span></a>    <a class="shiva-back" href="#start">← Digital Shiva</a>    <nav class="workspace-tabs" role="tablist" aria-label="SEVA-Bereiche">
+  <div class="workspace-topbar"><a class="workspace-brand" href="#start">ZeitFlow<span aria-hidden="true">〜</span></a>    <a class="shiva-back" href="#start">← Digital Shiva</a>    <nav class="workspace-tabs" role="tablist" aria-label="SEVA-Bereiche">
       <button id="daily-tab" type="button" role="tab" data-workspace="daily" aria-selected="false" aria-controls="daily-panel" tabindex="0">Tagesseva</button>
       <button id="rapla-tab" type="button" role="tab" data-workspace="rapla" aria-selected="false" aria-controls="rapla-panel" tabindex="-1">KI-Projekte</button>
     </nav>    <div class="statusbar"><span id="sync-status" role="status">Nur auf diesem Gerät gespeichert</span><button id="sync" class="link">Abgleichen</button><button id="settings-toggle" class="link" aria-expanded="false" aria-controls="settings">Geräte & Sicherung</button></div></div>
@@ -45,6 +45,7 @@
     <section id="settings" class="panel" hidden aria-label="Geräte und Sicherung">
       <h2>Auf iPhone und Computer</h2><p>Melde dich auf beiden Geräten mit derselben E-Mail-Adresse an. Die SEVA-K Liste bleibt getrennt von deinen anderen Planer-Daten.</p>
       <form id="login-form" class="row"><label>E-Mail-Adresse<input id="email" type="email" autocomplete="email" required placeholder="Deine E-Mail-Adresse"></label><button class="primary" type="submit">Anmeldelink senden</button></form>
+      <form id="magic-link-form" class="row" style="margin-top:10px"><label>Anmeldelink aus E-Mail direkt einfügen (optional)<input id="magic-link-input" type="text" autocomplete="off" placeholder="Link aus der E-Mail hier einfügen …"></label><button type="submit">Direkt verbinden</button></form>
       <div id="account" hidden><p id="account-name"></p><div class="row"><button id="adopt">Lokale Aufgaben in dieses Konto übernehmen</button><button id="logout">Abmelden</button></div></div>
       <p id="auth-message" role="status"></p>
       <section id="team-sharing" class="team-sharing" hidden aria-label="Teamzugriff">
