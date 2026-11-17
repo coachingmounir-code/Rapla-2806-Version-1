@@ -136,9 +136,9 @@ def main():
         person_days['Nirmaya'][datetime.datetime(2026, 11, 26)] = 'u'
         person_days['Nirmaya'][datetime.datetime(2026, 11, 27)] = 'u'
 
-    # 5. Abha: Sevafrei ('u') from 29.11.2026 through 06.12.2026.
+    # 5. Abha: Sevafrei ('u') from 23.11.2026 through 06.12.2026.
     if 'Abha' in person_days:
-        cur = datetime.datetime(2026, 11, 29)
+        cur = datetime.datetime(2026, 11, 23)
         end = datetime.datetime(2026, 12, 6)
         while cur <= end:
             person_days['Abha'][cur] = 'u'

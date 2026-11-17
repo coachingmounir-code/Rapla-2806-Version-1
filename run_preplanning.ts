@@ -170,6 +170,22 @@ function planWeekWithAbsences(weekCode: string, standardCourses: any[]) {
         }
       }
 
+      // KW 48 Sunday 09:15 special rule:
+      // Instead of the usual Sunday 09:15 Anfänger class, there is an open Yogilates class in Tripura (room-5) with Carina van Anken,
+      // and the parallel Mittelstufe class takes place in Radha Krishna (room-2).
+      if (weekCode === '2026-W48' && courseCopy.dayOfWeek === 0 && courseCopy.startTime === '09:15') {
+        if (courseCopy.name.toLowerCase().includes('anfänger')) {
+          courseCopy.name = 'Yogilates';
+          courseCopy.roomId = 'room-5';
+          courseCopy.teacherId = 'teacher-gen-carina-van-anken';
+          (courseCopy as any).teacherName = 'Carina van Anken';
+          courseCopy.isAiPlanned = false;
+          return courseCopy;
+        } else if (courseCopy.name.toLowerCase().includes('mittelstufe')) {
+          courseCopy.roomId = 'room-2';
+        }
+      }
+
     if (!courseCopy.teacherId) {
       courseCopy.isAiPlanned = true;
       return courseCopy;
@@ -266,6 +282,12 @@ function planWeekWithAbsences(weekCode: string, standardCourses: any[]) {
     { type: "include", dayOfWeek: 3, startTime: "21:10", courseName: "Entspannungsangebot", teacherId: "teacher-gen-chandrashekara" },
     { type: "include", dayOfWeek: 4, startTime: "07:00", courseName: "Satsang", teacherId: "teacher-gen-burnie-bansemer" },
     { type: "include", dayOfWeek: 4, startTime: "19:30", courseName: "Om Namo Narayanaya", teacherId: "teacher-gen-christopher" }
+  ] : weekCode === '2026-W48' ? [
+    { type: "include", dayOfWeek: 5, startTime: "09:15", courseName: "Anfänger", teacherId: "teacher-karma-tanja-eichenmueller" },
+    { type: "include", dayOfWeek: 5, startTime: "20:00", courseName: "Satsang Einführung", teacherId: "teacher-gen-pranava-pauly" },
+    { type: "include", dayOfWeek: 5, startTime: "20:00", courseName: "Satsang", teacherId: "teacher-gen-narayani-kedenburg" },
+    { type: "include", dayOfWeek: 6, startTime: "16:15", courseName: "Mittelstufe", teacherId: "teacher-karma-tanja-eichenmueller" },
+    { type: "include", dayOfWeek: 0, startTime: "16:30", courseName: "Mittelstufe Ankommensstunde", teacherId: "teacher-gen-narayani-kedenburg" }
   ] : [];
 
   // Run AI Planning - CORRECT PARAMETER ORDER: runAiPlanning(courses, teachers, seminarLeaderIds, targetWeekCode, customConstraints, absences)
@@ -481,14 +503,14 @@ function getNext8WeekCodes(): string[] {
   return weeks;
 }
 
-const weeksToPlan = ["2026-W41", "2026-W42", "2026-W43", "2026-W44", "2026-W45", "2026-W46", "2026-W47"];
+const weeksToPlan = ["2026-W41", "2026-W42", "2026-W43", "2026-W44", "2026-W45", "2026-W46", "2026-W47", "2026-W48"];
 console.log(`[PREPLANNING] Planning for weeks: ${weeksToPlan.join(', ')}`);
 
 const existingWeekPlans = db.getWeekPlans();
 const results: Record<string, any[]> = {};
 for (const week of weeksToPlan) {
   const existingPlan = existingWeekPlans.find(p => p.targetWeekCode === week);
-  if (week !== "2026-W47" && existingPlan && (existingPlan.courses?.length > 0)) {
+  if (week !== "2026-W48" && existingPlan && (existingPlan.courses?.length > 0)) {
     console.log(`[PREPLANNING] Preserving existing plan for ${week} (${existingPlan.courses.length} courses).`);
     results[week] = existingPlan.courses;
   } else {
@@ -532,33 +554,33 @@ const dbPath = './rapla-frontend/src/lib/db.ts';
 if (fs.existsSync(dbPath)) {
   let dbContent = fs.readFileSync(dbPath, 'utf-8');
 
-  // Insert or update plan-pre-2026-W47
-  const w47Courses = results['2026-W47'];
-  if (w47Courses) {
-    const w47PlanCode = `  {
-    "id": "plan-pre-2026-W47",
-    "name": "Vorplanung 2026-W47 (Automatisch)",
+  // Insert or update plan-pre-2026-W48
+  const w48Courses = results['2026-W48'];
+  if (w48Courses) {
+    const w48PlanCode = `  {
+    "id": "plan-pre-2026-W48",
+    "name": "Vorplanung 2026-W48 (Automatisch)",
     "status": "draft",
     "isApproved": false,
     "manuallyUnapproved": true,
-    "targetWeekCode": "2026-W47",
-    "courses": ${formatPlanCoursesCode(w47Courses)},
+    "targetWeekCode": "2026-W48",
+    "courses": ${formatPlanCoursesCode(w48Courses)},
     "createdAt": "${new Date().toISOString()}"
   }`;
 
-    const existingW47Idx = dbContent.indexOf('"id": "plan-pre-2026-W47"');
-    if (existingW47Idx !== -1) {
-      const braceStart = dbContent.lastIndexOf('  {', existingW47Idx);
-      const createdIdx = dbContent.indexOf('"createdAt":', existingW47Idx);
+    const existingW48Idx = dbContent.indexOf('"id": "plan-pre-2026-W48"');
+    if (existingW48Idx !== -1) {
+      const braceStart = dbContent.lastIndexOf('  {', existingW48Idx);
+      const createdIdx = dbContent.indexOf('"createdAt":', existingW48Idx);
       const braceEnd = dbContent.indexOf('  }', createdIdx) + 3;
-      dbContent = dbContent.substring(0, braceStart) + w47PlanCode + dbContent.substring(braceEnd);
-      console.log(`[PREPLANNING] Updated existing plan-pre-2026-W47 in db.ts.`);
+      dbContent = dbContent.substring(0, braceStart) + w48PlanCode + dbContent.substring(braceEnd);
+      console.log(`[PREPLANNING] Updated existing plan-pre-2026-W48 in db.ts.`);
     } else {
       const insertMarker = '\n];\n\n\n// Cloud-aware storage';
       const insertIdx = dbContent.indexOf(insertMarker);
       if (insertIdx !== -1) {
-        dbContent = dbContent.substring(0, insertIdx) + ',\n' + w47PlanCode + dbContent.substring(insertIdx);
-        console.log(`[PREPLANNING] Appended plan-pre-2026-W47 to DEFAULT_WEEK_PLANS in db.ts.`);
+        dbContent = dbContent.substring(0, insertIdx) + ',\n' + w48PlanCode + dbContent.substring(insertIdx);
+        console.log(`[PREPLANNING] Appended plan-pre-2026-W48 to DEFAULT_WEEK_PLANS in db.ts.`);
       } else {
         console.error('[PREPLANNING] Could not find insertion marker in db.ts');
       }
@@ -576,7 +598,7 @@ if (fs.existsSync(dbPath)) {
     );
 
     fs.writeFileSync(dbPath, dbContent, 'utf-8');
-    console.log(`[PREPLANNING] rapla-frontend/src/lib/db.ts wurde erfolgreich mit KW 47 aktualisiert (CURRENT_DB_VERSION erhöht).`);
+    console.log(`[PREPLANNING] rapla-frontend/src/lib/db.ts wurde erfolgreich mit KW 48 aktualisiert (CURRENT_DB_VERSION erhöht).`);
   }
 } else {
   console.error('[PREPLANNING] db.ts Pfad existiert nicht.');

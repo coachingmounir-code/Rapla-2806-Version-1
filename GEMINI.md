@@ -22,6 +22,12 @@ Bitte bei zukünftigen Zuweisungen und Planungen entsprechend beachten!
     - Sonntagmorgen (15.11., 09:15 Uhr): Statt der üblichen Anfängerstunde findet eine offene **Räkelyoga**-Yogastunde im **Tripura-Raum (`room-5`)** (mit Erkan Batmaz) statt; parallel dazu findet die **Mittelstufenstunde** im **Sitaram-Raum (`room-4`)** statt.
     - **Narayani in KW 47**: Macht ausnahmsweise am **Montag (16.11.)** ihren freien Tag (statt Samstag). Daher kann sie am **Sonntag (15.11.) ab Nachmittag (ab 12:00 Uhr)**, am **Montag (16.11.) ganztägig** sowie am **Dienstag (17.11.) Vormittag bis 15:00 Uhr** für keinerlei Slots eingeteilt werden.
     - **Morgen-Satsang (07:00 Uhr) am Samstag (14.11.) & Sonntag (15.11.) in KW 47**: Weder Anjali noch Karuna einteilen.
+  - Speziell für **KW 48 (20.11. – 27.11.2026)**:
+    - **Yoga und Pilates / Yogilates (Carina van Anken, 20.–22.11.)**: Findet im **Tripura-Raum (`room-5`)** statt (nur orangene Slots übernommen). Am Samstagmorgen (21.11., 09:15 Uhr) weicht die Mittelstufe daher auf den **Sitaram-Raum (`room-4`)** aus. Am Sonntagmorgen (22.11., 09:15 Uhr) bleibt die offene Stunde **Yogilates** (für Anfängerinnen) im **Tripura-Raum (`room-5`)**, während die parallele Mittelstufenstunde im **Radha Krishna Raum (`room-2`)** stattfindet.
+    - **Yoga Ferienwoche (Beate Menkarski, 22.–27.11.)**: Findet im **Radha Krishna Raum (`room-2`)** statt (nur orangene Slots aus dem Standard-Ferienwochenplan übernommen).
+    - **Schweigeretreat an der Nordsee (Pranava, 22.–27.11.)**: Ist dem **Hanuman-Raum (`room-3`)** zugewiesen (konkrete Slots bleiben zunächst offen und können später nachgepflegt werden).
+    - **Tanja in KW 48**: Übernimmt am Freitag (20.11., 09:15 Uhr Anfänger) und am Samstag (21.11., 16:15 Uhr Mittelstufe) jeweils eine Yogastunde.
+    - **Narayani in KW 48**: Übernimmt am Freitag (20.11., 20:00 Uhr) den Abend-Satsang sowie am Sonntag (22.11., 16:30 Uhr) die Mittelstufe Ankommensstunde.
 
 # Sevaka-Regeln
 - Teresa: Bis auf weiteres komplett herausgenommen (wird für keine Stunden oder Dienste eingeteilt).
@@ -33,7 +39,7 @@ Bitte bei zukünftigen Zuweisungen und Planungen entsprechend beachten!
   - Sonntags hat sie dafür nicht mehr regulär frei.
   - Sie darf wöchentlich bis zu drei Anfänger-Yogastunden geben (an Tagen, an denen sie nicht frei hat).
   - In den 4 Wochen der Yogalehrerausbildung (YLA: 30.08.2026 – 27.09.2026) steht sie komplett nicht zur Verfügung.
-  - Seva-freie Zeiten: 29.11.2026 – 06.12.2026 (Sevafrei).
+  - Seva-freie Zeiten: 23.11.2026 – 06.12.2026 (Sevafrei).
 - Nirmaya:
   - Seva-freie Zeiten: 26.11.2026 – 27.11.2026 (Sevafrei).
 - Alexander Melior:

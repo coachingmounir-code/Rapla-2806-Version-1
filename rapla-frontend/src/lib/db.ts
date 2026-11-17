@@ -15091,6 +15091,848 @@ const DEFAULT_WEEK_PLANS: WeekPlan[] = [
       }
     ],
     "createdAt": "2026-11-10T08:26:10.368Z"
+  },
+  {
+    "id": "plan-pre-2026-W48",
+    "name": "Vorplanung 2026-W48 (Automatisch)",
+    "status": "draft",
+    "isApproved": false,
+    "manuallyUnapproved": true,
+    "targetWeekCode": "2026-W48",
+    "courses": [
+      {
+        "id": "course-2026-W48-21",
+        "name": "Fortgeschrittenes Pranayama",
+        "style": "Hatha",
+        "dayOfWeek": 0,
+        "startTime": "06:00",
+        "endTime": "06:50",
+        "roomId": "room-2",
+        "teacherId": "teacher-gen-burnie-bansemer",
+        "isAiPlanned": true,
+        "status": "draft",
+        "teacherName": "burnie"
+      },
+      {
+        "id": "course-2026-W48-22",
+        "name": "Geführte Meditation",
+        "style": "Meditation",
+        "dayOfWeek": 0,
+        "startTime": "07:00",
+        "endTime": "07:30",
+        "roomId": "room-5",
+        "teacherId": "teacher-gen-hu-buerkle",
+        "isAiPlanned": true,
+        "status": "draft",
+        "teacherName": "Hu"
+      },
+      {
+        "id": "course-2026-W48-23",
+        "name": "Satsang",
+        "style": "Meditation",
+        "dayOfWeek": 0,
+        "startTime": "07:00",
+        "endTime": "08:00",
+        "roomId": "room-2",
+        "teacherId": "teacher-gen-burnie-bansemer",
+        "isAiPlanned": false,
+        "status": "draft",
+        "teacherName": "burnie"
+      },
+      {
+        "id": "course-2026-W48-24",
+        "name": "Yogilates",
+        "style": "Hatha",
+        "dayOfWeek": 0,
+        "startTime": "09:15",
+        "endTime": "11:00",
+        "roomId": "room-5",
+        "teacherId": "teacher-gen-carina-van-anken",
+        "isAiPlanned": false,
+        "status": "draft",
+        "teacherName": "Carina van Anken"
+      },
+      {
+        "id": "course-2026-W48-25",
+        "name": "Pavanmukt Asana",
+        "style": "Hatha",
+        "dayOfWeek": 0,
+        "startTime": "09:15",
+        "endTime": "11:00",
+        "roomId": "room-2",
+        "teacherId": "teacher-gen-burnie-bansemer",
+        "isAiPlanned": true,
+        "status": "draft",
+        "teacherName": "burnie"
+      },
+      {
+        "id": "course-2026-W48-26",
+        "name": "Anfänger Ankommensstunde",
+        "style": "Hatha",
+        "dayOfWeek": 0,
+        "startTime": "16:30",
+        "endTime": "18:00",
+        "roomId": "room-2",
+        "teacherId": "teacher-gen-pranava-pauly",
+        "isAiPlanned": false,
+        "status": "draft",
+        "teacherName": "Pranava"
+      },
+      {
+        "id": "course-2026-W48-27",
+        "name": "Mittelstufe Ankommensstunde",
+        "style": "Hatha",
+        "dayOfWeek": 0,
+        "startTime": "16:30",
+        "endTime": "18:00",
+        "roomId": "room-5",
+        "teacherId": "teacher-gen-narayani-kedenburg",
+        "isAiPlanned": true,
+        "status": "draft",
+        "teacherName": "Narayani"
+      },
+      {
+        "id": "course-2026-W48-20",
+        "name": "Hausführung",
+        "style": "Sonstiges",
+        "dayOfWeek": 0,
+        "startTime": "19:00",
+        "endTime": "19:30",
+        "roomId": "room-7",
+        "teacherId": "teacher-gen-burnie-bansemer",
+        "isAiPlanned": true,
+        "status": "draft",
+        "teacherName": "burnie"
+      },
+      {
+        "id": "course-2026-W48-28",
+        "name": "Om Namo Narayanaya",
+        "style": "Meditation",
+        "dayOfWeek": 0,
+        "startTime": "19:30",
+        "endTime": "20:00",
+        "roomId": "room-2",
+        "teacherId": "teacher-gen-burnie-narayani",
+        "isAiPlanned": false,
+        "status": "draft",
+        "teacherName": "burnie, Narayani"
+      },
+      {
+        "id": "course-2026-W48-29",
+        "name": "Satsang Einführung",
+        "style": "Meditation",
+        "dayOfWeek": 0,
+        "startTime": "20:00",
+        "endTime": "20:35",
+        "roomId": "room-5",
+        "teacherId": "teacher-gen-mouniir-jaber",
+        "isAiPlanned": true,
+        "status": "draft",
+        "teacherName": "Mounir"
+      },
+      {
+        "id": "course-2026-W48-30",
+        "name": "Satsang",
+        "style": "Meditation",
+        "dayOfWeek": 0,
+        "startTime": "20:00",
+        "endTime": "21:00",
+        "roomId": "room-2",
+        "teacherId": "teacher-gen-abha-morkoetter",
+        "isAiPlanned": true,
+        "status": "draft",
+        "teacherName": "Abha"
+      },
+      {
+        "id": "course-2026-W48-31",
+        "name": "Geführte Meditation",
+        "style": "Meditation",
+        "dayOfWeek": 1,
+        "startTime": "07:00",
+        "endTime": "07:30",
+        "roomId": "room-5",
+        "teacherId": "teacher-gen-hu-buerkle",
+        "isAiPlanned": false,
+        "status": "draft",
+        "teacherName": "Hu"
+      },
+      {
+        "id": "course-2026-W48-32",
+        "name": "Satsang",
+        "style": "Meditation",
+        "dayOfWeek": 1,
+        "startTime": "07:00",
+        "endTime": "08:00",
+        "roomId": "room-2",
+        "teacherId": "teacher-gen-burnie-bansemer",
+        "isAiPlanned": true,
+        "status": "draft",
+        "teacherName": "burnie"
+      },
+      {
+        "id": "course-2026-W48-33",
+        "name": "Anfänger",
+        "style": "Hatha",
+        "dayOfWeek": 1,
+        "startTime": "09:15",
+        "endTime": "11:00",
+        "roomId": "room-2",
+        "teacherId": "teacher-gen-burnie-bansemer",
+        "isAiPlanned": false,
+        "status": "draft",
+        "teacherName": "burnie"
+      },
+      {
+        "id": "course-2026-W48-34",
+        "name": "Mittelstufe",
+        "style": "Hatha",
+        "dayOfWeek": 1,
+        "startTime": "09:15",
+        "endTime": "11:00",
+        "roomId": "room-5",
+        "teacherId": "teacher-gen-narayani-kedenburg",
+        "isAiPlanned": true,
+        "status": "draft",
+        "teacherName": "Narayani"
+      },
+      {
+        "id": "course-2026-W48-35",
+        "name": "Anfänger Rückenstunde",
+        "style": "Hatha",
+        "dayOfWeek": 1,
+        "startTime": "16:15",
+        "endTime": "18:00",
+        "roomId": "room-2",
+        "teacherId": "teacher-gen-pranava-pauly",
+        "isAiPlanned": false,
+        "status": "draft",
+        "teacherName": "Pranava"
+      },
+      {
+        "id": "course-2026-W48-36",
+        "name": "Mittelstufe",
+        "style": "Hatha",
+        "dayOfWeek": 1,
+        "startTime": "16:15",
+        "endTime": "18:00",
+        "roomId": "room-5",
+        "teacherId": "teacher-gen-narayani-kedenburg",
+        "isAiPlanned": true,
+        "status": "draft",
+        "teacherName": "Narayani"
+      },
+      {
+        "id": "course-2026-W48-37",
+        "name": "Om Namo Narayanaya",
+        "style": "Meditation",
+        "dayOfWeek": 1,
+        "startTime": "19:30",
+        "endTime": "20:00",
+        "roomId": "room-2",
+        "teacherId": "teacher-gen-nirmaya-fodor",
+        "isAiPlanned": false,
+        "status": "draft",
+        "teacherName": "Nirmaya"
+      },
+      {
+        "id": "course-2026-W48-38",
+        "name": "Satsang",
+        "style": "Meditation",
+        "dayOfWeek": 1,
+        "startTime": "20:00",
+        "endTime": "21:00",
+        "roomId": "room-2",
+        "teacherId": "teacher-gen-narayani-kedenburg",
+        "isAiPlanned": false,
+        "status": "draft",
+        "teacherName": "Narayani"
+      },
+      {
+        "id": "course-2026-W48-39",
+        "name": "Entspannungsangebot: Klangreise",
+        "style": "Entspannung",
+        "dayOfWeek": 1,
+        "startTime": "21:10",
+        "endTime": "22:00",
+        "roomId": "room-5",
+        "teacherId": "teacher-gen-pranava-pauly",
+        "isAiPlanned": true,
+        "status": "draft",
+        "teacherName": "Pranava"
+      },
+      {
+        "id": "course-2026-W48-40",
+        "name": "Geführte Meditation",
+        "style": "Meditation",
+        "dayOfWeek": 2,
+        "startTime": "07:00",
+        "endTime": "07:30",
+        "roomId": "room-5",
+        "teacherId": "teacher-gen-christopher",
+        "isAiPlanned": true,
+        "status": "draft",
+        "teacherName": "Christopher"
+      },
+      {
+        "id": "course-2026-W48-41",
+        "name": "Satsang",
+        "style": "Meditation",
+        "dayOfWeek": 2,
+        "startTime": "07:00",
+        "endTime": "08:00",
+        "roomId": "room-2",
+        "teacherId": "teacher-gen-chandrashekara",
+        "isAiPlanned": true,
+        "status": "draft",
+        "teacherName": "Chandrashekara"
+      },
+      {
+        "id": "course-2026-W48-42",
+        "name": "Anfänger",
+        "style": "Hatha",
+        "dayOfWeek": 2,
+        "startTime": "09:15",
+        "endTime": "11:00",
+        "roomId": "room-2",
+        "teacherId": "teacher-gen-karuna-wapke",
+        "isAiPlanned": false,
+        "status": "draft",
+        "teacherName": "Karuna"
+      },
+      {
+        "id": "course-2026-W48-43",
+        "name": "Mittelstufe",
+        "style": "Hatha",
+        "dayOfWeek": 2,
+        "startTime": "09:15",
+        "endTime": "11:00",
+        "roomId": "room-5",
+        "teacherId": "teacher-gen-anjali-gelzleichter",
+        "isAiPlanned": false,
+        "status": "draft",
+        "teacherName": "Anjali"
+      },
+      {
+        "id": "course-2026-W48-44",
+        "name": "Anfänger Yin Yoga",
+        "style": "Hatha",
+        "dayOfWeek": 2,
+        "startTime": "16:15",
+        "endTime": "18:00",
+        "roomId": "room-2",
+        "teacherId": "teacher-gen-karuna-wapke",
+        "isAiPlanned": true,
+        "status": "draft",
+        "teacherName": "Karuna"
+      },
+      {
+        "id": "course-2026-W48-45",
+        "name": "Mittelstufe",
+        "style": "Hatha",
+        "dayOfWeek": 2,
+        "startTime": "16:15",
+        "endTime": "18:00",
+        "roomId": "room-5",
+        "teacherId": "teacher-gen-narayani-kedenburg",
+        "isAiPlanned": false,
+        "status": "draft",
+        "teacherName": "Narayani"
+      },
+      {
+        "id": "course-2026-W48-46",
+        "name": "Om Namo Narayanaya",
+        "style": "Meditation",
+        "dayOfWeek": 2,
+        "startTime": "19:30",
+        "endTime": "20:00",
+        "roomId": "room-2",
+        "teacherId": "teacher-gen-narayani-kedenburg",
+        "isAiPlanned": true,
+        "status": "draft",
+        "teacherName": "Narayani"
+      },
+      {
+        "id": "course-2026-W48-47",
+        "name": "Meditativer Spaziergang",
+        "style": "Entspannung",
+        "dayOfWeek": 2,
+        "startTime": "19:30",
+        "endTime": "20:30",
+        "roomId": "room-7",
+        "teacherId": "teacher-gen-pranava-pauly",
+        "isAiPlanned": false,
+        "status": "draft",
+        "teacherName": "Pranava"
+      },
+      {
+        "id": "course-2026-W48-48",
+        "name": "Geführte Meditation",
+        "style": "Meditation",
+        "dayOfWeek": 3,
+        "startTime": "07:00",
+        "endTime": "07:30",
+        "roomId": "room-5",
+        "teacherId": "teacher-gen-mouniir-jaber",
+        "isAiPlanned": true,
+        "status": "draft",
+        "teacherName": "Mounir"
+      },
+      {
+        "id": "course-2026-W48-49",
+        "name": "Satsang",
+        "style": "Meditation",
+        "dayOfWeek": 3,
+        "startTime": "07:00",
+        "endTime": "08:00",
+        "roomId": "room-2",
+        "teacherId": "teacher-gen-narayani-kedenburg",
+        "isAiPlanned": false,
+        "status": "draft",
+        "teacherName": "Narayani"
+      },
+      {
+        "id": "course-2026-W48-50",
+        "name": "Anfänger",
+        "style": "Hatha",
+        "dayOfWeek": 3,
+        "startTime": "09:15",
+        "endTime": "11:00",
+        "roomId": "room-2",
+        "teacherId": "teacher-gen-alexander-melior",
+        "isAiPlanned": false,
+        "status": "draft",
+        "teacherName": "Alexander"
+      },
+      {
+        "id": "course-2026-W48-51",
+        "name": "Mittelstufe",
+        "style": "Hatha",
+        "dayOfWeek": 3,
+        "startTime": "09:15",
+        "endTime": "11:00",
+        "roomId": "room-5",
+        "teacherId": "teacher-gen-narayani-kedenburg",
+        "isAiPlanned": false,
+        "status": "draft",
+        "teacherName": "Narayani"
+      },
+      {
+        "id": "course-2026-W48-52",
+        "name": "Om Namo Narayanaya",
+        "style": "Meditation",
+        "dayOfWeek": 3,
+        "startTime": "19:30",
+        "endTime": "20:00",
+        "roomId": "room-2",
+        "teacherId": "teacher-gen-burnie-bansemer",
+        "isAiPlanned": true,
+        "status": "draft",
+        "teacherName": "burnie"
+      },
+      {
+        "id": "course-2026-W48-53",
+        "name": "Satsang",
+        "style": "Meditation",
+        "dayOfWeek": 3,
+        "startTime": "20:00",
+        "endTime": "21:00",
+        "roomId": "room-2",
+        "teacherId": "teacher-gen-karuna-wapke",
+        "isAiPlanned": false,
+        "status": "draft",
+        "teacherName": "Karuna"
+      },
+      {
+        "id": "course-2026-W48-54",
+        "name": "Entspannungsangebot: Yogageschichten am Kamin",
+        "style": "Entspannung",
+        "dayOfWeek": 3,
+        "startTime": "21:10",
+        "endTime": "22:00",
+        "roomId": "room-6",
+        "teacherId": "teacher-gen-hu-buerkle",
+        "isAiPlanned": true,
+        "status": "draft",
+        "teacherName": "Hu"
+      },
+      {
+        "id": "course-2026-W48-55",
+        "name": "Geführte Meditation",
+        "style": "Meditation",
+        "dayOfWeek": 4,
+        "startTime": "07:00",
+        "endTime": "07:30",
+        "roomId": "room-5",
+        "teacherId": "teacher-gen-mouniir-jaber",
+        "isAiPlanned": true,
+        "status": "draft",
+        "teacherName": "Mounir"
+      },
+      {
+        "id": "course-2026-W48-56",
+        "name": "Satsang",
+        "style": "Meditation",
+        "dayOfWeek": 4,
+        "startTime": "07:00",
+        "endTime": "08:00",
+        "roomId": "room-2",
+        "teacherId": "teacher-gen-alexander-melior",
+        "isAiPlanned": true,
+        "status": "draft",
+        "teacherName": "Alexander"
+      },
+      {
+        "id": "course-2026-W48-57",
+        "name": "Anfänger",
+        "style": "Hatha",
+        "dayOfWeek": 4,
+        "startTime": "09:15",
+        "endTime": "11:00",
+        "roomId": "room-2",
+        "teacherId": "teacher-gen-alexander-melior",
+        "isAiPlanned": false,
+        "status": "draft",
+        "teacherName": "Alexander"
+      },
+      {
+        "id": "course-2026-W48-58",
+        "name": "Mittelstufe",
+        "style": "Hatha",
+        "dayOfWeek": 4,
+        "startTime": "09:15",
+        "endTime": "11:00",
+        "roomId": "room-5",
+        "teacherId": "teacher-gen-karuna-wapke",
+        "isAiPlanned": true,
+        "status": "draft",
+        "teacherName": "Karuna"
+      },
+      {
+        "id": "course-2026-W48-59",
+        "name": "Anfänger",
+        "style": "Hatha",
+        "dayOfWeek": 4,
+        "startTime": "16:15",
+        "endTime": "18:00",
+        "roomId": "room-2",
+        "teacherId": "teacher-gen-anjali-gelzleichter",
+        "isAiPlanned": true,
+        "status": "draft",
+        "teacherName": "Anjali"
+      },
+      {
+        "id": "course-2026-W48-60",
+        "name": "Mittelstufe",
+        "style": "Hatha",
+        "dayOfWeek": 4,
+        "startTime": "16:15",
+        "endTime": "18:00",
+        "roomId": "room-5",
+        "teacherId": "teacher-gen-karuna-wapke",
+        "isAiPlanned": true,
+        "status": "draft",
+        "teacherName": "Karuna"
+      },
+      {
+        "id": "course-2026-W48-61",
+        "name": "Om Namo Narayanaya",
+        "style": "Meditation",
+        "dayOfWeek": 4,
+        "startTime": "19:30",
+        "endTime": "20:00",
+        "roomId": "room-2",
+        "teacherId": "teacher-gen-christopher",
+        "isAiPlanned": true,
+        "status": "draft",
+        "teacherName": "Christopher"
+      },
+      {
+        "id": "course-2026-W48-62",
+        "name": "Satsang",
+        "style": "Meditation",
+        "dayOfWeek": 4,
+        "startTime": "20:00",
+        "endTime": "21:00",
+        "roomId": "room-2",
+        "teacherId": "teacher-gen-karuna-wapke",
+        "isAiPlanned": false,
+        "status": "draft",
+        "teacherName": "Karuna"
+      },
+      {
+        "id": "course-2026-W48-63",
+        "name": "Entspannungsangebot: Peziebälle",
+        "style": "Entspannung",
+        "dayOfWeek": 4,
+        "startTime": "21:10",
+        "endTime": "22:00",
+        "roomId": "room-5",
+        "teacherId": "teacher-gen-burnie-bansemer",
+        "isAiPlanned": true,
+        "status": "draft",
+        "teacherName": "burnie"
+      },
+      {
+        "id": "course-2026-W48-2",
+        "name": "Geführte Meditation",
+        "style": "Meditation",
+        "dayOfWeek": 5,
+        "startTime": "07:00",
+        "endTime": "07:30",
+        "roomId": "room-5",
+        "teacherId": "teacher-gen-pranava-pauly",
+        "isAiPlanned": false,
+        "status": "draft",
+        "teacherName": "Pranava"
+      },
+      {
+        "id": "course-2026-W48-3",
+        "name": "Satsang",
+        "style": "Meditation",
+        "dayOfWeek": 5,
+        "startTime": "07:00",
+        "endTime": "08:00",
+        "roomId": "room-2",
+        "teacherId": "teacher-gen-nirmaya-fodor",
+        "isAiPlanned": false,
+        "status": "draft",
+        "teacherName": "Nirmaya"
+      },
+      {
+        "id": "course-2026-W48-4",
+        "name": "Anfänger",
+        "style": "Hatha",
+        "dayOfWeek": 5,
+        "startTime": "09:15",
+        "endTime": "11:00",
+        "roomId": "room-5",
+        "teacherId": "teacher-karma-tanja-eichenmueller",
+        "isAiPlanned": true,
+        "status": "draft",
+        "teacherName": "Tanja"
+      },
+      {
+        "id": "course-2026-W48-5",
+        "name": "Mittelstufe Klangyogastunde",
+        "style": "Hatha",
+        "dayOfWeek": 5,
+        "startTime": "09:15",
+        "endTime": "11:00",
+        "roomId": "room-2",
+        "teacherId": "teacher-gen-pranava-pauly",
+        "isAiPlanned": false,
+        "status": "draft",
+        "teacherName": "Pranava"
+      },
+      {
+        "id": "course-2026-W48-6",
+        "name": "Anfänger Ankommensstunde",
+        "style": "Hatha",
+        "dayOfWeek": 5,
+        "startTime": "16:30",
+        "endTime": "18:00",
+        "roomId": "room-2",
+        "teacherId": "teacher-gen-pranava-pauly",
+        "isAiPlanned": true,
+        "status": "draft",
+        "teacherName": "Pranava"
+      },
+      {
+        "id": "course-2026-W48-7",
+        "name": "Mittelstufe Ankommensstunde",
+        "style": "Hatha",
+        "dayOfWeek": 5,
+        "startTime": "16:30",
+        "endTime": "18:00",
+        "roomId": "room-5",
+        "teacherId": "teacher-gen-chandrashekara",
+        "isAiPlanned": true,
+        "status": "draft",
+        "teacherName": "Chandrashekara"
+      },
+      {
+        "id": "course-2026-W48-1",
+        "name": "Hausführung",
+        "style": "Sonstiges",
+        "dayOfWeek": 5,
+        "startTime": "19:00",
+        "endTime": "19:30",
+        "roomId": "room-7",
+        "teacherId": "teacher-gen-pranava-pauly",
+        "isAiPlanned": true,
+        "status": "draft",
+        "teacherName": "Pranava"
+      },
+      {
+        "id": "course-2026-W48-8",
+        "name": "Om Namo Narayanaya",
+        "style": "Meditation",
+        "dayOfWeek": 5,
+        "startTime": "19:30",
+        "endTime": "20:00",
+        "roomId": "room-2",
+        "teacherId": "teacher-gen-christopher",
+        "isAiPlanned": true,
+        "status": "draft",
+        "teacherName": "Christopher"
+      },
+      {
+        "id": "course-2026-W48-9",
+        "name": "Satsang Einführung",
+        "style": "Meditation",
+        "dayOfWeek": 5,
+        "startTime": "20:00",
+        "endTime": "20:35",
+        "roomId": "room-5",
+        "teacherId": "teacher-gen-pranava-pauly",
+        "isAiPlanned": false,
+        "status": "draft",
+        "teacherName": "Pranava"
+      },
+      {
+        "id": "course-2026-W48-10",
+        "name": "Satsang",
+        "style": "Meditation",
+        "dayOfWeek": 5,
+        "startTime": "20:00",
+        "endTime": "21:00",
+        "roomId": "room-2",
+        "teacherId": "teacher-gen-narayani-kedenburg",
+        "isAiPlanned": true,
+        "status": "draft",
+        "teacherName": "Narayani"
+      },
+      {
+        "id": "course-2026-W48-11",
+        "name": "Fortgeschrittenes Pranayama",
+        "style": "Hatha",
+        "dayOfWeek": 6,
+        "startTime": "06:00",
+        "endTime": "06:50",
+        "roomId": "room-2",
+        "teacherId": "teacher-gen-chandrashekara",
+        "isAiPlanned": true,
+        "status": "draft",
+        "teacherName": "Chandrashekara"
+      },
+      {
+        "id": "course-2026-W48-12",
+        "name": "Geführte Meditation",
+        "style": "Meditation",
+        "dayOfWeek": 6,
+        "startTime": "07:00",
+        "endTime": "07:30",
+        "roomId": "room-5",
+        "teacherId": "teacher-gen-nirmaya-fodor",
+        "isAiPlanned": false,
+        "status": "draft",
+        "teacherName": "Nirmaya"
+      },
+      {
+        "id": "course-2026-W48-13",
+        "name": "Satsang",
+        "style": "Meditation",
+        "dayOfWeek": 6,
+        "startTime": "07:00",
+        "endTime": "08:00",
+        "roomId": "room-2",
+        "teacherId": "teacher-gen-abha-morkoetter",
+        "isAiPlanned": false,
+        "status": "draft",
+        "teacherName": "Abha"
+      },
+      {
+        "id": "course-2026-W48-14",
+        "name": "Anfänger",
+        "style": "Hatha",
+        "dayOfWeek": 6,
+        "startTime": "09:15",
+        "endTime": "11:00",
+        "roomId": "room-2",
+        "teacherId": "teacher-gen-pranava-pauly",
+        "isAiPlanned": false,
+        "status": "draft",
+        "teacherName": "Pranava"
+      },
+      {
+        "id": "course-2026-W48-15",
+        "name": "Mittelstufe",
+        "style": "Hatha",
+        "dayOfWeek": 6,
+        "startTime": "09:15",
+        "endTime": "11:00",
+        "roomId": "room-4",
+        "teacherId": "teacher-gen-abha-morkoetter",
+        "isAiPlanned": true,
+        "status": "draft",
+        "teacherName": "Abha"
+      },
+      {
+        "id": "course-2026-W48-schulung-yl-schulung--thema-12",
+        "name": "YL-Schulung, Thema 12",
+        "style": "Schulung",
+        "dayOfWeek": 6,
+        "startTime": "15:00",
+        "endTime": "18:00",
+        "roomId": "room-5",
+        "teacherId": null,
+        "isAiPlanned": false,
+        "status": "draft"
+      },
+      {
+        "id": "course-2026-W48-16",
+        "name": "Anfänger",
+        "style": "Hatha",
+        "dayOfWeek": 6,
+        "startTime": "16:15",
+        "endTime": "18:00",
+        "roomId": "room-2",
+        "teacherId": "teacher-gen-yl",
+        "isAiPlanned": false,
+        "status": "draft",
+        "teacherName": "! YL"
+      },
+      {
+        "id": "course-2026-W48-17",
+        "name": "Mittelstufe",
+        "style": "Hatha",
+        "dayOfWeek": 6,
+        "startTime": "16:15",
+        "endTime": "18:00",
+        "roomId": "room-5",
+        "teacherId": "teacher-karma-tanja-eichenmueller",
+        "isAiPlanned": true,
+        "status": "draft",
+        "teacherName": "Tanja"
+      },
+      {
+        "id": "course-2026-W48-18",
+        "name": "Om Namo Narayanaya",
+        "style": "Meditation",
+        "dayOfWeek": 6,
+        "startTime": "19:30",
+        "endTime": "20:00",
+        "roomId": "room-2",
+        "teacherId": "teacher-gen-christopher",
+        "isAiPlanned": true,
+        "status": "draft",
+        "teacherName": "Christopher"
+      },
+      {
+        "id": "course-2026-W48-19",
+        "name": "Satsang",
+        "style": "Meditation",
+        "dayOfWeek": 6,
+        "startTime": "20:00",
+        "endTime": "22:00",
+        "roomId": "room-2",
+        "teacherId": "teacher-gen-abha-morkoetter",
+        "isAiPlanned": true,
+        "status": "draft",
+        "teacherName": "Abha"
+      }
+    ],
+    "createdAt": "2026-11-17T07:47:24.586Z"
   }
 ];
 
@@ -16183,8 +17025,8 @@ export function reconcilePlansWithDefaults(plans: WeekPlan[]): { plans: WeekPlan
       }
     }
 
-    // Ensure KW 46 and KW 47 default to draft / unapproved unless explicitly approved by user
-    if (p.targetWeekCode === '2026-W46' || p.targetWeekCode === '2026-W47') {
+    // Ensure KW 46, KW 47, and KW 48 default to draft / unapproved unless explicitly approved by user
+    if (p.targetWeekCode === '2026-W46' || p.targetWeekCode === '2026-W47' || p.targetWeekCode === '2026-W48') {
       if (!(p as any).manuallyApprovedByUser) {
         p.isApproved = false;
         p.status = 'draft';
@@ -16298,6 +17140,19 @@ export function reconcilePlansWithDefaults(plans: WeekPlan[]): { plans: WeekPlan
       for (const c of p.courses) {
         const courseDate = getLocalDateForDay(p.targetWeekCode, c.dayOfWeek);
         const nameLower = c.name.toLowerCase();
+
+        // Abha is Sevafrei from 2026-11-23 through 2026-12-06 and cannot be scheduled
+        if (
+          courseDate >= '2026-11-23' &&
+          courseDate <= '2026-12-06' &&
+          !isPlanProtected &&
+          !c.isManuallyEdited &&
+          (c.teacherId === 'teacher-gen-abha-morkoetter' || c.teacherId === 'abha' || c.teacherName?.toLowerCase().includes('abha'))
+        ) {
+          c.teacherId = null;
+          c.teacherName = undefined;
+          c.isAiPlanned = true;
+        }
 
         if (isDateInYlaRange(courseDate) && !isPlanProtected) {
           if (c.dayOfWeek !== 0 && !(p.targetWeekCode === '2026-W37' && c.dayOfWeek === 2) && (nameLower.includes('om namo') || nameLower.includes('narayanaya')) && c.roomId !== 'room-1' && !c.isManuallyEdited) {
@@ -16592,7 +17447,7 @@ export function reconcilePlansWithDefaults(plans: WeekPlan[]): { plans: WeekPlan
   return { plans: list, hasChanges: beforeJson !== afterJson };
 }
 
-const CURRENT_DB_VERSION = 159;
+const CURRENT_DB_VERSION = 163;
 
 // Database Actions
 export const db = {
@@ -17054,9 +17909,16 @@ export const db = {
       }
     }
     for (const defSem of DEFAULT_SEMINARS) {
-      if (!stored.some(s => s.id === defSem.id)) {
+      const existingIdx = stored.findIndex(s => s.id === defSem.id);
+      if (existingIdx === -1) {
         stored.push(JSON.parse(JSON.stringify(defSem)));
         mutated = true;
+      } else {
+        const existingSem = stored[existingIdx];
+        if ((!existingSem.roomId && defSem.roomId) || (existingSem.isBlueprint && !defSem.isBlueprint)) {
+          stored[existingIdx] = JSON.parse(JSON.stringify(defSem));
+          mutated = true;
+        }
       }
     }
     if (mutated) {

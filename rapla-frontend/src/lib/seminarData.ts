@@ -2873,6 +2873,436 @@ export const ERKAN_FEWO_SEMINAR: Seminar = {
   ]
 };
 
+// --- 8. WOCHENEND-SEMINAR: YOGA UND PILATES / YOGILATES (CARINA VAN ANKEN im TRIPURA RAUM, 20.11. – 22.11.2026) ---
+export const YOGA_PILATES_CARINA_SLOTS: SeminarSlot[] = [
+  // Freitag 20.11.2026
+  {
+    id: 'yogilates-fr-vorstellrunde',
+    seminarId: 'sem-2026-11-20-we-pilates',
+    dayIndex: 0,
+    dayOfWeek: 5,
+    dayName: 'Freitag',
+    dateStr: '2026-11-20',
+    timeLabel: 'Nach dem Satsang',
+    startTime: '21:15',
+    endTime: '22:00',
+    title: 'Vorstellrunde',
+    description: 'Vorstellrunde und Begrüßung der Seminargruppe nach dem Satsang mit Carina van Anken im Tripura-Raum.',
+    isOrange: true,
+    roomName: 'Tripura-Raum',
+    roomId: 'room-5',
+    teacher: 'Carina van Anken',
+    category: 'evening'
+  },
+
+  // Samstag 21.11.2026
+  {
+    id: 'yogilates-sa-vortrag',
+    seminarId: 'sem-2026-11-20-we-pilates',
+    dayIndex: 1,
+    dayOfWeek: 6,
+    dayName: 'Samstag',
+    dateStr: '2026-11-21',
+    timeLabel: '8:15 - 9:00 Uhr',
+    startTime: '08:15',
+    endTime: '09:00',
+    title: 'Einführung Pilates: Hintergründe und Prinzipien',
+    description: '8:15 – 9:00 Uhr: Einführung Pilates – Hintergründe und Prinzipien mit Carina van Anken im Tripura-Raum.',
+    isOrange: true,
+    roomName: 'Tripura-Raum',
+    roomId: 'room-5',
+    teacher: 'Carina van Anken',
+    category: 'lecture'
+  },
+  {
+    id: 'yogilates-sa-yoga',
+    seminarId: 'sem-2026-11-20-we-pilates',
+    dayIndex: 1,
+    dayOfWeek: 6,
+    dayName: 'Samstag',
+    dateStr: '2026-11-21',
+    timeLabel: '9:15 - 11:00 Uhr',
+    startTime: '09:15',
+    endTime: '11:00',
+    title: 'Pilates Flow',
+    description: '9:15 – 11:00 Uhr: Pilates Flow mit Carina van Anken im Tripura-Raum.',
+    isOrange: true,
+    roomName: 'Tripura-Raum',
+    roomId: 'room-5',
+    teacher: 'Carina van Anken',
+    category: 'yoga'
+  },
+  {
+    id: 'yogilates-sa-nachmittag',
+    seminarId: 'sem-2026-11-20-we-pilates',
+    dayIndex: 1,
+    dayOfWeek: 6,
+    dayName: 'Samstag',
+    dateStr: '2026-11-21',
+    timeLabel: '15:00 - ca. 16:15 Uhr',
+    startTime: '15:00',
+    endTime: '16:15',
+    title: 'Workshop Pilates: Magic Circle und Redondoball',
+    description: '15:00 – ca. 16:15 Uhr: Workshop Pilates – Magic Circle und Redondoball mit Carina van Anken im Tripura-Raum.',
+    isOrange: true,
+    roomName: 'Tripura-Raum',
+    roomId: 'room-5',
+    teacher: 'Carina van Anken',
+    category: 'afternoon'
+  },
+
+  // Sonntag 22.11.2026
+  {
+    id: 'yogilates-so-vortrag',
+    seminarId: 'sem-2026-11-20-we-pilates',
+    dayIndex: 2,
+    dayOfWeek: 0,
+    dayName: 'Sonntag',
+    dateStr: '2026-11-22',
+    timeLabel: '8:15 - 9:00 Uhr',
+    startTime: '08:15',
+    endTime: '09:00',
+    title: 'Theorie „Joseph Pilates“ und Abschluss',
+    description: '8:15 – 9:00 Uhr: Theorie „Joseph Pilates“ und Abschluss mit Carina van Anken im Tripura-Raum.',
+    isOrange: true,
+    roomName: 'Tripura-Raum',
+    roomId: 'room-5',
+    teacher: 'Carina van Anken',
+    category: 'lecture'
+  },
+  {
+    id: 'yogilates-so-yogastunde',
+    seminarId: 'sem-2026-11-20-we-pilates',
+    dayIndex: 2,
+    dayOfWeek: 0,
+    dayName: 'Sonntag',
+    dateStr: '2026-11-22',
+    timeLabel: '9:15 - 11:00 Uhr',
+    startTime: '09:15',
+    endTime: '11:00',
+    title: 'Offene Yogastunde: Yogilates',
+    description: '9:15 – 11:00 Uhr: Offene Yogastunde „Yogilates“ (für Anfängerinnen und alle Gäste) mit Carina van Anken im Tripura-Raum.',
+    isOrange: true,
+    roomName: 'Tripura-Raum',
+    roomId: 'room-5',
+    teacher: 'Carina van Anken',
+    category: 'yoga'
+  }
+];
+
+export const YOGA_PILATES_CARINA_SEMINAR: Seminar = {
+  id: 'sem-2026-11-20-we-pilates',
+  title: 'Yoga und Pilates',
+  shortTitle: 'Yoga & Pilates (WE)',
+  subtitle: 'Fr. 20.11. bis So. 22.11.2026',
+  leader: 'Carina van Anken',
+  roomName: 'Tripura-Raum',
+  roomId: 'room-5',
+  color: '#0284c7',
+  startDate: '2026-11-20',
+  endDate: '2026-11-22',
+  startDayName: 'Freitag',
+  endDayName: 'Sonntag',
+  weeks: ['2026-W47', '2026-W48'],
+  type: 'seminar',
+  isBlueprint: false,
+  slots: YOGA_PILATES_CARINA_SLOTS,
+  peaceChant: {
+    time: '19:30 - 20:00 Uhr',
+    room: 'Radha Krishna Raum',
+    title: 'Om Namonarayanaya Singen (Singen für den Weltfrieden)'
+  },
+  notes: [
+    'Die orangenen Seminar-Einheiten von Yoga und Pilates finden mit Carina van Anken im Tripura-Raum statt.',
+    'Am Sonntagmorgen (22.11., 09:15 – 11:00 Uhr) findet im Tripura-Raum die offene Yogastunde „Yogilates“ statt.',
+    'Kurzfristige Änderungen vorbehalten.'
+  ]
+};
+
+// --- 9. YOGA FERIENWOCHE (BEATE MENKARSKI im RADHA KRISHNA RAUM, 22.11. – 27.11.2026) ---
+export const BEATE_FEWO_SLOTS: SeminarSlot[] = [
+  // Sonntag 22.11.2026
+  {
+    id: 'fewo-beate-so-begruessung',
+    seminarId: 'sem-2026-11-22-fewo-beate',
+    dayIndex: 2,
+    dayOfWeek: 0,
+    dayName: 'Sonntag',
+    dateStr: '2026-11-22',
+    timeLabel: 'Nach Satsang (ca. 21:15)',
+    startTime: '21:15',
+    endTime: '22:00',
+    title: 'Begrüßungsrunde / Seminarplan',
+    description: 'Begrüßungsrunde und Vorstellung des Seminarplans mit Beate Menkarski im Radha Krishna Raum.',
+    isOrange: true,
+    roomName: 'Radha Krishna Raum',
+    roomId: 'room-2',
+    teacher: 'Beate Menkarski',
+    category: 'evening'
+  },
+
+  // Montag 23.11.2026
+  {
+    id: 'fewo-beate-mo-vortrag',
+    seminarId: 'sem-2026-11-22-fewo-beate',
+    dayIndex: 3,
+    dayOfWeek: 1,
+    dayName: 'Montag',
+    dateStr: '2026-11-23',
+    timeLabel: '8:15 Uhr Vortrag',
+    startTime: '08:15',
+    endTime: '09:00',
+    title: 'Die 6 Yoga Wege',
+    description: 'Vortrag: Die 6 Yoga Wege mit Beate Menkarski im Radha Krishna Raum.',
+    isOrange: true,
+    roomName: 'Radha Krishna Raum',
+    roomId: 'room-2',
+    teacher: 'Beate Menkarski',
+    category: 'lecture'
+  },
+  {
+    id: 'fewo-beate-mo-nachmittag',
+    seminarId: 'sem-2026-11-22-fewo-beate',
+    dayIndex: 3,
+    dayOfWeek: 1,
+    dayName: 'Montag',
+    dateStr: '2026-11-23',
+    timeLabel: 'Nachmittags-Programm',
+    startTime: '13:00',
+    endTime: '15:00',
+    title: '13:00 Uhr: Spaziergang nach Horumersiel',
+    description: 'Gemeinsamer Spaziergang nach Horumersiel. Treffpunkt: Eingang.',
+    isOrange: true,
+    roomName: 'Treffpunkt Eingang',
+    locationHint: 'Treffpunkt: Eingang',
+    teacher: 'Beate Menkarski',
+    category: 'afternoon'
+  },
+  {
+    id: 'fewo-beate-mo-abendprogramm',
+    seminarId: 'sem-2026-11-22-fewo-beate',
+    dayIndex: 3,
+    dayOfWeek: 1,
+    dayName: 'Montag',
+    dateStr: '2026-11-23',
+    timeLabel: 'Nach Satsang (ca. 21:15)',
+    startTime: '21:15',
+    endTime: '22:00',
+    title: 'Abendprogramm',
+    description: 'Seminar-Abendprogramm im Radha Krishna Raum.',
+    isOrange: true,
+    roomName: 'Radha Krishna Raum',
+    roomId: 'room-2',
+    teacher: 'Beate Menkarski',
+    category: 'evening'
+  },
+
+  // Dienstag 24.11.2026
+  {
+    id: 'fewo-beate-di-vortrag',
+    seminarId: 'sem-2026-11-22-fewo-beate',
+    dayIndex: 4,
+    dayOfWeek: 2,
+    dayName: 'Dienstag',
+    dateStr: '2026-11-24',
+    timeLabel: '8:15 Uhr Vortrag',
+    startTime: '08:15',
+    endTime: '09:00',
+    title: 'Einführung in die Meditation',
+    description: 'Vortrag: Einführung in die Meditation mit Beate Menkarski im Radha Krishna Raum.',
+    isOrange: true,
+    roomName: 'Radha Krishna Raum',
+    roomId: 'room-2',
+    teacher: 'Beate Menkarski',
+    category: 'lecture'
+  },
+  {
+    id: 'fewo-beate-di-nachmittag',
+    seminarId: 'sem-2026-11-22-fewo-beate',
+    dayIndex: 4,
+    dayOfWeek: 2,
+    dayName: 'Dienstag',
+    dateStr: '2026-11-24',
+    timeLabel: 'Nachmittags-Programm',
+    startTime: '15:00',
+    endTime: '16:15',
+    title: '15:00 – 16:15 Uhr: Workshop',
+    description: 'Nachmittags-Workshop (15:00 – 16:15 Uhr) mit Beate Menkarski im Radha Krishna Raum.',
+    isOrange: true,
+    roomName: 'Radha Krishna Raum',
+    roomId: 'room-2',
+    teacher: 'Beate Menkarski',
+    category: 'afternoon'
+  },
+
+  // Mittwoch 25.11.2026
+  {
+    id: 'fewo-beate-mi-vortrag',
+    seminarId: 'sem-2026-11-22-fewo-beate',
+    dayIndex: 5,
+    dayOfWeek: 3,
+    dayName: 'Mittwoch',
+    dateStr: '2026-11-25',
+    timeLabel: '8:15 Uhr Vortrag',
+    startTime: '08:15',
+    endTime: '09:00',
+    title: 'Die 3 Gunas und yogische Ernährung',
+    description: 'Vortrag: Die 3 Gunas und yogische Ernährung mit Beate Menkarski im Radha Krishna Raum.',
+    isOrange: true,
+    roomName: 'Radha Krishna Raum',
+    roomId: 'room-2',
+    teacher: 'Beate Menkarski',
+    category: 'lecture'
+  },
+  {
+    id: 'fewo-beate-mi-abendprogramm',
+    seminarId: 'sem-2026-11-22-fewo-beate',
+    dayIndex: 5,
+    dayOfWeek: 3,
+    dayName: 'Mittwoch',
+    dateStr: '2026-11-25',
+    timeLabel: 'Nach Satsang (ca. 21:15)',
+    startTime: '21:15',
+    endTime: '22:00',
+    title: 'Abendprogramm',
+    description: 'Seminar-Abendprogramm im Radha Krishna Raum.',
+    isOrange: true,
+    roomName: 'Radha Krishna Raum',
+    roomId: 'room-2',
+    teacher: 'Beate Menkarski',
+    category: 'evening'
+  },
+
+  // Donnerstag 26.11.2026
+  {
+    id: 'fewo-beate-do-vortrag',
+    seminarId: 'sem-2026-11-22-fewo-beate',
+    dayIndex: 6,
+    dayOfWeek: 4,
+    dayName: 'Donnerstag',
+    dateStr: '2026-11-26',
+    timeLabel: '8:15 Uhr Vortrag',
+    startTime: '08:15',
+    endTime: '09:00',
+    title: 'Die Yoga Vidya Grundreihe',
+    description: 'Vortrag: Die Yoga Vidya Grundreihe mit Beate Menkarski im Radha Krishna Raum.',
+    isOrange: true,
+    roomName: 'Radha Krishna Raum',
+    roomId: 'room-2',
+    teacher: 'Beate Menkarski',
+    category: 'lecture'
+  },
+  {
+    id: 'fewo-beate-do-nachmittag',
+    seminarId: 'sem-2026-11-22-fewo-beate',
+    dayIndex: 6,
+    dayOfWeek: 4,
+    dayName: 'Donnerstag',
+    dateStr: '2026-11-26',
+    timeLabel: 'Nachmittags-Programm',
+    startTime: '15:00',
+    endTime: '16:15',
+    title: '15:00 – 16:15 Uhr: Workshop',
+    description: 'Nachmittags-Workshop (15:00 – 16:15 Uhr) mit Beate Menkarski im Radha Krishna Raum.',
+    isOrange: true,
+    roomName: 'Radha Krishna Raum',
+    roomId: 'room-2',
+    teacher: 'Beate Menkarski',
+    category: 'afternoon'
+  },
+  {
+    id: 'fewo-beate-do-abendprogramm',
+    seminarId: 'sem-2026-11-22-fewo-beate',
+    dayIndex: 6,
+    dayOfWeek: 4,
+    dayName: 'Donnerstag',
+    dateStr: '2026-11-26',
+    timeLabel: 'Nach Satsang (ca. 21:15)',
+    startTime: '21:15',
+    endTime: '22:00',
+    title: 'Abendprogramm',
+    description: 'Seminar-Abendprogramm im Radha Krishna Raum.',
+    isOrange: true,
+    roomName: 'Radha Krishna Raum',
+    roomId: 'room-2',
+    teacher: 'Beate Menkarski',
+    category: 'evening'
+  },
+
+  // Freitag 27.11.2026
+  {
+    id: 'fewo-beate-fr-vortrag',
+    seminarId: 'sem-2026-11-22-fewo-beate',
+    dayIndex: 7,
+    dayOfWeek: 5,
+    dayName: 'Freitag',
+    dateStr: '2026-11-27',
+    timeLabel: '8:15 Uhr Vortrag',
+    startTime: '08:15',
+    endTime: '09:00',
+    title: 'Abschlussrunde / Tipps für die weitere Praxis',
+    description: 'Gemeinsame Abschlussrunde und Tipps für die weitere Praxis im Radha Krishna Raum.',
+    isOrange: true,
+    roomName: 'Radha Krishna Raum',
+    roomId: 'room-2',
+    teacher: 'Beate Menkarski',
+    category: 'lecture'
+  }
+];
+
+export const BEATE_FEWO_SEMINAR: Seminar = {
+  id: 'sem-2026-11-22-fewo-beate',
+  title: 'Yoga Ferienwoche',
+  shortTitle: 'FEWO Beate',
+  subtitle: 'So. 22.11. bis Fr. 27.11.2026',
+  leader: 'Beate Menkarski',
+  roomName: 'Radha Krishna Raum',
+  roomId: 'room-2',
+  color: '#ea580c',
+  startDate: '2026-11-22',
+  endDate: '2026-11-27',
+  startDayName: 'Sonntag',
+  endDayName: 'Freitag',
+  weeks: ['2026-W48', '2026-W49'],
+  type: 'fewo',
+  isBlueprint: false,
+  slots: BEATE_FEWO_SLOTS,
+  peaceChant: {
+    time: '19:30 - 20:00 Uhr',
+    room: 'Radha Krishna Raum',
+    title: 'Om Namonarayanaya Singen (Singen für den Weltfrieden)'
+  },
+  notes: [
+    'Die orangenen Seminar-Einheiten der Yoga Ferienwoche finden im Radha Krishna Raum statt.',
+    'Om Namonarayanaya Singen (Singen für den Weltfrieden): 19:30 – 20:00 Uhr (RadhaKrishna Raum).',
+    'Kurzfristige Änderungen vorbehalten.'
+  ]
+};
+
+// --- 10. SCHWEIGERETREAT AN DER NORDSEE (PRANAVA HEINZ PAULY im HANUMAN RAUM, 22.11. – 27.11.2026) ---
+// Raum ist fest auf Hanuman-Raum (room-3) hinterlegt; die konkreten Zeitslots bleiben zunächst offen und können später nachgepflegt werden.
+export const SCHWEIGERETREAT_PRANAVA_SEMINAR: Seminar = {
+  id: 'sem-2026-11-22-schweigeretreat',
+  title: 'Schweigeretreat an der Nordsee',
+  shortTitle: 'Schweigeretreat Nordsee',
+  subtitle: 'So. 22.11. bis Fr. 27.11.2026',
+  leader: 'Pranava Heinz Pauly',
+  roomName: 'Hanuman-Raum',
+  roomId: 'room-3',
+  color: '#d97706',
+  startDate: '2026-11-22',
+  endDate: '2026-11-27',
+  startDayName: 'Sonntag',
+  endDayName: 'Freitag',
+  weeks: ['2026-W48', '2026-W49'],
+  type: 'seminar',
+  isBlueprint: true,
+  slots: [],
+  notes: [
+    'Raumzuweisung: Hanuman-Raum (Einheiten werden noch nachgepflegt).'
+  ]
+};
+
 // --- CORE ASHRAM SEMINAR ROOMS (matching RoomOccupancyView) ---
 export const SEMINAR_ROOMS = [
   { id: 'room-2', name: 'Radha Krishna Raum', shortName: 'Radha Krishna', icon: '🟠' },
@@ -3261,12 +3691,9 @@ const NORDSEE_CALENDAR_SEMINAR_SEEDS: NordseeSeminarSeed[] = [
   { id: 'sem-2026-10-25-fewo-praevention', title: 'Hatha Yoga Prävention Ferienwoche', shortTitle: 'Hatha Prävention FEWO', startDate: '2026-10-25', endDate: '2026-10-30', isWE: false, leader: 'Pranava Heinz Pauly' },
   { id: 'sem-2026-10-25-yin-vipassana', title: 'Yin Yoga meets Vipassana', startDate: '2026-10-25', endDate: '2026-10-30', isWE: false, leader: 'Christian Bliedtner', colorIndex: 2 },
 
-  // 20.11. – 06.12.2026 (Seminarauswertung Nordsee: 13 Seminare)
+  // 20.11. – 06.12.2026 (Seminarauswertung Nordsee)
   { id: 'sem-2026-11-20-we-intro', title: 'Yoga und Meditation Einführung', shortTitle: 'Yoga & Meditation (WE)', startDate: '2026-11-20', endDate: '2026-11-22', isWE: true, leader: 'Monika Adele Camara', colorIndex: 0 },
   { id: 'sem-2026-11-20-we-schatten', title: 'Selbsthilfe-Praktiken für Schatten-Bewusstsein', shortTitle: 'Schatten-Bewusstsein (WE)', startDate: '2026-11-20', endDate: '2026-11-22', isWE: true, leader: 'Erkan Batmaz', colorIndex: 1 },
-  { id: 'sem-2026-11-20-we-pilates', title: 'Yoga und Pilates', shortTitle: 'Yoga & Pilates (WE)', startDate: '2026-11-20', endDate: '2026-11-22', isWE: true, leader: 'Carina van Anken', colorIndex: 2 },
-  { id: 'sem-2026-11-22-fewo-beate', title: 'Yoga Ferienwoche', shortTitle: 'FEWO Beate Menkalski', startDate: '2026-11-22', endDate: '2026-11-27', isWE: false, leader: 'Beate Menkalski' },
-  { id: 'sem-2026-11-22-schweigeretreat', title: 'Schweigeretreat an der Nordsee', shortTitle: 'Schweigeretreat Nordsee', startDate: '2026-11-22', endDate: '2026-11-27', isWE: false, leader: 'Pranava Heinz Pauly', colorIndex: 4 },
   { id: 'sem-2026-11-27-we-autogene', title: 'Autogene Entspannung', shortTitle: 'Autogene Entspannung (WE)', startDate: '2026-11-27', endDate: '2026-11-29', isWE: true, leader: 'Roswitha Breitkopf', colorIndex: 3 },
   { id: 'sem-2026-11-27-we-stress', title: 'Hatha Yoga, Entspannung und Stress Management – Yogalehrer Weiterbildung', shortTitle: 'Stress Management YLW (WE)', startDate: '2026-11-27', endDate: '2026-11-29', isWE: true, leader: 'Michael Büchel', colorIndex: 1 },
   { id: 'sem-2026-11-27-we-yinyoga', title: 'Yin Yoga & Selbstakupressur', shortTitle: 'Yin Yoga & Akupressur (WE)', startDate: '2026-11-27', endDate: '2026-11-29', isWE: true, leader: 'Maharani Schons', colorIndex: 5 },
@@ -3288,7 +3715,10 @@ export const DEFAULT_SEMINARS: Seminar[] = [
   CHARRY_FACEYOGA_SEMINAR,
   WE4_YOGA_ANATOMIE_SEMINAR,
   RAEKELYOGA_ERKAN_SEMINAR,
-  ERKAN_FEWO_SEMINAR
+  ERKAN_FEWO_SEMINAR,
+  YOGA_PILATES_CARINA_SEMINAR,
+  BEATE_FEWO_SEMINAR,
+  SCHWEIGERETREAT_PRANAVA_SEMINAR
 ];
 
 // Helper to get all seminars
@@ -3299,8 +3729,16 @@ export function getRegisteredSeminars(): Seminar[] {
     if (!raw) return JSON.parse(JSON.stringify(DEFAULT_SEMINARS));
     const parsed = JSON.parse(raw);
     if (Array.isArray(parsed) && parsed.length > 0) {
-      const existingIds = new Set(parsed.map((s: Seminar) => s.id));
-      const merged = [...parsed];
+      const upgradedIds = new Set(['sem-2026-11-20-we-pilates', 'sem-2026-11-22-fewo-beate', 'sem-2026-11-22-schweigeretreat']);
+      const existingIds = new Set<string>();
+      const merged = parsed.map((s: Seminar) => {
+        existingIds.add(s.id);
+        if (upgradedIds.has(s.id) && (!s.roomId || s.isBlueprint)) {
+          const defMatch = DEFAULT_SEMINARS.find(d => d.id === s.id);
+          if (defMatch) return JSON.parse(JSON.stringify(defMatch));
+        }
+        return s;
+      });
       for (const defSem of DEFAULT_SEMINARS) {
         if (!existingIds.has(defSem.id)) {
           merged.push(JSON.parse(JSON.stringify(defSem)));
@@ -3824,11 +4262,13 @@ export function getSeminarConflictForTeacher(
         continue;
       }
 
-      // Open seminar yoga class that is itself represented as an open Wochenplan course (e.g. Räkelyoga on Sunday 09:15)
+      // Open seminar yoga class that is itself represented as an open Wochenplan course (e.g. Räkelyoga or Yogilates on Sunday 09:15)
       const slotTitleLower = (slot.title || '').toLowerCase();
       if (
-        (cNameLower.includes('räkel') || cNameLower.includes('raekel')) &&
-        (slotTitleLower.includes('räkel') || slotTitleLower.includes('raekel') || slotTitleLower.includes('(offen)'))
+        ((cNameLower.includes('räkel') || cNameLower.includes('raekel')) &&
+          (slotTitleLower.includes('räkel') || slotTitleLower.includes('raekel') || slotTitleLower.includes('(offen)'))) ||
+        ((cNameLower.includes('yogilates') || cNameLower.includes('jogi-lates') || cNameLower.includes('pilates')) &&
+          (slotTitleLower.includes('yogilates') || slotTitleLower.includes('offene yogastunde')))
       ) {
         continue;
       }
@@ -3942,8 +4382,10 @@ export function getSeminarRoomConflict(
 
       const slotTitleLower = (slot.title || '').toLowerCase();
       if (
-        (cNameLower.includes('räkel') || cNameLower.includes('raekel')) &&
-        (slotTitleLower.includes('räkel') || slotTitleLower.includes('raekel') || slotTitleLower.includes('(offen)'))
+        ((cNameLower.includes('räkel') || cNameLower.includes('raekel')) &&
+          (slotTitleLower.includes('räkel') || slotTitleLower.includes('raekel') || slotTitleLower.includes('(offen)'))) ||
+        ((cNameLower.includes('yogilates') || cNameLower.includes('jogi-lates') || cNameLower.includes('pilates')) &&
+          (slotTitleLower.includes('yogilates') || slotTitleLower.includes('offene yogastunde')))
       ) {
         continue;
       }

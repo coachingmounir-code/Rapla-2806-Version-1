@@ -184,8 +184,15 @@ export function validateAssignment(
         const isPranava = teacherNameLower.includes('pranava');
         const isRegularFreeDay = activeAbsence.type.toLowerCase() === 'frei' || (activeAbsence.note && activeAbsence.note.toLowerCase().includes('regulärer freier wochentag'));
 
-        if (isWalk && isPranava && isRegularFreeDay) {
-          // Pranava standardmäßig für meditativen Spaziergang eingeteilt
+        const isNarayaniW48FridaySatsang =
+          targetWeekCode === '2026-W48' &&
+          name.includes('narayani') &&
+          course.dayOfWeek === 5 &&
+          course.name === 'Satsang' &&
+          course.startTime === '20:00';
+
+        if ((isWalk && isPranava && isRegularFreeDay) || (isNarayaniW48FridaySatsang && isRegularFreeDay)) {
+          // Pranava standardmäßig für meditativen Spaziergang eingeteilt; Narayani in KW 48 für Freitagabend-Satsang eingeteilt
         } else {
           conflicts.push({
             type: 'hard',
@@ -194,28 +201,20 @@ export function validateAssignment(
           break;
         }
       } else if (isTeacherAbsent(name, course.dayOfWeek, targetWeekCode, absences)) {
-        conflicts.push({
-          type: 'hard',
-          message: `${teacher.name} hat an diesem Wochentag (${getDayName(course.dayOfWeek)}) Seva-frei / ist abwesend.`
-        });
-        break;
+        const isNarayaniW48FridaySatsang =
+          targetWeekCode === '2026-W48' &&
+          name.includes('narayani') &&
+          course.dayOfWeek === 5 &&
+          course.name === 'Satsang' &&
+          course.startTime === '20:00';
+        if (!isNarayaniW48FridaySatsang) {
+          conflicts.push({
+            type: 'hard',
+            message: `${teacher.name} hat an diesem Wochentag (${getDayName(course.dayOfWeek)}) Seva-frei / ist abwesend.`
+          });
+          break;
+        }
       }
-    }
-  }
-
-  // 0b. Check stay window for Karma-Yogis and Guest Teachers (Hard)
-  if (targetWeekCode && (teacher.stayStartDate || teacher.stayEndDate)) {
-    const courseDate = getLocalDateForDay(targetWeekCode, course.dayOfWeek);
-    if (teacher.stayStartDate && courseDate < teacher.stayStartDate) {
-      conflicts.push({
-        type: 'hard',
-        message: `${teacher.name} ist am ${courseDate} noch nicht im Haus (Aufenthaltszeitraum: ${teacher.stayStartDate} bis ${teacher.stayEndDate || 'offen'}).`
-      });
-    } else if (teacher.stayEndDate && courseDate > teacher.stayEndDate) {
-      conflicts.push({
-        type: 'hard',
-        message: `${teacher.name} ist am ${courseDate} nicht mehr im Haus (Aufenthaltszeitraum endete am ${teacher.stayEndDate}).`
-      });
     }
   }
 
@@ -231,6 +230,43 @@ export function validateAssignment(
   const isPranayamaForSevaka = courseNameLower.includes('pranayama') || courseStyleLower.includes('pranayama');
   const isSonstigesForSevaka = courseStyleLower.includes('sonstiges') || courseStyleLower.includes('buffet') || courseStyleLower.includes('schulung') || courseNameLower.includes('schulung') || courseNameLower.includes('hausführung') || courseNameLower.includes('hausfuehrung') || courseNameLower.includes('rezeption') || courseNameLower.includes('infopoint') || courseNameLower.includes('yoga-shop') || courseNameLower.includes('begrüßung') || courseNameLower.includes('ausbildung') || courseNameLower.includes('mantra-singen');
   const isYogaClassForSevaka = !isMeditationForSevaka && !isSatsangForSevaka && !isSatsangEinfuehrungForSevaka && !isOnnForSevaka && !isEntspannungForSevaka && !isSonstigesForSevaka && !isPranayamaForSevaka;
+
+  // 0b. Check stay window for Karma-Yogis and Guest Teachers (Hard)
+  // In 2026-W48, Tanja is explicitly approved for Friday (20.11.) and Saturday (21.11.) yoga classes (max 1 per day).
+  const isTanjaApprovedW48 =
+    targetWeekCode === '2026-W48' &&
+    (teacher.id === 'teacher-karma-tanja-eichenmueller' || teacherNameLower === 'tanja');
+  if (isTanjaApprovedW48) {
+    if ((course.dayOfWeek !== 5 && course.dayOfWeek !== 6) || !isYogaClassForSevaka) {
+      conflicts.push({
+        type: 'hard',
+        message: `Tanja ist in KW 48 ausschließlich für jeweils eine Yogastunde am Freitag (20.11.) und Samstag (21.11.) vorgesehen.`
+      });
+    } else {
+      const otherTanjaYogaSameDay = allCourses.some(
+        c => c.id !== course.id && c.teacherId === teacher.id && c.dayOfWeek === course.dayOfWeek
+      );
+      if (otherTanjaYogaSameDay) {
+        conflicts.push({
+          type: 'hard',
+          message: `Tanja darf in KW 48 am Freitag und Samstag für jeweils maximal eine Yogastunde eingeteilt werden.`
+        });
+      }
+    }
+  } else if (targetWeekCode && (teacher.stayStartDate || teacher.stayEndDate)) {
+    const courseDate = getLocalDateForDay(targetWeekCode, course.dayOfWeek);
+    if (teacher.stayStartDate && courseDate < teacher.stayStartDate) {
+      conflicts.push({
+        type: 'hard',
+        message: `${teacher.name} ist am ${courseDate} noch nicht im Haus (Aufenthaltszeitraum: ${teacher.stayStartDate} bis ${teacher.stayEndDate || 'offen'}).`
+      });
+    } else if (teacher.stayEndDate && courseDate > teacher.stayEndDate) {
+      conflicts.push({
+        type: 'hard',
+        message: `${teacher.name} ist am ${courseDate} nicht mehr im Haus (Aufenthaltszeitraum endete am ${teacher.stayEndDate}).`
+      });
+    }
+  }
 
   // Complete exclusion for Satyam (Sevaka), but NOT Guest Teacher Sathyam Bad Meinberg
   if (teacherNameLower.includes('satyam') && !teacherNameLower.includes('meinberg')) {
@@ -369,7 +405,12 @@ export function validateAssignment(
     const isWalk = courseNameLower.includes('spaziergang');
     const isPranava = teacherNameLower.includes('pranava');
     const isNarayaniSundayOnn = isOnnForSevaka && teacherNameLower.includes('narayani') && course.dayOfWeek === 0 && targetWeekCode !== '2026-W47';
-    if (!(isWalk && isPranava) && !isNarayaniSundayOnn) {
+    const isNarayaniW48Override =
+      targetWeekCode === '2026-W48' &&
+      teacherNameLower.includes('narayani') &&
+      ((course.dayOfWeek === 5 && course.name === 'Satsang' && course.startTime === '20:00') ||
+       (course.dayOfWeek === 0 && course.startTime === '16:30' && courseNameLower.includes('mittelstufe')));
+    if (!(isWalk && isPranava) && !isNarayaniSundayOnn && !isNarayaniW48Override) {
       if (teacherNameLower.includes('chandrashekara') && course.dayOfWeek === 2 && courseStart >= timeToMinutes('12:00') && courseStart < timeToMinutes('18:30')) {
         conflicts.push({
           type: 'hard',
@@ -1180,7 +1221,15 @@ export function runAiPlanning(
         let matchCourse = true;
         if (rule.dayOfWeek !== undefined && rule.dayOfWeek !== null && c.dayOfWeek !== rule.dayOfWeek) matchCourse = false;
         if (rule.startTime !== undefined && rule.startTime !== null && c.startTime !== rule.startTime) matchCourse = false;
-        if (rule.courseName !== undefined && rule.courseName !== null && !c.name.toLowerCase().includes(rule.courseName.toLowerCase())) matchCourse = false;
+        if (rule.courseName !== undefined && rule.courseName !== null) {
+          const rcn = rule.courseName.toLowerCase();
+          const cn = c.name.toLowerCase();
+          if (rcn === 'satsang') {
+            if (cn !== 'satsang') matchCourse = false;
+          } else if (!cn.includes(rcn)) {
+            matchCourse = false;
+          }
+        }
         if (rule.courseStyle !== undefined && rule.courseStyle !== null && !c.style.toLowerCase().includes(rule.courseStyle.toLowerCase())) matchCourse = false;
         if (matchCourse) {
           if (rule.type === 'include' && c.teacherId !== rule.teacherId) return true;
@@ -1311,7 +1360,15 @@ export function runAiPlanning(
           let matchCourse = true;
           if (rDay !== undefined && rDay !== null && course.dayOfWeek !== rDay) matchCourse = false;
           if (rStart !== undefined && rStart !== null && course.startTime !== rStart) matchCourse = false;
-          if (rCourseName !== undefined && rCourseName !== null && !course.name.toLowerCase().includes(rCourseName.toLowerCase())) matchCourse = false;
+          if (rCourseName !== undefined && rCourseName !== null) {
+            const rcn = rCourseName.toLowerCase();
+            const cn = course.name.toLowerCase();
+            if (rcn === 'satsang') {
+              if (cn !== 'satsang') matchCourse = false;
+            } else if (!cn.includes(rcn)) {
+              matchCourse = false;
+            }
+          }
           if (rCourseStyle !== undefined && rCourseStyle !== null && !course.style.toLowerCase().includes(rCourseStyle.toLowerCase())) matchCourse = false;
 
           if (matchCourse) {
@@ -1858,6 +1915,9 @@ export function runAiPlanning(
     }
   });
 
+  // Apply room rules to auto-adjust rooms based on final teacher assignments (before Burnie's Pavanmukt Asana rename so Mittelstufe vs Anfänger room logic is preserved)
+  adjustRoomsForRules(workingCourses, teachers, targetWeekCode);
+
   // Post-process Burnie's Pavanmukt Asana rule across ALL courses (static and AI-planned)
   const burnieClasses = workingCourses.filter(c => {
     if (!c.teacherId) return false;
@@ -1865,23 +1925,27 @@ export function runAiPlanning(
     return teacher && teacher.name.toLowerCase().includes('burnie');
   });
 
-  // Sort them so we consistently pick the "first" one (e.g., by day and time)
+  // Sort them so we consistently pick the "first" one in Rapla week order (Fr -> Sa -> So -> Mo -> Di -> Mi -> Do)
+  const raplaOrderForBurnie: Record<number, number> = { 5: 0, 6: 1, 0: 2, 1: 3, 2: 4, 3: 5, 4: 6 };
   burnieClasses.sort((a, b) => {
-    if (a.dayOfWeek !== b.dayOfWeek) return a.dayOfWeek - b.dayOfWeek;
+    const da = raplaOrderForBurnie[a.dayOfWeek] ?? a.dayOfWeek;
+    const dbDay = raplaOrderForBurnie[b.dayOfWeek] ?? b.dayOfWeek;
+    if (da !== dbDay) return da - dbDay;
     return a.startTime.localeCompare(b.startTime);
   });
 
   let pavanCount = 0;
   burnieClasses.forEach(c => {
     const isAnkommenSlot = (c.dayOfWeek === 5 || c.dayOfWeek === 0) && c.startTime === '16:30';
+    const wasIntermediateSlot = c.id.endsWith('-25') || c.roomId === 'room-5' || (targetWeekCode === '2026-W48' && c.dayOfWeek === 0 && c.startTime === '09:15' && c.roomId === 'room-2');
     if (c.name === 'Pavanmukt Asana' || c.name === 'Yoga Vidya meets Pavanmuktasana' || c.name === 'Yoga Vidya Pavanmuktasana') {
       if (isAnkommenSlot) {
-        c.name = 'Anfänger Ankommensstunde';
+        c.name = wasIntermediateSlot ? 'Mittelstufe Ankommensstunde' : 'Anfänger Ankommensstunde';
         return;
       }
       pavanCount++;
       if (pavanCount > 1) {
-        c.name = 'Anfänger'; // Revert any extra ones back to Anfänger
+        c.name = wasIntermediateSlot ? 'Mittelstufe' : 'Anfänger';
       } else {
         c.name = 'Pavanmukt Asana'; // Ensure exact correct name
       }
@@ -1889,20 +1953,19 @@ export function runAiPlanning(
   });
 
   if (pavanCount === 0) {
-    // If he doesn't have one yet, rename his first regular Anfänger class (excluding 16:30 Ankommensstunde)
-    const firstAnfaenger = burnieClasses.find(c => {
+    // If he doesn't have one yet, rename his first regular yoga class of the week (Anfänger or Mittelstufe, excluding 16:30 Ankommensstunde and Pranayama)
+    const firstBurnieYoga = burnieClasses.find(c => {
       const isAnkommenSlot = (c.dayOfWeek === 5 || c.dayOfWeek === 0) && c.startTime === '16:30';
       if (isAnkommenSlot) return false;
-      const isYoga = !c.name.toLowerCase().includes('meditation') && !c.style.toLowerCase().includes('meditation') && !c.name.toLowerCase().includes('satsang') && !c.name.toLowerCase().includes('om namo') && !c.name.toLowerCase().includes('narayanaya');
-      return isYoga && c.name.toLowerCase().includes('anfänger');
+      const cn = c.name.toLowerCase();
+      const cs = c.style.toLowerCase();
+      const isYoga = !cn.includes('meditation') && !cs.includes('meditation') && !cn.includes('satsang') && !cn.includes('om namo') && !cn.includes('narayanaya') && !cn.includes('pranayama') && !cs.includes('pranayama') && !cs.includes('entspannung') && !cn.includes('peziebälle') && !cs.includes('sonstiges') && !cn.includes('hausführung');
+      return isYoga && (cn.includes('anfänger') || cn.includes('mittelstufe'));
     });
-    if (firstAnfaenger) {
-      firstAnfaenger.name = 'Pavanmukt Asana';
+    if (firstBurnieYoga) {
+      firstBurnieYoga.name = 'Pavanmukt Asana';
     }
   }
-
-  // Apply room rules to auto-adjust rooms based on final teacher assignments
-  adjustRoomsForRules(workingCourses, teachers, targetWeekCode);
 
   // Synchronize teacherName with final teacherId across all courses
   workingCourses.forEach(c => {
@@ -2063,7 +2126,7 @@ export function validateRoomRules(
       c.dayOfWeek === course.dayOfWeek &&
       isOverlapping(c.startTime, c.endTime, course.startTime, course.endTime) &&
       c.roomId === preferredRoom &&
-      (c.name.toLowerCase().includes('räkel') || c.name.toLowerCase().includes('raekel'))
+      (c.name.toLowerCase().includes('räkel') || c.name.toLowerCase().includes('raekel') || c.name.toLowerCase().includes('yogilates') || c.name.toLowerCase().includes('jogi-lates'))
     );
 
     if (!isPreferredRoomBlockedBySeminar && !isPreferredRoomOccupiedBySpecialYoga) {
@@ -2145,8 +2208,8 @@ export function adjustRoomsForRules(courses: Course[], teachers: Teacher[], targ
       return;
     }
 
-    // 0d. Räkelyoga open class rule: always im Tripura-Raum (room-5)
-    if (nameLower.includes('räkel') || nameLower.includes('raekel')) {
+    // 0d. Räkelyoga / Yogilates open class rule: always im Tripura-Raum (room-5)
+    if (nameLower.includes('räkel') || nameLower.includes('raekel') || nameLower.includes('yogilates') || nameLower.includes('jogi-lates')) {
       course.roomId = 'room-5'; // Tripura
       return;
     }
@@ -2240,6 +2303,8 @@ export function adjustRoomsForRules(courses: Course[], teachers: Teacher[], targ
           styleLower.includes('schulung') ||
           nameLower.includes('räkel') ||
           nameLower.includes('raekel') ||
+          nameLower.includes('yogilates') ||
+          nameLower.includes('jogi-lates') ||
           nameLower.includes('am kamin') ||
           nameLower.includes('spaziergang') ||
           nameLower.includes('hausführung') ||
@@ -2280,9 +2345,13 @@ export function adjustRoomsForRules(courses: Course[], teachers: Teacher[], targ
         const hasParallelConflict = isRoomTakenByParallelCourse(course.roomId);
 
         if (hasSemConflict || hasParallelConflict) {
-          const fallbackOrder = isIntermediate
-            ? ['room-5', 'room-4', 'room-3', 'room-2', 'room-1']
-            : ['room-2', 'room-5', 'room-4', 'room-3', 'room-1'];
+          const isW48Sunday0915Mittelstufe =
+            targetWeekCode === '2026-W48' && course.dayOfWeek === 0 && course.startTime === '09:15' && isIntermediate;
+          const fallbackOrder = isW48Sunday0915Mittelstufe
+            ? ['room-2', 'room-4', 'room-3', 'room-5', 'room-1']
+            : isIntermediate
+              ? ['room-5', 'room-4', 'room-3', 'room-2', 'room-1']
+              : ['room-2', 'room-5', 'room-4', 'room-3', 'room-1'];
 
           for (const candRoomId of fallbackOrder) {
             const candSemConflict = getSeminarRoomConflict(
