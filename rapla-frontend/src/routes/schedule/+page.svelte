@@ -143,7 +143,7 @@
   let nextEightSeminars = $derived<UpcomingSeminarItem[]>(
     getNextStartingSeminars(todayIso, upcomingPreviewLimit, effectiveNordseeSeminars)
   );
-  let isUpcomingEightExpanded = $state(true);
+  let isUpcomingEightExpanded = $state(false);
   let showDeletedUpcomingPanel = $state(false);
   let lastDeletedUpcomingSem = $state<UpcomingSeminarItem | null>(null);
   let editingUpcomingSemId = $state<string | null>(null);
@@ -155,6 +155,7 @@
   function refreshUpcomingSeminarsState() {
     deletedUpcomingIds = getDeletedUpcomingSeminarIds();
     upcomingOverrides = getUpcomingSeminarOverrides();
+    registeredSeminars = db.getSeminars();
   }
 
   function handleDeleteUpcomingCard(sem: UpcomingSeminarItem) {
@@ -195,8 +196,11 @@
   afterNavigate(({ to }) => {
     const tabParam = to?.url.searchParams.get('tab') || '';
     if (tabParam === '' || tabParam === 'calendar' || tabParam === 'wochenplan') {
-      isUpcomingEightExpanded = true;
       nowTick = Date.now();
+    }
+    const jumpDateParam = to?.url.searchParams.get('jumpDate');
+    if (jumpDateParam) {
+      jumpToSeminarWeek(jumpDateParam);
     }
   });
 
@@ -227,7 +231,6 @@
     } else if (scheduleTabParam === '' || scheduleTabParam === 'calendar' || scheduleTabParam === 'wochenplan') {
       if (activeScheduleTab !== 'calendar') {
         activeScheduleTab = 'calendar';
-        isUpcomingEightExpanded = true;
       }
     }
   });
@@ -235,8 +238,10 @@
   function switchScheduleTab(tab: 'calendar' | 'seminare') {
     activeScheduleTab = tab;
     if (tab === 'calendar') {
-      isUpcomingEightExpanded = true;
       nowTick = Date.now();
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('open-upcoming-seminars-popup'));
+      }
     }
     const params = new URLSearchParams(page.url.searchParams);
     if (tab === 'seminare') {
@@ -368,11 +373,24 @@
       loadData();
     };
 
+    const handleJumpSeminarWeek = (e: Event) => {
+      const startDate = (e as CustomEvent)?.detail?.startDate;
+      if (startDate) {
+        jumpToSeminarWeek(startDate);
+      }
+    };
+
+    const initialJumpDate = page.url.searchParams.get('jumpDate');
+    if (initialJumpDate) {
+      jumpToSeminarWeek(initialJumpDate);
+    }
+
     window.addEventListener('keydown', handleKeydown);
     window.addEventListener('storage', handleYlaChange);
     window.addEventListener('yla-assignment-changed', handleYlaChange);
     window.addEventListener('rapla-data-synced', handleYlaChange);
     window.addEventListener('upcoming-seminars-updated', refreshUpcomingSeminarsState);
+    window.addEventListener('rapla-jump-seminar-week', handleJumpSeminarWeek);
     window.addEventListener('focus', refreshClock);
     document.addEventListener('visibilitychange', refreshClock);
     document.addEventListener('fullscreenchange', handleFullscreenChange);
@@ -387,6 +405,7 @@
       window.removeEventListener('yla-assignment-changed', handleYlaChange);
       window.removeEventListener('rapla-data-synced', handleYlaChange);
       window.removeEventListener('upcoming-seminars-updated', refreshUpcomingSeminarsState);
+      window.removeEventListener('rapla-jump-seminar-week', handleJumpSeminarWeek);
       window.removeEventListener('focus', refreshClock);
       document.removeEventListener('visibilitychange', refreshClock);
       document.removeEventListener('fullscreenchange', handleFullscreenChange);
@@ -1705,6 +1724,14 @@
         <a href="/" class="u8-all-seminars-link" title="Alle kommenden Seminare anzeigen">
           Alle kommenden Seminare →
         </a>
+        <button
+          type="button"
+          class="u8-all-seminars-link"
+          onclick={() => window.dispatchEvent(new CustomEvent('open-upcoming-seminars-popup'))}
+          title="Kommende Seminare als Pop-up-Fenster öffnen"
+        >
+          🪷 Pop-up öffnen
+        </button>
         <button
           type="button"
           class="u8-collapse-btn"

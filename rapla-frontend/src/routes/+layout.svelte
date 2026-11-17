@@ -5,6 +5,7 @@
 	import { todoManager } from '$lib/todoStore.svelte';
 	import { adminTodoStore } from '$lib/adminTodoStore.svelte';
 	import { getStoredUserRole, clearStoredUserRole } from '$lib/authRole';
+	import UpcomingSeminarsPopup from '$lib/components/UpcomingSeminarsPopup.svelte';
 
 	let dbModulePromise: Promise<typeof import('$lib/db')> | null = null;
 	function getDb() {
@@ -498,6 +499,10 @@
 					</div>
 				</main>
 			</div>
+
+			{#if userRole === 'admin' || userRole === 'viewer'}
+				<UpcomingSeminarsPopup />
+			{/if}
 	{/if}
 
 	{#if todoManager.activeReminder}
