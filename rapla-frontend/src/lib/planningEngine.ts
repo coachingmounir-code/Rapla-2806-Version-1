@@ -405,12 +405,13 @@ export function validateAssignment(
     const isWalk = courseNameLower.includes('spaziergang');
     const isPranava = teacherNameLower.includes('pranava');
     const isNarayaniSundayOnn = isOnnForSevaka && teacherNameLower.includes('narayani') && course.dayOfWeek === 0 && targetWeekCode !== '2026-W47';
+    const isNarayaniSundayPranayama = isPranayamaForSevaka && teacherNameLower.includes('narayani') && course.dayOfWeek === 0 && course.startTime === '06:00';
     const isNarayaniW48Override =
       targetWeekCode === '2026-W48' &&
       teacherNameLower.includes('narayani') &&
       ((course.dayOfWeek === 5 && course.name === 'Satsang' && course.startTime === '20:00') ||
        (course.dayOfWeek === 0 && course.startTime === '16:30' && courseNameLower.includes('mittelstufe')));
-    if (!(isWalk && isPranava) && !isNarayaniSundayOnn && !isNarayaniW48Override) {
+    if (!(isWalk && isPranava) && !isNarayaniSundayOnn && !isNarayaniSundayPranayama && !isNarayaniW48Override) {
       if (teacherNameLower.includes('chandrashekara') && course.dayOfWeek === 2 && courseStart >= timeToMinutes('12:00') && courseStart < timeToMinutes('18:30')) {
         conflicts.push({
           type: 'hard',
@@ -540,8 +541,25 @@ export function validateAssignment(
       });
     }
 
-    // 3.5 Pranayama Sunday Rule (Burnie must be assigned if available)
+    if (course.dayOfWeek === 6) {
+      const satAllowed = (wochenplanRules.pranayama as any)?.saturday?.allowed || ['karuna', 'chandrashekara', 'abha'];
+      if (!satAllowed.some((a: string) => teacherNameLower.includes(a))) {
+        conflicts.push({
+          type: 'hard',
+          message: `Samstags dürfen für das fortgeschrittene Pranayama nur ${satAllowed.join(', ').toUpperCase()} eingeteilt werden (Narayani und burnie unterrichten nur sonntags Pranayama).`
+        });
+      }
+    }
+
+    // 3.5 Pranayama Sunday Rule (only burnie, narayani, abha; burnie primary if available)
     if (course.dayOfWeek === 0) {
+      const sunAllowed = (wochenplanRules.pranayama as any)?.sunday?.allowed || ['burnie', 'narayani', 'abha'];
+      if (!sunAllowed.some((a: string) => teacherNameLower.includes(a))) {
+        conflicts.push({
+          type: 'hard',
+          message: `Sonntags dürfen für das fortgeschrittene Pranayama nur ${sunAllowed.join(', ').toUpperCase()} eingeteilt werden (Karuna und Chandrashekara kommen nur für samstags in Frage).`
+        });
+      }
       const isBurnieAbsent = isTeacherAbsent('burnie', course.dayOfWeek, targetWeekCode, absences);
       if (!isBurnieAbsent) {
         if (!teacherNameLower.includes('burnie')) {
@@ -861,6 +879,16 @@ export function validateAssignment(
   // 8.5 Hausführung rules
   const isHausfuehrung = courseNameLower.includes('hausführung') || courseNameLower.includes('hausfuehrung');
   if (isHausfuehrung && course.dayOfWeek !== 6) {
+    const otherHausfuehrung = otherSevakaAssignments.some(
+      c => c.name.toLowerCase().includes('hausführung') || c.name.toLowerCase().includes('hausfuehrung')
+    );
+    if (otherHausfuehrung) {
+      conflicts.push({
+        type: 'hard',
+        message: `${teacher.name} darf maximal einmal pro Woche für eine Hausführung eingeteilt werden.`
+      });
+    }
+
     const rules = (wochenplanRules as any).hausfuehrung;
     if (rules) {
       const isAllowed = rules.allowed.some((a: string) => teacherNameLower.includes(a));
@@ -894,13 +922,19 @@ export function validateAssignment(
           }
         }
       } else if (course.dayOfWeek === 0) { // Sonntag
+        const fridayTour = allCourses.find(
+          c => c.id !== course.id && c.dayOfWeek === 5 && (c.name.toLowerCase().includes('hausführung') || c.name.toLowerCase().includes('hausfuehrung'))
+        );
+        const fridayTourTeacher = fridayTour?.teacherId ? teachers?.find(t => t.id === fridayTour.teacherId) : null;
+        const fridayTourNameLower = fridayTourTeacher?.name.toLowerCase() || '';
+
         if (targetWeekCode) {
           const weekNum = parseInt(targetWeekCode.split('-W')[1], 10);
           const alts = rules.sunday.alternating;
           
           let availableAlts = [];
           for (const alt of alts) {
-            if (!isTeacherAbsent(alt, course.dayOfWeek, targetWeekCode, absences)) {
+            if (!isTeacherAbsent(alt, course.dayOfWeek, targetWeekCode, absences) && (!fridayTourNameLower || !fridayTourNameLower.includes(alt))) {
               availableAlts.push(alt);
             }
           }
@@ -937,6 +971,47 @@ export function validateAssignment(
     }
   }
 
+  // 8.6 Entspannungsangebote (Mon/Wed/Thu 21:10): Only Pranava, Hu, burnie allowed
+  const isEveningEntspannung =
+    (courseNameLower.includes('entspannung') ||
+     courseNameLower.includes('klangreise') ||
+     courseNameLower.includes('yogageschichten am kamin') ||
+     courseNameLower.includes('peziebälle') ||
+     courseNameLower.includes('yoganidra')) &&
+    !courseNameLower.includes('spaziergang');
+  if (isEveningEntspannung) {
+    const allowedEntspannung = (wochenplanRules.entspannungsangebot as any)?.allowed || ['pranava', 'hu', 'burnie'];
+    if (!allowedEntspannung.some((a: string) => teacherNameLower.includes(a))) {
+      conflicts.push({
+        type: 'hard',
+        message: `Für die Entspannungsangebote um 21:10 Uhr dürfen ausschließlich ${allowedEntspannung.join(', ').toUpperCase()} eingeteilt werden.`
+      });
+    } else if (course.dayOfWeek === 1 && !teacherNameLower.includes('pranava')) {
+      conflicts.push({
+        type: 'hard',
+        message: `Das Entspannungsangebot (Klangreise) am Montagabend um 21:10 Uhr wird von Pranava geleitet.`
+      });
+    } else if (course.dayOfWeek === 3) {
+      const isHuAbsent = isTeacherAbsent('hu', 3, targetWeekCode, absences);
+      if (!isHuAbsent && !teacherNameLower.includes('hu')) {
+        conflicts.push({
+          type: 'hard',
+          message: `Die Yogageschichten am Kamin am Mittwochabend um 21:10 Uhr werden von Hu geleitet, wenn sie im Einsatz ist.`
+        });
+      } else if (isHuAbsent && !teacherNameLower.includes('burnie')) {
+        conflicts.push({
+          type: 'hard',
+          message: `Wenn Hu am Mittwochabend nicht zur Verfügung steht, wird stattdessen ein Entspannungsangebot von burnie angeboten.`
+        });
+      }
+    } else if (course.dayOfWeek === 4 && !teacherNameLower.includes('burnie')) {
+      conflicts.push({
+        type: 'hard',
+        message: `Das Entspannungsangebot am Donnerstagabend um 21:10 Uhr (Pezibälle / Yoganidra) wird von burnie geleitet.`
+      });
+    }
+  }
+
   // 9. Generic limits from JSON
   if (teacher.isYogaTeacher === false && isYogaClassForSevaka) {
     conflicts.push({
@@ -950,6 +1025,92 @@ export function validateAssignment(
       type: 'hard',
       message: `${teacher.name} leitet nie Satsangs.`
     });
+  }
+
+  if (teacher.rules.canLeadSatsangEinfuehrung === false && isSatsangEinfuehrung) {
+    conflicts.push({
+      type: 'hard',
+      message: `${teacher.name} ist nicht für die Satsang Einführung eingetragen.`
+    });
+  }
+
+  // Pranava: Geführte Meditation darf nicht an einem Freitag sein; Satsang Einführung max 1x wöchentlich
+  if (teacherNameLower.includes('pranava')) {
+    if (isMeditationForSevaka && course.dayOfWeek === 5) {
+      conflicts.push({
+        type: 'hard',
+        message: `Pranava soll freitags nicht für die geführte Meditation eingeteilt werden.`
+      });
+    }
+    if (isSatsangEinfuehrung) {
+      const otherSatEinf = otherSevakaAssignments.some(
+        c => c.name.toLowerCase().includes('satsang einführung') || c.name.toLowerCase().includes('satsang-einführung')
+      );
+      if (otherSatEinf) {
+        conflicts.push({
+          type: 'hard',
+          message: `Pranava darf maximal einmal wöchentlich für die Satsang Einführung eingeteilt werden.`
+        });
+      }
+    }
+  }
+
+  // Nirmaya: Anfänger-Yogastunden nur morgens um 09:15 Uhr an Samstag (6), Montag (1) oder Donnerstag (4)
+  if (teacherNameLower.includes('nirmaya') && isYogaClassForSevaka && !isPranayamaForSevaka) {
+    const isAllowedNirmayaDay = [6, 1, 4].includes(course.dayOfWeek);
+    const isMorning0915 = course.startTime === '09:15';
+    const isAnfaenger = courseNameLower.includes('anfänger');
+    if (!isAllowedNirmayaDay || !isMorning0915 || !isAnfaenger) {
+      conflicts.push({
+        type: 'hard',
+        message: `Nirmaya gibt ausschließlich Anfänger-Yogastunden morgens um 09:15 Uhr an den Tagen Samstag, Montag oder Donnerstag.`
+      });
+    }
+  }
+
+  // Hu: Om Namo Narayanaya nur donnerstags (4) oder samstags (6)
+  if (teacherNameLower === 'hu' && isOnnForSevaka) {
+    if (course.dayOfWeek !== 4 && course.dayOfWeek !== 6) {
+      conflicts.push({
+        type: 'hard',
+        message: `Hu darf nur donnerstags oder samstags für das Om Namo Narayanaya eingeteilt werden.`
+      });
+    }
+  }
+
+  // Christopher: Einteilungen an einem Tag dürfen nicht zu weit auseinanderliegen (nicht morgens 07:00 und abends 19:00/19:30/20:00)
+  if (teacherNameLower.includes('christopher')) {
+    const sameDayOther = otherSevakaAssignments.filter(c => c.dayOfWeek === course.dayOfWeek);
+    const thisIsMorning = courseStart < timeToMinutes('12:00');
+    const thisIsEvening = courseStart >= timeToMinutes('18:00');
+    const hasWideSpread = sameDayOther.some(c => {
+      const oStart = timeToMinutes(c.startTime);
+      return (thisIsMorning && oStart >= timeToMinutes('18:00')) || (thisIsEvening && oStart < timeToMinutes('12:00'));
+    });
+    if (hasWideSpread) {
+      conflicts.push({
+        type: 'hard',
+        message: `Bei Christopher dürfen die Einteilungen am selben Tag nicht zu weit auseinanderliegen (nicht morgens und zusätzlich am Abend).`
+      });
+    }
+  }
+
+  // burnie: Wenn sonntags 06:00 Pranayama, spätestens nach dem Brunch nicht mehr einteilen
+  if (teacherNameLower.includes('burnie') && course.dayOfWeek === 0) {
+    const sameDayOther = otherSevakaAssignments.filter(c => c.dayOfWeek === 0);
+    const thisIsPranayama = isPranayamaForSevaka && course.startTime === '06:00';
+    const thisIsAfterBrunch = courseStart >= timeToMinutes('13:00');
+    const hasSundaySpread = sameDayOther.some(c => {
+      const oStart = timeToMinutes(c.startTime);
+      const oIsPran = c.name.toLowerCase().includes('pranayama') && c.startTime === '06:00';
+      return (thisIsPranayama && oStart >= timeToMinutes('13:00')) || (thisIsAfterBrunch && oIsPran);
+    });
+    if (hasSundaySpread) {
+      conflicts.push({
+        type: 'hard',
+        message: `Wenn burnie sonntags um 06:00 Uhr das Pranayama leitet, soll er nach dem Brunch nicht mehr eingeteilt werden.`
+      });
+    }
   }
 
   if (teacher.rules.maxYogaClassesPerWeek !== undefined && teacher.rules.maxYogaClassesPerWeek !== null && isYogaClassForSevaka && counts.yogaCount > teacher.rules.maxYogaClassesPerWeek) {
@@ -996,17 +1157,32 @@ export function validateAssignment(
     });
   }
 
-  if (teacher.rules.noTwoYogaSameDay && isYogaClassForSevaka) {
+  // Menge der Yogastunden an einem Tag: Bei allen Personen gilt, dass man sie nur für eine Yogastunde pro Tag einteilen darf.
+  if (isYogaClassForSevaka) {
     const otherYogaOnDay = otherSevakaAssignments.some(c => {
       const cName = c.name.toLowerCase();
       const cStyle = c.style.toLowerCase();
-      const cIsYoga = !cName.includes('meditation') && !cName.includes('medi.') && !cStyle.includes('meditation') && !cName.includes('satsang') && !cName.includes('om namo') && !cName.includes('narayanaya');
+      const cIsYoga =
+        !cName.includes('meditation') &&
+        !cName.includes('medi.') &&
+        !cStyle.includes('meditation') &&
+        !cName.includes('satsang') &&
+        !cName.includes('om namo') &&
+        !cName.includes('narayanaya') &&
+        !cStyle.includes('entspannung') &&
+        !cName.includes('entspannung') &&
+        !cName.includes('spaziergang') &&
+        !cStyle.includes('sonstiges') &&
+        !cName.includes('hausführung') &&
+        !cName.includes('hausfuehrung') &&
+        !cName.includes('pranayama') &&
+        !cStyle.includes('pranayama');
       return cIsYoga && c.dayOfWeek === course.dayOfWeek;
     });
     if (otherYogaOnDay) {
       conflicts.push({
         type: 'hard',
-        message: `${teacher.name} darf nicht zwei Yogastunden am selben Tag leiten.`
+        message: `${teacher.name} darf nicht zwei Yogastunden am selben Tag leiten (maximal eine Yogastunde pro Tag).`
       });
     }
   }
@@ -1284,6 +1460,12 @@ export function runAiPlanning(
     if (c.isFixedAgreement) return 0;
     if ((c.dayOfWeek === 5 || c.dayOfWeek === 0) && c.startTime === '16:30' && cn.includes('mittelstufe')) return 1;
     if ((c.dayOfWeek === 6 && c.startTime === '09:15' && cn.includes('mittelstufe')) || (c.dayOfWeek === 2 && c.startTime === '09:15' && cn.includes('anfänger'))) return 1;
+    if (c.dayOfWeek === 4 && c.startTime === '16:15' && cn.includes('mittelstufe')) return 1; // Anjali Donnerstag 16:15 Mantrayogastunde
+    if ((c.dayOfWeek === 2 && c.startTime === '16:15' && cn.includes('mittelstufe')) || (c.dayOfWeek === 3 && c.startTime === '09:15' && cn.includes('mittelstufe'))) return 1; // Narayani feste Mittelstufen
+    if ([6, 1].includes(c.dayOfWeek) && c.startTime === '09:15' && cn.includes('anfänger')) return 1; // Nirmaya 09:15 Anfänger-Slots (Sa, Mo)
+    if (c.dayOfWeek === 1 && (cn.includes('anfänger') || cn.includes('mittelstufe'))) return 1; // Montag: nur 4 Yogalehrer verfügbar (Anjali 09:15 Mittelstufe, Narayani 16:15 Mittelstufe)
+    if (c.dayOfWeek === 0 && c.startTime === '09:15' && (cn.includes('anfänger') || cn.includes('mittelstufe'))) return 1; // Sonntag 09:15: Narayani & Alexander nicht verfügbar
+    if (c.dayOfWeek === 2 && c.startTime === '16:15' && cn.includes('anfänger')) return 1; // Dienstag 16:15: nur Alexander frei
     if (c.dayOfWeek === 5 && c.startTime === '09:15' && cn.includes('anfänger')) return 1;
     if (cn.includes('meditation') && c.startTime === '07:00' && (wochenplanRules.meditation.dailyPrimary as any)[c.dayOfWeek]) return 2;
     if (cn.includes('hausführung') || cn.includes('hausfuehrung')) return 2;
@@ -1298,7 +1480,12 @@ export function runAiPlanning(
     const da = raplaDayOrder[a.dayOfWeek] ?? a.dayOfWeek;
     const dbDay = raplaDayOrder[b.dayOfWeek] ?? b.dayOfWeek;
     if (da !== dbDay) return da - dbDay;
-    return a.startTime.localeCompare(b.startTime);
+    const timeCmp = a.startTime.localeCompare(b.startTime);
+    if (timeCmp !== 0) return timeCmp;
+    // At the same time slot, plan Mittelstufe before Anfänger so Mittelstufe specialists (Narayani, Chandrashekara) take Mittelstufe
+    const aIsMittel = a.name.toLowerCase().includes('mittelstufe') ? 0 : 1;
+    const bIsMittel = b.name.toLowerCase().includes('mittelstufe') ? 0 : 1;
+    return aIsMittel - bIsMittel;
   });
 
   // Plan course by course
@@ -1484,6 +1671,48 @@ export function runAiPlanning(
         }
       }
 
+      // Narayani: Stets Mittelstufe dienstags um 16:15 Uhr und mittwochs um 09:15 Uhr
+      if (
+        ((course.dayOfWeek === 2 && course.startTime === '16:15') ||
+         (course.dayOfWeek === 3 && course.startTime === '09:15')) &&
+        course.name.toLowerCase().includes('mittelstufe')
+      ) {
+        if (teacherNameLower.includes('narayani')) {
+          score += 10000;
+        }
+      }
+
+      // Anjali: Donnerstag 16:15 Uhr Mittelstufe Mantrayogastunde
+      if (course.dayOfWeek === 4 && course.startTime === '16:15' && course.name.toLowerCase().includes('mittelstufe')) {
+        if (teacherNameLower.includes('anjali')) {
+          score += 10000;
+        }
+      }
+
+      // Nirmaya: Anfänger-Yogastunden morgens um 09:15 Uhr an Samstag (6), Montag (1) oder Donnerstag (4)
+      if ([6, 1, 4].includes(course.dayOfWeek) && course.startTime === '09:15' && course.name.toLowerCase().includes('anfänger')) {
+        if (teacherNameLower.includes('nirmaya')) {
+          score += 2500;
+        }
+      }
+
+      // Entspanntes Zeitmanagement (kompakter Zeitplan am selben Tag):
+      // Wenn jemand am selben Vor- oder Nachmittag/Abend bereits einen benachbarten Slot hat, bevorzugen;
+      // wenn jemand am anderen Ende des Tages (z. B. 07:00 morgens vs. 19:30/20:00 abends) eingeteilt ist, abwerten.
+      const sameDayAssigned = workingCourses.filter(c => c.teacherId === teacher.id && c.dayOfWeek === course.dayOfWeek && c.id !== course.id);
+      if (sameDayAssigned.length > 0) {
+        const thisMin = timeToMinutes(course.startTime);
+        for (const other of sameDayAssigned) {
+          const otherMin = timeToMinutes(other.startTime);
+          const gapHours = Math.abs(thisMin - otherMin) / 60;
+          if (gapHours <= 3.5) {
+            score += 400; // Kompakter Block (z. B. 07:00 + 09:15 oder 16:15 + 19:30/20:00 oder 19:00 + 20:00)
+          } else if (gapHours >= 8) {
+            score -= 1500; // Weit auseinanderliegende Slots (z. B. früh morgens und spät abends) vermeiden
+          }
+        }
+      }
+
       // Rule 6 & 7: Friday and Sunday 16:30 Mittelstufe Ankommensstunde from compiled rules
       const isMittelstufeAnkommen = (course.dayOfWeek === 5 || course.dayOfWeek === 0) && 
                                     course.startTime === '16:30' && 
@@ -1550,28 +1779,29 @@ export function runAiPlanning(
             }
           }
           if (weekNum > 0) {
-            // Rule 4: Burnie is primarily assigned on Sundays.
+            // Sonntags: nur burnie (primär), narayani, abha
             if (course.dayOfWeek === 0) {
               if (teacherNameLower.includes('burnie')) {
                 score += 2000;
               } else {
-                // If Burnie is sevafrei, rotate the others
-                const backups = ["karuna", "narayani", "abha"];
+                const backups = ["narayani", "abha"];
                 const teacherIdx = backups.findIndex((n: string) => teacherNameLower.includes(n));
                 if (teacherIdx !== -1) {
-                  const targetIndex = (weekNum + 1) % 3;
-                  const distance = (teacherIdx - targetIndex + 3) % 3;
+                  const targetIndex = (weekNum + 1) % backups.length;
+                  const distance = (teacherIdx - targetIndex + backups.length) % backups.length;
                   score += 1000 - distance * 300;
                 }
               }
             } else if (course.dayOfWeek === 6) {
-              // On Saturdays, rotate the eligible teachers
-              const backups = (wochenplanRules.pranayama as any)?.saturday?.alternating || ["karuna", "chandrashekara", "narayani", "abha"];
+              // Samstags: 14-tägig im Wechsel Karuna und Chandrashekara (Abha als Backup)
+              const backups = (wochenplanRules.pranayama as any)?.saturday?.alternating || ["karuna", "chandrashekara"];
               const teacherIdx = backups.findIndex((n: string) => teacherNameLower.includes(n));
               if (teacherIdx !== -1) {
-                const targetIndex = weekNum % backups.length;
+                const targetIndex = (weekNum + 1) % backups.length;
                 const distance = (teacherIdx - targetIndex + backups.length) % backups.length;
-                score += 1000 - distance * 300;
+                score += 5000 - distance * 3000;
+              } else if (teacherNameLower.includes('abha')) {
+                score += 300;
               }
             }
           }
@@ -1670,6 +1900,14 @@ export function runAiPlanning(
           score -= 10000;
         } else if (isAllowed) {
           score += 100;
+          // Prioritize core meditation teachers (burnie, Alexander, Nirmaya, Mounir, Christopher, Hu, Pranava) over backup Chandrashekara
+          if (!teacherNameLower.includes('chandrashekara')) {
+            score += 2000;
+          }
+          // Pranava: 1x wöchentlich Geführte Meditation (nicht am Freitag, idealerweise am Sonntag)
+          if (course.dayOfWeek === 0 && teacherNameLower.includes('pranava')) {
+            score += 3000;
+          }
           
           const primaryName = (wochenplanRules.meditation.dailyPrimary as any)[course.dayOfWeek];
           if (primaryName && teacherNameLower.includes(primaryName)) {
@@ -1683,8 +1921,11 @@ export function runAiPlanning(
       // --- OM NAMO NARAYANAYA SCORING RULES ---
       const isOmNamoCourse = course.name.toLowerCase().includes('om namo') || course.name.toLowerCase().includes('narayanaya');
       if (isOmNamoCourse) {
-        // ONN is its own category, freed from all restrictions except Sevafrei calendar.
         score += 100;
+        // Narayani: Immer am Sonntag Abend macht sie das Om Namo Narayanaya
+        if (course.dayOfWeek === 0 && teacherNameLower.includes('narayani')) {
+          score += 10000;
+        }
       }
 
       // --- SATSANG SCORING RULES ---
@@ -1696,6 +1937,10 @@ export function runAiPlanning(
             score += 500;
             if (teacherNameLower.includes('burnie') && course.dayOfWeek === 1) {
               score += 2000;
+            }
+            // Narayani: Leitet stets den Satsang am Mittwoch morgen um 07:00 Uhr
+            if (teacherNameLower.includes('narayani') && course.dayOfWeek === 3) {
+              score += 10000;
             }
           } else {
             score -= 10000;
@@ -1776,8 +2021,8 @@ export function runAiPlanning(
       for (const teacher of yogaTeachers) {
         const teacherNameLower = teacher.name.toLowerCase();
         
-        // Regel 4: Folgende Personen werden nie für einen Satsang eingeteilt: Adam, Hu, Mounir, Teresa, Satyam, Ulrich, Harishakti, Pranava
-        const forbiddenForSatsang = ['adam', 'hu', 'mounir', 'mouniir', 'teresa', 'satyam', 'ulrich', 'harishakti', 'pranava'];
+        // Regel 4: Folgende Personen werden nie für einen Satsang eingeteilt: Adam, Hu, Mounir, Christopher, Suryani, Teresa, Satyam, Ulrich, Harishakti, Pranava
+        const forbiddenForSatsang = ['adam', 'hu', 'mounir', 'mouniir', 'christopher', 'suryani', 'teresa', 'satyam', 'ulrich', 'harishakti', 'pranava'];
         if (forbiddenForSatsang.some(name => teacherNameLower.includes(name))) {
           continue; // Absolut verboten!
         }
@@ -1792,7 +2037,7 @@ export function runAiPlanning(
         const nonRelaxableConflicts = conflicts.filter(c => {
           if (c.type !== 'hard') return false;
           const msg = c.message.toLowerCase();
-          return msg.includes('abwesend') || msg.includes('urlaub') || msg.includes('krank') || msg.includes('satsang-regel 4') || msg.includes('nie für einen satsang') || msg.includes('verfügbar') || msg.includes('herausgenommen') || msg.includes('nicht mehr teil des teams') || msg.includes('zeitgleich im seminar') || msg.includes('im seminar') || msg.includes('yogalehrer-ausbildung');
+          return msg.includes('abwesend') || msg.includes('urlaub') || msg.includes('krank') || msg.includes('satsang-regel 4') || msg.includes('nie für einen satsang') || msg.includes('nie satsangs') || msg.includes('verfügbar') || msg.includes('herausgenommen') || msg.includes('nicht mehr teil des teams') || msg.includes('zeitgleich im seminar') || msg.includes('im seminar') || msg.includes('yogalehrer-ausbildung') || msg.includes('zeitgleich für');
         });
 
         if (nonRelaxableConflicts.length === 0) {
@@ -1878,6 +2123,85 @@ export function runAiPlanning(
       candidateScores.sort((a, b) => b.score - a.score);
     }
 
+    // Fallback: If no candidate without hard conflicts was found for a Yogastunde or Geführte Meditation,
+    // only allow the exceptions explicitly permitted in "Regeln der Sevakas & weitere Regeln.txt":
+    // - Yogastunden: Narayani, burnie, Abha idealerweise 3, dürfen wenn es nicht anders geht auch 4 geben (alle anderen bleiben strikt bei ihrem Limit: Karuna 4, Pranava 4, Anjali 2, Nirmaya 2, Chandrashekara 2, Alexander 2; und immer max 1 Yogastunde/Tag!).
+    // - Geführte Meditation: Nirmaya, Mounir, burnie idealerweise 1x wöchentlich, dürfen bei zu wenigen Sevakas auch mehr geben.
+    if (candidateScores.length === 0) {
+      const cNameLower = course.name.toLowerCase();
+      const cStyleLower = course.style.toLowerCase();
+      const isMedCourse = (course.name === 'Geführte Meditation' || cStyleLower === 'meditation') && !cNameLower.includes('om namo') && !cNameLower.includes('narayanaya') && !cNameLower.includes('satsang');
+      const isYogaCourse = !isMedCourse && !cNameLower.includes('satsang') && !cNameLower.includes('om namo') && !cNameLower.includes('narayanaya') && !cStyleLower.includes('entspannung') && !cNameLower.includes('entspannung') && !cNameLower.includes('spaziergang') && !cStyleLower.includes('sonstiges') && !cNameLower.includes('hausführung') && !cNameLower.includes('pranayama') && !cStyleLower.includes('pranayama');
+
+      if (isYogaCourse || isMedCourse) {
+        for (const teacher of yogaTeachers) {
+          const tLower = teacher.name.toLowerCase();
+          if (isYogaCourse) {
+            // Laut Regeln dürfen NUR Narayani, burnie und Abha im Ausnahmefall 4 statt 3 Yogastunden geben
+            const canDoFourYoga = tLower.includes('narayani') || tLower.includes('burnie') || tLower.includes('abha');
+            if (!canDoFourYoga) continue;
+          }
+          if (isMedCourse) {
+            // Laut Regeln dürfen NUR Nirmaya, Mounir und burnie bei Bedarf mehr als 1 geführte Meditation geben
+            const canDoMoreMed = tLower.includes('nirmaya') || tLower.includes('mounir') || tLower.includes('mouniir') || tLower.includes('burnie');
+            if (!canDoMoreMed || teacher.rules.canLeadMeditation === false) continue;
+          }
+
+          const tempLayout = workingCourses.map(x => x.id === course.id ? { ...x, teacherId: teacher.id } : { ...x });
+          adjustRoomsForRules(tempLayout, teachers, targetWeekCode);
+          const adjustedCourse = tempLayout.find(x => x.id === course.id)!;
+
+          const conflicts = validateAssignment(teacher, adjustedCourse, tempLayout, seminarLeaderIds, targetWeekCode, teachers, absences);
+
+          // Only allow relaxing the weekly count limit (maxYogaClassesPerWeek for Narayani/burnie/Abha up to 4, or maxMeditationPerWeek for Nirmaya/Mounir/burnie)
+          const nonRelaxableConflicts = conflicts.filter(c => {
+            if (c.type !== 'hard') return false;
+            const msg = c.message.toLowerCase();
+            const isWeeklyYogaLimit = isYogaCourse && msg.includes('maximal') && msg.includes('yogastunden wöchentlich');
+            const isWeeklyMedLimit = isMedCourse && msg.includes('maximal') && msg.includes('pro woche für eine geführte meditation');
+            return !isWeeklyYogaLimit && !isWeeklyMedLimit;
+          });
+
+          if (nonRelaxableConflicts.length === 0) {
+            const currentYogaCount = workingCourses.filter(c => {
+              if (c.teacherId !== teacher.id) return false;
+              const cn = c.name.toLowerCase();
+              const cs = c.style.toLowerCase();
+              return !cn.includes('meditation') && !cs.includes('meditation') && !cn.includes('satsang') && !cn.includes('om namo') && !cn.includes('narayanaya') && !cs.includes('entspannung') && !cn.includes('entspannung') && !cn.includes('spaziergang') && !cs.includes('sonstiges') && !cn.includes('hausführung') && !cn.includes('pranayama') && !cs.includes('pranayama');
+            }).length;
+
+            if (isYogaCourse && currentYogaCount >= 4) {
+              continue;
+            }
+
+            let score = 100;
+            const plannedHours = workingCourses
+              .filter(c => c.teacherId === teacher.id)
+              .reduce((sum, c) => sum + (timeToMinutes(c.endTime) - timeToMinutes(c.startTime)) / 60, 0);
+            score -= plannedHours * 20;
+
+            const hardConflictsToRelax = conflicts.filter(c => c.type === 'hard');
+            score -= hardConflictsToRelax.length * 1000000;
+
+            const combinedSoftConflicts = conflicts.map(c => {
+              if (c.type === 'hard') {
+                return { type: 'soft' as const, message: `[Ausnahmeregel laut Dokument] ${c.message}` };
+              }
+              return c;
+            });
+
+            candidateScores.push({
+              teacher,
+              score,
+              conflicts: combinedSoftConflicts
+            });
+          }
+        }
+
+        candidateScores.sort((a, b) => b.score - a.score);
+      }
+    }
+
     if (candidateScores.length > 0) {
       const bestCandidate = candidateScores[0];
       const index = workingCourses.findIndex(c => c.id === course.id);
@@ -1920,12 +2244,23 @@ export function runAiPlanning(
           }
         }
 
-        // Saturday 16:15 intermediate class rename based on Anjali assignment
-        if (workingCourses[index].dayOfWeek === 6 && workingCourses[index].startTime === '16:15' && workingCourses[index].name.toLowerCase().includes('mittelstufe')) {
+        // Thursday 16:15 (and Saturday 16:15) intermediate class rename based on Anjali assignment (Mittelstufe Mantrayogastunde)
+        if ((workingCourses[index].dayOfWeek === 4 || workingCourses[index].dayOfWeek === 6) && workingCourses[index].startTime === '16:15' && workingCourses[index].name.toLowerCase().includes('mittelstufe')) {
           if (tNameLower.includes('anjali')) {
             workingCourses[index].name = 'Mittelstufe Mantrayogastunde';
           } else {
             workingCourses[index].name = 'Mittelstufe';
+          }
+        }
+
+        // Thursday 21:10 Entspannungsangebot rename based on assigned teacher (burnie -> Peziebälle, Pranava -> Klangreise, Hu -> Entspannungsangebot)
+        if (workingCourses[index].dayOfWeek === 4 && workingCourses[index].startTime === '21:10') {
+          if (tNameLower.includes('burnie')) {
+            workingCourses[index].name = 'Entspannungsangebot: Peziebälle';
+          } else if (tNameLower.includes('pranava')) {
+            workingCourses[index].name = 'Entspannungsangebot: Klangreise';
+          } else if (tNameLower.includes('hu')) {
+            workingCourses[index].name = 'Entspannungsangebot: Yogageschichten am Kamin';
           }
         }
         
@@ -2333,9 +2668,7 @@ export function adjustRoomsForRules(courses: Course[], teachers: Teacher[], targ
         course.roomId = 'room-5'; // Tripura
       }
     } else if (isEntspannung) {
-      if (!course.roomId) {
-        course.roomId = 'room-2';
-      }
+      course.roomId = 'room-2'; // Montags & donnerstags 21:10 standardmäßig im Radha Krishna Raum (wird im 2. Pass bei Seminarbelegung auf Tripura verlegt)
     }
   });
 

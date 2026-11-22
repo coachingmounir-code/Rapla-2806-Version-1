@@ -152,6 +152,18 @@ def main():
             person_days['burnie'][cur] = 'u'
             cur += datetime.timedelta(days=1)
 
+    # 7. Mounir: From KW 49 (2026-11-27) onwards, Wednesday is his regular full free day ('f') instead of Monday.
+    if 'Mounir' in person_days:
+        cur = datetime.datetime(2026, 11, 27)
+        end = datetime.datetime(2026, 12, 31)
+        while cur <= end:
+            existing = person_days['Mounir'].get(cur)
+            if cur.weekday() == 0 and existing == 'f':  # Monday
+                del person_days['Mounir'][cur]
+            elif cur.weekday() == 2 and existing is None:  # Wednesday
+                person_days['Mounir'][cur] = 'f'
+            cur += datetime.timedelta(days=1)
+
     # Convert daily codes into contiguous blocks per person
     blocks = []
     for excel_name in person_order:

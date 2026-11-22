@@ -6955,10 +6955,10 @@
         "startTime": "06:00",
         "endTime": "06:50",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-karuna-wapke",
+        "teacherId": "teacher-gen-narayani-kedenburg",
         "isAiPlanned": true,
         "status": "draft",
-        "teacherName": "Karuna"
+        "teacherName": "Narayani"
       },
       {
         "id": "course-2026-W49-22",
@@ -6968,10 +6968,10 @@
         "startTime": "07:00",
         "endTime": "07:30",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-hu-buerkle",
+        "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": true,
         "status": "draft",
-        "teacherName": "Hu"
+        "teacherName": "Pranava"
       },
       {
         "id": "course-2026-W49-23",
@@ -6994,10 +6994,10 @@
         "startTime": "09:15",
         "endTime": "11:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-narayani-kedenburg",
+        "teacherId": "teacher-gen-anjali-gelzleichter",
         "isAiPlanned": true,
         "status": "draft",
-        "teacherName": "Narayani"
+        "teacherName": "Anjali"
       },
       {
         "id": "course-2026-W49-25",
@@ -7007,10 +7007,10 @@
         "startTime": "09:15",
         "endTime": "11:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-anjali-gelzleichter",
-        "isAiPlanned": false,
+        "teacherId": "teacher-gen-chandrashekara",
+        "isAiPlanned": true,
         "status": "draft",
-        "teacherName": "Anjali"
+        "teacherName": "Chandrashekara"
       },
       {
         "id": "course-2026-W49-26",
@@ -7021,7 +7021,7 @@
         "endTime": "18:00",
         "roomId": "room-2",
         "teacherId": "teacher-gen-pranava-pauly",
-        "isAiPlanned": false,
+        "isAiPlanned": true,
         "status": "draft",
         "teacherName": "Pranava"
       },
@@ -7046,10 +7046,10 @@
         "startTime": "19:00",
         "endTime": "19:30",
         "roomId": "room-7",
-        "teacherId": "teacher-gen-christopher",
+        "teacherId": "teacher-gen-mouniir-jaber",
         "isAiPlanned": true,
         "status": "draft",
-        "teacherName": "Christopher"
+        "teacherName": "Mounir"
       },
       {
         "id": "course-2026-W49-28",
@@ -7059,10 +7059,10 @@
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-christopher",
-        "isAiPlanned": true,
+        "teacherId": "teacher-gen-narayani-kedenburg",
+        "isAiPlanned": false,
         "status": "draft",
-        "teacherName": "Christopher"
+        "teacherName": "Narayani"
       },
       {
         "id": "course-2026-W49-29",
@@ -7072,10 +7072,10 @@
         "startTime": "20:00",
         "endTime": "20:35",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-mouniir-jaber",
+        "teacherId": "teacher-gen-christopher",
         "isAiPlanned": true,
         "status": "draft",
-        "teacherName": "Mounir"
+        "teacherName": "Christopher"
       },
       {
         "id": "course-2026-W49-30",
@@ -7163,10 +7163,9 @@
         "startTime": "16:15",
         "endTime": "18:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-narayani-kedenburg",
-        "isAiPlanned": true,
-        "status": "draft",
-        "teacherName": "Narayani"
+        "teacherId": null,
+        "isAiPlanned": false,
+        "status": "draft"
       },
       {
         "id": "course-2026-W49-37",
@@ -7201,7 +7200,7 @@
         "dayOfWeek": 1,
         "startTime": "21:10",
         "endTime": "22:00",
-        "roomId": "room-5",
+        "roomId": "room-2",
         "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": true,
         "status": "draft",
@@ -7254,10 +7253,10 @@
         "startTime": "09:15",
         "endTime": "11:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-anjali-gelzleichter",
-        "isAiPlanned": false,
+        "teacherId": "teacher-gen-chandrashekara",
+        "isAiPlanned": true,
         "status": "draft",
-        "teacherName": "Anjali"
+        "teacherName": "Chandrashekara"
       },
       {
         "id": "course-2026-W49-44",
@@ -7293,10 +7292,10 @@
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-narayani-kedenburg",
-        "isAiPlanned": true,
+        "teacherId": "teacher-guest-1791278735445",
+        "isAiPlanned": false,
         "status": "draft",
-        "teacherName": "Narayani"
+        "teacherName": "Suryani"
       },
       {
         "id": "course-2026-W49-47",
@@ -7319,10 +7318,9 @@
         "startTime": "07:00",
         "endTime": "07:30",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-mouniir-jaber",
-        "isAiPlanned": true,
-        "status": "draft",
-        "teacherName": "Mounir"
+        "teacherId": null,
+        "isAiPlanned": false,
+        "status": "draft"
       },
       {
         "id": "course-2026-W49-49",
@@ -7345,10 +7343,9 @@
         "startTime": "09:15",
         "endTime": "11:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-alexander-melior",
+        "teacherId": null,
         "isAiPlanned": false,
-        "status": "draft",
-        "teacherName": "Alexander"
+        "status": "draft"
       },
       {
         "id": "course-2026-W49-51",
@@ -7371,10 +7368,10 @@
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-narayani-kedenburg",
+        "teacherId": "teacher-gen-chandrashekara",
         "isAiPlanned": true,
         "status": "draft",
-        "teacherName": "Narayani"
+        "teacherName": "Chandrashekara"
       },
       {
         "id": "course-2026-W49-53",
@@ -7410,10 +7407,10 @@
         "startTime": "07:00",
         "endTime": "07:30",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-mouniir-jaber",
+        "teacherId": "teacher-gen-christopher",
         "isAiPlanned": true,
         "status": "draft",
-        "teacherName": "Mounir"
+        "teacherName": "Christopher"
       },
       {
         "id": "course-2026-W49-56",
@@ -7423,10 +7420,10 @@
         "startTime": "07:00",
         "endTime": "08:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-alexander-melior",
+        "teacherId": "teacher-gen-nirmaya-fodor",
         "isAiPlanned": true,
         "status": "draft",
-        "teacherName": "Alexander"
+        "teacherName": "Nirmaya"
       },
       {
         "id": "course-2026-W49-57",
@@ -7436,10 +7433,9 @@
         "startTime": "09:15",
         "endTime": "11:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-alexander-melior",
+        "teacherId": null,
         "isAiPlanned": false,
-        "status": "draft",
-        "teacherName": "Alexander"
+        "status": "draft"
       },
       {
         "id": "course-2026-W49-58",
@@ -7449,10 +7445,10 @@
         "startTime": "09:15",
         "endTime": "11:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-chandrashekara",
+        "teacherId": "teacher-gen-narayani-kedenburg",
         "isAiPlanned": true,
         "status": "draft",
-        "teacherName": "Chandrashekara"
+        "teacherName": "Narayani"
       },
       {
         "id": "course-2026-W49-59",
@@ -7462,23 +7458,22 @@
         "startTime": "16:15",
         "endTime": "18:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-anjali-gelzleichter",
-        "isAiPlanned": true,
-        "status": "draft",
-        "teacherName": "Anjali"
+        "teacherId": null,
+        "isAiPlanned": false,
+        "status": "draft"
       },
       {
         "id": "course-2026-W49-60",
-        "name": "Mittelstufe",
+        "name": "Mittelstufe Mantrayogastunde",
         "style": "Hatha",
         "dayOfWeek": 4,
         "startTime": "16:15",
         "endTime": "18:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-nirmaya-fodor",
+        "teacherId": "teacher-gen-anjali-gelzleichter",
         "isAiPlanned": false,
         "status": "draft",
-        "teacherName": "Nirmaya"
+        "teacherName": "Anjali"
       },
       {
         "id": "course-2026-W49-61",
@@ -7488,10 +7483,10 @@
         "startTime": "19:30",
         "endTime": "20:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-christopher",
+        "teacherId": "teacher-gen-mouniir-jaber",
         "isAiPlanned": true,
         "status": "draft",
-        "teacherName": "Christopher"
+        "teacherName": "Mounir"
       },
       {
         "id": "course-2026-W49-62",
@@ -7513,11 +7508,10 @@
         "dayOfWeek": 4,
         "startTime": "21:10",
         "endTime": "22:00",
-        "roomId": "room-5",
-        "teacherId": "teacher-gen-mouniir-jaber",
-        "isAiPlanned": true,
-        "status": "draft",
-        "teacherName": "Mounir"
+        "roomId": "room-2",
+        "teacherId": null,
+        "isAiPlanned": false,
+        "status": "draft"
       },
       {
         "id": "course-2026-W49-2",
@@ -7527,10 +7521,10 @@
         "startTime": "07:00",
         "endTime": "07:30",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-pranava-pauly",
-        "isAiPlanned": false,
+        "teacherId": "teacher-gen-mouniir-jaber",
+        "isAiPlanned": true,
         "status": "draft",
-        "teacherName": "Pranava"
+        "teacherName": "Mounir"
       },
       {
         "id": "course-2026-W49-3",
@@ -7540,10 +7534,10 @@
         "startTime": "07:00",
         "endTime": "08:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-christopher",
+        "teacherId": "teacher-gen-alexander-melior",
         "isAiPlanned": true,
         "status": "draft",
-        "teacherName": "Christopher"
+        "teacherName": "Alexander"
       },
       {
         "id": "course-2026-W49-4",
@@ -7579,10 +7573,9 @@
         "startTime": "16:30",
         "endTime": "18:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-alexander-melior",
-        "isAiPlanned": true,
-        "status": "draft",
-        "teacherName": "Alexander"
+        "teacherId": null,
+        "isAiPlanned": false,
+        "status": "draft"
       },
       {
         "id": "course-2026-W49-7",
@@ -7657,10 +7650,10 @@
         "startTime": "06:00",
         "endTime": "06:50",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-chandrashekara",
+        "teacherId": "teacher-gen-karuna-wapke",
         "isAiPlanned": true,
         "status": "draft",
-        "teacherName": "Chandrashekara"
+        "teacherName": "Karuna"
       },
       {
         "id": "course-2026-W49-12",
@@ -7683,10 +7676,10 @@
         "startTime": "07:00",
         "endTime": "08:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-chandrashekara",
+        "teacherId": "teacher-gen-anjali-gelzleichter",
         "isAiPlanned": true,
         "status": "draft",
-        "teacherName": "Chandrashekara"
+        "teacherName": "Anjali"
       },
       {
         "id": "course-2026-W49-14",
@@ -7696,10 +7689,10 @@
         "startTime": "09:15",
         "endTime": "11:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-pranava-pauly",
+        "teacherId": "teacher-gen-nirmaya-fodor",
         "isAiPlanned": false,
         "status": "draft",
-        "teacherName": "Pranava"
+        "teacherName": "Nirmaya"
       },
       {
         "id": "course-2026-W49-15",
@@ -7722,23 +7715,22 @@
         "startTime": "16:15",
         "endTime": "18:00",
         "roomId": "room-2",
-        "teacherId": "teacher-gen-yl",
+        "teacherId": null,
         "isAiPlanned": false,
-        "status": "draft",
-        "teacherName": "! YL"
+        "status": "draft"
       },
       {
         "id": "course-2026-W49-17",
-        "name": "Mittelstufe Mantrayogastunde",
+        "name": "Mittelstufe",
         "style": "Hatha",
         "dayOfWeek": 6,
         "startTime": "16:15",
         "endTime": "18:00",
         "roomId": "room-5",
-        "teacherId": "teacher-gen-anjali-gelzleichter",
+        "teacherId": "teacher-gen-pranava-pauly",
         "isAiPlanned": false,
         "status": "draft",
-        "teacherName": "Anjali"
+        "teacherName": "Pranava"
       },
       {
         "id": "course-2026-W49-18",
