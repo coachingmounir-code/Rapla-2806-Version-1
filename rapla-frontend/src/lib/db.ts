@@ -17758,10 +17758,22 @@ export function reconcilePlansWithDefaults(plans: WeekPlan[]): { plans: WeekPlan
               plan.targetWeekCode === '2026-W45' &&
               (!existingC.lastEditedAt || existingC.lastEditedAt < '2026-10-27T08:16:00.000Z') &&
               (existingC.teacherId !== defC.teacherId || existingC.teacherName !== defC.teacherName || existingC.name !== defC.name);
-            if (hasRemovedTeacher || isStaleW45Preplan) {
+            const isStaleW49Preplan =
+              plan.targetWeekCode === '2026-W49' &&
+              (!existingC.lastEditedAt || existingC.lastEditedAt < '2026-11-22T07:15:00.000Z') &&
+              (existingC.teacherId !== defC.teacherId ||
+               existingC.teacherName !== defC.teacherName ||
+               existingC.name !== defC.name ||
+               existingC.roomId !== defC.roomId);
+            if (hasRemovedTeacher || isStaleW45Preplan || isStaleW49Preplan) {
               existingC.teacherId = defC.teacherId;
-              existingC.teacherName = defC.teacherName;
+              if (defC.teacherName) {
+                existingC.teacherName = defC.teacherName;
+              } else {
+                delete existingC.teacherName;
+              }
               existingC.name = defC.name;
+              existingC.roomId = defC.roomId;
               existingC.isAiPlanned = defC.isAiPlanned;
             }
           }
@@ -17802,8 +17814,8 @@ export function reconcilePlansWithDefaults(plans: WeekPlan[]): { plans: WeekPlan
       }
     }
 
-    // Ensure KW 46, KW 47, and KW 48 default to draft / unapproved unless explicitly approved by user
-    if (p.targetWeekCode === '2026-W46' || p.targetWeekCode === '2026-W47' || p.targetWeekCode === '2026-W48') {
+    // Ensure KW 46, KW 47, KW 48, and KW 49 default to draft / unapproved unless explicitly approved by user
+    if (p.targetWeekCode === '2026-W46' || p.targetWeekCode === '2026-W47' || p.targetWeekCode === '2026-W48' || p.targetWeekCode === '2026-W49') {
       if (!(p as any).manuallyApprovedByUser) {
         p.isApproved = false;
         p.status = 'draft';
@@ -18224,7 +18236,7 @@ export function reconcilePlansWithDefaults(plans: WeekPlan[]): { plans: WeekPlan
   return { plans: list, hasChanges: beforeJson !== afterJson };
 }
 
-const CURRENT_DB_VERSION = 170;
+const CURRENT_DB_VERSION = 172;
 
 // Database Actions
 export const db = {
