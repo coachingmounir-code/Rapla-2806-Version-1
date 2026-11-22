@@ -1827,6 +1827,57 @@ export function runAiPlanning(
       candidateScores.sort((a, b) => b.score - a.score);
     }
 
+    // Fallback: If no candidate without hard conflicts was found for Om Namo Narayanaya, relax weekly ONN limit (maxOnnPerWeek)
+    if (
+      candidateScores.length === 0 &&
+      (course.name.toLowerCase().includes('om namo') || course.name.toLowerCase().includes('narayanaya'))
+    ) {
+      logs.push(`  [NOTFALL] Kein konfliktfreier Lehrer für ${course.name} am Tag ${course.dayOfWeek} um ${course.startTime} gefunden. Prüfe verfügbare ONN-Lehrer mit gelockertem Wochenlimit...`);
+      for (const teacher of yogaTeachers) {
+        if (teacher.rules.canLeadOnn === false) continue;
+
+        const tempLayout = workingCourses.map(x => x.id === course.id ? { ...x, teacherId: teacher.id } : { ...x });
+        adjustRoomsForRules(tempLayout, teachers, targetWeekCode);
+        const adjustedCourse = tempLayout.find(x => x.id === course.id)!;
+
+        const conflicts = validateAssignment(teacher, adjustedCourse, tempLayout, seminarLeaderIds, targetWeekCode, teachers, absences);
+
+        // Only allow relaxing the weekly maxOnnPerWeek limit; all other hard conflicts (absence, availability, overlap, Pranayama exclusion) remain strict
+        const nonRelaxableConflicts = conflicts.filter(c => {
+          if (c.type !== 'hard') return false;
+          const msg = c.message.toLowerCase();
+          const isWeeklyOnnLimit = msg.includes('maximal') && msg.includes('pro woche für om namo narayanaya');
+          return !isWeeklyOnnLimit;
+        });
+
+        if (nonRelaxableConflicts.length === 0) {
+          let score = 100;
+          const plannedHours = workingCourses
+            .filter(c => c.teacherId === teacher.id)
+            .reduce((sum, c) => sum + (timeToMinutes(c.endTime) - timeToMinutes(c.startTime)) / 60, 0);
+          score -= plannedHours * 5;
+
+          const hardConflictsToRelax = conflicts.filter(c => c.type === 'hard');
+          score -= hardConflictsToRelax.length * 1000000;
+
+          const combinedSoftConflicts = conflicts.map(c => {
+            if (c.type === 'hard') {
+              return { type: 'soft' as const, message: `[Regellockerung] ${c.message}` };
+            }
+            return c;
+          });
+
+          candidateScores.push({
+            teacher,
+            score,
+            conflicts: combinedSoftConflicts
+          });
+        }
+      }
+
+      candidateScores.sort((a, b) => b.score - a.score);
+    }
+
     if (candidateScores.length > 0) {
       const bestCandidate = candidateScores[0];
       const index = workingCourses.findIndex(c => c.id === course.id);

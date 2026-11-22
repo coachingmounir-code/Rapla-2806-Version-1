@@ -144,6 +144,14 @@ def main():
             person_days['Abha'][cur] = 'u'
             cur += datetime.timedelta(days=1)
 
+    # 6. burnie: Sevafrei ('u') from 23.11.2026 through 06.12.2026.
+    if 'burnie' in person_days:
+        cur = datetime.datetime(2026, 11, 23)
+        end = datetime.datetime(2026, 12, 6)
+        while cur <= end:
+            person_days['burnie'][cur] = 'u'
+            cur += datetime.timedelta(days=1)
+
     # Convert daily codes into contiguous blocks per person
     blocks = []
     for excel_name in person_order:

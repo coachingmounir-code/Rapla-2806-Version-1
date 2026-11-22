@@ -503,14 +503,14 @@ function getNext8WeekCodes(): string[] {
   return weeks;
 }
 
-const weeksToPlan = ["2026-W41", "2026-W42", "2026-W43", "2026-W44", "2026-W45", "2026-W46", "2026-W47", "2026-W48"];
+const weeksToPlan = ["2026-W41", "2026-W42", "2026-W43", "2026-W44", "2026-W45", "2026-W46", "2026-W47", "2026-W48", "2026-W49"];
 console.log(`[PREPLANNING] Planning for weeks: ${weeksToPlan.join(', ')}`);
 
 const existingWeekPlans = db.getWeekPlans();
 const results: Record<string, any[]> = {};
 for (const week of weeksToPlan) {
   const existingPlan = existingWeekPlans.find(p => p.targetWeekCode === week);
-  if (week !== "2026-W48" && existingPlan && (existingPlan.courses?.length > 0)) {
+  if (week !== "2026-W49" && existingPlan && (existingPlan.courses?.length > 0)) {
     console.log(`[PREPLANNING] Preserving existing plan for ${week} (${existingPlan.courses.length} courses).`);
     results[week] = existingPlan.courses;
   } else {
@@ -554,33 +554,33 @@ const dbPath = './rapla-frontend/src/lib/db.ts';
 if (fs.existsSync(dbPath)) {
   let dbContent = fs.readFileSync(dbPath, 'utf-8');
 
-  // Insert or update plan-pre-2026-W48
-  const w48Courses = results['2026-W48'];
-  if (w48Courses) {
-    const w48PlanCode = `  {
-    "id": "plan-pre-2026-W48",
-    "name": "Vorplanung 2026-W48 (Automatisch)",
+  // Insert or update plan-pre-2026-W49
+  const w49Courses = results['2026-W49'];
+  if (w49Courses) {
+    const w49PlanCode = `  {
+    "id": "plan-pre-2026-W49",
+    "name": "Vorplanung 2026-W49 (Automatisch)",
     "status": "draft",
     "isApproved": false,
     "manuallyUnapproved": true,
-    "targetWeekCode": "2026-W48",
-    "courses": ${formatPlanCoursesCode(w48Courses)},
+    "targetWeekCode": "2026-W49",
+    "courses": ${formatPlanCoursesCode(w49Courses)},
     "createdAt": "${new Date().toISOString()}"
   }`;
 
-    const existingW48Idx = dbContent.indexOf('"id": "plan-pre-2026-W48"');
-    if (existingW48Idx !== -1) {
-      const braceStart = dbContent.lastIndexOf('  {', existingW48Idx);
-      const createdIdx = dbContent.indexOf('"createdAt":', existingW48Idx);
+    const existingW49Idx = dbContent.indexOf('"id": "plan-pre-2026-W49"');
+    if (existingW49Idx !== -1) {
+      const braceStart = dbContent.lastIndexOf('  {', existingW49Idx);
+      const createdIdx = dbContent.indexOf('"createdAt":', existingW49Idx);
       const braceEnd = dbContent.indexOf('  }', createdIdx) + 3;
-      dbContent = dbContent.substring(0, braceStart) + w48PlanCode + dbContent.substring(braceEnd);
-      console.log(`[PREPLANNING] Updated existing plan-pre-2026-W48 in db.ts.`);
+      dbContent = dbContent.substring(0, braceStart) + w49PlanCode + dbContent.substring(braceEnd);
+      console.log(`[PREPLANNING] Updated existing plan-pre-2026-W49 in db.ts.`);
     } else {
       const insertMarker = '\n];\n\n\n// Cloud-aware storage';
       const insertIdx = dbContent.indexOf(insertMarker);
       if (insertIdx !== -1) {
-        dbContent = dbContent.substring(0, insertIdx) + ',\n' + w48PlanCode + dbContent.substring(insertIdx);
-        console.log(`[PREPLANNING] Appended plan-pre-2026-W48 to DEFAULT_WEEK_PLANS in db.ts.`);
+        dbContent = dbContent.substring(0, insertIdx) + ',\n' + w49PlanCode + dbContent.substring(insertIdx);
+        console.log(`[PREPLANNING] Appended plan-pre-2026-W49 to DEFAULT_WEEK_PLANS in db.ts.`);
       } else {
         console.error('[PREPLANNING] Could not find insertion marker in db.ts');
       }
@@ -598,7 +598,7 @@ if (fs.existsSync(dbPath)) {
     );
 
     fs.writeFileSync(dbPath, dbContent, 'utf-8');
-    console.log(`[PREPLANNING] rapla-frontend/src/lib/db.ts wurde erfolgreich mit KW 48 aktualisiert (CURRENT_DB_VERSION erhöht).`);
+    console.log(`[PREPLANNING] rapla-frontend/src/lib/db.ts wurde erfolgreich mit KW 49 aktualisiert (CURRENT_DB_VERSION erhöht).`);
   }
 } else {
   console.error('[PREPLANNING] db.ts Pfad existiert nicht.');

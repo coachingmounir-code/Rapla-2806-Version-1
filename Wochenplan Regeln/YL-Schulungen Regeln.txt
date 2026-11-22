@@ -15,3 +15,5 @@ Regeln für YL-Schulungen:
 
 4. Darstellung:
 - In der Wochenplanansicht und im Planungs-Schedule haben YL-Schulungen eine eigenständige Farbcodierung (Indigo/Blau-Violett) und heben sich deutlich von regulären Stunden ab.
+
+
