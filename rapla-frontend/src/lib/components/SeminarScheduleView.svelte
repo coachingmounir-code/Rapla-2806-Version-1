@@ -136,9 +136,6 @@
     }
   });
 
-  // Filter: 'all' | 'orange' | 'white'
-  let activeFilter = $state<'all' | 'orange' | 'white'>('all');
-
   // Mobile active day index (0 = Start-Freitag .. 7 = End-Freitag)
   let activeMobileDayIndex = $state<number>(0);
 
@@ -209,33 +206,17 @@
     for (const sem of seminarsToSearch) {
       const daySlots = getEffectiveSeminarSlotsForDay(sem, day);
       for (const slot of daySlots) {
-        if (!activeSeminar && !slot.isOrange) {
-          // Deduplicate shared open Ashram Hausprogramm slots by hour + category in combined view
-          const hour = getSlotHour(slot);
-          const alreadyHasHouseSlot = results.some(
-            r => !r.slot.isOrange && getSlotHour(r.slot) === hour && r.slot.category === slot.category
-          );
-          if (!alreadyHasHouseSlot) {
-            results.push({ slot, seminar: sem });
-          }
-        } else {
-          results.push({ slot, seminar: sem });
-        }
+        // Strictly show only internal seminar slots (isOrange === true)
+        if (!slot.isOrange) continue;
+        results.push({ slot, seminar: sem });
       }
     }
 
     return results.sort((a, b) => {
       const timeCmp = a.slot.startTime.localeCompare(b.slot.startTime);
       if (timeCmp !== 0) return timeCmp;
-      if (a.slot.isOrange !== b.slot.isOrange) return a.slot.isOrange ? 1 : -1;
       return a.seminar.title.localeCompare(b.seminar.title);
     });
-  }
-
-  function shouldShowEntryBase(entry: SlotEntry): boolean {
-    if (activeFilter === 'orange') return entry.slot.isOrange;
-    if (activeFilter === 'white') return !entry.slot.isOrange;
-    return true;
   }
 
   // Check if selectedTeacher actually leads/teaches any seminar slot in this week
@@ -247,7 +228,7 @@
   });
 
   function shouldShowEntry(entry: SlotEntry): boolean {
-    if (!shouldShowEntryBase(entry)) return false;
+    if (!entry.slot.isOrange) return false;
     if (selectedTeacher && onlyMySlots && selectedTeacherHasWeekSlots) {
       return matchesSelectedTeacher(entry, selectedTeacher);
     }
@@ -807,33 +788,6 @@
               {/if}
             </div>
           {/each}
-        </div>
-
-        <div class="slot-type-segmented">
-          <button
-            type="button"
-            class="seg-btn"
-            class:active={activeFilter === 'all'}
-            onclick={() => activeFilter = 'all'}
-          >
-            Alle
-          </button>
-          <button
-            type="button"
-            class="seg-btn"
-            class:active={activeFilter === 'orange'}
-            onclick={() => activeFilter = 'orange'}
-          >
-            Seminar-Einheiten
-          </button>
-          <button
-            type="button"
-            class="seg-btn"
-            class:active={activeFilter === 'white'}
-            onclick={() => activeFilter = 'white'}
-          >
-            Hausprogramm
-          </button>
         </div>
       </div>
 
@@ -1498,7 +1452,6 @@
                   {/each}
                   {#if slotEditScope === 'single'}
                     <option value="treffpunkt">📍 Treffpunkt Eingang / Draußen (ohne Raumbelegung)</option>
-                    <option value="house">🕊️ Offenes Hausprogramm (weißer Slot)</option>
                   {/if}
                 </select>
               </div>
@@ -1882,36 +1835,6 @@
     background: #dcfce7;
     border-color: #22c55e;
     color: #14532d;
-  }
-
-  .slot-type-segmented {
-    display: inline-flex;
-    background: #f1f5f9;
-    border: 1px solid #cbd5e1;
-    border-radius: 6px;
-    padding: 2px;
-    gap: 2px;
-    flex-shrink: 0;
-  }
-
-  .seg-btn {
-    background: transparent;
-    border: none;
-    border-radius: 4px;
-    padding: 0.24rem 0.55rem;
-    font-family: inherit;
-    font-size: 0.73rem;
-    font-weight: 600;
-    color: #475569;
-    cursor: pointer;
-    transition: all 0.15s ease;
-  }
-
-  .seg-btn.active {
-    background: #ffffff;
-    color: #0f172a;
-    font-weight: 700;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
   }
 
   .selected-seminar-strip {

@@ -3804,134 +3804,19 @@ export function getSeminarsForWeek(
   });
 }
 
-// Standard open Ashram Hausprogramm synthesizer for active seminar days that only store fixed seminar units
+// Returns ONLY internal seminar slots (isOrange === true) for the given seminar and day.
+// Open Ashram Hausprogramm slots (Meditation, Satsang, Brunch, Abendessen, offene Yogastunden lt. Tagesplan, etc.)
+// are intentionally excluded here to avoid duplication with the main Wochenplan.
 export function getEffectiveSeminarSlotsForDay(
   seminar: Seminar,
   day: { dateStr: string; dayIndex: number; dayOfWeek: number; label: string }
 ): SeminarSlot[] {
   const deletedSet = new Set(seminar.deletedSlotIds || []);
-  const explicitDaySlots = seminar.slots
+  return (seminar.slots || [])
+    .filter(sl => sl.isOrange === true)
     .filter(sl => (sl.dateStr ? sl.dateStr === day.dateStr : sl.dayIndex === day.dayIndex))
-    .filter(sl => !deletedSet.has(sl.id));
-
-  // Outside seminar date range, only return any explicitly dated slots
-  if (!day.dateStr || day.dateStr < seminar.startDate || day.dateStr > seminar.endDate) {
-    return explicitDaySlots;
-  }
-
-  // If this seminar uses explicit Hausprogramm slots (or is not a generic blueprint), return explicit slots directly
-  // so that deleting a Hausprogramm slot on a day does not synthesize fallback duplicates.
-  if (!seminar.isBlueprint || seminar.slots.some(sl => !sl.isOrange) || explicitDaySlots.some(sl => !sl.isOrange)) {
-    return explicitDaySlots;
-  }
-
-  const isArrivalDay = day.dateStr === seminar.startDate;
-  const isDepartureDay = day.dateStr === seminar.endDate;
-  const isSundayDeparture = isDepartureDay && day.dayOfWeek === 0;
-  const generatedHouse: SeminarSlot[] = [];
-
-  const pushHouseSlot = (
-    suffix: string,
-    startTime: string,
-    endTime: string,
-    timeLabel: string,
-    title: string,
-    description: string,
-    category: SeminarSlot['category']
-  ) => {
-    const synthId = `house-${seminar.id}-${day.dateStr}-${suffix}`;
-    if (deletedSet.has(synthId)) return;
-    generatedHouse.push({
-      id: synthId,
-      seminarId: seminar.id,
-      dayIndex: day.dayIndex,
-      dayOfWeek: day.dayOfWeek,
-      dayName: day.label,
-      dateStr: day.dateStr,
-      timeLabel,
-      startTime,
-      endTime,
-      title,
-      description,
-      isOrange: false,
-      category
-    });
-  };
-
-  if (!isArrivalDay) {
-    pushHouseSlot(
-      '0700',
-      '07:00',
-      '08:00',
-      '7:00 Uhr',
-      'Stille Meditation oder geführte Meditation / Satsang',
-      'Morgendlicher Satsang mit Meditation und Kirtan laut Tagesplan.',
-      'meditation'
-    );
-    pushHouseSlot(
-      '0915',
-      '09:15',
-      '10:45',
-      '9:15 Uhr Yoga',
-      'Yogastunde (siehe Aushang Tagesplan)',
-      'Offene Vormittags-Yogastunde im Hausprogramm.',
-      'yoga'
-    );
-    pushHouseSlot(
-      '1100',
-      '11:00',
-      isDepartureDay && !isSundayDeparture ? '12:00' : '12:30',
-      '11:00 Uhr',
-      isDepartureDay ? 'Vollwert-Brunch & Verabschiedung' : 'Brunch und Freizeit',
-      'Reichhaltiges biologisch-vegetarisches Vollwert-Buffet im Speisesaal.',
-      'meal'
-    );
-    if (isDepartureDay && !isSundayDeparture) {
-      pushHouseSlot(
-        '1200-abreise',
-        '12:00',
-        '12:30',
-        'Nachmittags-Programm',
-        'Bei Abreise bitte Zimmer bis 12:30 Uhr räumen',
-        'Das Yoga Vidya Team wünscht eine gute und gesegnete Heimfahrt.',
-        'departure'
-      );
-    }
-  }
-
-  if (!isDepartureDay) {
-    pushHouseSlot(
-      '1615',
-      isArrivalDay ? '16:30' : '16:15',
-      isArrivalDay ? '18:00' : '17:45',
-      '16:15 Uhr / 16:30 Uhr',
-      isArrivalDay ? 'Ankommens-Yogastunde' : 'Yogastunde (siehe Aushang Tagesplan)',
-      isArrivalDay
-        ? 'Sanftes Ankommen im Haus Yoga Vidya Nordsee (laut Tagesaushang).'
-        : 'Offene Nachmittags-Yogastunde laut Tagesplan.',
-      'yoga'
-    );
-    pushHouseSlot(
-      '1800',
-      '18:00',
-      '19:30',
-      '18:00 Uhr',
-      'Abendessen und Freizeit',
-      'Reichhaltiges biologisch-vegetarisches Vollwert-Buffet im Speisesaal.',
-      'meal'
-    );
-    pushHouseSlot(
-      '2000',
-      '20:00',
-      day.dayOfWeek === 6 ? '21:30' : '21:00',
-      '20:00 Uhr Satsang',
-      day.dayOfWeek === 6 ? 'Großer Fest-Satsang am Samstagabend' : 'Meditieren Mantrasingen Satsang',
-      'Gemeinsamer Abend-Satsang mit Meditation, Mantra-Singen und Arati.',
-      'satsang'
-    );
-  }
-
-  return [...explicitDaySlots, ...generatedHouse].sort((a, b) => a.startTime.localeCompare(b.startTime));
+    .filter(sl => !deletedSet.has(sl.id))
+    .sort((a, b) => a.startTime.localeCompare(b.startTime));
 }
 
 // Generates the standard room reservations for ashram wide room occupancy
